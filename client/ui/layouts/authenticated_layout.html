@@ -1,0 +1,23 @@
+<template name="AuthenticatedLayout">
+  <div class="app-container">
+    {{#if Template.subscriptionsReady}}
+      {{#if currentUser}}
+        <div class="app-row">
+          <div class="app-main-column">
+            {{> Template.dynamic template=header }}
+          </div>
+          <div class="app-nav-column">
+            {{> Template.dynamic template=nav }}
+          </div>
+        </div>
+        <div class="app-main-column">
+          {{> Template.dynamic template=main }}
+        </div>
+      {{else}}
+        {{> Login }}
+      {{/if}}
+    {{else}}
+      {{> AppLoading}}
+    {{/if}}
+  </div>
+</template>

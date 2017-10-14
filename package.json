@@ -1,0 +1,34 @@
+{
+  "name": "journalist",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "bcrypt": "^1.0.3",
+    "jira-connector": "^2.6.0",
+    "meteor-node-stubs": "~0.2.4"
+  },
+  "description": "Reporting Planning Tracking",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/austinsand/journalist.git"
+  },
+  "keywords": [
+    "Reporting",
+    "Planning",
+    "Tracking"
+  ],
+  "author": "austin.sand@gmail.com",
+  "license": {
+    "notValid": true
+  },
+  "bugs": {
+    "url": "https://github.com/austinsand/journalist/issues"
+  },
+  "homepage": "https://github.com/austinsand/journalist"
+}
