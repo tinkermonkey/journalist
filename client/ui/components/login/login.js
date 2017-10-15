@@ -18,7 +18,6 @@ Template.Login.helpers({
  */
 Template.Login.events({
   'submit .login-form'(e, instance) {
-    console.log("Login form submitted:", e.target);
     let username = instance.$(".login-username").val(),
         password = instance.$(".login-password").val();
     
@@ -42,7 +41,7 @@ Template.Login.events({
         }
       });
     } else {
-      instance.$(".login-error").text("go on, type it in");
+      instance.$(".login-error").text("Please enter a valid email address and password");
     }
     return false;
   },

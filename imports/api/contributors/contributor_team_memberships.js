@@ -57,6 +57,13 @@ export const ContributorTeamMembership = new SimpleSchema({
 export const ContributorTeamMemberships = new Mongo.Collection("contributor_team_memberships");
 ContributorTeamMemberships.attachSchema(ContributorTeamMembership);
 
+// These are server side only
+ContributorTeamMemberships.deny({
+  remove() { return true; },
+  insert() { return true; },
+  update() { return true; }
+});
+
 /**
  * Helpers
  */

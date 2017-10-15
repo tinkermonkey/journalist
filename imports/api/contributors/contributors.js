@@ -28,6 +28,13 @@ export const Contributor = new SimpleSchema({
 export const Contributors = new Mongo.Collection("contributors");
 Contributors.attachSchema(Contributor);
 
+// These are server side only
+Contributors.deny({
+  remove() { return true; },
+  insert() { return true; },
+  update() { return true; }
+});
+
 /**
  * Helpers
  */

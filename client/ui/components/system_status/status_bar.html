@@ -1,0 +1,11 @@
+<template name="StatusBar">
+  <div class="status-bar {{cssClass}}">
+    {{#unless leftToRight}}
+      <label>{{label}}</label>
+      {{> StatusCircle cssClass=getCircleClass }}
+    {{else}}
+      {{> StatusCircle cssClass=getCircleClass }}
+      <label>{{label}}{{#if subLabel}} <small>({{subLabel}})</small>{{/if}}</label>
+    {{/unless}}
+  </div>
+</template>

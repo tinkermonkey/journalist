@@ -35,6 +35,13 @@ export const Team = new SimpleSchema({
 export const Teams = new Mongo.Collection("teams");
 Teams.attachSchema(Team);
 
+// These are server side only
+Teams.deny({
+  remove() { return true; },
+  insert() { return true; },
+  update() { return true; }
+});
+
 /**
  * Helpers
  */

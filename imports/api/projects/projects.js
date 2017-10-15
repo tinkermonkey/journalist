@@ -39,6 +39,13 @@ export const Project = new SimpleSchema({
 export const Projects = new Mongo.Collection("projects");
 Projects.attachSchema(Project);
 
+// These are server side only
+Projects.deny({
+  remove() { return true; },
+  insert() { return true; },
+  update() { return true; }
+});
+
 /**
  * Helpers
  */

@@ -74,6 +74,13 @@ export const ImportedIssue = new SimpleSchema({
 export const ImportedIssues = new Mongo.Collection("imported_issues");
 ImportedIssues.attachSchema(ImportedIssue);
 
+// These are server side only
+ImportedIssues.deny({
+  remove() { return true; },
+  insert() { return true; },
+  update() { return true; }
+});
+
 /**
  * Helpers
  */

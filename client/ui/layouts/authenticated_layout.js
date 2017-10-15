@@ -16,7 +16,11 @@ Template.AuthenticatedLayout.events({});
  * Template Created
  */
 Template.AuthenticatedLayout.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.subscribe('contributors');
+  instance.subscribe('system_status_metrics');
+  instance.subscribe('user_level');
 });
 
 /**

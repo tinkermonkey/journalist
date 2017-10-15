@@ -1,0 +1,68 @@
+.sortable-table {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.sortable-table-row:hover {
+  background-color: #F0F0F0;
+}
+
+.sortable-table-row > td {
+  margin-right: 5px;
+  padding: 3px;
+}
+
+/* Divider Row */
+.sortable-table-divider .divider {
+  margin-top: 5px;
+  border-top: 1px dotted #666;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+/* Drag handle */
+.sortable-table-row .drag-handle {
+  border-radius: 3px 0 0 3px;
+  width: 1.9em;
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.sortable-table-row:hover .drag-handle {
+  color: #298cff;
+  opacity: 1;
+}
+
+.sortable-table-row:hover .drag-handle:hover {
+  background-color: #298cff;
+  color: #fff;
+}
+
+/* Delete Button */
+.sortable-table-row .btn-delete {
+  border-radius: 0 3px 3px 0;
+  width: 1.9em;
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0.1;
+}
+
+.sortable-table-row:hover .btn-delete {
+  color: #FF793E;
+  opacity: 1;
+}
+
+.sortable-table-row:hover .btn-delete:hover {
+  background-color: #FF793E;
+  color: #fff;
+}
+
+.drag-handle .glyphicon, .btn-delete .glyphicon {
+  margin-left:3px;
+}
+
+.odd-row {
+  background-color: #f7f7f7;
+}

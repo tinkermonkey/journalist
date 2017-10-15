@@ -29,3 +29,15 @@ percolate:synced-cron
 lnmunhoz:autoform-markdown-editor
 kadira:blaze-layout
 austinsand:roba-spinner
+dburles:collection-helpers
+austinsand:roba-dialog
+austinsand:roba-popover
+austinsand:roba-tabs
+austinsand:editable-record-selector
+austinsand:editable-record-checklist
+austinsand:editable-enum-selector
+austinsand:editable-enum-checklist
+austinsand:editable-text-area
+austinsand:editable-text-field
+austinsand:editable-text-array
+force-ssl

@@ -1,0 +1,33 @@
+<template name="AdminUserList">
+  <table class="data-table">
+    <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Name</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each users}}
+      <tr class="data-table-row" data-pk="{{_id}}">
+        <td>{{> EditableTextField dataKey="username" value=username emptyText="Username" }}</td>
+        <td>{{> EditableTextField dataKey="email" value=userEmail emptyText="Email" }}</td>
+        <td>{{> EditableTextField dataKey="name" value=profile.name emptyText="Name" }}</td>
+        <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes}}</td>
+        <td>
+          <button class="btn-xs btn-danger btn-delete-user">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+            Delete
+          </button>
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+  <button class="btn btn-xs btn-primary btn-add-user">
+    <span class="glyphicon glyphicon-plus"></span>
+    Add User
+  </button>
+</template>

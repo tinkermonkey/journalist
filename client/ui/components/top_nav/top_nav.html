@@ -1,0 +1,91 @@
+<template name="TopNav">
+  <nav class="navbar navbar-default navbar-inverse navbar-static-top top-nav">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+          <span class="journalist-logo">journalist</span>
+        </a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+              Projects
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="">My Projects</a></li>
+              <li class="divider" role="separator"></li>
+              <li><a href="">Other Projects</a></li>
+              <li class="divider" role="separator"></li>
+            </ul>
+          </li>
+          
+          {{#if userIsManager}}
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                Direct Reports
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                {{#each userReports}}
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+          {{#if userIsAdmin}}
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                Admin
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="{{pathFor 'AdminHome'}}">Admin Home</a></li>
+                <li class="divider" role="separator"></li>
+                <li><a href="{{pathFor 'AdminContributors'}}">Contributors</a></li>
+                <li><a href="{{pathFor 'AdminProjects'}}">Projects</a></li>
+                <li><a href="{{pathFor 'AdminTeams'}}">Teams</a></li>
+                <li><a href="{{pathFor 'AdminUsers'}}">Users</a></li>
+              </ul>
+            </li>
+          {{/if}}
+        </ul>
+        
+        <form class="navbar-form navbar-left">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+          </div>
+        </form>
+        
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+              {{#with statusSummary}}
+                <span class="inline-block">{{> StatusBar  label=title status=healthy leftToRight=true }}</span>
+              {{/with}}
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              {{#each statusMetrics}}
+                <li>
+                  <span class="inline-block">{{> StatusBar  label=title status=healthy leftToRight=true }}</span>
+                </li>
+              {{/each}}
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+              <span class="glyphicon glyphicon-user"></span>
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="/">{{userName}}</a></li>
+              <li class="divider" role="separator"></li>
+              <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</template>

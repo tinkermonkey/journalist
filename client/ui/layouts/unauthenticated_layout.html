@@ -1,11 +1,7 @@
 <template name="UnauthenticatedLayout">
   <div class="app-container">
     {{#if Template.subscriptionsReady}}
-      {{#if currentUser}}
-        {{> Template.dynamic template=main}}
-      {{else}}
-        {{> Login }}
-      {{/if}}
+      {{> Template.dynamic template=main}}
     {{else}}
       {{> AppLoading}}
     {{/if}}
