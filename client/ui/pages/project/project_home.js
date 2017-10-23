@@ -11,7 +11,6 @@ import './project_sidebar.js';
 Template.ProjectHome.helpers({
   project(){
     let projectId = FlowRouter.getParam('projectId');
-    console.log('project', projectId, Projects.findOne(projectId));
     return Projects.findOne(projectId)
   }
 });

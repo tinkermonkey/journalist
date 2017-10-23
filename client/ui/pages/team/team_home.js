@@ -11,7 +11,6 @@ import './team_sidebar.js';
 Template.TeamHome.helpers({
   team(){
     let teamId = FlowRouter.getParam('teamId');
-    console.log('team', teamId, Teams.findOne(teamId));
     return Teams.findOne(teamId)
   }
 });
