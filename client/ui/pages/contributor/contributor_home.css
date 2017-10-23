@@ -1,0 +1,11 @@
+.contributor-sidebar .sortable-table {
+  margin-left: -1.9em;
+}
+
+.contributor-sidebar .sortable-table-row:hover {
+  background-color: transparent;
+}
+
+.contributor-sidebar h3 {
+  padding-left: 2px;
+}

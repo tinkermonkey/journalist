@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { check } from 'meteor/check';
 import { Auth } from '../../auth.js';
+import { Contributors } from '../../contributors/contributors.js';
+import { Users } from '../users.js';
 
 Meteor.methods({
   /**
@@ -33,6 +35,13 @@ Meteor.methods({
       
       // Set the user type
       Meteor.users.update(newUserId, { $set: { usertype: userData.usertype } });
+      
+      // Check for a contributor record to link up
+      let contributor = Contributors.findOne({ 'email': userData.email });
+      if (contributor) {
+        console.log('addUser linking contributor:', userData.email);
+        Contributors.update(contributor._id, { $set: { userId: newUserId, usertype: userData.usertype } })
+      }
     } else {
       console.error('Non-admin user tried to add a user:', user, userData);
       throw new Meteor.Error(403);
@@ -81,6 +90,15 @@ Meteor.methods({
         
         console.log('editUser update:', userId, key, value, update);
         Meteor.users.update(userId, {$set: update});
+        
+        // If the usertype field was edited, sync up the contributor record
+        if(update.usertype !== null){
+          let contributor = Contributors.findOne({ userId: userId });
+          if (contributor) {
+            console.log('editUser syncing contributor usertype:', contributor.email, update.usertype);
+            Contributors.update(contributor._id, { $set: { usertype: update.usertype } })
+          }
+        }
       } else {
         console.error('editUser failed, unauthorized:', key, userId, user.username);
       }
@@ -107,5 +125,19 @@ Meteor.methods({
       console.error('deleteUser failed, unauthorized:', user.username, userId);
       throw new Meteor.Error(403);
     }
+  },
+  /**
+   * Check to see if a user has a contributor record
+   * @param userId
+   */
+  checkUserContributor(userId){
+    console.log('checkUserContributor:', userId);
+    let user = Auth.requireAuthentication();
+  
+    // Validate
+    check(userId, String);
+    
+    // Check for the presense of a contributor record
+    return Users.findOne(userId).contributor() !== null
   }
 });

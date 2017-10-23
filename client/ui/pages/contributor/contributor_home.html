@@ -1,0 +1,16 @@
+<template name="ContributorHome">
+  {{#with contributor}}
+    <div class="full-width">{{> ContributorBanner }}</div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <h1>{{name}}</h1>
+          {{> ContributorHeader }}
+        </div>
+        <div class="col-md-3">{{> ContributorSidebar }}</div>
+      </div>
+    </div>
+  {{else}}
+    {{> NotFound}}
+  {{/with}}
+</template>

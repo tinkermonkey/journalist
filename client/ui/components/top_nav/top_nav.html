@@ -7,84 +7,117 @@
         </a>
       </div>
       <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-              Projects
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="">My Projects</a></li>
-              <li class="divider" role="separator"></li>
-              <li><a href="">Other Projects</a></li>
-              <li class="divider" role="separator"></li>
-            </ul>
-          </li>
-          
-          {{#if userIsManager}}
+        {{#with currentUser.contributor}}
+          <ul class="nav navbar-nav">
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-                Direct Reports
+                Projects
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                {{#each userReports}}
+                <li class="disabled"><a href="">My Projects</a></li>
+                {{#each participatingProjects}}
+                  <li><a href="{{pathFor 'ProjectHome' projectId=_id}}">{{title}}</a></li>
+                {{/each}}
+                <li class="divider" role="separator"></li>
+                <li class="disabled"><a href="">Other Projects</a></li>
+                {{#each otherProjects}}
+                  <li><a href="{{pathFor 'ProjectHome' projectId=_id}}">{{title}}</a></li>
                 {{/each}}
               </ul>
             </li>
-          {{/if}}
-          {{#if userIsAdmin}}
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-                Admin
+                Teams
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="{{pathFor 'AdminHome'}}">Admin Home</a></li>
+                <li class="disabled"><a href="">My Teams</a></li>
+                {{#each participatingTeams}}
+                  <li><a href="{{pathFor 'TeamHome' teamId=_id}}">{{title}}</a></li>
+                {{/each}}
                 <li class="divider" role="separator"></li>
-                <li><a href="{{pathFor 'AdminContributors'}}">Contributors</a></li>
-                <li><a href="{{pathFor 'AdminProjects'}}">Projects</a></li>
-                <li><a href="{{pathFor 'AdminTeams'}}">Teams</a></li>
-                <li><a href="{{pathFor 'AdminUsers'}}">Users</a></li>
+                <li class="disabled"><a href="">Other Teams</a></li>
+                {{#each otherTeams}}
+                  <li><a href="{{pathFor 'TeamHome' teamId=_id}}">{{title}}</a></li>
+                {{/each}}
               </ul>
             </li>
-          {{/if}}
-        </ul>
-        
-        <form class="navbar-form navbar-left">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search">
-          </div>
-        </form>
-        
-        <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-              {{#with statusSummary}}
-                <span class="inline-block">{{> StatusBar  label=title status=healthy leftToRight=true }}</span>
-              {{/with}}
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              {{#each statusMetrics}}
-                <li>
+            
+            {{#if userIsManager}}
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                  Staff
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="disabled"><a href="">Direct Reports</a></li>
+                  {{#each directReports}}
+                    <li><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></li>
+                  {{/each}}
+                  {{#if indirectReports.count}}
+                    <li class="divider" role="separator"></li>
+                    <li class="disabled"><a href="">Indirect Reports</a></li>
+                    {{#each indirectReports}}
+                      <li><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></li>
+                    {{/each}}
+                  {{/if}}
+                </ul>
+              </li>
+            {{/if}}
+            {{#if userIsAdmin}}
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                  Admin
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="{{pathFor 'AdminHome'}}">Admin Home</a></li>
+                  <li class="divider" role="separator"></li>
+                  <li><a href="{{pathFor 'AdminContributors'}}">Contributors</a></li>
+                  <li><a href="{{pathFor 'AdminProjects'}}">Projects</a></li>
+                  <li><a href="{{pathFor 'AdminTeams'}}">Teams</a></li>
+                  <li><a href="{{pathFor 'AdminUsers'}}">Users</a></li>
+                </ul>
+              </li>
+            {{/if}}
+          </ul>
+          
+          <form class="navbar-form navbar-left">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
+            </div>
+          </form>
+          
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                {{#with statusSummary}}
                   <span class="inline-block">{{> StatusBar  label=title status=healthy leftToRight=true }}</span>
-                </li>
-              {{/each}}
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-              <span class="glyphicon glyphicon-user"></span>
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="/">{{userName}}</a></li>
-              <li class="divider" role="separator"></li>
-              <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-            </ul>
-          </li>
-        </ul>
+                {{/with}}
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                {{#each statusMetrics}}
+                  <li>
+                    <span class="inline-block">{{> StatusBar  label=title status=healthy leftToRight=true }}</span>
+                  </li>
+                {{/each}}
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                <span class="glyphicon glyphicon-user"></span>
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="{{pathFor 'UserProfile'}}">{{userName}}</a></li>
+                <li class="divider" role="separator"></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+        {{/with}}
       </div>
     </div>
   </nav>

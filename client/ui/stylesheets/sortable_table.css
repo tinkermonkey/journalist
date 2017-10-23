@@ -11,6 +11,8 @@
 .sortable-table-row > td {
   margin-right: 5px;
   padding: 3px;
+  transition: transform 0.4s, background-color 0.4s, color 0.4s, opacity 0.4s;
+  -webkit-transition: -webkit-transform 0.4s, background-color 0.4s, color 0.4s, opacity 0.4s;
 }
 
 /* Divider Row */

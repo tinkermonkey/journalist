@@ -1,3 +1,42 @@
 <template name="AdminTeams">
-  admin_teams
+  {{#if Template.subscriptionsReady }}
+    <div class="container">
+      <h1>Teams</h1>
+      <table class="table data-table full-width">
+        <thead>
+        <tr>
+          <th>Title</th>
+          <th>Projects</th>
+          <th>Roster</th>
+          <th>Modified</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each teams}}
+          <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+            <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+            <td>{{> EditableRecordChecklist projectChecklistContext }}</td>
+            <td>{{> EditableTeamRoster }}</td>
+            <td>{{dateFormat dateModified}}</td>
+            <td>{{dateFormat dateCreated}}</td>
+            <td>
+              <button class="btn-xs btn-danger btn-delete-team">
+                <span class="glyphicon glyphicon-minus-sign"></span>
+                Delete
+              </button>
+            </td>
+          </tr>
+        {{/each}}
+        </tbody>
+      </table>
+      <button class="btn btn-xs btn-primary btn-add-team">
+        <span class="glyphicon glyphicon-plus"></span>
+        Add Team
+      </button>
+    </div>
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
 </template>

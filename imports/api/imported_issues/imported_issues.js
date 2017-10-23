@@ -17,7 +17,7 @@ export const ImportedIssue = new SimpleSchema({
   // Overall type of this issue:
   issueType: {
     type: Number,
-    allowedValues: _.keys(IssueTypes)
+    allowedValues: _.values(IssueTypes)
   },
   // Primary identifier in the originating system
   identifier: {
@@ -71,7 +71,7 @@ export const ImportedIssue = new SimpleSchema({
   }
 });
 
-export const ImportedIssues = new Mongo.Collection("imported_issues");
+export const ImportedIssues = new Mongo.Collection('imported_issues');
 ImportedIssues.attachSchema(ImportedIssue);
 
 // These are server side only

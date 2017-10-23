@@ -16,6 +16,10 @@ a:visited {
   cursor: pointer;
 }
 
+a.link-red,
+a.link-red:visited {
+  color: #c9302c;
+}
 
 h1,
 h2,
@@ -120,22 +124,6 @@ button {
 }
 
 /**
- * Data Table
- */
-
-.data-table th {
-  /*border-bottom: 1px solid #bbbbbb;*/
-  padding: 2px 5px;
-  font-weight: 500;
-  vertical-align: bottom;
-}
-
-.data-table td {
-  padding: 2px 5px;
-  vertical-align: top;
-}
-
-/**
  * Editable fields
  */
 
@@ -162,6 +150,10 @@ a.editable-click:hover {
 
 .editable-text-area {
   word-break: break-all;
+}
+
+.editableform .form-control[type="text"] {
+  min-width: 20em;
 }
 
 /**

@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 
@@ -11,6 +12,10 @@ import { SchemaHelpers } from '../schema_helpers.js';
 export const Project = new SimpleSchema({
   title: {
     type: String
+  },
+  description: {
+    type: String,
+    optional: true
   },
   // Contributor that is the primary owner of this project
   owner: {
@@ -36,8 +41,9 @@ export const Project = new SimpleSchema({
   }
 });
 
-export const Projects = new Mongo.Collection("projects");
+export const Projects = new Mongo.Collection('projects');
 Projects.attachSchema(Project);
+ChangeTracker.trackChanges(Projects, 'Projects');
 
 // These are server side only
 Projects.deny({

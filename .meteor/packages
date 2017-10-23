@@ -41,3 +41,6 @@ austinsand:editable-text-area
 austinsand:editable-text-field
 austinsand:editable-text-array
 force-ssl
+austinsand:editable-code
+austinsand:roba-change-tracker
+mizzao:jquery-ui

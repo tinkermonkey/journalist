@@ -13,6 +13,6 @@ export const Auth = {
     if(user){
       return user
     }
-    throw new Meteor.Error("403");
+    throw new Meteor.Error('403');
   }
 };

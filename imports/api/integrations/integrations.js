@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { IssueTypes } from '../imported_issues/issue_types';
@@ -17,7 +18,7 @@ export const Integration = new SimpleSchema({
   // Overall type of this issue:
   issueType: {
     type: Number,
-    allowedValues: _.keys(IssueTypes)
+    allowedValues: _.values(IssueTypes)
   },
   // Configuration blob
   config: {
@@ -43,8 +44,9 @@ export const Integration = new SimpleSchema({
   },
 });
 
-export const Integrations = new Mongo.Collection("integrations");
+export const Integrations = new Mongo.Collection('integrations');
 Integrations.attachSchema(Integration);
+ChangeTracker.trackChanges(Integrations, 'Integrations');
 
 /**
  * Helpers

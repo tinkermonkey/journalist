@@ -2,14 +2,13 @@ import './admin_user_list.html';
 import { Template } from 'meteor/templating';
 import { RobaDialog } from 'meteor/austinsand:roba-dialog';
 import { UserTypes } from '../../../../../imports/api/users/user_types.js';
-import './add_user_form.html';
+import '../../../components/add_record_form/add_record_form.js';
 
 /**
  * Template Helpers
  */
 Template.AdminUserList.helpers({
   users(){
-    console.log('users:', this.usertype);
     if (this.usertype !== null) {
       return Meteor.users.find({ usertype: this.usertype }, { sort: { username: 1 } })
     }
@@ -45,16 +44,33 @@ Template.AdminUserList.events({
     let context = Template.currentData();
     
     RobaDialog.show({
-      contentTemplate: "AddUserForm",
+      contentTemplate: "AddRecordForm",
+      contentData    : {
+        schema: new SimpleSchema({
+          email: {
+            type: String,
+            regEx: SimpleSchema.RegEx.Email,
+            label: "Email"
+          },
+          password: {
+            type: String,
+            label: "Password"
+          },
+          name: {
+            type: String,
+            label: "Name"
+          }
+        })
+      },
       title          : "Add User",
-      width          : 600,
+      width          : 400,
       buttons        : [
         { text: "Cancel" },
         { text: "Add" }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
-          let formId = 'insertUserForm';
+          let formId = 'addRecordForm';
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
@@ -84,12 +100,21 @@ Template.AdminUserList.events({
         user   = Meteor.users.findOne(userId);
     
     RobaDialog.ask('Delete User?', 'Are you sure that you want to delete the user <span class="label label-primary"> ' + user.profile.name + '</span> ?', () => {
-      RobaDialog.hide();
       Meteor.call('deleteUser', userId, function (error, response) {
         if (error) {
           RobaDialog.error("Delete failed: " + error.message);
+        } else {
+          RobaDialog.hide();
         }
       });
+    });
+  },
+  "click .label-create-contributor"(e, instance){
+    let userId  = $(e.target).closest(".data-table-row").attr("data-pk");
+    Meteor.call('checkUserContributor', userId, (error, response) => {
+      if (error) {
+        RobaDialog.error('Failed to create user:' + error.toString())
+      }
     });
   }
 });

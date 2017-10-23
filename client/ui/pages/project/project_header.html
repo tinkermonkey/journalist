@@ -1,0 +1,11 @@
+<template name="ProjectHeader">
+  <div class="project-header" data-pk="{{_id}}">
+    <div class="project-header-mission">
+      {{#if userIsAdmin _id}}
+        {{> EditableTextArea dataKey="description" value=description emptyText="Enter a project description" }}
+      {{else}}
+        {{description}}
+      {{/if}}
+    </div>
+  </div>
+</template>

@@ -7,8 +7,8 @@ import '../../api/contributors/server/methods.js';
 import '../../api/contributors/server/publications.js';
 
 // Efforts
-//import '../../api/efforts/server/methods.js';
-//import '../../api/efforts/server/publications.js';
+import '../../api/efforts/server/methods.js';
+import '../../api/efforts/server/publications.js';
 
 // Features
 //import '../../api/features/server/methods.js';
@@ -22,9 +22,13 @@ import '../../api/contributors/server/publications.js';
 import '../../api/integrations/server/methods.js';
 import '../../api/integrations/server/publications.js';
 
+// Priorities
+import '../../api/priorities/server/methods.js';
+import '../../api/priorities/server/publications.js';
+
 // Projects
-//import '../../api/projects/server/methods.js';
-//import '../../api/projects/server/publications.js';
+import '../../api/projects/server/methods.js';
+import '../../api/projects/server/publications.js';
 
 // Releases
 //import '../../api/releases/server/methods.js';
@@ -43,12 +47,12 @@ import '../../api/integrations/server/publications.js';
 import '../../api/system_status_metrics/server/publications.js';
 
 // Tasks
-//import '../../api/tasks/server/methods.js';
-//import '../../api/tasks/server/publications.js';
+import '../../api/tasks/server/methods.js';
+import '../../api/tasks/server/publications.js';
 
 // Teams
-//import '../../api/teams/server/methods.js';
-//import '../../api/teams/server/publications.js';
+import '../../api/teams/server/methods.js';
+import '../../api/teams/server/publications.js';
 
 // Users
 import '../../api/users/server/methods.js';

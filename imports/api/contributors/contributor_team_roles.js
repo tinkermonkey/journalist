@@ -1,24 +1,27 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { ContributorRoles } from './contributor_roles';
+import { Teams } from '../teams/teams';
 
 /**
  * ============================================================================
- * ContributorTeamMembership
+ * ContributorTeamRole
  * ============================================================================
  */
-export const ContributorTeamMembership = new SimpleSchema({
+export const ContributorTeamRole = new SimpleSchema({
   contributorId   : {
-    type: String
+    type      : String,
+    denyUpdate: true
   },
   // An array of the teamIds that this role applies to
-  teams           : {
-    type: [ String ]
+  teamId          : {
+    type: String
   },
   role            : {
     type         : Number,
-    allowedValues: _.keys(ContributorRoles)
+    allowedValues: _.values(ContributorRoles)
   },
   // Percent dedicated to this team
   percent         : {
@@ -32,7 +35,7 @@ export const ContributorTeamMembership = new SimpleSchema({
   },
   // Text description providing a list of responsibilities for this role
   responsibilities: {
-    type    : [String],
+    type    : [ String ],
     optional: true
   },
   // Standard tracking fields
@@ -54,17 +57,31 @@ export const ContributorTeamMembership = new SimpleSchema({
   }
 });
 
-export const ContributorTeamMemberships = new Mongo.Collection("contributor_team_memberships");
-ContributorTeamMemberships.attachSchema(ContributorTeamMembership);
+export const ContributorTeamRoles = new Mongo.Collection('contributor_team_roles');
+ContributorTeamRoles.attachSchema(ContributorTeamRole);
+ChangeTracker.trackChanges(ContributorTeamRoles, 'ContributorTeamRoles');
 
 // These are server side only
-ContributorTeamMemberships.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+ContributorTeamRoles.deny({
+  remove() {
+    return true;
+  },
+  insert() {
+    return true;
+  },
+  update() {
+    return true;
+  }
 });
 
 /**
  * Helpers
  */
-ContributorTeamMemberships.helpers({});
+ContributorTeamRoles.helpers({
+  /**
+   * Get the team record for this role
+   */
+  team(){
+    return Teams.findOne({ _id: this.teamId })
+  }
+});

@@ -8,10 +8,14 @@ import '../../../client/ui/layouts/authenticated_layout.js';
 
 // Import the pages
 import '../../../client/ui/pages/admin/contributors/admin_contributors.js';
-import '../../../client/ui/pages/admin/home/admin_home.js';
+import '../../../client/ui/pages/admin/admin_home/admin_home.js';
 import '../../../client/ui/pages/admin/projects/admin_projects.js';
 import '../../../client/ui/pages/admin/teams/admin_teams.js';
 import '../../../client/ui/pages/admin/users/admin_users.js';
+import '../../../client/ui/pages/contributor/contributor_home.js';
+import '../../../client/ui/pages/project/project_home.js';
+import '../../../client/ui/pages/team/team_home.js';
+import '../../../client/ui/pages/user/user_profile.js';
 
 // Set the layout root element
 BlazeLayout.setRoot('body');
@@ -34,15 +38,39 @@ FlowRouter.route('/logout', {
   }
 });
 
-
 // Authenticated Routes
 FlowRouter.route('/', {
-  name: 'SystemOverview',
+  name: 'Home',
   action() {
-    BlazeLayout.render('AuthenticatedLayout', { main: 'SystemOverview' });
+    BlazeLayout.render('AuthenticatedLayout', { main: 'ContributorHome' });
+  }
+});
+FlowRouter.route('/contributor/:contributorId', {
+  name: 'ContributorHome',
+  action() {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'ContributorHome' });
+  }
+});
+FlowRouter.route('/project/:projectId', {
+  name: 'ProjectHome',
+  action() {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'ProjectHome' });
+  }
+});
+FlowRouter.route('/team/:teamId', {
+  name: 'TeamHome',
+  action() {
+    console.log('TeamHome Route');
+    BlazeLayout.render('AuthenticatedLayout', { main: 'TeamHome' });
   }
 });
 
+FlowRouter.route('/user_profile', {
+  name: 'UserProfile',
+  action() {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'UserProfile' });
+  }
+});
 
 // Admin Routes
 FlowRouter.route('/admin/contributors', {

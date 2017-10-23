@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Integrations } from '../integrations';
 
-Meteor.publish("integrations", function () {
-  console.info("Publish: integrations");
+Meteor.publish('integrations', function () {
+  console.info('Publish: integrations');
   if (this.userId) {
     let user = Meteor.users.findOne(this.userId);
     if(user && user.isAdmin()){

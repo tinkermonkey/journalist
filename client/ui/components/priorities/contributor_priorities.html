@@ -1,0 +1,39 @@
+<template name="ContributorPriorities">
+  <div class="contributor-priorities show-controls-on-hover" data-pk="{{_id}}">
+    <h3>Priorities</h3>
+    
+    {{#if userManagesContributor _id}}
+      <table class="sortable-table">
+        {{#each priorities}}
+          <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{order}}">
+            <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
+            <td>
+              {{> EditableTextField dataKey="title" value=title emptyText="Enter Title" }}
+            </td>
+            <td>
+              <a class="btn-delete-priority link-red hidden-control">
+                <span class="glyphicon glyphicon-minus-sign"></span>
+              </a>
+            </td>
+          </tr>
+        {{/each}}
+      </table>
+    {{else}}
+      <table class="table data-table">
+        {{#each priorities}}
+          <tr class="data-table-row" data-pk="{{_id}}">
+            <td>{{title}}</td>
+          </tr>
+        {{/each}}
+      </table>
+    {{/if}}
+    
+    {{#if userManagesContributor _id}}
+      <div>
+        <a class="btn-add-priority hidden-control">
+          <span class="glyphicon glyphicon-plus-sign"></span>
+        </a>
+      </div>
+    {{/if}}
+  </div>
+</template>

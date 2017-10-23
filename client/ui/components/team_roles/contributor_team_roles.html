@@ -1,0 +1,37 @@
+<template name="ContributorTeamRoles">
+  <div class="contributor-team-roles show-controls-on-hover" data-pk="{{_id}}">
+    {{#if teamRoles.count}}
+      {{#if hasSameRole}}
+        {{#with firstRole}}
+          <h3>{{renderTeamRole role}}</h3>
+        {{/with}}
+      {{else}}
+        <h3>Roles</h3>
+      {{/if}}
+    {{else}}
+      <h3>Roles</h3>
+      User has no team roles
+    {{/if}}
+    
+    {{#if userManagesContributor _id}}
+      {{> EditableContributorRoles }}
+    {{else}}
+      <table class="table data-table">
+        {{#each teamRoles}}
+          <tr>
+            {{#unless ../hasSameRole}}
+              <td>{{renderTeamRole role}}</td>
+            {{/unless}}
+            <td>
+              {{team.title}}
+              <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=teamId}}">
+                <span class="glyphicon glyphicon-folder-open"></span>
+              </a>
+            </td>
+            <td>{{percent}}%</td>
+          </tr>
+        {{/each}}
+      </table>
+    {{/if}}
+  </div>
+</template>
