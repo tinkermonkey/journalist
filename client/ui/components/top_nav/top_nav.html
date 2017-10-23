@@ -51,14 +51,14 @@
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="disabled"><a href="">Direct Reports</a></li>
-                  {{#each directReports}}
+                  <li class="disabled"><a href="">Direct Staff</a></li>
+                  {{#each directStaff}}
                     <li><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></li>
                   {{/each}}
-                  {{#if indirectReports.count}}
+                  {{#if indirectStaff.count}}
                     <li class="divider" role="separator"></li>
-                    <li class="disabled"><a href="">Indirect Reports</a></li>
-                    {{#each indirectReports}}
+                    <li class="disabled"><a href="">Indirect Staff</a></li>
+                    {{#each indirectStaff}}
                       <li><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></li>
                     {{/each}}
                   {{/if}}

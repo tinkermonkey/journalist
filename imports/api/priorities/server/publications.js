@@ -5,7 +5,7 @@ Meteor.publish('priorities', function () {
   console.log('Publish: priorities');
   if (this.userId) {
     let user            = Meteor.user(),
-        contributorList = user.contributor().allReportIds();
+        contributorList = user.contributor().allStaffIds();
     contributorList.push(user.contributor()._id);
     return Priorities.find({ contributorId: { $in: contributorList } });
   } else {

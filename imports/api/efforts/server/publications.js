@@ -5,7 +5,7 @@ Meteor.publish('efforts', function () {
   console.log('Publish: efforts');
   if (this.userId) {
     let user            = Meteor.user(),
-        contributorList = user.contributor().allReportIds();
+        contributorList = user.contributor().allStaffIds();
     contributorList.push(user.contributor()._id);
     return Efforts.find({ contributorId: { $in: contributorList } });
   } else {

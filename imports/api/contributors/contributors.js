@@ -160,64 +160,64 @@ Contributors.helpers({
     });
   },
   /**
-   * Get the list of direct reports for this contributor
+   * Get the list of direct staff for this contributor
    * @return {cursor}
    */
-  directReports(){
+  directStaff(){
     let contributor = this;
     return Contributors.find({ manager: contributor._id, _id: { $ne: contributor._id } })
   },
   /**
-   * Get the list of indirect reports for this contributor
+   * Get the list of indirect staff for this contributor
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  indirectReports(sortBy){
+  indirectStaff(sortBy){
     let contributor = this,
-        reportIds   = [];
+        staffIds   = [];
     
     // Default sort
     sortBy = sortBy || { name: 1 };
     
-    // Get all of the direct reports and their reports
-    contributor.directReports().forEach((report) => {
-      report.allReports().forEach((report) => {
-        reportIds.push(report._id);
+    // Get all of the direct staff and their staff
+    contributor.directStaff().forEach((staff) => {
+      staff.allStaff().forEach((staff) => {
+        staffIds.push(staff._id);
       });
     });
     
     // Get all of the contributor records
-    return Contributors.find({ _id: { $in: reportIds } }, { sort: sortBy });
+    return Contributors.find({ _id: { $in: staffIds } }, { sort: sortBy });
   },
   /**
    * Get the list of contributorIds that this contributor manages
    * @return {cursor}
    */
-  allReportIds(){
+  allStaffIds(){
     let contributor = this,
-        reportIds   = [];
+        staffIds   = [];
     
-    // Get all of the direct reports and their reports
-    contributor.directReports().forEach((report) => {
-      reportIds.push(report._id);
-      report.allReports().forEach((report) => {
-        reportIds.push(report._id);
+    // Get all of the direct staff and their staff
+    contributor.directStaff().forEach((staff) => {
+      staffIds.push(staff._id);
+      staff.allStaff().forEach((staff) => {
+        staffIds.push(staff._id);
       });
     });
     
-    return reportIds
+    return staffIds
   },
   /**
-   * Get the list of all reports for this contributor
+   * Get the list of all staff for this contributor
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  allReports(sortBy){
+  allStaff(sortBy){
     // Default sort
     sortBy = sortBy || { name: 1 };
     
     // Return the cursor to all of the contributor records
-    return Contributors.find({ _id: { $in: this.allReportIds() } }, { sort: sortBy });
+    return Contributors.find({ _id: { $in: this.allStaffIds() } }, { sort: sortBy });
   },
   /**
    * Get projects that have a direct role for this contributor
@@ -269,11 +269,11 @@ Contributors.helpers({
    */
   managesContributor(contributorId){
     try {
-      let managerReportIds = this.allReports().map((report) => {
-        return report._id
+      let managerStaffIds = this.allStaff().map((staff) => {
+        return staff._id
       });
       
-      return _.contains(managerReportIds, contributorId);
+      return _.contains(managerStaffIds, contributorId);
     } catch (e) {
       console.error('User.managesContributor failed:', e);
       return false

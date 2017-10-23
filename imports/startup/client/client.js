@@ -66,10 +66,10 @@ Template.registerHelper('userManagesContributor', function (contributorId) {
     return user.contributor().managesContributor(contributorId) || user.isAdmin();
   }
 });
-Template.registerHelper('userDirectReports', function () {
+Template.registerHelper('userDirectStaff', function () {
   let user = Users.findOne(Meteor.userId());
   if (user) {
-    return user.directReports();
+    return user.directStaff();
   }
 });
 Template.registerHelper('userName', function () {
