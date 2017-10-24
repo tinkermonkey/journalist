@@ -1,56 +1,62 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
+import { TaskStateColors } from './task_state_colors';
 
 /**
  * ============================================================================
- * Priorities
+ * TaskStates
  * ============================================================================
  */
-export const Priority = new SimpleSchema({
-  contributorId: {
-    type: String,
-    denyUpdate: true
-  },
+export const TaskState = new SimpleSchema({
   title: {
     type: String
   },
   order: {
     type: Number
   },
+  color: {
+    type: String,
+    allowedValues: _.keys(StatusReportStates),
+    defaultValue: _.keys(StatusReportStates)[0]
+  },
   // Standard tracking fields
-  dateCreated     : {
+  dateCreated    : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy       : {
+  createdBy      : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified    : {
+  dateModified   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy      : {
+  modifiedBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
 });
 
-export const Priorities = new Mongo.Collection("priorities");
-Priorities.attachSchema(Priority);
-ChangeTracker.trackChanges(Priorities, 'Priorities');
+export const TaskStates = new Mongo.Collection("task_states");
+TaskStates.attachSchema(TaskState);
 
 // These are server side only
-Priorities.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+TaskStates.deny({
+  remove() {
+    return true;
+  },
+  insert() {
+    return true;
+  },
+  update() {
+    return true;
+  }
 });
 
 /**
  * Helpers
  */
-Priorities.helpers({});
+TaskStates.helpers({});

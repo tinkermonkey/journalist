@@ -48,6 +48,13 @@ export const Integrations = new Mongo.Collection('integrations');
 Integrations.attachSchema(Integration);
 ChangeTracker.trackChanges(Integrations, 'Integrations');
 
+// These are server side only
+Integrations.deny({
+  remove() { return true; },
+  insert() { return true; },
+  update() { return true; }
+});
+
 /**
  * Helpers
  */

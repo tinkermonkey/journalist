@@ -9,7 +9,7 @@ aldeed:schema-deny@1.1.0
 aldeed:schema-index@1.1.1
 aldeed:simple-schema@1.5.3
 allow-deny@1.0.9
-austinsand:editable-code@1.0.0
+austinsand:editable-code@1.0.1
 austinsand:editable-enum-checklist@1.0.2
 austinsand:editable-enum-selector@1.0.1
 austinsand:editable-record-checklist@1.0.2

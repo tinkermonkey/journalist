@@ -13,7 +13,9 @@ import '../../../client/ui/pages/admin/projects/admin_projects.js';
 import '../../../client/ui/pages/admin/teams/admin_teams.js';
 import '../../../client/ui/pages/admin/users/admin_users.js';
 import '../../../client/ui/pages/contributor/contributor_home.js';
+import '../../../client/ui/pages/effort/effort.js';
 import '../../../client/ui/pages/project/project_home.js';
+import '../../../client/ui/pages/task/task.js';
 import '../../../client/ui/pages/team/team_home.js';
 import '../../../client/ui/pages/user/user_profile.js';
 
@@ -51,16 +53,27 @@ FlowRouter.route('/contributor/:contributorId', {
     BlazeLayout.render('AuthenticatedLayout', { main: 'ContributorHome' });
   }
 });
+FlowRouter.route('/effort/:effortId', {
+  name: 'Effort',
+  action() {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'Effort' });
+  }
+});
 FlowRouter.route('/project/:projectId', {
   name: 'ProjectHome',
   action() {
     BlazeLayout.render('AuthenticatedLayout', { main: 'ProjectHome' });
   }
 });
+FlowRouter.route('/task/:taskId', {
+  name: 'Task',
+  action() {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'Task' });
+  }
+});
 FlowRouter.route('/team/:teamId', {
   name: 'TeamHome',
   action() {
-    console.log('TeamHome Route');
     BlazeLayout.render('AuthenticatedLayout', { main: 'TeamHome' });
   }
 });

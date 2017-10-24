@@ -1,0 +1,13 @@
+.sidebar .overhang-table-left,
+.sidebar .editable-contributor-roles .data-table
+{
+  margin-left: -1.9em;
+}
+
+.sidebar .sortable-table-row:hover {
+  background-color: transparent;
+}
+
+.sidebar .section-header {
+  /*padding-left: 1.9em;*/
+}

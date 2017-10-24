@@ -40,6 +40,13 @@ export const Efforts = new Mongo.Collection("efforts");
 Efforts.attachSchema(Effort);
 ChangeTracker.trackChanges(Efforts, 'Efforts');
 
+// These are server side only
+Efforts.deny({
+  remove() { return true; },
+  insert() { return true; },
+  update() { return true; }
+});
+
 /**
  * Helpers
  */

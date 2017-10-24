@@ -3,21 +3,23 @@
     <table class="table data-table">
       {{#each roles}}
         <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+          <td class="open-link">
+            <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=teamId}}">
+              <span class="glyphicon glyphicon-folder-open"></span>
+            </a>
+          </td>
           {{#unless ../hasSameRole}}
             <td>{{> EditableEnumSelector dataKey="role" value=role enum=ContributorRoles}}</td>
           {{/unless}}
           <td>
             {{> EditableRecordSelector teamSelectorContext }}
-            <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=teamId}}">
-              <span class="glyphicon glyphicon-folder-open"></span>
-            </a>
           </td>
-          <td>
+          <td class="text-right">
             {{#if showPercent}}
               {{> EditableTextField dataKey="percent" value=percent emptyText="Percent" dataType="number" }}
             {{/if}}
           </td>
-          <td>
+          <td class="pull-right">
             <a class="btn-delete-role link-red hidden-control">
               <span class="glyphicon glyphicon-minus-sign"></span>
             </a>

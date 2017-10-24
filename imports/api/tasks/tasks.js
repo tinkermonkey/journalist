@@ -1,7 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 
 /**
@@ -10,27 +9,39 @@ import { SchemaHelpers } from '../schema_helpers.js';
  * ============================================================================
  */
 export const Task = new SimpleSchema({
-  contributorId: {
-    type: String,
+  contributorId  : {
+    type      : String,
     denyUpdate: true
   },
-  title: {
+  title          : {
     type: String
   },
+  description    : {
+    type    : String,
+    optional: true
+  },
+  state          : {
+    type    : Number,
+    optional: true
+  },
+  percentComplete: {
+    type        : Number,
+    defaultValue: 0
+  },
   // Standard tracking fields
-  dateCreated     : {
+  dateCreated    : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy       : {
+  createdBy      : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified    : {
+  dateModified   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy      : {
+  modifiedBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -39,6 +50,19 @@ export const Task = new SimpleSchema({
 export const Tasks = new Mongo.Collection("tasks");
 Tasks.attachSchema(Task);
 ChangeTracker.trackChanges(Tasks, 'Tasks');
+
+// These are server side only
+Tasks.deny({
+  remove() {
+    return true;
+  },
+  insert() {
+    return true;
+  },
+  update() {
+    return true;
+  }
+});
 
 /**
  * Helpers

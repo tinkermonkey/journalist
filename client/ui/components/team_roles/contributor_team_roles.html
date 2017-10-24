@@ -3,20 +3,26 @@
     {{#if teamRoles.count}}
       {{#if hasSameRole}}
         {{#with firstRole}}
-          <h3>{{renderTeamRole role}}</h3>
+          <div class="section-header">
+            <h3>{{renderTeamRole role}}</h3>
+          </div>
         {{/with}}
       {{else}}
-        <h3>Roles</h3>
+        <div class="section-header">
+          <h3>Roles</h3>
+        </div>
       {{/if}}
     {{else}}
-      <h3>Roles</h3>
+      <div class="section-header">
+        <h3>Roles</h3>
+      </div>
       User has no team roles
     {{/if}}
     
     {{#if userManagesContributor _id}}
       {{> EditableContributorRoles }}
     {{else}}
-      <table class="table data-table">
+      <table class="table data-table overhang-table-left">
         {{#each teamRoles}}
           <tr>
             {{#unless ../hasSameRole}}

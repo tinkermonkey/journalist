@@ -2,7 +2,7 @@
   <div class="contributor-header" data-pk="{{_id}}">
       <div class="contributor-header-mission">
         {{#if userManagesContributor _id}}
-          {{> EditableTextArea dataKey="missionStatement" value=missionStatement emptyText="Enter a mission statement" }}
+          {{> EditableCode dataKey="missionStatement" value=missionStatement emptyText="Enter a mission statement" language="markdown" mode="inline" }}
         {{else}}
           {{missionStatement}}
         {{/if}}
