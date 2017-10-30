@@ -39,8 +39,8 @@ import '../../api/projects/server/publications.js';
 //import '../../api/roadmap_items/server/publications.js';
 
 // Status Reports
-//import '../../api/status_reports/server/methods.js';
-//import '../../api/status_reports/server/publications.js';
+import '../../api/status_reports/server/methods.js';
+import '../../api/status_reports/server/publications.js';
 
 // System Status
 //import '../../api/system_status_metrics/server/methods.js';

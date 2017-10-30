@@ -3,6 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { ContributorRoles } from './contributor_roles';
+import { ContributorProjectAssignments } from './contributor_project_assignments';
 import { Teams } from '../teams/teams';
 
 /**
@@ -22,11 +23,6 @@ export const ContributorTeamRole = new SimpleSchema({
   role            : {
     type         : Number,
     allowedValues: _.values(ContributorRoles)
-  },
-  // Percent dedicated to this team
-  percent         : {
-    type        : Number,
-    defaultValue: 100
   },
   // Text description providing a quick summary of the role
   missionStatement: {
@@ -83,5 +79,11 @@ ContributorTeamRoles.helpers({
    */
   team(){
     return Teams.findOne({ _id: this.teamId })
+  },
+  /**
+   * Get all of the project assignments for a role
+   */
+  projectAssignments(){
+    return ContributorProjectAssignments.find({teamRoleId: this._id})
   }
 });

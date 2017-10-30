@@ -59,6 +59,12 @@ Template.registerHelper('userIsManager', function () {
     return user.isManager();
   }
 });
+Template.registerHelper('isCurrentContributor', function (contributorId) {
+  let user = Users.findOne(Meteor.userId());
+  if (user) {
+    return user.contributor()._id === contributorId;
+  }
+});
 Template.registerHelper('userManagesContributor', function (contributorId) {
   let user      = Users.findOne(Meteor.userId());
   contributorId = contributorId || (this && this.contributorId);
@@ -78,6 +84,12 @@ Template.registerHelper('userName', function () {
     return user.profile.name;
   }
 });
+Template.registerHelper('contributorName', function (contributorId) {
+  let contributor = Contributors.findOne(contributorId);
+  if (contributor) {
+    return contributor.name;
+  }
+});
 Template.registerHelper('renderUserType', function () {
   let usertype = (this && this.usertype) || this;
   if (usertype) {
@@ -87,6 +99,20 @@ Template.registerHelper('renderUserType', function () {
 Template.registerHelper('renderTeamRole', function (role) {
   if (role !== null) {
     return Util.camelToTitle(_.invert(ContributorRoles)[ role ]);
+  }
+});
+Template.registerHelper('contributorSelectorContext', function () {
+  let record = this;
+  
+  return {
+    valueField  : '_id',
+    displayField: 'name',
+    value       : record.contributorId,
+    dataKey     : 'contributorId',
+    collection  : Contributors,
+    emptyText   : 'Select a contributor',
+    cssClass    : 'inline-block',
+    query       : {}
   }
 });
 Template.registerHelper('managerSelectorContext', function () {
@@ -99,6 +125,7 @@ Template.registerHelper('managerSelectorContext', function () {
     dataKey     : 'manager',
     collection  : Contributors,
     emptyText   : 'Select a manager',
+    cssClass    : 'inline-block',
     query       : {
       usertype: { $in: [ UserTypes.manager, UserTypes.administrator ] }
     }
@@ -114,6 +141,7 @@ Template.registerHelper('ownerSelectorContext', function () {
     dataKey     : 'owner',
     collection  : Contributors,
     emptyText   : 'Select an owner',
+    cssClass    : 'inline-block',
     query       : {
       usertype: { $in: [ UserTypes.manager, UserTypes.administrator ] }
     }
@@ -129,6 +157,7 @@ Template.registerHelper('projectChecklistContext', function () {
     dataKey     : 'projects',
     collection  : Projects,
     emptyText   : 'Select projects',
+    cssClass    : 'inline-block',
     query       : {}
   }
 });
@@ -168,7 +197,7 @@ Template.registerHelper('isNewRecord', function () {
 });
 
 Template.registerHelper('dateFormat', function (date, format) {
-  format = _.isString(format) ? format : 'MMM Do, YY';
+  format = _.isString(format) ? format : 'MMM Do, YYYY';
   if (date) {
     return moment(date).format(format);
   }

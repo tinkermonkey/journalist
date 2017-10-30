@@ -8,7 +8,7 @@ import './editable_contributor_roles.js';
 Template.ContributorTeamRoles.helpers({
   firstRole(){
     let roles = this.teamRoles().fetch();
-    console.log('firstRole:', roles);
+    //console.log('firstRole:', roles);
     return roles.length ? roles[0] : null
   }
 });

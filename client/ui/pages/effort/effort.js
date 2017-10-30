@@ -1,6 +1,9 @@
 import './effort.html';
 import { Template } from 'meteor/templating';
 import { Efforts } from '../../../../imports/api/efforts/efforts';
+import '../../components/document_status_reports/status_report_settings';
+import '../../components/document_status_reports/document_status_reports';
+import '../../components/document_status_reports/assign_report';
 
 /**
  * Template Helpers

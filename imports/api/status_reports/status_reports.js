@@ -37,6 +37,10 @@ export const StatusReport = new SimpleSchema({
     type    : String,
     optional: true
   },
+  submitDate: {
+    type: Date,
+    optional: true
+  },
   // Standard tracking fields for date only
   dateCreated     : {
     type     : Date,

@@ -63,9 +63,9 @@ Template.ContributorEfforts.events({
             
             AutoForm.resetForm(formId)
           }
-          return;
+        } else {
+          RobaDialog.hide();
         }
-        RobaDialog.hide();
       }.bind(this)
     });
   },
@@ -74,10 +74,11 @@ Template.ContributorEfforts.events({
         effort   = Efforts.findOne(effortId);
     
     RobaDialog.ask('Delete Effort?', 'Are you sure that you want to delete the effort <span class="label label-primary"> ' + effort.title + '</span> ?', () => {
-      RobaDialog.hide();
       Meteor.call('deleteEffort', effortId, function (error, response) {
         if (error) {
           RobaDialog.error("Delete failed: " + error.message);
+        } else {
+          RobaDialog.hide();
         }
       });
     });

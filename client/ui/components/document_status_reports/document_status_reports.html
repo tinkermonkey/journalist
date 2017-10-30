@@ -1,0 +1,32 @@
+<template name="DocumentStatusReports">
+  <div class="document-status-reports">
+    <div class="document-action-bar">
+      {{#if userManagesContributor contributorId}}
+        {{#if canBeCompleted}}
+          {{#if documentIsComplete}}
+            <a class="btn-reopen-document">
+              <span class="glyphicon glyphicon-folder-open"></span>
+              Reopen
+            </a>
+          {{else}}
+            <a class="btn-complete-document">
+              <span class="glyphicon glyphicon-check"></span>
+              Mark Complete
+            </a>
+          {{/if}}
+        {{/if}}
+        {{#unless documentIsComplete}}
+          <a class="btn-file-report">
+            <span class="glyphicon glyphicon-file"></span>
+            File Report
+          </a>
+        {{/unless}}
+      {{/if}}
+    </div>
+    <div class="report-form-container">
+  
+    </div>
+    {{> IncompleteReports }}
+    {{> RecentReports }}
+  </div>
+</template>

@@ -21,6 +21,11 @@ a.link-red:visited {
   color: #c9302c;
 }
 
+a.link-plain,
+a.link-plain:visited {
+  color: inherit;
+}
+
 h1,
 h2,
 h3,
@@ -40,6 +45,10 @@ h3 small {
 button {
   outline: none;
   border-width: 1px;
+}
+
+.blue {
+  color: #007AC9;
 }
 
 .no-select {

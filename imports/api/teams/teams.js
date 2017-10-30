@@ -15,11 +15,6 @@ export const Team = new SimpleSchema({
   title       : {
     type: String
   },
-  // List of project _ids that this team participates in
-  projects    : {
-    type    : [ String ],
-    optional: true
-  },
   // Standard tracking fields
   dateCreated : {
     type     : Date,

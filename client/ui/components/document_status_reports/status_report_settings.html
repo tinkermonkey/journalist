@@ -1,0 +1,31 @@
+<template name="StatusReportSettings">
+  {{#with settings}}
+    <div class="status-report-settings show-controls-on-hover" data-pk="{{_id}}">
+      <div>
+        {{> EditableRecordSelector contributorSelectorContext}}
+        is assigned to report on this
+        {{> EditableTextField dataKey="laterDirective" value=laterDirective emptyText="Enter Directive" cssClass="inline-block"}}
+        starting {{dateFormat startDate}}
+      </div>
+      <div>
+        <a class="btn-delete-settings link-red hidden-control">
+          <span class="glyphicon glyphicon-minus-sign"></span>
+          Delete Schedule
+        </a>
+      </div>
+    </div>
+    <div>
+      {{#if nextDue}}
+        The next report is due {{dateFormat nextDue}}.
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="status-report-settings">
+      There is no status report configured for this item.
+      <a class="configure-reporting-button">
+        <span class="glyphicon glyphicon-cog"></span>
+        Configure Reporting
+      </a>
+    </div>
+  {{/with}}
+</template>

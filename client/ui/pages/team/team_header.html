@@ -1,7 +1,16 @@
 <template name="TeamHeader">
   <div class="team-header" data-pk="{{_id}}">
-    <div class="team-header-mission">
-
+    <div class="team-header-staff">
+      <div class="flex">
+        {{#each teamRoles}}
+          <div class="team-staff-roster">
+            <h3>{{renderTeamRole this}}</h3>
+            {{#each contributorsInRole ../_id this}}
+              <div><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></div>
+            {{/each}}
+          </div>
+        {{/each}}
+      </div>
     </div>
   </div>
 </template>

@@ -1,25 +1,29 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 
 /**
  * ============================================================================
- * Efforts
+ * ContributorProjectAssignments
  * ============================================================================
  */
-export const Effort = new SimpleSchema({
-  contributorId: {
+export const ContributorProjectAssignment = new SimpleSchema({
+  contributorId   : {
+    type      : String,
+    denyUpdate: true
+  },
+  teamRoleId: {
     type: String,
     denyUpdate: true
   },
-  title: {
+  projectId: {
     type: String
   },
-  complete: {
-    type: Boolean,
-    defaultValue: false
+  // Percent dedicated to this team
+  percent         : {
+    type        : Number,
+    defaultValue: 100
   },
   // Standard tracking fields
   dateCreated     : {
@@ -40,18 +44,10 @@ export const Effort = new SimpleSchema({
   }
 });
 
-export const Efforts = new Mongo.Collection("efforts");
-Efforts.attachSchema(Effort);
-ChangeTracker.trackChanges(Efforts, 'Efforts');
-
-// These are server side only
-Efforts.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
-});
+export const ContributorProjectAssignments = new Mongo.Collection("contributor_project_assignments");
+ContributorProjectAssignments.attachSchema(ContributorProjectAssignment);
 
 /**
  * Helpers
  */
-Efforts.helpers({});
+ContributorProjectAssignments.helpers({});

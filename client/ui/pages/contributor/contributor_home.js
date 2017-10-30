@@ -5,6 +5,7 @@ import { Contributors } from '../../../../imports/api/contributors/contributors'
 import './contributor_sidebar.js';
 import './contributor_banner.js';
 import './contributor_header.js';
+import './contributor_status_reports_due.js';
 
 /**
  * Template Helpers

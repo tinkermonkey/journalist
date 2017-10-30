@@ -1,6 +1,9 @@
 import './task.html';
 import { Template } from 'meteor/templating';
 import { Tasks } from '../../../../imports/api/tasks/tasks';
+import '../../components/document_status_reports/status_report_settings';
+import '../../components/document_status_reports/document_status_reports';
+import '../../components/document_status_reports/assign_report';
 
 /**
  * Template Helpers
@@ -15,7 +18,8 @@ Template.Task.helpers({
 /**
  * Template Event Handlers
  */
-Template.Task.events({});
+Template.Task.events({
+});
 
 /**
  * Template Created

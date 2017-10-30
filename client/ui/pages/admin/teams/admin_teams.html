@@ -6,7 +6,6 @@
         <thead>
         <tr>
           <th>Title</th>
-          <th>Projects</th>
           <th>Roster</th>
           <th>Modified</th>
           <th>Created</th>
@@ -17,7 +16,6 @@
         {{#each teams}}
           <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
             <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-            <td>{{> EditableRecordChecklist projectChecklistContext }}</td>
             <td>{{> EditableTeamRoster }}</td>
             <td>{{dateFormat dateModified}}</td>
             <td>{{dateFormat dateCreated}}</td>

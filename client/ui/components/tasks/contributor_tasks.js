@@ -63,9 +63,9 @@ Template.ContributorTasks.events({
             
             AutoForm.resetForm(formId)
           }
-          return;
+        } else {
+          RobaDialog.hide();
         }
-        RobaDialog.hide();
       }.bind(this)
     });
   },
@@ -74,10 +74,11 @@ Template.ContributorTasks.events({
         task   = Tasks.findOne(taskId);
     
     RobaDialog.ask('Delete Task?', 'Are you sure that you want to delete the task <span class="label label-primary"> ' + task.title + '</span> ?', () => {
-      RobaDialog.hide();
       Meteor.call('deleteTask', taskId, function (error, response) {
         if (error) {
           RobaDialog.error("Delete failed: " + error.message);
+        } else {
+          RobaDialog.hide();
         }
       });
     });

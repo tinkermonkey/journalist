@@ -5,5 +5,6 @@ export const ContributorRoles = {
   qaManager: 3,
   productManager: 4,
   visualDesigner: 5,
-  documentation: 6
+  documentation: 6,
+  owner: 7
 };

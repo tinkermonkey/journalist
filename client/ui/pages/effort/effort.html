@@ -1,7 +1,30 @@
 <template name="Effort">
   {{#with effort}}
-    <div class="container">
-      <h1>{{title}}</h1>
+    <div class="container effort" data-pk="{{_id}}">
+      <div class="row">
+        <div class="col-md-9">
+          <h1>
+            <span class="glyphicon glyphicon-compressed blue"></span>
+            {{title}}
+            <small><a href="{{pathFor 'ContributorHome' contributorId=contributorId}}" class="link-plain">{{contributorName contributorId}}</a></small>
+            {{#if complete}}
+              (complete)
+            {{/if}}
+          </h1>
+          {{> DocumentStatusReports sourceCollection='Efforts' sourceId=_id contributorId=contributorId }}
+        </div>
+        <div class="col-md-3">
+          {{#unless complete}}
+            {{#if userManagesContributor contributorId}}
+              <h3>Reporting</h3>
+              {{> StatusReportSettings sourceCollection='Efforts' sourceId=_id contributorId=contributorId }}
+            
+              <h4>Assign Report</h4>
+              {{> AssignReport }}
+            {{/if}}
+          {{/unless}}
+        </div>
+      </div>
     </div>
   {{else}}
     {{> NotFound}}

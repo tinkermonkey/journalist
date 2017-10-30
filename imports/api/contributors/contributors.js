@@ -286,7 +286,7 @@ Contributors.helpers({
    */
   efforts(sortBy){
     sortBy = sortBy || { title: 1 };
-    return Efforts.find({ contributorId: this._id }, { sort: sortBy })
+    return Efforts.find({ contributorId: this._id, complete: false }, { sort: sortBy })
   },
   /**
    * Get all of the Priorities for this contributor
@@ -304,6 +304,6 @@ Contributors.helpers({
    */
   tasks(sortBy){
     sortBy = sortBy || { title: 1 };
-    return Tasks.find({ contributorId: this._id }, { sort: sortBy })
+    return Tasks.find({ contributorId: this._id, complete: false }, { sort: sortBy })
   }
 });

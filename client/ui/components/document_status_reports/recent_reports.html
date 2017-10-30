@@ -1,0 +1,53 @@
+<template name="RecentReports">
+  {{#if Template.subscriptionsReady }}
+    <div class="recent-reports">
+      <h3>Recent Reports</h3>
+      
+      {{#if reports.count}}
+        {{#each reports}}
+          <div class="status-report-container show-controls-on-hover" data-pk="{{_id}}">
+            <div>
+              <h4 class="status-report-title">
+                {{dateFormat submitDate 'ddd MMM Do, hh:mm a'}}
+                -
+                <a href="{{pathFor 'ContributorHome' contributorId=contributorId}}" class="link-plain">{{contributorName contributorId}}</a>
+              </h4>
+              {{#if userManagesContributor contributorId}}
+                <a class="btn-reopen-report hidden-control">
+                  <span class="glyphicon glyphicon-folder-open"></span>
+                  Reopen
+                </a>
+                <a class="btn-delete-report link-red hidden-control">
+                  <span class="glyphicon glyphicon-minus-sign"></span>
+                  Delete
+                </a>
+              {{/if}}
+            </div>
+            <div class="status-report-header">
+            
+            </div>
+            <div class="status-report-body collapsed">
+              <div class="status-report-body-inner">
+                {{#markdown}}{{body}}{{/markdown}}
+              </div>
+            </div>
+          </div>
+        {{/each}}
+        {{#if moreReports}}
+          <div class="display-more-bar">
+            <a class="btn-load-more-reports">
+              <span class="glyphicon glyphicon-arrow-down"></span>
+              Display older reports
+            </a>
+          </div>
+        {{/if}}
+      {{else}}
+        <span>
+        No reports have been filed.
+      </span>
+      {{/if}}
+    </div>
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

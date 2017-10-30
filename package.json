@@ -17,7 +17,7 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/austinsand/journalist.git"
+    "url": "git+https://github.com/austinsand/journalist.git"
   },
   "keywords": [
     "Reporting",
@@ -25,9 +25,7 @@
     "Tracking"
   ],
   "author": "austin.sand@gmail.com",
-  "license": {
-    "notValid": true
-  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/austinsand/journalist/issues"
   },

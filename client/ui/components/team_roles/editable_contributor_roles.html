@@ -14,15 +14,20 @@
           <td>
             {{> EditableRecordSelector teamSelectorContext }}
           </td>
-          <td class="text-right">
-            {{#if showPercent}}
-              {{> EditableTextField dataKey="percent" value=percent emptyText="Percent" dataType="number" }}
-            {{/if}}
-          </td>
           <td class="pull-right">
             <a class="btn-delete-role link-red hidden-control">
               <span class="glyphicon glyphicon-minus-sign"></span>
             </a>
+          </td>
+        </tr>
+        <tr class="data-table-row" data-pk="{{_id}}">
+          <td></td>
+          <td colspan="2">
+            {{#if projectAssignments.count}}
+            
+            {{else}}
+              <a class="add-project-assignment">Add Project Assignment</a>
+            {{/if}}
           </td>
         </tr>
       {{/each}}

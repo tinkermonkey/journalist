@@ -28,6 +28,10 @@ export const Task = new SimpleSchema({
     type        : Number,
     defaultValue: 0
   },
+  complete: {
+    type: Boolean,
+    defaultValue: false
+  },
   // Standard tracking fields
   dateCreated    : {
     type     : Date,

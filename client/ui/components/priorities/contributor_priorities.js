@@ -64,9 +64,9 @@ Template.ContributorPriorities.events({
             
             AutoForm.resetForm(formId)
           }
-          return;
+        } else {
+          RobaDialog.hide();
         }
-        RobaDialog.hide();
       }.bind(this)
     });
   },
@@ -75,10 +75,11 @@ Template.ContributorPriorities.events({
         priority   = Priorities.findOne(priorityId);
     
     RobaDialog.ask('Delete Priority?', 'Are you sure that you want to delete the priority <span class="label label-primary"> ' + priority.title + '</span> ?', () => {
-      RobaDialog.hide();
       Meteor.call('deletePriority', priorityId, function (error, response) {
         if (error) {
           RobaDialog.error("Delete failed: " + error.message);
+        } else {
+          RobaDialog.hide();
         }
       });
     });
