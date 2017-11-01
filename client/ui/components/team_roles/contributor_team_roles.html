@@ -12,6 +12,10 @@
           <h3>Roles</h3>
         </div>
       {{/if}}
+      
+      {{#unless isManager}}
+        {{> ContributorCommitmentLevel }}
+      {{/unless}}
     {{else}}
       <div class="section-header">
         <h3>Roles</h3>
@@ -32,6 +36,7 @@
               {{team.title}}
               <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=teamId}}">
                 <span class="glyphicon glyphicon-folder-open"></span>
+                Add Team Role
               </a>
             </td>
           </tr>

@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
+import { Contributors } from './contributors';
 import { ContributorRoles } from './contributor_roles';
 import { ContributorProjectAssignments } from './contributor_project_assignments';
 import { Teams } from '../teams/teams';
@@ -59,13 +60,13 @@ ChangeTracker.trackChanges(ContributorTeamRoles, 'ContributorTeamRoles');
 
 // These are server side only
 ContributorTeamRoles.deny({
-  remove() {
+  remove () {
     return true;
   },
-  insert() {
+  insert () {
     return true;
   },
-  update() {
+  update () {
     return true;
   }
 });
@@ -77,13 +78,20 @@ ContributorTeamRoles.helpers({
   /**
    * Get the team record for this role
    */
-  team(){
+  team () {
     return Teams.findOne({ _id: this.teamId })
   },
   /**
    * Get all of the project assignments for a role
    */
-  projectAssignments(){
-    return ContributorProjectAssignments.find({teamRoleId: this._id})
-  }
+  projectAssignments () {
+    return ContributorProjectAssignments.find({ teamRoleId: this._id }, { sort: { percent: -1 } })
+  },
+  /**
+   * Get the contributor this team role is for
+   * @return {Contributor}
+   */
+  contributor () {
+    return Contributors.findOne(this.contributorId)
+  },
 });

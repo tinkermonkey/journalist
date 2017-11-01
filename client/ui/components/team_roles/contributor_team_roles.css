@@ -1,0 +1,31 @@
+.contributor-commitment-level {
+  width: 100%;
+  background-color: #bbbbbb;
+  border-radius: 3px;
+  position: absolute;
+  font-size: 1.5em;
+  height: 1.8em;
+  color: #ffffff;
+}
+
+.contributor-commitment-bar {
+  background-color: #007AC9;
+  border-radius: 3px;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding: 3px;
+  padding-left: 10px;
+  overflow: visible;
+}
+
+.contributor-commitment-buffer {
+  height: 3em;
+}
+
+.project-percent-committed {
+  height: 5px;
+  background-color: #007AC9;
+  margin-bottom: 10px;
+}

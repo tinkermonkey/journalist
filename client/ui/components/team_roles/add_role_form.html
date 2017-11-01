@@ -1,15 +1,15 @@
 <template name="AddRoleForm">
   <div>
-    {{#autoForm schema=getRoleSchema id="serverMethodForm" type="insert"}}
+    {{#autoForm schema=getRoleSchema id="serverMethodForm" type="normal"}}
       <fieldset>
-        <label for="ooN3ReCmZdbH3Baw7" class="control-label">Team</label>
+        <label for="teamId" class="control-label">Team</label>
         <select class="form-control" name="teamId" data-schema-key="teamId" required>
           {{#each teamOptions}}
             <option value="{{_id}}">{{title}}</option>
           {{/each}}
         </select>
         
-        <label for="ooN3ReCmZdbH3Baw7" class="control-label">Role</label>
+        <label for="role" class="control-label">Role</label>
         <select class="form-control" name="role" data-schema-key="role" required>
           {{#each roleOptions}}
             <option value="{{value}}">{{title}}</option>

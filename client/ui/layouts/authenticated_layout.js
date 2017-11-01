@@ -23,6 +23,7 @@ Template.AuthenticatedLayout.onCreated(() => {
   
   instance.subscribe('contributors');
   instance.subscribe('contributor_team_roles');
+  instance.subscribe('contributor_project_assignments');
   instance.subscribe('efforts');
   instance.subscribe('priorities');
   instance.subscribe('projects');

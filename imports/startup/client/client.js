@@ -147,20 +147,6 @@ Template.registerHelper('ownerSelectorContext', function () {
     }
   }
 });
-Template.registerHelper('projectChecklistContext', function () {
-  let record = this;
-  
-  return {
-    valueField  : '_id',
-    displayField: 'title',
-    value       : record.projects,
-    dataKey     : 'projects',
-    collection  : Projects,
-    emptyText   : 'Select projects',
-    cssClass    : 'inline-block',
-    query       : {}
-  }
-});
 Template.registerHelper('teamSelectorContext', function () {
   let record = this;
   
@@ -171,6 +157,21 @@ Template.registerHelper('teamSelectorContext', function () {
     dataKey     : 'teamId',
     collection  : Teams,
     emptyText   : 'Select team',
+    cssClass    : 'inline-block',
+    query       : {}
+  }
+});
+
+Template.registerHelper('projectSelectorContext', function () {
+  let record = this;
+  
+  return {
+    valueField  : '_id',
+    displayField: 'title',
+    value       : record.projectId,
+    dataKey     : 'projectId',
+    collection  : Projects,
+    emptyText   : 'Select project',
     cssClass    : 'inline-block',
     query       : {}
   }

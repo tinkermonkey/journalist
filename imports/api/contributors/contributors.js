@@ -3,6 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { ContributorTeamRoles } from './contributor_team_roles';
+import { ContributorProjectAssignments } from './contributor_project_assignments';
 import { Efforts } from '../efforts/efforts';
 import { Priorities } from '../priorities/priorities';
 import { Projects } from '../projects/projects';
@@ -67,13 +68,13 @@ ChangeTracker.trackChanges(Contributors, 'Contributors');
 
 // These are server side only
 Contributors.deny({
-  remove() {
+  remove () {
     return true;
   },
-  insert() {
+  insert () {
     return true;
   },
-  update() {
+  update () {
     return true;
   }
 });
@@ -86,21 +87,21 @@ Contributors.helpers({
    * Is this contributor an administrator?
    * @return {boolean}
    */
-  isAdmin(){
+  isAdmin () {
     return this.usertype === UserTypes.administrator
   },
   /**
    * Is this contributor a manager
    * @return {boolean}
    */
-  isManager(){
+  isManager () {
     return this.usertype === UserTypes.administrator || this.usertype === UserTypes.manager
   },
   /**
    * Fetch the user record for this contributor
    * @return {cursor}
    */
-  user(){
+  user () {
     if (this.userId) {
       return Users.findOne({ _id: this.userId })
     }
@@ -109,24 +110,24 @@ Contributors.helpers({
    * Get all of the team roles for this contributor
    * @return {cursor}
    */
-  teamRoles(){
+  teamRoles () {
     return ContributorTeamRoles.find({ contributorId: this._id });
   },
   /**
    * Determine if this user serves the same role on all teams
    * @return {boolean}
    */
-  hasSameRole(){
+  hasSameRole () {
     return _.uniq(this.teamRoles().map((role) => {
-          return role.role
-        })).length < 2
+      return role.role
+    })).length < 2
   },
   /**
    * Get the list of teams that this contributor participates in
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  participatingTeams(sortBy){
+  participatingTeams (sortBy) {
     let contributor = this,
         teamIds     = [];
     
@@ -145,7 +146,7 @@ Contributors.helpers({
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  otherTeams(sortBy){
+  otherTeams (sortBy) {
     let contributor = this;
     
     // Default sort
@@ -163,7 +164,7 @@ Contributors.helpers({
    * Get the list of direct staff for this contributor
    * @return {cursor}
    */
-  directStaff(){
+  directStaff () {
     let contributor = this;
     return Contributors.find({ manager: contributor._id, _id: { $ne: contributor._id } })
   },
@@ -172,9 +173,9 @@ Contributors.helpers({
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  indirectStaff(sortBy){
+  indirectStaff (sortBy) {
     let contributor = this,
-        staffIds   = [];
+        staffIds    = [];
     
     // Default sort
     sortBy = sortBy || { name: 1 };
@@ -193,9 +194,9 @@ Contributors.helpers({
    * Get the list of contributorIds that this contributor manages
    * @return {cursor}
    */
-  allStaffIds(){
+  allStaffIds () {
     let contributor = this,
-        staffIds   = [];
+        staffIds    = [];
     
     // Get all of the direct staff and their staff
     contributor.directStaff().forEach((staff) => {
@@ -212,7 +213,7 @@ Contributors.helpers({
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  allStaff(sortBy){
+  allStaff (sortBy) {
     // Default sort
     sortBy = sortBy || { name: 1 };
     
@@ -224,7 +225,7 @@ Contributors.helpers({
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  participatingProjects(sortBy){
+  participatingProjects (sortBy) {
     let contributor = this,
         projectIds  = [];
     
@@ -248,7 +249,7 @@ Contributors.helpers({
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  otherProjects(sortBy){
+  otherProjects (sortBy) {
     let contributor = this;
     
     // Default sort
@@ -267,7 +268,7 @@ Contributors.helpers({
    * @param contributorId
    * @return {boolean}
    */
-  managesContributor(contributorId){
+  managesContributor (contributorId) {
     try {
       let managerStaffIds = this.allStaff().map((staff) => {
         return staff._id
@@ -280,11 +281,37 @@ Contributors.helpers({
     }
   },
   /**
+   * Calculate the sum of this contributor's commitments
+   */
+  percentCommitted () {
+    return ContributorProjectAssignments.find({ contributorId: this._id }).fetch().reduce((sum, assignment) => {
+      return sum + assignment.percent
+    }, 0);
+  },
+  /**
+   * Determine if this contributor has capacity for more roles
+   */
+  hasCapacity () {
+    return this.percentCommitted() < 100
+  },
+  /**
+   * Get the project assignments for a team role
+   * @param teamId
+   * @param role
+   */
+  assignmentsForRole(teamId, role){
+    console.log('assignmentsForRole:', teamId, role);
+    let teamRole = ContributorTeamRoles.findOne({contributorId: this._id, teamId: teamId, role: role});
+    if(teamRole){
+      return teamRole.projectAssignments();
+    }
+  },
+  /**
    * Get all of the Efforts for this contributor
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  efforts(sortBy){
+  efforts (sortBy) {
     sortBy = sortBy || { title: 1 };
     return Efforts.find({ contributorId: this._id, complete: false }, { sort: sortBy })
   },
@@ -293,7 +320,7 @@ Contributors.helpers({
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  priorities(sortBy){
+  priorities (sortBy) {
     sortBy = sortBy || { order: 1 };
     return Priorities.find({ contributorId: this._id }, { sort: sortBy })
   },
@@ -302,7 +329,7 @@ Contributors.helpers({
    * @param sortBy {Object} Mongo sort directive
    * @return {cursor}
    */
-  tasks(sortBy){
+  tasks (sortBy) {
     sortBy = sortBy || { title: 1 };
     return Tasks.find({ contributorId: this._id, complete: false }, { sort: sortBy })
   }

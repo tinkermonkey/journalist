@@ -1,5 +1,7 @@
 import './contributor_team_roles.html';
+import './contributor_team_roles.css';
 import { Template } from 'meteor/templating';
+import './contributor_commitment_level.js';
 import './editable_contributor_roles.js';
 
 /**

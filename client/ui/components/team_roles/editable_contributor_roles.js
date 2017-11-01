@@ -31,7 +31,7 @@ Template.EditableContributorRoles.events({
         dataKey = $(e.target).attr("data-key");
     
     console.log('EditableContributorRoles edited:', roleId, dataKey, newValue);
-    if (roleId && dataKey) {
+    if (roleId !== null && dataKey !== null) {
       // Create the project
       Meteor.call('editContributorTeamRole', roleId, dataKey, newValue, (error, response) => {
         if (error) {
@@ -48,7 +48,7 @@ Template.EditableContributorRoles.events({
     RobaDialog.show({
       contentTemplate: "AddRoleForm",
       title          : "Add Role",
-      width          : 400,
+      width          : 500,
       buttons        : [
         { text: "Cancel" },
         { text: "Add" }
@@ -70,9 +70,9 @@ Template.EditableContributorRoles.events({
             
             AutoForm.resetForm(formId)
           }
-          return;
+        } else {
+          RobaDialog.hide();
         }
-        RobaDialog.hide();
       }.bind(this)
     });
   },
@@ -93,8 +93,7 @@ Template.EditableContributorRoles.events({
         }
       });
     });
-    
-  },
+  }
 });
 
 /**

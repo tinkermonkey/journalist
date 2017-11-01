@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Contributors } from '../contributors';
 import { ContributorTeamRoles } from '../contributor_team_roles';
+import { ContributorProjectAssignments } from '../contributor_project_assignments';
 
 Meteor.publish('contributors', function () {
   console.info('Publish: contributors');
@@ -16,6 +17,16 @@ Meteor.publish('contributor_team_roles', function () {
   console.info('Publish: contributor_team_roles');
   if (this.userId) {
     return ContributorTeamRoles.find({});
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('contributor_project_assignments', function () {
+  console.info('Publish: contributor_project_assignments');
+  if (this.userId) {
+    return ContributorProjectAssignments.find({});
   } else {
     this.ready();
     return [];

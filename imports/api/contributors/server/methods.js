@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { Contributors } from '../contributors.js';
 import { ContributorTeamRoles } from '../contributor_team_roles.js';
+import { ContributorProjectAssignments } from '../contributor_project_assignments.js';
 import { Auth } from '../../auth.js';
 
 Meteor.methods({
@@ -113,7 +114,7 @@ Meteor.methods({
    * @param role
    */
   addContributorTeamRole(contributorId, teamId, role){
-    console.log('addContributorRole:', contributorId, teamId, role);
+    console.log('addContributorTeamRole:', contributorId, teamId, role);
     let user = Auth.requireAuthentication();
   
     // Validate the data is complete
@@ -140,7 +141,7 @@ Meteor.methods({
    * @param roleId
    */
   deleteContributorTeamRole(roleId){
-    console.log('deleteContributor:', roleId);
+    console.log('deleteContributorTeamRole:', roleId);
     let user = Auth.requireAuthentication();
   
     // Validate the data is complete
@@ -166,7 +167,7 @@ Meteor.methods({
    * @param value
    */
   editContributorTeamRole(roleId, key, value){
-    console.log('editContributorRole:', roleId, key);
+    console.log('editContributorTeamRole:', roleId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -186,6 +187,96 @@ Meteor.methods({
       ContributorTeamRoles.update(roleId, { $set: update });
     } else {
       console.error('Non-admin user tried to edit a contributor:', user.username, key, value);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Add an assignment for a contributor
+   * @param contributorId
+   * @param teamRoleId
+   * @param projectId
+   * @param percent
+   */
+  addContributorProjectAssignment(contributorId, teamRoleId, projectId, percent){
+    console.log('addContributorProjectAssignment:', contributorId, teamRoleId, projectId, percent);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(contributorId, String);
+    check(teamRoleId, String);
+    check(projectId, String);
+    check(percent, Number);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin() || user.managesContributor(contributorId)) {
+      // Insert the project percent
+      ContributorProjectAssignments.insert({
+        contributorId: contributorId,
+        teamRoleId: teamRoleId,
+        projectId: projectId,
+        percent: percent
+      });
+    } else {
+      console.error('Non-admin user tried to edit a project assignment:', user.username, key, value);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Remove a project assignment for a contributor
+   * @param assignmentId
+   */
+  deleteContributorProjectAssignment(assignmentId){
+    console.log('deleteContributorProjectAssignment:', assignmentId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(assignmentId, String);
+    
+    // Get the assignment record to make sure this is authorized
+    let assignment = ContributorProjectAssignments.findOne(assignmentId);
+    
+    // Validate that the current user is an administrator
+    if (assignment && (user.isAdmin() || user.managesContributor(assignment.contributorId))) {
+      // Delete the contributor
+      ContributorProjectAssignments.remove(assignmentId);
+    } else {
+      console.error('Non-admin user tried to delete a project assignment:', user.username, assignmentId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Edit a contributor project assignment record
+   * @param assignmentId
+   * @param key
+   * @param value
+   */
+  editContributorProjectAssignment(assignmentId, key, value){
+    console.log('editContributorProjectAssignment:', assignmentId, key);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(assignmentId, String);
+    check(key, String);
+    check(value, Match.Any);
+    
+    // Get the assignment record to make sure this is authorized
+    let assignment = ContributorProjectAssignments.findOne(assignmentId);
+    
+    // Validate that the current user is an administrator
+    if (assignment && (user.isAdmin() || user.managesContributor(assignment.contributorId))) {
+      let update    = {};
+      update[ key ] = value;
+      
+      // Update the contributor
+      ContributorProjectAssignments.update(assignmentId, { $set: update });
+      
+      // Balance the contributor's assignments
+      ContributorProjectAssignments.findOne(assignmentId).balanceOtherAssignments();
+    } else {
+      console.error('Non-admin user tried to edit a project assignment:', user.username, key, value, assignmentId);
       throw new Meteor.Error(403);
     }
   }

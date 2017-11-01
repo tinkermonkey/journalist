@@ -4,10 +4,7 @@
       <div class="flex">
         {{#each teamRoles}}
           <div class="team-staff-roster">
-            <h3>{{renderTeamRole this}}</h3>
-            {{#each contributorsInRole ../_id this}}
-              <div><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></div>
-            {{/each}}
+            {{> TeamRoleContributorList }}
           </div>
         {{/each}}
       </div>
