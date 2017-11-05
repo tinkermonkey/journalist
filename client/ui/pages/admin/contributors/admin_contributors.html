@@ -2,52 +2,59 @@
   {{#if Template.subscriptionsReady }}
     <div class="container">
       <h1>Contributors</h1>
-      <table class="table data-table full-width">
-        <thead>
-        <tr>
-          <th>Identifier</th>
-          <th>Email</th>
-          <th>Name</th>
-          <th>Manager</th>
-          <th>Default Role</th>
-          <th>User</th>
-          <th>Type</th>
-          <th>Modified</th>
-          <th>Created</th>
-          <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#each contributors}}
-          <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
-            <td>{{> EditableTextField dataKey="identifier" value=identifier emptyText="Identifier" }}</td>
-            <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" }}</td>
-            <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" }}</td>
-            <td>{{> EditableRecordSelector managerSelectorContext }}</td>
-            <td>{{> EditableRecordSelector roleSelectorContext }}</td>
-            <td>
-              {{#with user}}
-                <span class="label label-success">Yes</span>
-              {{else}}
-                <span class="label label-warning">No</span>
-              {{/with}}
-            </td>
-            <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes emptyText="Select"}}</td>
-            <td>{{dateFormat dateModified}}</td>
-            <td>{{dateFormat dateCreated}}</td>
-            <td>
-              <a class="link-red btn-delete-contributor">
-                <span class="glyphicon glyphicon-minus-sign"></span>
-              </a>
-            </td>
-          </tr>
-        {{/each}}
-        </tbody>
-      </table>
-      <button class="btn btn-xs btn-primary btn-add-contributor">
-        <span class="glyphicon glyphicon-plus"></span>
-        Add Contributor
-      </button>
+      {{#each roleDefinitions}}
+        <div class="contributor-role">
+          <h3>{{title}}s</h3>
+          <table class="table data-table full-width border-bottom">
+            <thead>
+            <tr>
+              <th>Identifier</th>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Manager</th>
+              <th>Default Role</th>
+              <th>User</th>
+              <th>Type</th>
+              <th>Modified</th>
+              <th>Created</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each contributors}}
+              <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+                <td>{{> EditableTextField dataKey="identifier" value=identifier emptyText="Identifier" }}</td>
+                <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" }}</td>
+                <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" }}</td>
+                <td>{{> EditableRecordSelector managerSelectorContext }}</td>
+                <td>{{> EditableRecordSelector roleSelectorContext }}</td>
+                <td>
+                  {{#with user}}
+                    <span class="label label-success">Yes</span>
+                  {{else}}
+                    <span class="label label-warning">No</span>
+                  {{/with}}
+                </td>
+                <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes emptyText="Select"}}</td>
+                <td>{{dateFormat dateModified}}</td>
+                <td>{{dateFormat dateCreated}}</td>
+                <td>
+                  <a class="link-red btn-delete-contributor">
+                    <span class="glyphicon glyphicon-minus-sign"></span>
+                  </a>
+                </td>
+              </tr>
+            {{/each}}
+            </tbody>
+          </table>
+          {{#if _id}}
+            <button class="btn btn-xs btn-primary btn-add-contributor">
+              <span class="glyphicon glyphicon-plus"></span>
+              Add {{title}}
+            </button>
+          {{/if}}
+        </div>
+      {{/each}}
     </div>
   {{else}}
     {{> AppLoading }}

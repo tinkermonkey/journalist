@@ -12,15 +12,17 @@ Meteor.methods({
    * @param identifier
    * @param email
    * @param name
+   * @param roleId
    */
-  addContributor (identifier, email, name) {
-    console.log('addContributor:', identifier, email, name);
+  addContributor (identifier, email, name, roleId) {
+    console.log('addContributor:', identifier, email, name, roleId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
     check(identifier, String);
     check(email, String);
     check(name, String);
+    check(roleId, String);
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
@@ -32,7 +34,8 @@ Meteor.methods({
         let contributorId = Contributors.insert({
           identifier: identifier,
           email     : email,
-          name      : name
+          name      : name,
+          roleId    : roleId
         });
         
         // Look for users to sync up

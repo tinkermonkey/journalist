@@ -1,5 +1,7 @@
 .project-team-roster {
   padding: 10px;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 .project-team-roster:first-child {
