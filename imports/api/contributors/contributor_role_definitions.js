@@ -8,28 +8,32 @@ import { SchemaHelpers } from '../schema_helpers.js';
  * ============================================================================
  */
 export const ContributorRoleDefinition = new SimpleSchema({
-  title       : {
+  title        : {
     type: String
   },
-  order       : {
+  order        : {
     type        : Number,
     defaultValue: 0
   },
+  isManager: {
+    type        : Boolean,
+    defaultValue: false
+  },
   // Standard tracking fields
-  dateCreated : {
+  dateCreated  : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
+  createdBy    : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy,
     optional : true
   },
-  dateModified: {
+  dateModified : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
+  modifiedBy   : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy,
     optional : true

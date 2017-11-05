@@ -1,29 +1,25 @@
 <template name="ProjectTeamRoleContributors">
-  {{#with role}}
-    <h3>{{title}}</h3>
-    {{#if true}}
-      {{#each ../project.contributorsInRoleOnTeam ../role._id ../team._id }}
-        <div>
-          <a href="{{pathFor 'ContributorHome' contributorId=_id}}" class="team-roster-name">{{name}}</a>
-          <table class="table data-table team-roster-assignments">
-            {{#each assignmentsForRole ../../team._id ../../role._id ../../project._id}}
-              <tr>
-                <td>
-                  {{percent}} %
-                </td>
-                <td>
-                  {{project.title}}
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <div class="team-roster-assignment-percent-bar" style="width: {{percent}}%;"></div>
-                </td>
-              </tr>
-            {{/each}}
-          </table>
-        </div>
-      {{/each}}
-    {{/if}}
-  {{/with}}
+  <h3>{{role.title}}s</h3>
+    {{#each project.contributorsInRoleOnTeam role._id team._id }}
+      <div class="project-team-contributor">
+        <a href="{{pathFor 'ContributorHome' contributorId=_id}}" class="team-roster-name">{{name}}</a>
+        <table class="table data-table team-roster-assignments">
+          {{#each assignmentsForRole ../team._id ../role._id ../project._id}}
+            <tr>
+              <td>
+                {{percent}} %
+              </td>
+              <td>
+                {{project.title}}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <div class="team-roster-assignment-percent-bar" style="width: {{percent}}%;"></div>
+              </td>
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+    {{/each}}
 </template>
