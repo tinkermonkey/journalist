@@ -1,8 +1,11 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
+import { Contributors } from '../contributors/contributors';
+import { ContributorProjectAssignments } from '../contributors/contributor_project_assignments';
+import { ContributorTeamRoles } from '../contributors/contributor_team_roles';
+import { Teams } from '../teams/teams';
 
 /**
  * ============================================================================
@@ -10,33 +13,33 @@ import { SchemaHelpers } from '../schema_helpers.js';
  * ============================================================================
  */
 export const Project = new SimpleSchema({
-  title: {
+  title       : {
     type: String
   },
-  description: {
-    type: String,
+  description : {
+    type    : String,
     optional: true
   },
   // Contributor that is the primary owner of this project
-  owner: {
-    type: String,
+  owner       : {
+    type    : String,
     optional: true
   },
   // Standard tracking fields
-  dateCreated: {
-    type: Date,
+  dateCreated : {
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy: {
-    type: String,
+  createdBy   : {
+    type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
   dateModified: {
-    type: Date,
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy: {
-    type: String,
+  modifiedBy  : {
+    type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
 });
@@ -47,12 +50,85 @@ ChangeTracker.trackChanges(Projects, 'Projects');
 
 // These are server side only
 Projects.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+  remove () {
+    return true;
+  },
+  insert () {
+    return true;
+  },
+  update () {
+    return true;
+  }
 });
 
 /**
  * Helpers
  */
-Projects.helpers({});
+Projects.helpers({
+  /**
+   * Fetch the list of ContributorTeamRoles for this project
+   * @param query
+   * @return {Array}
+   */
+  teamRoleIds (query) {
+    let project     = this,
+        teamRoleIds = [];
+    
+    // built up the query
+    query           = query || {};
+    query.projectId = project._id;
+    
+    // Gather all of the teamIds from assignments to this team
+    ContributorProjectAssignments.find(query).forEach((assignment) => {
+      teamRoleIds.push(assignment.teamRoleId);
+    });
+    
+    // Filter for uniqueness
+    return _.uniq(teamRoleIds);
+  },
+  /**
+   * Fetch a list of teams that work on this project
+   * @param sortBy
+   * @return {cursor}
+   */
+  teams (sortBy) {
+    let project = this,
+        teamIds = [];
+  
+    // Default sort, check for sortBy.hash because that is what is passed in by Spacebars if sortBy is not passed
+    sortBy = _.isObject(sortBy) && sortBy.hash === null ? sortBy : { title: 1 };
+    
+    // Gather all of the teamIds from assignments to this team
+    ContributorTeamRoles.find({ _id: { $in: project.teamRoleIds() } }).forEach((teamRole) => {
+      teamIds.push(teamRole.teamId);
+    });
+    
+    // Filter for uniqueness
+    teamIds = _.uniq(teamIds);
+    
+    return Teams.find({ _id: { $in: teamIds } }, { sort: sortBy })
+  },
+  /**
+   * Get all of the contributors in a given role on a given team for this project
+   * @param roleId
+   * @param teamId
+   * @param sortBy
+   */
+  contributorsInRoleOnTeam (roleId, teamId, sortBy) {
+    let project        = this,
+        contributorIds = [];
+    
+    // Default sort, check for sortBy.hash because that is what is passed in by Spacebars if sortBy is not passed
+    sortBy = _.isObject(sortBy) && sortBy.hash === null ? sortBy : { name: 1 };
+    
+    // Gather all of the teamIds from assignments to this team
+    ContributorTeamRoles.find({ _id: { $in: project.teamRoleIds() }, roleId: roleId, teamId: teamId }).forEach((teamRole) => {
+      contributorIds.push(teamRole.contributorId);
+    });
+    
+    // Filter for uniqueness
+    contributorIds = _.uniq(contributorIds);
+    
+    return Contributors.find({ _id: { $in: contributorIds } }, { sort: sortBy })
+  }
+});

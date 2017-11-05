@@ -10,9 +10,9 @@
         </select>
         
         <label for="role" class="control-label">Role</label>
-        <select class="form-control" name="role" data-schema-key="role" required>
+        <select class="form-control" name="roleId" data-schema-key="roleId" required>
           {{#each roleOptions}}
-            <option value="{{value}}">{{title}}</option>
+            <option value="{{_id}}">{{title}}</option>
           {{/each}}
         </select>
       

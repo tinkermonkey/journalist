@@ -4,7 +4,7 @@
       {{#if hasSameRole}}
         {{#with firstRole}}
           <div class="section-header">
-            <h3>{{renderTeamRole role}}</h3>
+            <h3>{{renderTeamRole roleId}}</h3>
           </div>
         {{/with}}
       {{else}}
@@ -13,9 +13,7 @@
         </div>
       {{/if}}
       
-      {{#unless isManager}}
-        {{> ContributorCommitmentLevel }}
-      {{/unless}}
+      {{> ContributorCommitmentLevel }}
     {{else}}
       <div class="section-header">
         <h3>Roles</h3>
@@ -30,7 +28,7 @@
         {{#each teamRoles}}
           <tr>
             {{#unless ../hasSameRole}}
-              <td>{{renderTeamRole role}}</td>
+              <td>{{renderTeamRole roleId}}</td>
             {{/unless}}
             <td>
               {{team.title}}

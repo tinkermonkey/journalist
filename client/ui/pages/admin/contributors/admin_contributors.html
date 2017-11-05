@@ -9,7 +9,7 @@
           <th>Email</th>
           <th>Name</th>
           <th>Manager</th>
-          <th>Roles</th>
+          <th>Default Role</th>
           <th>User</th>
           <th>Type</th>
           <th>Modified</th>
@@ -24,7 +24,7 @@
             <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" }}</td>
             <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" }}</td>
             <td>{{> EditableRecordSelector managerSelectorContext }}</td>
-            <td>{{> EditableContributorRoles }}</td>
+            <td>{{> EditableRecordSelector roleSelectorContext }}</td>
             <td>
               {{#with user}}
                 <span class="label label-success">Yes</span>

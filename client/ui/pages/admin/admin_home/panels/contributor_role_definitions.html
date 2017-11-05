@@ -1,0 +1,27 @@
+<template name="ContributorRoleDefinitions">
+  {{#if Template.subscriptionsReady }}
+    <h1>Contributor Role Definitions</h1>
+    <table class="table data-table sortable-table">
+      <thead>
+      <tr>
+        <th></th>
+        <th>Role Title</th>
+        <th></th>
+      </tr>
+      </thead>
+      {{#each roleDefinitions}}
+        <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{order}}">
+          <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
+          <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+          <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
+        </tr>
+      {{/each}}
+    </table>
+    <button class="btn btn-xs btn-primary btn-add-definition">
+      <span class="glyphicon glyphicon-plus"></span>
+      Add Role Definition
+    </button>
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

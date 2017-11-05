@@ -2,7 +2,11 @@
  * Data Table
  */
 table.data-table {
-  margin-bottom: 3px;
+  margin-bottom: 5px;
+}
+
+table.data-table.border-bottom {
+  border-bottom: 2px solid #ddd;
 }
 
 .data-table th {

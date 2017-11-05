@@ -1,31 +1,55 @@
-.contributor-commitment-level {
-  width: 100%;
-  background-color: #bbbbbb;
-  border-radius: 3px;
-  position: absolute;
-  font-size: 1.5em;
-  height: 1.8em;
-  color: #ffffff;
+/**
+ * Table display styles
+ */
+.project-assignment-icon-col {
+  width: 1.4em;
 }
 
-.contributor-commitment-bar {
-  background-color: #007AC9;
-  border-radius: 3px;
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: 0;
-  padding: 3px;
-  padding-left: 10px;
-  overflow: visible;
+.project-assignment-percent-col {
+  width: 2em;
+  white-space: nowrap;
 }
 
-.contributor-commitment-buffer {
-  height: 3em;
+/**
+ * Team title
+ */
+.contributor-team-roles .team-title .editable span {
+  font-size: 1.2em;
+  color: #bbbbbb;
 }
 
+/**
+ * Percent committed bar
+ */
 .project-percent-committed {
   height: 5px;
   background-color: #007AC9;
   margin-bottom: 10px;
+}
+
+/**
+ * Commitment bar styles
+ */
+.contributor-commitment-level {
+  background-color: #bbbbbb;
+  width: 100%;
+  border-radius: 3px;
+  font-size: 1.5em;
+  color: #ffffff;
+  display: flex;
+  align-items: stretch;
+  justify-items: center;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.contributor-commitment-level .percent-bar {
+  background-color: #007AC9;
+  padding: 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.contributor-commitment-level .percent-text {
+  float: left;
 }

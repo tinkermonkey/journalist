@@ -17,7 +17,7 @@ Users.helpers({
    * Does this user have a administrator role
    * @return {boolean}
    */
-  isAdmin(){
+  isAdmin () {
     let contributor = this.contributor();
     if (contributor) {
       return contributor.isAdmin();
@@ -27,7 +27,7 @@ Users.helpers({
    * Does this user have a manager role
    * @return {boolean}
    */
-  isManager(){
+  isManager () {
     let contributor = this.contributor();
     if (contributor) {
       return contributor.isManager();
@@ -37,16 +37,16 @@ Users.helpers({
    * Determine if this user manages a specific contributor
    * @param contributorId
    */
-  managesContributor(contributorId){
+  managesContributor (contributorId) {
     return this.contributor().managesContributor(contributorId);
   },
   /**
    * Get the contributor record for this user
    */
-  contributor(){
-    let user = this,
+  contributor () {
+    let user        = this,
         contributor = Contributors.findOne({ userId: user._id });
-    if(!contributor && Meteor.isServer && (Meteor.userId() === user._id || Meteor.user().isAdmin())){
+    if (!contributor && Meteor.isServer && (Meteor.userId() === user._id || Meteor.user().isAdmin())) {
       //console.log('Users creating contributor:', user);
       // Create a contributor record if the circumstances are correct:
       // 1) A record doesn't exist
@@ -54,7 +54,13 @@ Users.helpers({
       // 3A) The current user is this user
       // OR
       // 3B) The current user is an administrator
-      Meteor.call('addContributor', user.emails[0].address, user.emails[0].address, user.profile.name);
+      Contributors.insert({
+        identifier: user.emails[ 0 ].address,
+        email     : user.emails[ 0 ].address,
+        name      : user.profile.name,
+        userId    : user._id,
+        usertype  : user.usertype
+      });
       
       // Grab the new record
       contributor = Contributors.findOne({ userId: user._id });

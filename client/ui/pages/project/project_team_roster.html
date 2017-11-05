@@ -1,0 +1,10 @@
+<template name="ProjectTeamRoster">
+  {{#with team}}
+    <h3>{{title}}</h3>
+    {{#each rolesInProject ../project._id}}
+      <div class="team-staff-roster">
+        {{> ProjectTeamRoleContributors role=this team=.. project=../../project }}
+      </div>
+    {{/each}}
+  {{/with}}
+</template>

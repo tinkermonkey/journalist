@@ -15,15 +15,21 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li class="disabled"><a >My Projects</a></li>
-                {{#each participatingProjects}}
-                  <li><a href="{{pathFor 'ProjectHome' projectId=_id}}">{{title}}</a></li>
-                {{/each}}
-                <li class="divider" role="separator"></li>
-                <li class="disabled"><a >Other Projects</a></li>
-                {{#each otherProjects}}
-                  <li><a href="{{pathFor 'ProjectHome' projectId=_id}}">{{title}}</a></li>
-                {{/each}}
+                {{#if participatingProjects.count}}
+                  <li class="disabled"><a>My Projects</a></li>
+                  {{#each participatingProjects}}
+                    <li><a href="{{pathFor 'ProjectHome' projectId=_id}}">{{title}}</a></li>
+                  {{/each}}
+                  {{#if otherProjects.count}}
+                    <li class="divider" role="separator"></li>
+                  {{/if}}
+                {{/if}}
+                {{#if otherProjects.count}}
+                  <li class="disabled"><a>Other Projects</a></li>
+                  {{#each otherProjects}}
+                    <li><a href="{{pathFor 'ProjectHome' projectId=_id}}">{{title}}</a></li>
+                  {{/each}}
+                {{/if}}
               </ul>
             </li>
             <li class="dropdown">
@@ -32,15 +38,21 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li class="disabled"><a >My Teams</a></li>
-                {{#each participatingTeams}}
-                  <li><a href="{{pathFor 'TeamHome' teamId=_id}}">{{title}}</a></li>
-                {{/each}}
-                <li class="divider" role="separator"></li>
-                <li class="disabled"><a >Other Teams</a></li>
-                {{#each otherTeams}}
-                  <li><a href="{{pathFor 'TeamHome' teamId=_id}}">{{title}}</a></li>
-                {{/each}}
+                {{#if participatingTeams.count}}
+                  <li class="disabled"><a>My Teams</a></li>
+                  {{#each participatingTeams}}
+                    <li><a href="{{pathFor 'TeamHome' teamId=_id}}">{{title}}</a></li>
+                  {{/each}}
+                  {{#if otherTeams.count}}
+                    <li class="divider" role="separator"></li>
+                  {{/if}}
+                {{/if}}
+                {{#if otherTeams.count}}
+                  <li class="disabled"><a>Other Teams</a></li>
+                  {{#each otherTeams}}
+                    <li><a href="{{pathFor 'TeamHome' teamId=_id}}">{{title}}</a></li>
+                  {{/each}}
+                {{/if}}
               </ul>
             </li>
             
@@ -51,13 +63,13 @@
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="disabled"><a >Direct Staff</a></li>
+                  <li class="disabled"><a>Direct Staff</a></li>
                   {{#each directStaff}}
                     <li><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></li>
                   {{/each}}
                   {{#if indirectStaff.count}}
                     <li class="divider" role="separator"></li>
-                    <li class="disabled"><a >Indirect Staff</a></li>
+                    <li class="disabled"><a>Indirect Staff</a></li>
                     {{#each indirectStaff}}
                       <li><a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a></li>
                     {{/each}}

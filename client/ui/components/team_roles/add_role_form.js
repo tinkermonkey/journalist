@@ -1,18 +1,16 @@
 import './add_role_form.html';
 import { Template } from 'meteor/templating';
-import { ContributorRoles } from '../../../../imports/api/contributors/contributor_roles';
+import { ContributorRoleDefinitions } from '../../../../imports/api/contributors/contributor_role_definitions.js';
 import { Teams } from '../../../../imports/api/teams/teams';
-import { Util } from '../../../../imports/api/util.js';
 
 let roleSchema = new SimpleSchema({
   teamId: {
     type : String,
     label: "Team"
   },
-  role  : {
-    type         : Number,
-    allowedValues: _.values(ContributorRoles),
-    label        : "Role"
+  roleId: {
+    type : String,
+    label: "Role"
   }
 });
 
@@ -20,16 +18,14 @@ let roleSchema = new SimpleSchema({
  * Template Helpers
  */
 Template.AddRoleForm.helpers({
-  getRoleSchema(){
+  getRoleSchema () {
     return roleSchema
   },
-  teamOptions(){
-    return Teams.find({}, {sort: {title: 1}})
+  teamOptions () {
+    return Teams.find({}, { sort: { title: 1 } })
   },
-  roleOptions(){
-    return _.keys(ContributorRoles).map((role) => {
-      return { title: Util.camelToTitle(role), value: ContributorRoles[role] }
-    })
+  roleOptions () {
+    return ContributorRoleDefinitions.find({}, { sort: { order: 1 } })
   }
 });
 
@@ -49,7 +45,13 @@ Template.AddRoleForm.onCreated(() => {
  * Template Rendered
  */
 Template.AddRoleForm.onRendered(() => {
+  let instance = Template.instance();
   
+  // Set the value of the role selector to the default
+  if(instance.data.contributor){
+    console.log('AddRoleForm setting default role:', instance.data.contributor.roleId);
+    instance.$("select[name='roleId']").val(instance.data.contributor.roleId);
+  }
 });
 
 /**

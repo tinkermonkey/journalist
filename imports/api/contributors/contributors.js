@@ -40,6 +40,11 @@ export const Contributor = new SimpleSchema({
     type    : String,
     optional: true
   },
+  // The default role for this contributor
+  roleId          : {
+    type    : String,
+    optional: true
+  },
   // The user level from the user record for this contributor
   usertype        : {
     type         : Number,
@@ -118,8 +123,8 @@ Contributors.helpers({
    * @return {boolean}
    */
   hasSameRole () {
-    return _.uniq(this.teamRoles().map((role) => {
-      return role.role
+    return _.uniq(this.teamRoles().map((teamRole) => {
+      return teamRole.roleId
     })).length < 2
   },
   /**
@@ -135,9 +140,12 @@ Contributors.helpers({
     sortBy = sortBy || { title: 1 };
     
     // Find all of the teams that this user has a role on
-    ContributorTeamRoles.find({ contributorId: contributor._id }).forEach((role) => {
-      teamIds.push(role.teamId);
+    ContributorTeamRoles.find({ contributorId: { $in: contributor.allStaffIds() } }).forEach((teamRole) => {
+      teamIds.push(teamRole.teamId);
     });
+    
+    // Filter for the unique keys
+    teamIds = _.uniq(teamIds);
     
     return Teams.find({ _id: { $in: teamIds } }, { sort: sortBy })
   },
@@ -234,13 +242,19 @@ Contributors.helpers({
     
     // Get any projects where this user is the owner
     Projects.find({ owner: contributor._id }).forEach((project) => {
-      projectIds.push(project);
+      projectIds.push(project._id);
     });
     
     // Get any projects where this user has a role
     contributor.participatingTeams().forEach((team) => {
-      projectIds.push(team.projectId)
+      if(team.projectId){
+        projectIds.push(team.projectId)
+      }
     });
+    
+    // Filter for the unique keys
+    projectIds = _.uniq(projectIds);
+    //console.log('participatingProjects:', Meteor.user().contributor()._id, contributor._id, projectIds);
     
     return Projects.find({ _id: { $in: projectIds } }, { sort: sortBy })
   },
@@ -297,13 +311,13 @@ Contributors.helpers({
   /**
    * Get the project assignments for a team role
    * @param teamId
-   * @param role
+   * @param roleId
+   * @param projectId
    */
-  assignmentsForRole(teamId, role){
-    console.log('assignmentsForRole:', teamId, role);
-    let teamRole = ContributorTeamRoles.findOne({contributorId: this._id, teamId: teamId, role: role});
-    if(teamRole){
-      return teamRole.projectAssignments();
+  assignmentsForRole (teamId, roleId, projectId) {
+    let teamRole = ContributorTeamRoles.findOne({ contributorId: this._id, teamId: teamId, roleId: roleId });
+    if (teamRole) {
+      return teamRole.projectAssignments(projectId);
     }
   },
   /**
@@ -312,7 +326,8 @@ Contributors.helpers({
    * @return {cursor}
    */
   efforts (sortBy) {
-    sortBy = sortBy || { title: 1 };
+    // Default sort, check for sortBy.hash because that is what is passed in by Spacebars if sortBy is not passed
+    sortBy = _.isObject(sortBy) && sortBy.hash === null ? sortBy : { title: 1 };
     return Efforts.find({ contributorId: this._id, complete: false }, { sort: sortBy })
   },
   /**
@@ -321,7 +336,8 @@ Contributors.helpers({
    * @return {cursor}
    */
   priorities (sortBy) {
-    sortBy = sortBy || { order: 1 };
+    // Default sort, check for sortBy.hash because that is what is passed in by Spacebars if sortBy is not passed
+    sortBy = _.isObject(sortBy) && sortBy.hash === null ? sortBy : { order: 1 };
     return Priorities.find({ contributorId: this._id }, { sort: sortBy })
   },
   /**
@@ -330,7 +346,8 @@ Contributors.helpers({
    * @return {cursor}
    */
   tasks (sortBy) {
-    sortBy = sortBy || { title: 1 };
+    // Default sort, check for sortBy.hash because that is what is passed in by Spacebars if sortBy is not passed
+    sortBy = _.isObject(sortBy) && sortBy.hash === null ? sortBy : { title: 1 };
     return Tasks.find({ contributorId: this._id, complete: false }, { sort: sortBy })
   }
 });

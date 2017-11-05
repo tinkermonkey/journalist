@@ -4,18 +4,18 @@ import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
 import { Util } from '../../api/util.js';
 import { Contributors } from '../../api/contributors/contributors.js';
-import { ContributorRoles } from '../../api/contributors/contributor_roles.js';
 import { Projects } from '../../api/projects/projects.js';
 import { Teams } from '../../api/teams/teams';
 import { Users } from '../../api/users/users';
 import { UserTypes } from '../../api/users/user_types.js';
+import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions';
 
 /**
  * Custom autoform hooks to prevent client side inserts
  */
 AutoForm.hooks({
   serverMethodForm: {
-    onSubmit(insertDoc, updateDoc, currentDoc){
+    onSubmit (insertDoc, updateDoc, currentDoc) {
       this.event.preventDefault();
       let dialogElement = $('#' + this.formId).closest('.roba-dialog'),
           dialogButton  = dialogElement.find('.button-bar button').last('button');
@@ -23,8 +23,8 @@ AutoForm.hooks({
       return false;
     }
   },
-  addRecordForm: {
-    onSubmit(insertDoc, updateDoc, currentDoc){
+  addRecordForm   : {
+    onSubmit (insertDoc, updateDoc, currentDoc) {
       this.event.preventDefault();
       let dialogElement = $('#' + this.formId).closest('.roba-dialog'),
           dialogButton  = dialogElement.find('.button-bar button').last('button');
@@ -39,9 +39,6 @@ AutoForm.hooks({
  */
 Template.registerHelper('UserTypes', function () {
   return UserTypes
-});
-Template.registerHelper('ContributorRoles', function () {
-  return ContributorRoles
 });
 
 /**
@@ -96,9 +93,14 @@ Template.registerHelper('renderUserType', function () {
     return Util.capitalize(_.invert(UserTypes)[ usertype ]);
   }
 });
-Template.registerHelper('renderTeamRole', function (role) {
-  if (role !== null) {
-    return Util.camelToTitle(_.invert(ContributorRoles)[ role ]);
+Template.registerHelper('renderTeamRole', function (roleId) {
+  if (roleId !== null) {
+    let definition = ContributorRoleDefinitions.findOne(roleId);
+    if (definition) {
+      return definition.title;
+    } else {
+      return 'Unknown'
+    }
   }
 });
 Template.registerHelper('contributorSelectorContext', function () {
@@ -161,7 +163,21 @@ Template.registerHelper('teamSelectorContext', function () {
     query       : {}
   }
 });
-
+Template.registerHelper('roleSelectorContext', function () {
+  let record = this;
+  
+  return {
+    valueField  : '_id',
+    displayField: 'title',
+    value       : record.roleId,
+    dataKey     : 'roleId',
+    collection  : ContributorRoleDefinitions,
+    emptyText   : 'Select role',
+    cssClass    : 'inline-block',
+    sort        : { sort: { order: 1 } },
+    query       : {}
+  }
+});
 Template.registerHelper('projectSelectorContext', function () {
   let record = this;
   

@@ -3,8 +3,8 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { Contributors } from './contributors';
-import { ContributorRoles } from './contributor_roles';
 import { ContributorProjectAssignments } from './contributor_project_assignments';
+import { ContributorRoleDefinitions } from './contributor_role_definitions';
 import { Teams } from '../teams/teams';
 
 /**
@@ -21,9 +21,9 @@ export const ContributorTeamRole = new SimpleSchema({
   teamId          : {
     type: String
   },
-  role            : {
-    type         : Number,
-    allowedValues: _.values(ContributorRoles)
+  // Link to the role definition
+  roleId          : {
+    type: String
   },
   // Text description providing a quick summary of the role
   missionStatement: {
@@ -84,8 +84,13 @@ ContributorTeamRoles.helpers({
   /**
    * Get all of the project assignments for a role
    */
-  projectAssignments () {
-    return ContributorProjectAssignments.find({ teamRoleId: this._id }, { sort: { percent: -1 } })
+  projectAssignments (projectId) {
+    let query = { teamRoleId: this._id };
+    if (_.isString(projectId)) {
+      query.projectId = projectId
+    }
+
+    return ContributorProjectAssignments.find(query, { sort: { percent: -1 } })
   },
   /**
    * Get the contributor this team role is for
@@ -94,4 +99,11 @@ ContributorTeamRoles.helpers({
   contributor () {
     return Contributors.findOne(this.contributorId)
   },
+  /**
+   * Fetch the role definition
+   * @return {ContributorRoleDefinition}
+   */
+  roleDefinition () {
+    return ContributorRoleDefinitions.findOne(this.roleId)
+  }
 });

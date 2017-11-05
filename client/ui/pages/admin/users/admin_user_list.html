@@ -25,10 +25,12 @@
         </td>
         <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes}}</td>
         <td>
+          {{#unless isCurrentContributor contributor._id}}
           <button class="btn-xs btn-danger btn-delete-user">
             <span class="glyphicon glyphicon-minus-sign"></span>
             Delete
           </button>
+          {{/unless}}
         </td>
       </tr>
     {{/each}}

@@ -95,15 +95,27 @@ ContributorProjectAssignments.helpers({
    */
   balanceOtherAssignments () {
     let percentCommitted = this.contributor().percentCommitted(),
-        otherAssignments = ContributorProjectAssignments.find({ contributorId: this.contributorId, _id: { $ne: this._id } });
-    if (percentCommitted > 100 && otherAssignments.count() && this.percent < (100 - otherAssignments.count())) {
-      let overCommitment = otherAssignments.fetch().reduce((sum, assignment) => {
-            return sum + assignment.percent
-          }, 0),
-          reduction      = (100 - this.percent) / overCommitment;
-      otherAssignments.forEach((assignment) => {
-        ContributorProjectAssignments.update(assignment._id, { $set: { percent: Math.max(Math.floor(reduction * assignment.percent), 1) } });
-      });
+        otherAssignments = ContributorProjectAssignments.find({ contributorId: this.contributorId, _id: { $ne: this._id } }),
+        adjustedIds      = [ this._id ];
+    
+    if (percentCommitted > 100 && otherAssignments.count()) {
+      // Do 3 passes for posterity
+      for (let i = 0; i < 3; i++) {
+        // For each pass, calculate the amount confirmed and the amount overCommitted
+        let overCommitment   = ContributorProjectAssignments.find({ contributorId: this.contributorId, _id: { $nin: adjustedIds } }).fetch()
+            .reduce((sum, assignment) => {
+              return sum + assignment.percent
+            }, 0),
+            alreadyCommitted = ContributorProjectAssignments.find({ contributorId: this.contributorId, _id: { $in: adjustedIds } }).fetch()
+                .reduce((sum, assignment) => {
+                  return sum + assignment.percent
+                }, 0),
+            reduction        = (100 - alreadyCommitted) / overCommitment;
+        
+        otherAssignments.forEach((assignment) => {
+          ContributorProjectAssignments.update(assignment._id, { $set: { percent: Math.max(Math.round(reduction * assignment.percent), 1) } });
+        });
+      }
     }
   }
 });

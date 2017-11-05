@@ -1,6 +1,6 @@
 import './admin_home.html';
-
 import { Template } from 'meteor/templating';
+import './panels/contributor_role_definitions';
 
 /**
  * Template Helpers

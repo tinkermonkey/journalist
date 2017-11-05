@@ -117,9 +117,9 @@ Template.ContributorPriorities.onRendered(() => {
             let newOrder = i + 1,
                 storedOrder  = $(el).attr("data-sort-order");
             if (newOrder !== storedOrder) {
-              let priorityId = $(el).attr("data-pk");
-              console.log("Updating order: ", newOrder, priorityId);
-              Meteor.call('editPriority', priorityId, 'order', newOrder, function (error, response) {
+              let rowId = $(el).attr("data-pk");
+              console.log("Updating order: ", newOrder, rowId);
+              Meteor.call('editPriority', rowId, 'order', newOrder, function (error, response) {
                 if (error) {
                   RobaDialog.error("Priority order update failed: " + error.message);
                 }

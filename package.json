@@ -5,7 +5,7 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "ace-builds": "^1.2.8",
+    "ace-builds": "^1.2.9",
     "babel-runtime": "^6.26.0",
     "bcrypt": "^1.0.3",
     "jira-connector": "^2.6.0",
