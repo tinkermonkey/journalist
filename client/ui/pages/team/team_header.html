@@ -1,0 +1,13 @@
+<template name="TeamHeader">
+  <div class="team-header" data-pk="{{_id}}">
+    <div class="team-header-staff">
+      <div class="flex">
+        {{#each teamRoles}}
+          <div class="team-staff-roster">
+            {{> TeamRoleContributorList }}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</template>

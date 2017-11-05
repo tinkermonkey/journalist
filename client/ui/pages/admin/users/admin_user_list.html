@@ -1,0 +1,43 @@
+<template name="AdminUserList">
+  <table class="table data-table full-width">
+    <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Name</th>
+      <th>Contributor</th>
+      <th>User Type</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each users}}
+      <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+        <td>{{> EditableTextField dataKey="username" value=username emptyText="Username" }}</td>
+        <td>{{> EditableTextField dataKey="email" value=userEmail emptyText="Email" }}</td>
+        <td>{{> EditableTextField dataKey="name" value=profile.name emptyText="Name" }}</td>
+        <td>
+          {{#with contributor}}
+            <span class="label label-success">Yes</span>
+          {{else}}
+            <span class="label label-warning label-create-contributor" style="cursor: pointer;">No</span>
+          {{/with}}
+        </td>
+        <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes}}</td>
+        <td>
+          {{#unless isCurrentContributor contributor._id}}
+          <button class="btn-xs btn-danger btn-delete-user">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+            Delete
+          </button>
+          {{/unless}}
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+  <button class="btn btn-xs btn-primary btn-add-user">
+    <span class="glyphicon glyphicon-plus"></span>
+    Add User
+  </button>
+</template>

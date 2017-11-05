@@ -1,0 +1,18 @@
+<template name="ContributorStatusReportsDue">
+  {{#if statusReportsDue.count}}
+    <h3>Status Reports Due</h3>
+    
+    {{#each statusReportsDue}}
+      <div class="no-wrap">
+        <ol class="breadcrumb">
+          <li class="active">{{sourceCollection}}</li>
+          <li>
+            <a href="{{pathFor sourceCollectionRouteName sourceCollectionRouteParam}}">{{#with sourceDocument}}{{title}}{{/with}}</a></li>
+          <li>
+            due {{dateFormat nextDue 'ddd MMM Do'}} at {{dateFormat nextDue 'h:mm a'}}
+          </li>
+        </ol>
+      </div>
+    {{/each}}
+  {{/if}}
+</template>

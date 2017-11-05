@@ -1,0 +1,13 @@
+<template name="AdminLayout">
+  {{#if Template.subscriptionsReady}}
+    {{#if userIsAdmin}}
+      {{> AuthenticatedLayout main=main }}
+    {{else}}
+      {{> AuthenticatedLayout main='NotFound' }}
+    {{/if}}
+  {{else}}
+    <div class="app-container">
+      {{> AppLoading}}
+    </div>
+  {{/if}}
+</template>

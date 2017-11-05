@@ -1,0 +1,19 @@
+<template name="EditReportForm">
+  {{#with report}}
+    <h3>Status Report</h3>
+    <div class="edit-report-form well well-sm" data-pk="{{_id}}">
+      <div>
+        <!-- datatype specific stuff goes here -->
+      </div>
+      <div class="container-fluid">
+        {{> EditableCode dataKey="body" value=body emptyText="Enter a report body" mode="inline" language="markdown" autoHeight=true}}
+      </div>
+      <div class="edit-report-action-bar">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default btn-close-form">Close</button>
+          <button type="button" class="btn btn-primary btn-submit-report">Submit Report</button>
+        </div>
+      </div>
+    </div>
+  {{/with}}
+</template>

@@ -1,0 +1,42 @@
+/**
+ * Data Table
+ */
+table.data-table {
+  margin-bottom: 5px;
+}
+
+table.data-table.border-bottom {
+  border-bottom: 2px solid #ddd;
+}
+
+.data-table th {
+  /*border-bottom: 1px solid #bbbbbb;*/
+  padding: 2px 5px;
+  font-weight: 500;
+  vertical-align: bottom;
+}
+
+.data-table td {
+  padding: 2px 5px;
+  vertical-align: top;
+}
+
+.data-table td:first-child {
+  border-top-left-radius : 3px;
+  border-bottom-left-radius : 3px;
+  padding-left: 0;
+}
+
+.data-table td:last-child {
+  border-top-right-radius : 3px;
+  border-bottom-right-radius : 3px;
+  padding-right: 0;
+}
+
+.data-table tr.new-record td {
+  background-color: rgba(41, 140, 255, 0.28);
+}
+
+.data-table .open-link {
+  width: 1.9em;
+}

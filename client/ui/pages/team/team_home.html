@@ -1,0 +1,16 @@
+<template name="TeamHome">
+  {{#with team}}
+    <div class="full-width">{{> TeamBanner }}</div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <h1>{{title}}</h1>
+          {{> TeamHeader }}
+        </div>
+        <div class="col-md-3">{{> TeamSidebar }}</div>
+      </div>
+    </div>
+  {{else}}
+    {{> NotFound}}
+  {{/with}}
+</template>

@@ -1,0 +1,55 @@
+/**
+ * Table display styles
+ */
+.project-assignment-icon-col {
+  width: 1.4em;
+}
+
+.project-assignment-percent-col {
+  width: 2em;
+  white-space: nowrap;
+}
+
+/**
+ * Team title
+ */
+.contributor-team-roles .team-title .editable span {
+  font-size: 1.2em;
+  color: #bbbbbb;
+}
+
+/**
+ * Percent committed bar
+ */
+.project-percent-committed {
+  height: 5px;
+  background-color: #007AC9;
+  margin-bottom: 10px;
+}
+
+/**
+ * Commitment bar styles
+ */
+.contributor-commitment-level {
+  background-color: #bbbbbb;
+  width: 100%;
+  border-radius: 3px;
+  font-size: 1.5em;
+  color: #ffffff;
+  display: flex;
+  align-items: stretch;
+  justify-items: center;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.contributor-commitment-level .percent-bar {
+  background-color: #007AC9;
+  padding: 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.contributor-commitment-level .percent-text {
+  float: left;
+}

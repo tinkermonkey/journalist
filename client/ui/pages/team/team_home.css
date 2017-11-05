@@ -1,0 +1,21 @@
+.team-staff-roster {
+  padding: 10px;
+}
+
+.team-staff-roster:first-child {
+  padding-left: 0;
+}
+
+.team-staff-roster:last-child {
+  padding-right: 0;
+}
+
+.team-roster-name {
+  font-size: 1.4em;
+}
+
+.team-roster-assignment-percent-bar {
+  height: 5px;
+  background-color: #007AC9;
+  margin-bottom: 10px;
+}

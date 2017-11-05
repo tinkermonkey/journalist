@@ -1,0 +1,38 @@
+<template name="EditableProjectAssignments">
+  <div class="editable editable-project-assignments show-controls-on-hover" data-pk="{{_id}}" data-contributor-id="{{contributorId}}">
+    <table class="table data-table">
+      {{#each projectAssignments}}
+        <tr class="data-table-row blue" data-pk="{{_id}}">
+          <td class="project-assignment-icon-col">
+            <span class="glyphicon glyphicon-dashboard"></span>
+          </td>
+          <td class="project-assignment-percent-col">
+            {{> EditableTextField dataKey="percent" value=percent emptyText="Percent" dataType="number" cssClass="inline-block"}}
+            %
+          </td>
+          <td>
+            {{> EditableRecordSelector projectSelectorContext }}
+          </td>
+          <td class="text-right">
+            <a class="btn-delete-assignment link-red hidden-control">
+              <span class="glyphicon glyphicon-minus-sign"></span>
+            </a>
+          </td>
+        </tr>
+          <tr class="project-commitment-row">
+            <td colspan="4">
+              <div class="project-percent-committed" style="width: {{percent}}%;"></div>
+            </td>
+          </tr>
+      {{/each}}
+    </table>
+    {{#if contributor.hasCapacity}}
+      <div class="hidden-control">
+        <a class="btn-add-project-assignment">
+          <span class="glyphicon glyphicon-plus-sign"></span>
+          Add Project Assignment
+        </a>
+      </div>
+    {{/if}}
+  </div>
+</template>

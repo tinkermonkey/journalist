@@ -1,0 +1,18 @@
+<template name="AddAssignmentForm">
+  <div>
+    {{#autoForm schema=getSchema id="serverMethodForm" type="normal"}}
+      <fieldset>
+        <label for="projectId" class="control-label">Project</label>
+        <select class="form-control" name="projectId" data-schema-key="projectId" required>
+          {{#each projectOptions}}
+            <option value="{{_id}}">{{title}}</option>
+          {{/each}}
+        </select>
+  
+        {{> afQuickField name='percent'}}
+      
+      </fieldset>
+    {{/autoForm}}
+  </div>
+
+</template>
