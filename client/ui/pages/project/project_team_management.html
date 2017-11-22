@@ -1,10 +1,10 @@
-<template name="TeamRoleContributorList">
-  <h3>{{title}}</h3>
-  {{#each contributorsInRole ../_id this._id}}
-    <div>
+<template name="ProjectTeamManagement">
+  <h3>{{role.title}}</h3>
+  {{#each project.contributorsInRoleOnTeam role._id team._id }}
+    <div class="project-team-contributor">
       <a href="{{pathFor 'ContributorHome' contributorId=_id}}" class="team-roster-name">{{name}}</a>
-      <table class="table team-roster-assignments">
-        {{#each assignmentsForRole ../../_id ../_id}}
+      <table class="table data-table team-roster-assignments">
+        {{#each assignmentsForRole ../team._id ../role._id ../project._id}}
           <tr>
             <td>
               {{percent}} %

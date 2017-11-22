@@ -22,7 +22,7 @@
             </thead>
             <tbody>
             {{#each contributors}}
-              <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+              <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
                 <td>{{> EditableTextField dataKey="identifier" value=identifier emptyText="Identifier" }}</td>
                 <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" }}</td>
                 <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" }}</td>
@@ -39,7 +39,7 @@
                 <td>{{dateFormat dateModified}}</td>
                 <td>{{dateFormat dateCreated}}</td>
                 <td>
-                  <a class="link-red btn-delete-contributor">
+                  <a class="link-red hidden-control btn-delete-contributor">
                     <span class="glyphicon glyphicon-minus-sign"></span>
                   </a>
                 </td>

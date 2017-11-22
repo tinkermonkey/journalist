@@ -2,8 +2,8 @@ export const IssueTypes = {
   bug: 0,
   feature: 1,
   epic: 2,
-  roadmap: 3,
+  roadMapItem: 3,
   documentation: 4,
-  testcase: 5,
-  testplan: 6
+  testCase: 5,
+  testPlan: 6
 };

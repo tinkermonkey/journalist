@@ -3,6 +3,7 @@ import { Template } from 'meteor/templating';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Projects } from '../../../../../imports/api/projects/projects.js';
 import '../../../components/add_record_form/add_record_form.js';
+import './admin_project_home.js';
 
 /**
  * Template Helpers

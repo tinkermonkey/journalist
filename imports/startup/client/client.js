@@ -4,6 +4,8 @@ import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
 import { Util } from '../../api/util.js';
 import { Contributors } from '../../api/contributors/contributors.js';
+import { IssueTypes } from '../../api/imported_issues/issue_types.js';
+import { IntegrationTypes } from '../../api/integrations/integration_types.js';
 import { Projects } from '../../api/projects/projects.js';
 import { Teams } from '../../api/teams/teams';
 import { Users } from '../../api/users/users';
@@ -39,6 +41,14 @@ AutoForm.hooks({
  */
 Template.registerHelper('UserTypes', function () {
   return UserTypes
+});
+
+Template.registerHelper('IssueTypes', function () {
+  return IssueTypes
+});
+
+Template.registerHelper('IntegrationTypes', function () {
+  return IntegrationTypes
 });
 
 /**
@@ -211,6 +221,10 @@ Template.registerHelper('isNewRecord', function () {
     return (now - record.dateCreated) < (60 * 1000)
   }
   return false
+});
+
+Template.registerHelper('isOdd', function (index) {
+  return index % 2 !== 0
 });
 
 Template.registerHelper('dateFormat', function (date, format) {

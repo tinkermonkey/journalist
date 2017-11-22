@@ -47,3 +47,4 @@ mrt:later
 mrt:moment-timezone
 dangrossman:bootstrap-daterangepicker
 twbs:bootstrap
+austinsand:editable-checkbox

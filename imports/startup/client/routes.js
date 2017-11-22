@@ -107,6 +107,13 @@ FlowRouter.route('/admin/projects', {
   }
 });
 
+FlowRouter.route('/admin/project/:projectId', {
+  name: 'AdminProjectHome',
+  action() {
+    BlazeLayout.render('AdminLayout', { main: 'AdminProjectHome' });
+  }
+});
+
 FlowRouter.route('/admin/teams', {
   name: 'AdminTeams',
   action() {

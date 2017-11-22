@@ -5,6 +5,7 @@ import { SchemaHelpers } from '../schema_helpers.js';
 import { Contributors } from '../contributors/contributors';
 import { ContributorProjectAssignments } from '../contributors/contributor_project_assignments';
 import { ContributorTeamRoles } from '../contributors/contributor_team_roles';
+import { Integrations } from '../integrations/integrations';
 import { Teams } from '../teams/teams';
 
 /**
@@ -130,5 +131,12 @@ Projects.helpers({
     contributorIds = _.uniq(contributorIds);
     
     return Contributors.find({ _id: { $in: contributorIds } }, { sort: sortBy })
+  },
+  
+  /**
+   * Get all of the integrations for this project
+   */
+  integrations(){
+    return Integrations.find({projectId: this._id}, {sort: {issueType: 1, integrationType: 1}})
   }
 });

@@ -4,6 +4,8 @@ import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { IssueTypes } from '../imported_issues/issue_types';
+import { IntegrationTypes } from './integration_types';
+import { Projects } from '../projects/projects';
 
 /**
  * ============================================================================
@@ -16,14 +18,20 @@ export const Integration = new SimpleSchema({
     type: String
   },
   // Overall type of this issue:
+  integrationType: {
+    type: Number,
+    allowedValues: _.values(IntegrationTypes)
+  },
+  // Overall type of this issue:
   issueType: {
     type: Number,
     allowedValues: _.values(IssueTypes)
   },
   // Configuration blob
-  config: {
+  details: {
     type: Object,
-    blackbox: true
+    blackbox: true,
+    optional: true
   },
   // Standard tracking fields
   dateCreated: {
@@ -41,7 +49,7 @@ export const Integration = new SimpleSchema({
   modifiedBy: {
     type: String,
     autoValue: SchemaHelpers.autoValueModifiedBy
-  },
+  }
 });
 
 export const Integrations = new Mongo.Collection('integrations');
@@ -58,4 +66,14 @@ Integrations.deny({
 /**
  * Helpers
  */
-Integrations.helpers({});
+Integrations.helpers({
+  integrationTypeTitle(){
+    return Util.camelToTitle(_.invert(IntegrationTypes)[this.integrationType])
+  },
+  issueTypeTitle(){
+    return Util.camelToTitle(_.invert(IssueTypes)[this.issueType])
+  },
+  project(){
+    return Projects.findOne({_id: this.projectId})
+  }
+});

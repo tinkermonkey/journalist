@@ -1,6 +1,7 @@
 import './project_team_roster.html';
 import { Template } from 'meteor/templating';
 import './project_team_role_contributors';
+import './project_team_management';
 import '../team/team_home.css';
 
 /**

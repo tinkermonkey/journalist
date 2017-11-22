@@ -1,0 +1,28 @@
+<template name="AdminProjectHome">
+  {{#with project}}
+    {{#if Template.subscriptionsReady}}
+      <div class="container project-container" data-pk="{{_id}}">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>{{title}}</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            {{> EditableTextArea dataKey="description" value=description emptyText="Enter a project description" }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Integrations</h2>
+            {{> AdminProjectIntegrations }}
+          </div>
+        </div>
+      </div>
+    {{else}}
+      {{> AppLoading }}
+    {{/if}}
+  {{else}}
+    {{> NotFound}}
+  {{/with}}
+</template>

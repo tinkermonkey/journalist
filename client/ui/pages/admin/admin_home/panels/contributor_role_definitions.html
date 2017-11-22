@@ -14,7 +14,7 @@
         <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{order}}">
           <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
           <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-          <td>{{> EditableBoolean dataKey="isManager" value=isManager emptyText="Is Management Role" }}</td>
+          <td>{{> EditableCheckbox dataKey="isManager" value=isManager cssClass="blue"}}</td>
           <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
         </tr>
       {{/each}}

@@ -2,7 +2,7 @@
   {{#if Template.subscriptionsReady }}
     <div class="container">
       <h1>Teams</h1>
-      <table class="table data-table full-width">
+      <table class="table data-table full-width border-bottom">
         <thead>
         <tr>
           <th>Title</th>
@@ -14,16 +14,15 @@
         </thead>
         <tbody>
         {{#each teams}}
-          <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+          <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
             <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
             <td>{{> EditableTeamRoster }}</td>
             <td>{{dateFormat dateModified}}</td>
             <td>{{dateFormat dateCreated}}</td>
             <td>
-              <button class="btn-xs btn-danger btn-delete-team">
+              <a class="link-red hidden-control btn-delete-team">
                 <span class="glyphicon glyphicon-minus-sign"></span>
-                Delete
-              </button>
+              </a>
             </td>
           </tr>
         {{/each}}

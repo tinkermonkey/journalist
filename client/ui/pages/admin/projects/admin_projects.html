@@ -2,9 +2,10 @@
   {{#if Template.subscriptionsReady }}
     <div class="container">
       <h1>Projects</h1>
-      <table class="table data-table full-width">
+      <table class="table data-table full-width border-bottom">
         <thead>
         <tr>
+          <th></th>
           <th>Title</th>
           <th>Description</th>
           <th>Owner</th>
@@ -15,17 +16,21 @@
         </thead>
         <tbody>
         {{#each projects}}
-          <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+          <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+            <td class="open-link">
+              <a href="{{pathFor 'AdminProjectHome' projectId=_id}}">
+                <span class="glyphicon glyphicon-folder-open"></span>
+              </a>
+            </td>
             <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
             <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" }}</td>
             <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
             <td>{{dateFormat dateModified}}</td>
             <td>{{dateFormat dateCreated}}</td>
             <td>
-              <button class="btn-xs btn-danger btn-delete-project">
+              <a class="link-red hidden-control btn-delete-project">
                 <span class="glyphicon glyphicon-minus-sign"></span>
-                Delete
-              </button>
+              </a>
             </td>
           </tr>
         {{/each}}

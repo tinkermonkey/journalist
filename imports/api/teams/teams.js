@@ -99,10 +99,12 @@ Teams.helpers({
   /**
    * Get all of the distinct role definitions on this team for a given project
    * @param projectId
+   * @param isManager
    */
-  rolesInProject (projectId) {
+  rolesInProject (projectId, isManager) {
     let team    = this,
-        roleIds = [];
+        roleIds = [],
+    query = {};
     
     // Get the list of team roles for this team and project
     ContributorTeamRoles.find({ teamId: team._id }).forEach((teamRole) => {
@@ -114,7 +116,29 @@ Teams.helpers({
     
     // filter for uniqueness
     roleIds = _.uniq(roleIds);
+    query._id= { $in: roleIds };
     
-    return ContributorRoleDefinitions.find({ _id: { $in: roleIds } }, { sort: { order: 1 } })
+    // Check for a role type filter
+    if(isManager === false || isManager === true){
+      query.isManager = isManager;
+    }
+    
+    console.log('rolesInProject', projectId, isManager, query, ContributorRoleDefinitions.find(query, { sort: { order: 1 } }).count());
+  
+    return ContributorRoleDefinitions.find(query, { sort: { order: 1 } })
+  },
+  /**
+   * Get all of the distinct non-manager role definitions on this team for a given project
+   * @param projectId
+   */
+  contributorRolesInProject (projectId) {
+    return this.rolesInProject(projectId, false)
+  },
+  /**
+   * Get all of the distinct non-manager role definitions on this team for a given project
+   * @param projectId
+   */
+  managementRolesInProject (projectId) {
+    return this.rolesInProject(projectId, true)
   }
 });
