@@ -17,12 +17,12 @@ export const Integration = new SimpleSchema({
   projectId: {
     type: String
   },
-  // Overall type of this issue:
+  // Type of integration
   integrationType: {
     type: Number,
     allowedValues: _.values(IntegrationTypes)
   },
-  // Overall type of this issue:
+  // Type of issues this integration provides
   issueType: {
     type: Number,
     allowedValues: _.values(IssueTypes)

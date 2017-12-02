@@ -10,12 +10,12 @@ import { IntegrationTypes } from './integration_types';
  * ============================================================================
  */
 export const IntegrationServer = new SimpleSchema({
+  title: {
+    type: String
+  },
   integrationType: {
     type: Number,
     allowedValues: _.values(IntegrationTypes)
-  },
-  title: {
-    type: String
   },
   baseUrl: {
     type: String
@@ -53,4 +53,6 @@ IntegrationServers.deny({
 /**
  * Helpers
  */
-IntegrationServers.helpers({});
+IntegrationServers.helpers({
+
+});

@@ -1,15 +1,57 @@
 import { Meteor } from 'meteor/meteor';
 import { Integrations } from '../integrations';
+import { IntegrationServers } from '../integration_servers';
+import { IntegrationServerCaches } from '../integration_server_caches';
 
 Meteor.publish('integrations', function (projectId) {
   console.info('Publish: integrations', projectId);
   if (this.userId && projectId) {
     let user = Meteor.users.findOne(this.userId);
-    if(user && user.isAdmin()){
-      return Integrations.find({projectId: projectId});
+    if (user && user.isAdmin()) {
+      return Integrations.find({ projectId: projectId });
     } else {
       console.warn('integrations requested by non-admin:', this.userId, user && user.username)
     }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_servers', function () {
+  console.info('Publish: integration_servers');
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationServers.find({});
+    } else {
+      console.warn('integration_servers requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_server', function (serverId) {
+  console.info('Publish: integration_server', serverId);
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationServers.find({ _id: serverId });
+    } else {
+      console.warn('integration_servers requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_server_chache', function (serverId) {
+  console.info('Publish: integration_server_chache', serverId);
+  if (this.userId) {
+    return IntegrationServerCaches.find({ serverId: serverId });
   } else {
     this.ready();
     return [];

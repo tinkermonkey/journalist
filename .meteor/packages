@@ -19,7 +19,6 @@ shell-server@0.3.0            # Server-side component of the `meteor shell` comm
 
 insecure@1.0.7                # Allow all DB writes from clients (for prototyping)
 aldeed:collection2
-aldeed:autoform
 kadira:flow-router
 accounts-password@1.5.0
 optilude:jira-auth
@@ -48,3 +47,4 @@ mrt:moment-timezone
 dangrossman:bootstrap-daterangepicker
 twbs:bootstrap
 austinsand:editable-checkbox
+aldeed:autoform

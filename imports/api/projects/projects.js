@@ -6,6 +6,7 @@ import { Contributors } from '../contributors/contributors';
 import { ContributorProjectAssignments } from '../contributors/contributor_project_assignments';
 import { ContributorTeamRoles } from '../contributors/contributor_team_roles';
 import { Integrations } from '../integrations/integrations';
+import { ProjectTypes } from './project_types';
 import { Teams } from '../teams/teams';
 
 /**
@@ -14,12 +15,19 @@ import { Teams } from '../teams/teams';
  * ============================================================================
  */
 export const Project = new SimpleSchema({
+  // Project Title
   title       : {
     type: String
   },
+  // Project Description
   description : {
     type    : String,
     optional: true
+  },
+  // Project Type
+  projectType: {
+    type: Number,
+    allowedValues: _.values(ProjectTypes)
   },
   // Contributor that is the primary owner of this project
   owner       : {

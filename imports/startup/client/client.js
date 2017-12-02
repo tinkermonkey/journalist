@@ -4,13 +4,14 @@ import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
 import { Util } from '../../api/util.js';
 import { Contributors } from '../../api/contributors/contributors.js';
+import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions';
 import { IssueTypes } from '../../api/imported_issues/issue_types.js';
 import { IntegrationTypes } from '../../api/integrations/integration_types.js';
 import { Projects } from '../../api/projects/projects.js';
+import { ProjectTypes } from '../../api/projects/project_types.js';
 import { Teams } from '../../api/teams/teams';
 import { Users } from '../../api/users/users';
 import { UserTypes } from '../../api/users/user_types.js';
-import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions';
 
 /**
  * Custom autoform hooks to prevent client side inserts
@@ -39,16 +40,18 @@ AutoForm.hooks({
 /**
  * Enums
  */
-Template.registerHelper('UserTypes', function () {
-  return UserTypes
-});
 
 Template.registerHelper('IssueTypes', function () {
   return IssueTypes
 });
-
 Template.registerHelper('IntegrationTypes', function () {
   return IntegrationTypes
+});
+Template.registerHelper('ProjectTypes', function () {
+  return ProjectTypes
+});
+Template.registerHelper('UserTypes', function () {
+  return UserTypes
 });
 
 /**
