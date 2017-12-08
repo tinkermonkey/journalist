@@ -5,36 +5,37 @@ import { SchemaHelpers } from '../schema_helpers.js';
 /**
  *  Status Metrics - track the health of the system
  */
-export const SystemStatusMetric = new SimpleSchema({
-  key: {
+export const SystemHealthMetric = new SimpleSchema({
+  key        : {
     type: String
   },
-  title: {
+  title      : {
     type: String
   },
-  healthy: {
+  isHealthy  : {
     type: Boolean,
     defaultValue: false
   },
-  detail: {
+  detail     : {
     type: Object,
     blackbox: true,
     optional: true
   },
+  // Auto track last updated
   lastUpdated: {
     type: Date,
     autoValue: SchemaHelpers.autoValueDateModified
   }
 });
 
-export const SystemStatusMetrics = new Mongo.Collection('system_status_metrics');
-SystemStatusMetrics.attachSchema(SystemStatusMetric);
+export const SystemHealthMetrics = new Mongo.Collection('system_health_metrics');
+SystemHealthMetrics.attachSchema(SystemHealthMetric);
 
 // These are server side only
-SystemStatusMetrics.deny({
+SystemHealthMetrics.deny({
   remove() { return true; },
   insert() { return true; },
   update() { return true; }
 });
 
-SystemStatusMetrics.helpers({});
+SystemHealthMetrics.helpers({});

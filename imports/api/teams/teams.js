@@ -17,6 +17,16 @@ export const Team = new SimpleSchema({
   title       : {
     type: String
   },
+  // Contributor._id of the team owner
+  owner: {
+    type: String,
+    optional: true
+  },
+  // Contributor._id of the default team reporter
+  reportingContributorId: {
+    type: String,
+    optional: true
+  },
   // Standard tracking fields
   dateCreated : {
     type     : Date,
@@ -123,7 +133,7 @@ Teams.helpers({
       query.isManager = isManager;
     }
     
-    console.log('rolesInProject', projectId, isManager, query, ContributorRoleDefinitions.find(query, { sort: { order: 1 } }).count());
+    //console.log('rolesInProject', projectId, isManager, query, ContributorRoleDefinitions.find(query, { sort: { order: 1 } }).count());
   
     return ContributorRoleDefinitions.find(query, { sort: { order: 1 } })
   },
@@ -140,5 +150,17 @@ Teams.helpers({
    */
   managementRolesInProject (projectId) {
     return this.rolesInProject(projectId, true)
+  },
+  /**
+   * Get the contributor._id of the default reporter for this project
+   */
+  defaultReporter(){
+    let team = this;
+    
+    if(team.reportingContributorId){
+      return team.reportingContributorId
+    } else if(team.owner){
+      return team.owner
+    }
   }
 });

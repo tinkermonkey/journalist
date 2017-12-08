@@ -3,7 +3,7 @@ import { Template } from 'meteor/templating';
 import { ContributorRoleDefinitions } from '../../../../imports/api/contributors/contributor_role_definitions.js';
 import { Teams } from '../../../../imports/api/teams/teams';
 
-let roleSchema = new SimpleSchema({
+let schema = new SimpleSchema({
   teamId: {
     type : String,
     label: "Team"
@@ -18,8 +18,8 @@ let roleSchema = new SimpleSchema({
  * Template Helpers
  */
 Template.AddRoleForm.helpers({
-  getRoleSchema () {
-    return roleSchema
+  getSchema () {
+    return schema
   },
   teamOptions () {
     return Teams.find({}, { sort: { title: 1 } })

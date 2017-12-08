@@ -20,6 +20,14 @@ export const IntegrationServer = new SimpleSchema({
   baseUrl: {
     type: String
   },
+  auth: {
+    type: Object,
+    optional: true
+  },
+  isActive: {
+    type: Boolean,
+    defaultValue: false
+  },
   // Standard tracking fields
   dateCreated: {
     type: Date,

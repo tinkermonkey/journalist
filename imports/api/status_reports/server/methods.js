@@ -9,13 +9,14 @@ import { Auth } from '../../auth.js';
 Meteor.methods({
   /**
    * Create a new statusReport
-   * @param contributorId
-   * @param sourceCollection
-   * @param sourceId
-   * @param state
+   * @param contributorId {String}
+   * @param sourceCollection {String}
+   * @param sourceId {String}
+   * @param state {StatusReportStates}
+   * @param dueDate {Date}
    */
-  addStatusReport(contributorId, sourceCollection, sourceId, state){
-    console.log('addStatusReport:', contributorId, sourceCollection, sourceId, state);
+  addStatusReport (contributorId, sourceCollection, sourceId, state, dueDate) {
+    console.log('addStatusReport:', contributorId, sourceCollection, sourceId, state, dueDate);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -23,6 +24,7 @@ Meteor.methods({
     check(sourceCollection, String);
     check(sourceId, String);
     check(state, Number);
+    check(dueDate, Date);
     
     // Validate that the current user is an administrator
     if (user.managesContributor(contributorId) || user.isAdmin() || user.contributorId === contributorId) {
@@ -31,8 +33,26 @@ Meteor.methods({
         contributorId   : contributorId,
         sourceCollection: sourceCollection,
         sourceId        : sourceId,
-        state           : state
+        state           : state,
+        dueDate         : dueDate
       });
+      
+      // Update the nextDue date for any settings that this is related to
+      try {
+        let reportSetting = StatusReportSettings.findOne({
+          contributorId   : contributorId,
+          sourceCollection: sourceCollection,
+          sourceId        : sourceId
+        });
+        if (reportSetting) {
+          // Calculate the next due date after the due date provided for this report
+          let nextDue = later.schedule(later.parse.text(reportSetting.laterDirective)).next(1, dueDate);
+          StatusReportSettings.update({ _id: reportSetting._id }, { $set: { nextDue: nextDue } });
+        }
+      } catch (e) {
+        console.error('addStatusReport failed to calculate the nextDue data:', contributorId, sourceCollection, sourceId, e);
+      }
+      
       return { reportId: reportId }
     } else {
       console.error('Non-authorized user tried to add a statusReport:', user.username, sourceCollection, sourceId);
@@ -46,7 +66,7 @@ Meteor.methods({
    * @param key
    * @param value
    */
-  editStatusReport(statusReportId, key, value){
+  editStatusReport (statusReportId, key, value) {
     console.log('editStatusReport:', statusReportId, key);
     let user = Auth.requireAuthentication();
     
@@ -81,7 +101,7 @@ Meteor.methods({
    * Delete a statusReport record
    * @param statusReportId
    */
-  deleteStatusReport(statusReportId){
+  deleteStatusReport (statusReportId) {
     console.log('deleteStatusReport:', statusReportId);
     let user = Auth.requireAuthentication();
     
@@ -105,7 +125,7 @@ Meteor.methods({
    * Submit a statusReport record
    * @param statusReportId
    */
-  submitStatusReport(statusReportId){
+  submitStatusReport (statusReportId) {
     console.log('submitStatusReport:', statusReportId);
     let user = Auth.requireAuthentication();
     
@@ -134,7 +154,7 @@ Meteor.methods({
    * Reopen a statusReport record
    * @param statusReportId
    */
-  reopenStatusReport(statusReportId){
+  reopenStatusReport (statusReportId) {
     console.log('reopenStatusReport:', statusReportId);
     let user = Auth.requireAuthentication();
     
@@ -167,7 +187,7 @@ Meteor.methods({
    * @param sourceCollection
    * @param sourceId
    */
-  addStatusReportSetting(contributorId, sourceCollection, sourceId){
+  addStatusReportSetting (contributorId, sourceCollection, sourceId) {
     console.log('addStatusReportSetting:', contributorId, sourceCollection, sourceId);
     let user = Auth.requireAuthentication();
     
@@ -189,7 +209,7 @@ Meteor.methods({
       // Set the first due date
       let setting = StatusReportSettings.findOne(settingId),
           nextDue = later.schedule(later.parse.text(setting.laterDirective)).next(1, setting.startDate);
-
+      
       StatusReportSettings.update(settingId, { $set: { nextDue: nextDue } });
     } else {
       console.error('Non-authorized user tried to add a statusReportSetting:', user.username, sourceCollection, sourceId);
@@ -203,7 +223,7 @@ Meteor.methods({
    * @param key
    * @param value
    */
-  editStatusReportSetting(statusReportSettingId, key, value){
+  editStatusReportSetting (statusReportSettingId, key, value) {
     console.log('editStatusReportSetting:', statusReportSettingId, key);
     let user = Auth.requireAuthentication();
     
@@ -232,7 +252,7 @@ Meteor.methods({
    * Delete a statusReportSetting record
    * @param statusReportSettingId
    */
-  deleteStatusReportSetting(statusReportSettingId){
+  deleteStatusReportSetting (statusReportSettingId) {
     console.log('deleteStatusReportSetting:', statusReportSettingId);
     let user = Auth.requireAuthentication();
     

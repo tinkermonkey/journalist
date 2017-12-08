@@ -10,3 +10,15 @@
 .sidebar .section-header {
   /*padding-left: 1.9em;*/
 }
+
+/**
+ * Make sure the data tables look clean
+ */
+.sidebar .data-table > tr > td:last-child,
+.sidebar .data-table .text-right {
+  padding-right: 0;
+}
+.sidebar .editable-record-selector span {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

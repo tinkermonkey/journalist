@@ -9,8 +9,10 @@
           <th>Title</th>
           <th>Type</th>
           <th>Base URL</th>
+          <th>Active</th>
           <th>Modified</th>
           <th>Created</th>
+          <th>Status</th>
           <th></th>
         </tr>
         </thead>
@@ -25,8 +27,15 @@
             <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
             <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Type" }}</td>
             <td>{{> EditableTextField dataKey="baseUrl" value=baseUrl emptyText="Server base URL" }}</td>
+            <td>{{> EditableCheckbox dataKey="isActive" value=isActive }}</td>
             <td>{{dateFormat dateModified}}</td>
             <td>{{dateFormat dateCreated}}</td>
+            <td>
+              <a class="btn-log-in">
+                <span class="glyphicon glyphicon-log-in"></span>
+                Log In
+              </a>
+            </td>
             <td>
               <a class="link-red hidden-control btn-delete-server">
                 <span class="glyphicon glyphicon-minus-sign"></span>

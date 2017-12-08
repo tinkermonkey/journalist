@@ -50,7 +50,6 @@ Template.EditableContributorRoles.events({
         { text: "Add" }
       ],
       callback       : function (btn) {
-        console.log('EditableContributorRoles AddRoleForm submit:', btn);
         if (btn.match(/add/i)) {
           let formId = 'serverMethodForm';
           if (AutoForm.validateForm(formId)) {

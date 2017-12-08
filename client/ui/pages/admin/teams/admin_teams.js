@@ -4,13 +4,29 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Teams } from '../../../../../imports/api/teams/teams.js';
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
+import { UserTypes } from '../../../../../imports/api/users/user_types';
+import { Contributors } from '../../../../../imports/api/contributors/contributors';
 
 /**
  * Template Helpers
  */
 Template.AdminTeams.helpers({
-  teams(){
+  teams () {
     return Teams.find({}, { sort: { title: 1 } })
+  },
+  reporterSelectorContext () {
+    return {
+      valueField  : '_id',
+      displayField: 'name',
+      value       : this.reportingContributorId,
+      dataKey     : 'reportingContributorId',
+      collection  : Contributors,
+      emptyText   : 'Select a default reporter',
+      cssClass    : 'inline-block',
+      query       : {
+        usertype: { $in: [ UserTypes.manager, UserTypes.administrator ] }
+      }
+    }
   }
 });
 
@@ -18,7 +34,7 @@ Template.AdminTeams.helpers({
  * Template Event Handlers
  */
 Template.AdminTeams.events({
-  "edited .editable"(e, instance, newValue){
+  "edited .editable" (e, instance, newValue) {
     e.stopImmediatePropagation();
     
     let teamId  = $(e.target).closest(".data-table-row").attr("data-pk"),
@@ -33,7 +49,7 @@ Template.AdminTeams.events({
       });
     }
   },
-  "click .btn-add-team"(e, instance){
+  "click .btn-add-team" (e, instance) {
     let context = Template.currentData();
     
     RobaDialog.show({
@@ -75,7 +91,7 @@ Template.AdminTeams.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-team"(e, instance){
+  "click .btn-delete-team" (e, instance) {
     let teamId = $(e.target).closest(".data-table-row").attr("data-pk"),
         team   = Teams.findOne(teamId);
     

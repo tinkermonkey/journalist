@@ -1,3 +1,11 @@
 <template name="TeamSidebar">
   <div class="page-sidebar team-sidebar"></div>
+  
+  {{#if userManagesTeam _id}}
+    <h3>Reporting</h3>
+    {{> StatusReportSettings sourceCollection='Contributors' sourceId=_id contributorId=defaultReporter }}
+    
+    <h4>Active Reports</h4>
+    {{> ActiveReports sourceCollection='Contributors' sourceId=_id contributorId=defaultReporter }}
+  {{/if}}
 </template>

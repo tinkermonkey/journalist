@@ -6,7 +6,8 @@
         <thead>
         <tr>
           <th>Title</th>
-          <th>Roster</th>
+          <th>Owner</th>
+          <th>Default Reporter</th>
           <th>Modified</th>
           <th>Created</th>
           <th></th>
@@ -16,7 +17,8 @@
         {{#each teams}}
           <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
             <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-            <td>{{> EditableTeamRoster }}</td>
+            <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
+            <td>{{> EditableRecordSelector reporterSelectorContext }}</td>
             <td>{{dateFormat dateModified}}</td>
             <td>{{dateFormat dateCreated}}</td>
             <td>

@@ -1,3 +1,4 @@
+
 /**
  * Base class from which to build various integrations
  */

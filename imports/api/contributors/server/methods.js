@@ -116,6 +116,12 @@ Meteor.methods({
       if (contributor) {
         // Delete the contributor
         Contributors.remove(contributorId);
+        
+        // Remove all team roles
+        ContributorTeamRoles.remove({ contributorId: contributorId });
+        
+        // remove all project assignments
+        ContributorProjectAssignments.remove({ contributorId: contributorId });
       } else {
         throw new Meteor.Error(404);
       }
@@ -171,8 +177,11 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin() || user.managesContributor(teamRole.contributorId)) {
       if (teamRole) {
-        // Delete the contributor
+        // Delete the contributor team role
         ContributorTeamRoles.remove(teamRoleId);
+        
+        // Delete any project assignments for this role
+        ContributorProjectAssignments.remove({ teamRoleId: teamRoleId });
       } else {
         throw new Meteor.Error(404);
       }

@@ -31,7 +31,7 @@ export const Contributor = new SimpleSchema({
     optional: true
   },
   // _id of the Contributor who manages this contributor
-  manager         : {
+  managerId       : {
     type    : String,
     optional: true
   },
@@ -169,12 +169,33 @@ Contributors.helpers({
     });
   },
   /**
-   * Get the list of direct staff for this contributor
+   * Determine if this contributor manages a given team
+   * @param teamId {String}
    * @return {cursor}
    */
-  directStaff () {
+  managesTeam (teamId) {
+    let contributor = this,
+      contributorManagesManager = false;
+
+    // Get the list of managers for the team that this contributor manages
+    ContributorTeamRoles.find({ teamId: teamId, contributorId: { $in: contributor.allStaffIds() } }).forEach((teamRole) => {
+      contributorManagesManager = contributorManagesManager || teamRole.roleDefinition().isManager
+    });
+    
+    return contributorManagesManager
+  },
+  /**
+   * Get the list of direct staff for this contributor
+   * @param sortBy {Object} Mongo sort directive
+   * @return {cursor}
+   */
+  directStaff (sortBy) {
     let contributor = this;
-    return Contributors.find({ manager: contributor._id, _id: { $ne: contributor._id } })
+  
+    // Default sort
+    sortBy = sortBy || { name: 1 };
+    
+    return Contributors.find({ managerId: contributor._id, _id: { $ne: contributor._id } }, { sort: sortBy })
   },
   /**
    * Get the list of indirect staff for this contributor
@@ -247,7 +268,7 @@ Contributors.helpers({
     
     // Get any projects where this user has a role
     contributor.participatingTeams().forEach((team) => {
-      if(team.projectId){
+      if (team.projectId) {
         projectIds.push(team.projectId)
       }
     });
@@ -284,11 +305,11 @@ Contributors.helpers({
    */
   managesContributor (contributorId) {
     try {
-      let managerStaffIds = this.allStaff().map((staff) => {
+      let managesStaffIds = this.allStaff().map((staff) => {
         return staff._id
       });
       
-      return _.contains(managerStaffIds, contributorId);
+      return _.contains(managesStaffIds, contributorId);
     } catch (e) {
       console.error('User.managesContributor failed:', e);
       return false

@@ -29,7 +29,7 @@ Template.AuthenticatedLayout.onCreated(() => {
   instance.subscribe('priorities');
   instance.subscribe('projects');
   instance.subscribe('status_report_settings');
-  instance.subscribe('system_status_metrics');
+  instance.subscribe('system_health_metrics');
   instance.subscribe('user_level');
   instance.subscribe('tasks');
   instance.subscribe('teams');

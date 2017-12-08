@@ -78,8 +78,15 @@ Template.registerHelper('isCurrentContributor', function (contributorId) {
 Template.registerHelper('userManagesContributor', function (contributorId) {
   let user      = Users.findOne(Meteor.userId());
   contributorId = contributorId || (this && this.contributorId);
-  if (user) {
+  if (user && contributorId) {
     return user.contributor().managesContributor(contributorId) || user.isAdmin();
+  }
+});
+Template.registerHelper('userManagesTeam', function (teamId) {
+  let user      = Users.findOne(Meteor.userId());
+  teamId = teamId || (this && this.teamId);
+  if (user && teamId) {
+    return user.contributor().managesTeam(teamId) || user.isAdmin();
   }
 });
 Template.registerHelper('userDirectStaff', function () {
@@ -136,8 +143,8 @@ Template.registerHelper('managerSelectorContext', function () {
   return {
     valueField  : '_id',
     displayField: 'name',
-    value       : record.manager,
-    dataKey     : 'manager',
+    value       : record.managerId,
+    dataKey     : 'managerId',
     collection  : Contributors,
     emptyText   : 'Select a manager',
     cssClass    : 'inline-block',
@@ -210,7 +217,11 @@ Template.registerHelper('projectSelectorContext', function () {
  * Simple pathFor helper
  */
 Template.registerHelper('pathFor', function (routeName, routeParams) {
-  return FlowRouter.path(routeName, routeParams.hash);
+  if(routeName){
+    return FlowRouter.path(routeName, routeParams.hash);
+  } else {
+    console.error('pathFor given no route name:', arguments);
+  }
 });
 
 /**
@@ -234,5 +245,11 @@ Template.registerHelper('dateFormat', function (date, format) {
   format = _.isString(format) ? format : 'MMM Do, YYYY';
   if (date) {
     return moment(date).format(format);
+  }
+});
+
+Template.registerHelper('fromNow', function (date) {
+  if (date) {
+    return moment.duration(date - Date.now(), 'ms').humanize(true);
   }
 });

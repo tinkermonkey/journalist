@@ -43,8 +43,8 @@ import '../../api/status_reports/server/methods.js';
 import '../../api/status_reports/server/publications.js';
 
 // System Status
-//import '../../api/system_status_metrics/server/methods.js';
-import '../../api/system_status_metrics/server/publications.js';
+//import '../../api/system_health_metrics/server/methods.js';
+import '../../api/system_health_metrics/server/publications.js';
 
 // Tasks
 import '../../api/tasks/server/methods.js';

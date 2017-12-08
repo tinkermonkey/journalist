@@ -1,40 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { Contributors } from '../contributors/contributors';
-import { Efforts } from '../efforts/efforts';
-import { Projects } from '../projects/projects';
-import { Tasks } from '../tasks/tasks';
-import { Teams } from '../teams/teams';
-
-let collectionMap      = {
-      Contributors: Contributors,
-      Efforts     : Efforts,
-      Projects    : Projects,
-      Tasks       : Tasks,
-      Teams       : Teams
-    },
-    collectionTitleMap = {
-      Contributors: 'Contributor',
-      Efforts     : 'Effort',
-      Projects    : 'Project',
-      Tasks       : 'Task',
-      Teams       : 'Team'
-    },
-    sourceCollectionRouteNameMap = {
-      Contributors: 'ContributorHome',
-      Efforts     : 'Effort',
-      Projects    : 'ProjectHome',
-      Tasks       : 'Task',
-      Teams       : 'TeamHome'
-    },
-    sourceCollectionRouteParamMap = {
-      Contributors: 'contributorId',
-      Efforts     : 'effortId',
-      Projects    : 'projectId',
-      Tasks       : 'taskId',
-      Teams       : 'teamId'
-    };
+import { CollectionDetails } from '../collection_details';
 
 /**
  * ============================================================================
@@ -96,51 +63,53 @@ StatusReportSettings.helpers({
   /**
    * Retrieve the source document
    */
-  sourceDocument(){
-    let setting    = this,
-        collection = collectionMap[ setting.sourceCollection ];
-    if (collection) {
-      return collection.findOne(setting.sourceId);
+  sourceDocument () {
+    let setting = this,
+        details = CollectionDetails[ setting.sourceCollection ];
+    if (details) {
+      return details.collection.findOne(setting.sourceId);
     } else {
       console.error('StatusReportSettings.sourceDocument failed to find collection:', setting.sourceCollection)
     }
   },
   /**
-   * Retrieve the title of source collection
+   * Return the title or name of the document this setting pertains to
    */
-  sourceCollectionTitle(){
-    let setting    = this,
-        title = collectionTitleMap[ setting.sourceCollection ];
-    if (title) {
-      return title
+  sourceLabel () {
+    let setting = this,
+        sourceDocument = setting.sourceDocument();
+    if(sourceDocument){
+      return sourceDocument.title || sourceDocument.name
     } else {
-      console.error('StatusReportSettings.sourceCollectionTitle failed to find collection:', setting.sourceCollection)
+      console.error('StatusReportSettings.sourceLabel failed to find source document:', setting.sourceCollection, setting.sourceId)
     }
   },
   /**
-   * Retrieve the route of the source collection document page
+   * Retrieve the source collection details
    */
-  sourceCollectionRouteName(){
-    let setting    = this,
-        routeName = sourceCollectionRouteNameMap[ setting.sourceCollection ];
-    if (routeName) {
-      return routeName
-    } else {
-      console.error('StatusReportSettings.sourceCollectionRouteName failed to find collection:', setting.sourceCollection)
-    }
+  sourceDetails () {
+    let setting = this;
+    
+    return CollectionDetails[ setting.sourceCollection ];
   },
   /**
    * Retrieve the route param of the source collection document page
    */
-  sourceCollectionRouteParam(){
-    let setting    = this,
-        paramName = sourceCollectionRouteParamMap[ setting.sourceCollection ];
-    if (paramName) {
-      let hash = {};
-      hash[paramName] = setting.sourceId;
-      return {hash: hash}
+  sourceRouteParamValue () {
+    let setting = this,
+        details = CollectionDetails[ setting.sourceCollection ];
+    if (details) {
+      let hash                   = {};
+      hash[ details.routeParam ] = setting.sourceId;
+      return { hash: hash }
     } else {
       console.error('StatusReportSettings.sourceCollectionRouteParam failed to find collection:', setting.sourceCollection)
     }
+  },
+  /**
+   * Provide a method to get the next due date for template simplicity
+   */
+  dueDate(){
+    return this.nextDue
   }
 });

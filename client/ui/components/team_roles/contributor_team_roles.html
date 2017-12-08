@@ -26,16 +26,42 @@
     {{else}}
       <table class="table data-table overhang-table-left">
         {{#each teamRoles}}
-          <tr>
-            {{#unless ../hasSameRole}}
-              <td>{{renderTeamRole roleId}}</td>
-            {{/unless}}
-            <td>
-              {{team.title}}
+          <tr class="data-table-row" data-pk="{{_id}}">
+            <td class="open-link">
               <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=teamId}}">
                 <span class="glyphicon glyphicon-folder-open"></span>
-                Add Team Role
               </a>
+            </td>
+            <td>
+              <span class="team-title">{{ team.title}}</span>
+              {{#unless ../hasSameRole}}
+                {{ roleDefinition.title }}
+              {{/unless}}
+            </td>
+          </tr>
+          <tr class="data-table-row" data-pk="{{_id}}">
+            <td></td>
+            <td colspan="3">
+              <table class="table data-table">
+                {{#each projectAssignments}}
+                  <tr class="data-table-row blue" data-pk="{{_id}}">
+                    <td class="project-assignment-icon-col">
+                      <span class="glyphicon glyphicon-dashboard"></span>
+                    </td>
+                    <td class="project-assignment-percent-col">
+                      {{ percent }}%
+                    </td>
+                    <td>
+                      {{ project.title }}
+                    </td>
+                  </tr>
+                  <tr class="project-commitment-row">
+                    <td colspan="4">
+                      <div class="project-percent-committed" style="width: {{percent}}%;"></div>
+                    </td>
+                  </tr>
+                {{/each}}
+              </table>
             </td>
           </tr>
         {{/each}}
