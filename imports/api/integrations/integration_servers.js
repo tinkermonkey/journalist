@@ -26,6 +26,12 @@ export const IntegrationServer = new SimpleSchema({
   },
   isActive: {
     type: Boolean,
+    optional: true,
+    defaultValue: false
+  },
+  isAuthenticated: {
+    type: Boolean,
+    optional: true,
     defaultValue: false
   },
   // Standard tracking fields
@@ -49,7 +55,7 @@ export const IntegrationServer = new SimpleSchema({
 
 export const IntegrationServers = new Mongo.Collection("integration_servers");
 IntegrationServers.attachSchema(IntegrationServer);
-ChangeTracker.trackChanges(IntegrationServers, 'IntegrationServers');
+//ChangeTracker.trackChanges(IntegrationServers, 'IntegrationServers');
 
 // These are server side only
 IntegrationServers.deny({

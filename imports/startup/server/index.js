@@ -12,7 +12,9 @@ import '../synced_cron_config.js';
 
 // Integration Service
 import { IntegrationService } from '../../modules/integration_service/integration_service.js';
+import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 
 Meteor.startup(() => {
+  HealthTracker.init();
   IntegrationService.start();
 });

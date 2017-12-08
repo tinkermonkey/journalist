@@ -12,6 +12,10 @@ export const SystemHealthMetric = new SimpleSchema({
   title      : {
     type: String
   },
+  type      : {
+    type: String,
+    optional: true
+  },
   isHealthy  : {
     type: Boolean,
     defaultValue: false
