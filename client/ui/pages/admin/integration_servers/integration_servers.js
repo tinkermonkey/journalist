@@ -81,6 +81,53 @@ Template.IntegrationServers.events({
       }.bind(this)
     });
   },
+  "click .btn-log-in-server"(e, instance){
+    let server = this;
+    console.log('Log in server:', server);
+    
+    RobaDialog.show({
+      contentTemplate: "AddRecordForm",
+      contentData    : {
+        schema: new SimpleSchema({
+          username: {
+            type : String,
+            label: "Username"
+          },
+          password: {
+            type : String,
+            label: "Password"
+          }
+        })
+      },
+      title          : "Authenticate to " + server.title,
+      width          : 500,
+      buttons        : [
+        { text: "Cancel" },
+        { text: "Log In" }
+      ],
+      callback       : function (btn) {
+        if (btn.match(/log in/i)) {
+          let formId = 'addRecordForm';
+          if (AutoForm.validateForm(formId)) {
+            let formData = AutoForm.getFormValues(formId).insertDoc;
+            
+            // Create the server
+            Meteor.call('authenticateIntegrationServer', server._id, formData.username, formData.password, (error, response) => {
+              if (error) {
+                RobaDialog.error('Failed to authenticate to server:' + error.toString())
+              } else {
+                RobaDialog.hide();
+              }
+            });
+            
+            AutoForm.resetForm(formId)
+          }
+          return;
+        }
+        RobaDialog.hide();
+      }.bind(this)
+    });
+  },
   "click .btn-delete-server"(e, instance){
     let serverId = $(e.target).closest(".data-table-row").attr("data-pk"),
         server   = Servers.findOne(serverId);

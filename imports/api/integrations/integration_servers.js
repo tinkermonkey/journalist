@@ -1,6 +1,5 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { IntegrationTypes } from './integration_types';
 
@@ -10,45 +9,45 @@ import { IntegrationTypes } from './integration_types';
  * ============================================================================
  */
 export const IntegrationServer = new SimpleSchema({
-  title: {
+  title          : {
     type: String
   },
   integrationType: {
-    type: Number,
+    type         : Number,
     allowedValues: _.values(IntegrationTypes)
   },
-  baseUrl: {
+  baseUrl        : {
     type: String
   },
-  auth: {
-    type: Object,
+  authData       : {
+    type    : Object,
     optional: true
   },
-  isActive: {
-    type: Boolean,
-    optional: true,
+  isActive       : {
+    type        : Boolean,
+    optional    : true,
     defaultValue: false
   },
   isAuthenticated: {
-    type: Boolean,
-    optional: true,
+    type        : Boolean,
+    optional    : true,
     defaultValue: false
   },
   // Standard tracking fields
-  dateCreated: {
-    type: Date,
+  dateCreated    : {
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy: {
-    type: String,
+  createdBy      : {
+    type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
-    type: Date,
+  dateModified   : {
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy: {
-    type: String,
+  modifiedBy     : {
+    type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
 });
@@ -59,14 +58,18 @@ IntegrationServers.attachSchema(IntegrationServer);
 
 // These are server side only
 IntegrationServers.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+  remove () {
+    return true;
+  },
+  insert () {
+    return true;
+  },
+  update () {
+    return true;
+  }
 });
 
 /**
  * Helpers
  */
-IntegrationServers.helpers({
-
-});
+IntegrationServers.helpers({});

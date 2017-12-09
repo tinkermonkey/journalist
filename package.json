@@ -10,7 +10,8 @@
     "bcrypt": "^1.0.3",
     "c3": "git+https://github.com/c3js/c3.git",
     "jira-connector": "^2.7.0",
-    "meteor-node-stubs": "~0.2.4"
+    "meteor-node-stubs": "~0.2.4",
+    "tough-cookie": "^2.3.3"
   },
   "description": "Reporting Planning Tracking",
   "version": "1.0.0",

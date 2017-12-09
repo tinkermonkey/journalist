@@ -3,6 +3,7 @@ import { check, Match } from 'meteor/check';
 import { Auth } from '../../auth';
 import { Integrations } from '../integrations';
 import { IntegrationServers } from '../integration_servers';
+import { IntegrationService } from '../../../modules/integration_service/integration_service';
 
 Meteor.methods({
   /**
@@ -155,12 +156,12 @@ Meteor.methods({
     check(key, String);
     check(value, Match.Any);
     
-    // Get the definition record to make sure this is authorized
-    let definition = IntegrationServers.findOne(integrationServerId);
+    // Get the server record to make sure this is authorized
+    let server = IntegrationServers.findOne(integrationServerId);
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      if (definition) {
+      if (server) {
         let update    = {};
         update[ key ] = value;
         
@@ -171,6 +172,67 @@ Meteor.methods({
       }
     } else {
       console.error('Non-admin user tried to edit an integration server:', user.username, key, value, integrationServerId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Authenticate to an integration server
+   * @param integrationServerId
+   * @param username
+   * @param password
+   */
+  authenticateIntegrationServer(integrationServerId, username, password){
+    console.log('authenticateIntegrationServer:', integrationServerId, username);
+    let user = Auth.requireAuthentication();
+  
+    // Validate the data is complete
+    check(integrationServerId, String);
+    check(username, String);
+    check(password, String);
+  
+    // Get the server record to make sure this is authorized
+    let server = IntegrationServers.findOne(integrationServerId);
+  
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (server) {
+        // Check to see if the server is already authenticated
+        // Pass the request on the to IntegrationService
+        IntegrationService.authenticateServiceProvider(server, username, password);
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to authenticate an integration server:', user.username, username, integrationServerId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Log out of an integration server
+   * @param integrationServerId
+   */
+  unAuthenticateIntegrationServer(integrationServerId){
+    console.log('unAuthenticateIntegrationServer:', integrationServerId);
+    let user = Auth.requireAuthentication();
+  
+    // Validate the data is complete
+    check(integrationServerId, String);
+  
+    // Get the server record to make sure this is authorized
+    let server = IntegrationServers.findOne(integrationServerId);
+  
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (server) {
+        // Pass the request on the to IntegrationService
+        IntegrationService.unAuthenticateServiceProvider(server);
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to authenticate an integration server:', user.username, username, integrationServerId);
       throw new Meteor.Error(403);
     }
   }
