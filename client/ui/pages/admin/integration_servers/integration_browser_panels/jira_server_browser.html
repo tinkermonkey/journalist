@@ -1,7 +1,11 @@
 <template name="JiraServerBrowser">
   <div class="row">
     <div class="col-md-12">
-      jira_server_browser
+      {{#RobaTabGroup name="server-tabs" navClass="nav-tabs"}}
+        {{#RobaTab name="Projects" title="Projects"}}
+          {{> JiraProjectList }}
+        {{/RobaTab}}
+      {{/RobaTabGroup}}
     </div>
   </div>
 </template>

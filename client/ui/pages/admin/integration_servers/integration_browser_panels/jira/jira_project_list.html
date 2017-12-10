@@ -1,0 +1,58 @@
+<template name="JiraProjectList">
+  <h2>
+    Projects
+    <small>
+      <a class="pull-right btn-refresh">
+        <span class="glyphicon glyphicon-refresh"></span>
+      </a>
+    </small>
+  </h2>
+  {{#if error}}
+    <div class="alert alert-warning">
+      <b>Loading projects failed:</b>
+      <div>{{ error }}</div>
+    </div>
+  {{else}}
+    
+    {{#if showLoading }}
+      {{> AppLoading }}
+    {{else}}
+      <table class="table data-table full-width border-bottom">
+        <thead>
+        <tr>
+          <th></th>
+          <th>ID</th>
+          <th>Key</th>
+          <th>Name</th>
+          <th></th>
+          <th>Category</th>
+          <th>Type</th>
+          <th>Avatar</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each projects}}
+          <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-id="{{id}}">
+            <td class="icon-link">
+              {{> JsonInfoLink cssClass="hidden-control" data=this }}
+            </td>
+            <td>{{ id }}</td>
+            <td>{{ key }}</td>
+            <td>{{ name }}</td>
+            <td class="icon-link">
+              {{#if projectCategory}}
+                {{> JsonInfoLink cssClass="hidden-control" data=projectCategory }}
+              {{/if}}
+            </td>
+            <td>{{ projectCategory.name }}</td>
+            <td>{{ type }}{{ projectTypeKey }}</td>
+            <td><img class="project-avatar-preview" src="{{getProjectAvatarUrl}}"></td>
+            <td></td>
+          </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    {{/if}}
+  {{/if}}
+</template>

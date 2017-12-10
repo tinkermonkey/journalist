@@ -205,6 +205,9 @@ Meteor.methods({
           Meteor.defer(() => {
             IntegrationService.checkServiceProviderHealth(server)
           });
+          return result.response
+        } else if(result.error) {
+          throw new Meteor.Error(result.error);
         }
 
         return result;
@@ -235,7 +238,12 @@ Meteor.methods({
     if (user.isAdmin()) {
       if (server) {
         // Pass the request on the to IntegrationService
-        return IntegrationService.unAuthenticateServiceProvider(server);
+        let result = IntegrationService.unAuthenticateServiceProvider(server);
+        if(result.success){
+          return result.response
+        } else if(result.error) {
+          throw new Meteor.Error(result.error)
+        }
       } else {
         throw new Meteor.Error(404);
       }
@@ -264,7 +272,12 @@ Meteor.methods({
     if (user.isAdmin()) {
       if (server) {
         // Pass the request on the to IntegrationService
-        return IntegrationService.fetchData(server, request);
+        let result = IntegrationService.fetchData(server, request);
+        if(result.success){
+          return result.response
+        } else if(result.error) {
+          throw new Meteor.Error(result.error)
+        }
       } else {
         throw new Meteor.Error(404);
       }

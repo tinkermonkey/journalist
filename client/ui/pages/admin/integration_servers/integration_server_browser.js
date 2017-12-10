@@ -10,15 +10,15 @@ import './integration_browser_panels/jira_server_browser';
  * Template Helpers
  */
 Template.IntegrationServerBrowser.helpers({
-  server(){
+  server () {
     let serverId = FlowRouter.getParam('serverId');
     return IntegrationServers.findOne(serverId);
   },
-  integrationBrowserPanel(){
+  integrationBrowserPanel () {
     let serverId = FlowRouter.getParam('serverId'),
-        server = IntegrationServers.findOne(serverId);
+        server   = IntegrationServers.findOne(serverId);
     
-    switch(server.integrationType){
+    switch (server.integrationType) {
       case IntegrationTypes.confluence:
         return "ConfluenceServerBrowser";
       case IntegrationTypes.jira:

@@ -123,7 +123,7 @@ export class JiraIntegrator extends Integrator {
 
       return authResult;
     } else {
-      return { success: false, response: { error: 'No stored auth data' } };
+      return { success: false, error: 'No stored auth data' };
     }
   }
 
@@ -179,7 +179,7 @@ export class JiraIntegrator extends Integrator {
             } catch (e) {
               debug && console.log('JiraIntegrator.fetchData failure response parse error:', module, method, e);
             }
-            return { success: false, response: response };
+            return { success: false, response: response, error: response.statusCode };
           })
           .await();
 
@@ -188,10 +188,10 @@ export class JiraIntegrator extends Integrator {
         return result
       } catch (e) {
         console.error('JiraIntegrator.fetchData error:', e);
-        return { success: false, response: { error: e } };
+        return { success: false, error: e };
       }
     } else {
-      return { success: false, response: { error: 'No Jira client' } };
+      return { success: false, error: 'No Jira client' };
     }
   }
 

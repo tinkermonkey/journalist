@@ -1,5 +1,6 @@
 import './jira_server_browser.html';
 import { Template } from 'meteor/templating';
+import './jira/jira_project_list';
 
 /**
  * Template Helpers

@@ -45,6 +45,9 @@ table.data-table.border-bottom {
   background-color: rgba(43, 255, 43, 0.28);
 }
 
+
+.data-table > tr > td.icon-link,
+.data-table > tbody > tr > td.icon-link,
 .data-table > tr > td.open-link,
 .data-table > tbody > tr > td.open-link {
   width: 1.9em;
