@@ -21,7 +21,12 @@ export const IntegrationServer = new SimpleSchema({
   },
   authData       : {
     type    : Object,
+    blackbox: true,
     optional: true
+  },
+  healthCheckFrequency : {
+    type: String,
+    defaultValue: 'every 5 minutes'
   },
   isActive       : {
     type        : Boolean,

@@ -199,7 +199,15 @@ Meteor.methods({
       if (server) {
         // Check to see if the server is already authenticated
         // Pass the request on the to IntegrationService
-        IntegrationService.authenticateServiceProvider(server, username, password);
+        let result = IntegrationService.authenticateServiceProvider(server, username, password);
+        if(result.success){
+          // Update the server health quickly
+          Meteor.defer(() => {
+            IntegrationService.checkServiceProviderHealth(server)
+          });
+        }
+
+        return result;
       } else {
         throw new Meteor.Error(404);
       }
@@ -227,7 +235,36 @@ Meteor.methods({
     if (user.isAdmin()) {
       if (server) {
         // Pass the request on the to IntegrationService
-        IntegrationService.unAuthenticateServiceProvider(server);
+        return IntegrationService.unAuthenticateServiceProvider(server);
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to authenticate an integration server:', user.username, username, integrationServerId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Fetch some data from an integration server
+   * @param integrationServerId
+   * @param request
+   */
+  fetchIntegrationServerData(integrationServerId, request){
+    console.log('fetchIntegrationServerData:', integrationServerId);
+    let user = Auth.requireAuthentication();
+  
+    // Validate the data is complete
+    check(integrationServerId, String);
+  
+    // Get the server record to make sure this is authorized
+    let server = IntegrationServers.findOne(integrationServerId);
+  
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (server) {
+        // Pass the request on the to IntegrationService
+        return IntegrationService.fetchData(server, request);
       } else {
         throw new Meteor.Error(404);
       }

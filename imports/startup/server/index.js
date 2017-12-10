@@ -15,6 +15,9 @@ import { IntegrationService } from '../../modules/integration_service/integratio
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 
 Meteor.startup(() => {
+  console.log('===========================');
+  console.log('Journalist Server Start');
+  console.log('===========================');
   HealthTracker.init();
   IntegrationService.start();
 });

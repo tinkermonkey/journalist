@@ -23,21 +23,28 @@ export const IntegrationService = {
     service.providers = {};
     
     // Start Synced Cron
+    SyncedCron.stop(); // Clear everything out
     SyncedCron.start();
     
     // Monitor the IntegrationServers collection to respond to additions, deletions, and modifications
     service.serverObserver = IntegrationServers.find({}).observe({
       added (server) {
         debug && console.log('IntegrationService.serverObserver.added:', server._id, server.title);
-        service.createServiceProvider(server);
+        Meteor.defer(() => {
+          service.createServiceProvider(server);
+        });
       },
       changed (newDoc, oldDoc) {
         debug && console.log('IntegrationService.serverObserver.changed:', newDoc._id, newDoc.title);
-        service.updateServiceProvider(newDoc, oldDoc);
+        Meteor.defer(() => {
+          service.updateServiceProvider(newDoc, oldDoc);
+        });
       },
       removed (server) {
         console.log('IntegrationService.serverObserver.removed:', server._id, server.title);
-        service.destroyServiceProvider(server);
+        Meteor.defer(() => {
+          service.destroyServiceProvider(server);
+        });
       }
     });
     
@@ -59,7 +66,10 @@ export const IntegrationService = {
       if (provider == null) {
         // Create the service provider record
         service.setServiceProvider(server, new IntegrationServiceProvider(server));
-        
+
+        // Try to re-authenticate
+        service.getServiceProvider(server).reAuthenticate();
+
         // Update the health of the provider
         service.getServiceProvider(server).checkHealth();
       } else {
@@ -155,6 +165,39 @@ export const IntegrationService = {
     
     if(provider){
       return provider.unAuthenticate();
+    } else {
+      throw new Meteor.Error(404, "Service Provider not found");
+    }
+  },
+  
+  /**
+   * Check the health of a service provider
+   * @param server
+   */
+  checkServiceProviderHealth (server) {
+    console.log('IntegrationService.checkServiceProviderHealth:', server._id, server.title);
+    let service = this,
+        provider = service.getServiceProvider(server);
+    
+    if(provider){
+      return provider.checkHealth();
+    } else {
+      throw new Meteor.Error(404, "Service Provider not found");
+    }
+  },
+  
+  /**
+   * Fetch data from a service provider
+   * @param server
+   * @param server
+   */
+  fetchData (server, request) {
+    console.log('IntegrationService.fetchData:', server._id, server.title);
+    let service = this,
+        provider = service.getServiceProvider(server);
+    
+    if(provider){
+      return provider.fetchData(request);
     } else {
       throw new Meteor.Error(404, "Service Provider not found");
     }

@@ -83,7 +83,6 @@ Template.IntegrationServers.events({
   },
   "click .btn-log-in-server"(e, instance){
     let server = this;
-    console.log('Log in server:', server);
     
     RobaDialog.show({
       contentTemplate: "AddRecordForm",
@@ -110,31 +109,43 @@ Template.IntegrationServers.events({
           let formId = 'addRecordForm';
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
+            RobaDialog.hide();
             
-            // Create the server
+            console.log('Making call to authenticateIntegrationServer...');
             Meteor.call('authenticateIntegrationServer', server._id, formData.username, formData.password, (error, response) => {
+              console.log('authenticateIntegrationServer response:', error, response);
               if (error) {
                 RobaDialog.error('Failed to authenticate to server:' + error.toString())
-              } else {
-                RobaDialog.hide();
               }
             });
             
             AutoForm.resetForm(formId)
           }
-          return;
+        } else {
+          RobaDialog.hide();
         }
-        RobaDialog.hide();
       }.bind(this)
     });
   },
+  "click .btn-log-out-server"(e, instance){
+    let server = this;
+    
+    RobaDialog.ask('Log out of server', 'Are you sure you want to log out of the server <span class="label label-primary"> ' + server.title + '</span> ?', () => {
+      console.log('Making call to authenticateIntegrationServer...');
+      Meteor.call('unAuthenticateIntegrationServer', server._id, (error, response) => {
+        console.log('unAuthenticateIntegrationServer response:', error, response);
+        if (error) {
+          RobaDialog.error('Request to un-authenticate returned an error:' + error.toString())
+        }
+      });
+    });
+  },
   "click .btn-delete-server"(e, instance){
-    let serverId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        server   = Servers.findOne(serverId);
+    let server = this;
     
     RobaDialog.ask('Delete Server?', 'Are you sure that you want to delete the server <span class="label label-primary"> ' + server.title + '</span> ?', () => {
       RobaDialog.hide();
-      Meteor.call('deleteIntegrationServer', serverId, function (error, response) {
+      Meteor.call('deleteIntegrationServer', server._id, function (error, response) {
         if (error) {
           RobaDialog.error("Delete failed: " + error.message);
         }

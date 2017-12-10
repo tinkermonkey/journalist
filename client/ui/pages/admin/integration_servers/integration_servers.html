@@ -4,45 +4,54 @@
       <h1>Integration Servers</h1>
       <table class="table data-table full-width border-bottom">
         <thead>
-        <tr>
-          <th></th>
-          <th>Title</th>
-          <th>Type</th>
-          <th>Base URL</th>
-          <th>Active</th>
-          <th>Modified</th>
-          <th>Created</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
+          <tr>
+            <th></th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Base URL</th>
+            <th>Health Check</th>
+            <th>Active</th>
+            <th>Modified</th>
+            <th>Created</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
-        {{#each servers}}
-          <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
-            <td class="open-link">
-              <a href="{{pathFor 'IntegrationServerBrowser' serverId=_id}}">
-                <span class="glyphicon glyphicon-folder-open"></span>
-              </a>
-            </td>
-            <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-            <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Type" }}</td>
-            <td>{{> EditableTextField dataKey="baseUrl" value=baseUrl emptyText="Server base URL" }}</td>
-            <td>{{> EditableCheckbox dataKey="isActive" value=isActive }}</td>
-            <td>{{dateFormat dateModified}}</td>
-            <td>{{dateFormat dateCreated}}</td>
-            <td>
-              <a class="btn-log-in-server">
-                <span class="glyphicon glyphicon-log-in"></span>
-                Log In
-              </a>
-            </td>
-            <td>
-              <a class="link-red hidden-control btn-delete-server">
-                <span class="glyphicon glyphicon-minus-sign"></span>
-              </a>
-            </td>
-          </tr>
-        {{/each}}
+          {{#each servers}}
+            <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+              <td class="open-link">
+                <a href="{{pathFor 'IntegrationServerBrowser' serverId=_id}}">
+                  <span class="glyphicon glyphicon-folder-open"></span>
+                </a>
+              </td>
+              <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+              <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Type" }}</td>
+              <td>{{> EditableTextField dataKey="baseUrl" value=baseUrl emptyText="Server base URL" }}</td>
+              <td>{{> EditableTextField dataKey="healthCheckFrequency" value=healthCheckFrequency emptyText="Enter later directive" }}</td>
+              <td>{{> EditableCheckbox dataKey="isActive" value=isActive }}</td>
+              <td>{{dateFormat dateModified}}</td>
+              <td>{{dateFormat dateCreated}}</td>
+              <td>
+                {{#if isAuthenticated}}
+                  <a class="btn-log-out-server">
+                    <span class="glyphicon glyphicon-log-out"></span>
+                    Log Out
+                  </a>
+                {{else}}
+                  <a class="btn-log-in-server">
+                    <span class="glyphicon glyphicon-log-in"></span>
+                    Log In
+                  </a>
+                {{/if}}
+              </td>
+              <td>
+                <a class="link-red hidden-control btn-delete-server">
+                  <span class="glyphicon glyphicon-minus-sign"></span>
+                </a>
+              </td>
+            </tr>
+          {{/each}}
         </tbody>
       </table>
       <button class="btn btn-xs btn-primary btn-add-server">
