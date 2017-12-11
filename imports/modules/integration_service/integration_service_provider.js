@@ -118,16 +118,6 @@ export class IntegrationServiceProvider {
         return;
       }
 
-      // Do a quick check of the server web services to make sure the server is responding
-      if (healthy) {
-        let connectivityResult = self.integrator.checkConnectivity();
-        healthy = connectivityResult.success === true;
-        if (!healthy) {
-          debug && console.log('IntegrationServiceProvider.checkHealth connectivity result:', connectivityResult);
-          details.error = "Server responded to ping but not to a request";
-        }
-      }
-
       // Check an authenticated end point to make sure the server is authenticated
       if (healthy) {
         let authResult = self.integrator.checkAuthentication();

@@ -4,6 +4,12 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'IntegrationServers' }}">Integration Servers</a></li>
+              <li class="active">{{title}}</li>
+            </ol>
+            
             <h1>{{title}}</h1>
             <div class="integration-server-url"><a href="{{baseUrl}}" target="_blank">{{baseUrl}}</a></div>
           </div>
@@ -13,8 +19,10 @@
           {{> Template.dynamic template=integrationBrowserPanel }}
         {{else}}
           <div class="row">
-            <div class="alert alert-warning">
-              Please authenticate this server to browse the data
+            <div class="col-md-12">
+              <div class="alert alert-warning">
+                Please authenticate this server to browse the data
+              </div>
             </div>
           </div>
         {{/if}}

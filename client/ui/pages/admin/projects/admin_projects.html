@@ -1,47 +1,57 @@
 <template name="AdminProjects">
   {{#if Template.subscriptionsReady }}
     <div class="container">
-      <h1>Projects</h1>
-      <table class="table data-table full-width border-bottom">
-        <thead>
-        <tr>
-          <th></th>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Type</th>
-          <th>Owner</th>
-          <th>Modified</th>
-          <th>Created</th>
-          <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#each projects}}
-          <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
-            <td class="open-link">
-              <a href="{{pathFor 'AdminProjectHome' projectId=_id}}">
-                <span class="glyphicon glyphicon-folder-open"></span>
-              </a>
-            </td>
-            <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-            <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" }}</td>
-            <td>{{> EditableEnumSelector dataKey="projectType" value=projectType enum=ProjectTypes emptyText="Project Type" }}</td>
-            <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
-            <td>{{dateFormat dateModified}}</td>
-            <td>{{dateFormat dateCreated}}</td>
-            <td>
-              <a class="link-red hidden-control btn-delete-project">
-                <span class="glyphicon glyphicon-minus-sign"></span>
-              </a>
-            </td>
-          </tr>
-        {{/each}}
-        </tbody>
-      </table>
-      <button class="btn btn-xs btn-primary btn-add-project">
-        <span class="glyphicon glyphicon-plus"></span>
-        Add Project
-      </button>
+      <div class="row">
+        <div class="col-md-12">
+          <ol class="breadcrumb">
+            <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+            <li class="active">Projects</li>
+          </ol>
+          
+          <h1>Projects</h1>
+          <table class="table data-table full-width border-bottom">
+            <thead>
+            <tr>
+              <th></th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Owner</th>
+              <th>Modified</th>
+              <th>Created</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each projects}}
+              <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+                  data-pk="{{_id}}">
+                <td class="open-link">
+                  <a href="{{pathFor 'AdminProjectHome' projectId=_id}}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+                <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" }}</td>
+                <td>{{> EditableEnumSelector dataKey="projectType" value=projectType enum=ProjectTypes emptyText="Project Type" }}</td>
+                <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
+                <td>{{dateFormat dateModified}}</td>
+                <td>{{dateFormat dateCreated}}</td>
+                <td>
+                  <a class="link-red hidden-control btn-delete-project">
+                    <span class="glyphicon glyphicon-minus-sign"></span>
+                  </a>
+                </td>
+              </tr>
+            {{/each}}
+            </tbody>
+          </table>
+          <button class="btn btn-xs btn-primary btn-add-project">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add Project
+          </button>
+        </div>
+      </div>
     </div>
   {{else}}
     {{> AppLoading }}
