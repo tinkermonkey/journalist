@@ -1,14 +1,16 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { IntegrationTypes } from './integration_types';
+import { IssueTypes } from '../imported_issues/issue_types';
 
 /**
  * ============================================================================
- * IntegrationServers
+ * IntegrationImportFunctions
  * ============================================================================
  */
-export const IntegrationServer = new SimpleSchema({
+export const IntegrationImportFunction = new SimpleSchema({
   title          : {
     type: String
   },
@@ -16,27 +18,17 @@ export const IntegrationServer = new SimpleSchema({
     type         : Number,
     allowedValues: _.values(IntegrationTypes)
   },
-  baseUrl        : {
-    type: String
+  issueType      : {
+    type         : Number,
+    allowedValues: _.values(IssueTypes)
   },
-  authData       : {
-    type    : Object,
-    blackbox: true,
+  description    : {
+    type    : String,
     optional: true
   },
-  healthCheckFrequency : {
-    type: String,
-    defaultValue: 'every 5 minutes'
-  },
-  isActive       : {
-    type        : Boolean,
-    optional    : true,
-    defaultValue: false
-  },
-  isAuthenticated: {
-    type        : Boolean,
-    optional    : true,
-    defaultValue: false
+  code           : {
+    type    : String,
+    optional: true
   },
   // Standard tracking fields
   dateCreated    : {
@@ -57,13 +49,12 @@ export const IntegrationServer = new SimpleSchema({
   }
 });
 
-export const IntegrationServers = new Mongo.Collection("integration_servers");
-IntegrationServers.attachSchema(IntegrationServer);
-// Don't track changes because the data changes too frequently
-//ChangeTracker.trackChanges(IntegrationServers, 'IntegrationServers');
+export const IntegrationImportFunctions = new Mongo.Collection("integration_import_functions");
+IntegrationImportFunctions.attachSchema(IntegrationImportFunction);
+ChangeTracker.trackChanges(IntegrationImportFunctions, 'IntegrationImportFunctions');
 
 // These are server side only
-IntegrationServers.deny({
+IntegrationImportFunctions.deny({
   remove () {
     return true;
   },
@@ -78,4 +69,4 @@ IntegrationServers.deny({
 /**
  * Helpers
  */
-IntegrationServers.helpers({});
+IntegrationImportFunctions.helpers({});

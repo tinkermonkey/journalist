@@ -4,11 +4,11 @@ import { Meteor } from "meteor/meteor";
 import { MongoCookieStore } from './mongo_cookie_store';
 
 // Pull in the jira connector
-const JiraConnector     = require('jira-connector'),
-      ToughCookie = require('tough-cookie'),
-      request           = require('request'),
-      useMongoStore     = false,
-      debug             = true;
+const JiraConnector = require('jira-connector'),
+      ToughCookie   = require('tough-cookie'),
+      request       = require('request'),
+      useMongoStore = false,
+      debug         = true;
 
 // Ignore self-signed errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -105,7 +105,8 @@ export class JiraIntegrator extends Integrator {
               }
             });
             console.log('Restored cookie:', cookie.toJSON());
-            self.cookieStore.putCookie(cookie, () => { });
+            self.cookieStore.putCookie(cookie, () => {
+            });
           } catch (e) {
             console.error('JiraIntegrator.reAuthenticate cookie parse failed:', cookieData, e);
           }

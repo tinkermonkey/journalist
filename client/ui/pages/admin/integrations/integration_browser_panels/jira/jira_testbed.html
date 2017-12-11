@@ -1,0 +1,42 @@
+<template name="JiraTestbed">
+  <h2>
+    Test Bed
+    <small>
+      <a class="pull-right btn-refresh">
+        <span class="glyphicon glyphicon-refresh"></span>
+      </a>
+    </small>
+  </h2>
+  
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <form class="navbar-form navbar-left">
+        <div class="form-group">
+          <input type="text" class="form-control input-module" placeholder="Module">
+          <input type="text" class="form-control input-method" placeholder="Method">
+          <input type="text" class="form-control input-payload" placeholder="Payload">
+        </div>
+        <button class="btn btn-default btn-load" type="button">Go</button>
+      </form>
+    </div>
+  </nav>
+  
+  {{#if error}}
+    <div class="alert alert-warning">
+      <b>Loading results failed:</b>
+      <div>{{ error }}</div>
+    </div>
+  {{else}}
+    
+    {{#if showLoading }}
+      {{> RobaSpinner rainbow=true }}
+    {{else}}
+      <div class="alert alert-default">
+        {{results.length}} results
+      </div>
+      {{#each results}}
+        <pre class="jira-brain-dump-data">{{formatResult this}}</pre>
+      {{/each}}
+    {{/if}}
+  {{/if}}
+</template>

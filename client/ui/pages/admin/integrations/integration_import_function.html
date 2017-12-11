@@ -1,0 +1,43 @@
+<template name="IntegrationImportFunction">
+  {{#if Template.subscriptionsReady }}
+    {{#with importFunction}}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'Integrations' }}">Integrations</a></li>
+              <li class="active">Integration Function</li>
+            </ol>
+            
+            <h1>{{title}}</h1>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Code</h2>
+            
+            <div class="alert alert-info">
+              <p>
+                This code will be executed with the variable <i>rawIssue</i> containing the raw Javascript Object from the integration.
+              </p>
+              <p>
+                Whatever is returned from this function needs to be an object and will be stored as the imported issue.
+              </p>
+            </div>
+            
+            {{> EditableCode value=code dataKey="code" emptyText="Enter function code" language="javascript" mode="inline" autoHeight=true }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Testbed</h2>
+          </div>
+        </div>
+      </div>
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Integrations } from '../integrations';
+import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationServerCaches } from '../integration_server_caches';
 
@@ -52,6 +53,36 @@ Meteor.publish('integration_server_chache', function (serverId) {
   console.info('Publish: integration_server_chache', serverId);
   if (this.userId) {
     return IntegrationServerCaches.find({ serverId: serverId });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_import_functions', function () {
+  console.info('Publish: integration_import_functions');
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationImportFunctions.find({});
+    } else {
+      console.warn('integration_import_functions requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_import_function', function (importFunctionId) {
+  console.info('Publish: integration_import_function', importFunctionId);
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationImportFunctions.find({ _id: importFunctionId });
+    } else {
+      console.warn('integration_import_functions requested by non-admin:', this.userId, user && user.username)
+    }
   } else {
     this.ready();
     return [];

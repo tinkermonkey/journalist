@@ -27,7 +27,7 @@
               <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
                   data-pk="{{_id}}">
                 <td class="open-link">
-                  <a href="{{pathFor 'AdminProjectHome' projectId=_id}}">
+                  <a class="hidden-control" href="{{pathFor 'AdminProjectHome' projectId=_id}}">
                     <span class="glyphicon glyphicon-folder-open"></span>
                   </a>
                 </td>

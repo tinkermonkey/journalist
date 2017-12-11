@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { Auth } from '../../auth';
 import { Integrations } from '../integrations';
+import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationService } from '../../../modules/integration_service/integration_service';
 
@@ -25,9 +26,9 @@ Meteor.methods({
     if (user.isAdmin()) {
       // Insert the project percent
       Integrations.insert({
-        projectId: projectId,
+        projectId      : projectId,
         integrationType: integrationType,
-        issueType: issueType
+        issueType      : issueType
       });
     } else {
       console.error('Non-admin user tried to add an integration:', user.username, projectId);
@@ -110,9 +111,9 @@ Meteor.methods({
     if (user.isAdmin()) {
       // Insert the project percent
       IntegrationServers.insert({
-        title: title,
+        title          : title,
         integrationType: integrationType,
-        baseUrl: baseUrl
+        baseUrl        : baseUrl
       });
     } else {
       console.error('Non-admin user tried to add an integration server:', user.username, title);
@@ -177,39 +178,124 @@ Meteor.methods({
   },
   
   /**
+   * Add an integration import function
+   * @param title
+   * @param integrationType
+   * @param issueType
+   */
+  addIntegrationImportFunction (title, integrationType, issueType) {
+    console.log('addIntegrationImportFunction:', title, integrationType, issueType);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(title, String);
+    check(integrationType, Number);
+    check(issueType, Number);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // Insert the project percent
+      IntegrationImportFunctions.insert({
+        title: title,
+        integrationType: integrationType,
+        issueType: issueType
+      });
+    } else {
+      console.error('Non-admin user tried to add an integration import function:', user.username, title);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Remove an integration import function
+   * @param integrationImportFunctionId
+   */
+  deleteIntegrationImportFunction (integrationImportFunctionId) {
+    console.log('deleteIntegrationImportFunction:', integrationImportFunctionId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(integrationImportFunctionId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // Delete the contributor
+      IntegrationImportFunctions.remove(integrationImportFunctionId);
+    } else {
+      console.error('Non-admin user tried to delete an integration import function:', user.username, integrationImportFunctionId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Edit an integration import function record
+   * @param integrationImportFunctionId
+   * @param key
+   * @param value
+   */
+  editIntegrationImportFunction (integrationImportFunctionId, key, value) {
+    console.log('editIntegrationImportFunction:', integrationImportFunctionId, key);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(integrationImportFunctionId, String);
+    check(key, String);
+    check(value, Match.Any);
+    
+    // Get the import function record to make sure this is authorized
+    let importFunction = IntegrationImportFunctions.findOne(integrationImportFunctionId);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (importFunction) {
+        let update    = {};
+        update[ key ] = value;
+        
+        // Update the contributor
+        IntegrationImportFunctions.update(integrationImportFunctionId, { $set: update });
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to edit an integration import function:', user.username, key, integrationImportFunctionId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
    * Authenticate to an integration server
    * @param integrationServerId
    * @param username
    * @param password
    */
-  authenticateIntegrationServer(integrationServerId, username, password){
+  authenticateIntegrationServer (integrationServerId, username, password) {
     console.log('authenticateIntegrationServer:', integrationServerId, username);
     let user = Auth.requireAuthentication();
-  
+    
     // Validate the data is complete
     check(integrationServerId, String);
     check(username, String);
     check(password, String);
-  
+    
     // Get the server record to make sure this is authorized
     let server = IntegrationServers.findOne(integrationServerId);
-  
+    
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (server) {
         // Check to see if the server is already authenticated
         // Pass the request on the to IntegrationService
         let result = IntegrationService.authenticateServiceProvider(server, username, password);
-        if(result.success){
+        if (result.success) {
           // Update the server health quickly
           Meteor.defer(() => {
             IntegrationService.checkServiceProviderHealth(server)
           });
           return result.response
-        } else if(result.error) {
+        } else if (result.error) {
           throw new Meteor.Error(result.error);
         }
-
+        
         return result;
       } else {
         throw new Meteor.Error(404);
@@ -224,24 +310,24 @@ Meteor.methods({
    * Log out of an integration server
    * @param integrationServerId
    */
-  unAuthenticateIntegrationServer(integrationServerId){
+  unAuthenticateIntegrationServer (integrationServerId) {
     console.log('unAuthenticateIntegrationServer:', integrationServerId);
     let user = Auth.requireAuthentication();
-  
+    
     // Validate the data is complete
     check(integrationServerId, String);
-  
+    
     // Get the server record to make sure this is authorized
     let server = IntegrationServers.findOne(integrationServerId);
-  
+    
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (server) {
         // Pass the request on the to IntegrationService
         let result = IntegrationService.unAuthenticateServiceProvider(server);
-        if(result.success){
+        if (result.success) {
           return result.response
-        } else if(result.error) {
+        } else if (result.error) {
           throw new Meteor.Error(result.error)
         }
       } else {
@@ -258,24 +344,24 @@ Meteor.methods({
    * @param integrationServerId
    * @param request
    */
-  fetchIntegrationServerData(integrationServerId, request){
+  fetchIntegrationServerData (integrationServerId, request) {
     console.log('fetchIntegrationServerData:', integrationServerId);
     let user = Auth.requireAuthentication();
-  
+    
     // Validate the data is complete
     check(integrationServerId, String);
-  
+    
     // Get the server record to make sure this is authorized
     let server = IntegrationServers.findOne(integrationServerId);
-  
+    
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (server) {
         // Pass the request on the to IntegrationService
         let result = IntegrationService.fetchData(server, request);
-        if(result.success){
+        if (result.success) {
           return result.response
-        } else if(result.error) {
+        } else if (result.error) {
           throw new Meteor.Error(result.error)
         }
       } else {

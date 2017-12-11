@@ -6,8 +6,8 @@
           <div class="col-md-12">
             <ol class="breadcrumb">
               <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
-              <li><a href="{{pathFor 'IntegrationServers' }}">Integration Servers</a></li>
-              <li class="active">{{title}}</li>
+              <li><a href="{{pathFor 'Integrations' }}">Integrations</a></li>
+              <li class="active">Integration Server</li>
             </ol>
             
             <h1>{{title}}</h1>
@@ -21,7 +21,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="alert alert-warning">
-                Please authenticate this server to browse the data
+                Please authenticate this server to browse the data: {{> AuthenticateServerLink }}
               </div>
             </div>
           </div>

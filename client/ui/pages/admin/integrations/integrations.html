@@ -1,0 +1,18 @@
+<template name="Integrations">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+          <li class="active">Integrations</li>
+        </ol>
+        
+        <h1>Integrations</h1>
+      </div>
+    </div>
+  
+    {{> IntegrationServers }}
+  
+    {{> IntegrationImportFunctions }}
+  </div>
+</template>

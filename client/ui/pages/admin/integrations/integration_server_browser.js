@@ -5,6 +5,7 @@ import { IntegrationServers } from '../../../../../imports/api/integrations/inte
 import { IntegrationTypes } from '../../../../../imports/api/integrations/integration_types';
 import './integration_browser_panels/confluence_server_browser';
 import './integration_browser_panels/jira_server_browser';
+import '../../../components/misc/authenticate_server_link';
 
 /**
  * Template Helpers
