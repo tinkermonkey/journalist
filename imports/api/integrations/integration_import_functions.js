@@ -3,7 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { IntegrationTypes } from './integration_types';
-import { IssueTypes } from '../imported_issues/issue_types';
+import { ItemTypes } from '../imported_items/item_types';
 
 /**
  * ============================================================================
@@ -18,9 +18,9 @@ export const IntegrationImportFunction = new SimpleSchema({
     type         : Number,
     allowedValues: _.values(IntegrationTypes)
   },
-  issueType      : {
+  itemType      : {
     type         : Number,
-    allowedValues: _.values(IssueTypes)
+    allowedValues: _.values(ItemTypes)
   },
   description    : {
     type    : String,

@@ -10,7 +10,7 @@
             <th></th>
             <th>Title</th>
             <th>Integration Type</th>
-            <th>Issue Type</th>
+            <th>Item Type</th>
             <th>Code</th>
             <th>Modified By</th>
             <th>Modified</th>
@@ -28,7 +28,7 @@
               </td>
               <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
               <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes}}</td>
-              <td>{{> EditableEnumSelector dataKey="issueType" value=issueType enum=IssueTypes}}</td>
+              <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes}}</td>
               <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter description" }}</td>
               <td>{{userName modifiedBy}}</td>
               <td>{{dateFormat dateModified}}</td>

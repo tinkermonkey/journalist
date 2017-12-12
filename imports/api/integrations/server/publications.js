@@ -49,8 +49,8 @@ Meteor.publish('integration_server', function (serverId) {
   }
 });
 
-Meteor.publish('integration_server_chache', function (serverId) {
-  console.info('Publish: integration_server_chache', serverId);
+Meteor.publish('integration_server_cache', function (serverId) {
+  console.info('Publish: integration_server_cache', serverId);
   if (this.userId) {
     return IntegrationServerCaches.find({ serverId: serverId });
   } else {

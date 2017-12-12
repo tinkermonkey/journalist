@@ -1,4 +1,4 @@
-export const IssueTypes = {
+export const ItemTypes = {
   bug          : 0,
   feature      : 1,
   subtask      : 2,

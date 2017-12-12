@@ -28,6 +28,10 @@ export const IntegrationServer = new SimpleSchema({
     type: String,
     defaultValue: 'every 5 minutes'
   },
+  cacheUpdateFrequency : {
+    type: String,
+    defaultValue: 'every 30 minutes'
+  },
   isActive       : {
     type        : Boolean,
     optional    : true,
@@ -59,7 +63,7 @@ export const IntegrationServer = new SimpleSchema({
 
 export const IntegrationServers = new Mongo.Collection("integration_servers");
 IntegrationServers.attachSchema(IntegrationServer);
-// Don't track changes because the data changes too frequently
+// Don't track changes because the data changes too frequently (authData, isActive, isAuthenticated)
 //ChangeTracker.trackChanges(IntegrationServers, 'IntegrationServers');
 
 // These are server side only

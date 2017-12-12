@@ -50,7 +50,7 @@ Template.IntegrationImportFunctions.events({
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Create the importFunction
-            Meteor.call('addIntegrationImportFunction', formData.title, formData.integrationType, formData.issueType, (error, response) => {
+            Meteor.call('addIntegrationImportFunction', formData.title, formData.integrationType, formData.itemType, (error, response) => {
               if (error) {
                 RobaDialog.error('Failed to create importFunction:' + error.toString())
               } else {

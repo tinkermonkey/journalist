@@ -17,7 +17,7 @@ export const IntegrationServerCache = new SimpleSchema({
     type: String
   },
   value: {
-    type: Object,
+    type: [Object],
     blackbox: true
   },
   // Track the age of the data

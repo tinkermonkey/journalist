@@ -13,11 +13,6 @@ Template.JiraTestbed.helpers({
       return [ results ]
     }
   },
-  formatResult(data){
-    if (data) {
-      return JSON.stringify(data, null, '\t')
-    }
-  },
   showLoading () {
     return Template.instance().showLoading.get();
   },

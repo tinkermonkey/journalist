@@ -42,7 +42,9 @@ Template.IntegrationServerBrowser.onCreated(() => {
   instance.autorun(() => {
     let serverId = FlowRouter.getParam('serverId');
     
+    
     instance.subscribe('integration_server', serverId);
+    //console.log('IntegrationServerBrowser subscribing to integration_server_cache:', serverId);
     instance.subscribe('integration_server_cache', serverId);
   })
 });

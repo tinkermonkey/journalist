@@ -3,7 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { IssueTypes } from '../imported_issues/issue_types';
+import { ItemTypes } from '../imported_items/item_types';
 import { IntegrationTypes } from './integration_types';
 import { Projects } from '../projects/projects';
 
@@ -22,10 +22,10 @@ export const Integration = new SimpleSchema({
     type: Number,
     allowedValues: _.values(IntegrationTypes)
   },
-  // Type of issues this integration provides
-  issueType: {
+  // Type of items this integration provides
+  itemType: {
     type: Number,
-    allowedValues: _.values(IssueTypes)
+    allowedValues: _.values(ItemTypes)
   },
   // Configuration blob
   details: {
@@ -70,8 +70,8 @@ Integrations.helpers({
   integrationTypeTitle(){
     return Util.camelToTitle(_.invert(IntegrationTypes)[this.integrationType])
   },
-  issueTypeTitle(){
-    return Util.camelToTitle(_.invert(IssueTypes)[this.issueType])
+  itemTypeTitle(){
+    return Util.camelToTitle(_.invert(ItemTypes)[this.itemType])
   },
   project(){
     return Projects.findOne({_id: this.projectId})

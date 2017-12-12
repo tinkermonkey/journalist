@@ -20,10 +20,10 @@
             
             <div class="alert alert-info">
               <p>
-                This code will be executed with the variable <i>rawIssue</i> containing the raw Javascript Object from the integration.
+                This code will be executed with the variable <i>rawItem</i> containing the raw Javascript Object from the integration.
               </p>
               <p>
-                Whatever is returned from this function needs to be an object and will be stored as the imported issue.
+                Whatever is returned from this function needs to be an object and will be stored as the imported item.
               </p>
             </div>
             
@@ -33,6 +33,8 @@
         <div class="row">
           <div class="col-md-12">
             <h2>Testbed</h2>
+            
+            {{> IntegrationServerImportTestbed }}
           </div>
         </div>
       </div>

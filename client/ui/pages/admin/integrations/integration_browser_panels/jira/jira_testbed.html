@@ -35,7 +35,7 @@
         {{results.length}} results
       </div>
       {{#each results}}
-        <pre class="jira-brain-dump-data">{{formatResult this}}</pre>
+        <pre class="jira-brain-dump-data">{{renderJson this}}</pre>
       {{/each}}
     {{/if}}
   {{/if}}

@@ -2,22 +2,22 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { IssueTypes } from './issue_types';
+import { ItemTypes } from './item_types';
 
 /**
  * ============================================================================
- * ImportedIssues
+ * ImportedItems
  * ============================================================================
  */
-export const ImportedIssue = new SimpleSchema({
-  // The source of this issue
+export const ImportedItem = new SimpleSchema({
+  // The source of this item
   integrationId: {
     type: String
   },
-  // Overall type of this issue:
-  issueType: {
+  // Overall type of this item:
+  itemType: {
     type: Number,
-    allowedValues: _.values(IssueTypes)
+    allowedValues: _.values(ItemTypes)
   },
   // Primary identifier in the originating system
   identifier: {
@@ -29,53 +29,53 @@ export const ImportedIssue = new SimpleSchema({
   description: {
     type: String
   },
-  // The imported issue document object
+  // The imported item document object
   document: {
     type: Object,
     blackbox: true
   },
-  // _id of the contributor designated as the owner of this issue
+  // _id of the contributor designated as the owner of this item
   owner: {
     type: String,
     optional: true
   },
-  // Date the issue was created in the originating system
+  // Date the item was created in the originating system
   dateCreated: {
     type: Date,
     optional: true
   },
-  // Contributor who created the issue in the originating system
+  // Contributor who created the item in the originating system
   createdBy: {
     type: String,
     optional: true
   },
-  // Date the issue was last modified in the originating system
+  // Date the item was last modified in the originating system
   dateModified: {
     type: Date,
     optional: true
   },
-  // Contributor who last modified the issue in the originating system
+  // Contributor who last modified the item in the originating system
   modifiedBy: {
     type: String,
     optional: true
   },
-  // Date this issue was last imported from the originating system
+  // Date this item was last imported from the originating system
   lastImported: {
     type: Date,
     optional: true
   },
-  // Date this issue was first imported from the originating system
+  // Date this item was first imported from the originating system
   firstImported: {
     type: Date,
     optional: true
   }
 });
 
-export const ImportedIssues = new Mongo.Collection('imported_issues');
-ImportedIssues.attachSchema(ImportedIssue);
+export const ImportedItems = new Mongo.Collection('imported_items');
+ImportedItems.attachSchema(ImportedItem);
 
 // These are server side only
-ImportedIssues.deny({
+ImportedItems.deny({
   remove() { return true; },
   insert() { return true; },
   update() { return true; }
@@ -84,4 +84,4 @@ ImportedIssues.deny({
 /**
  * Helpers
  */
-ImportedIssues.helpers({});
+ImportedItems.helpers({});

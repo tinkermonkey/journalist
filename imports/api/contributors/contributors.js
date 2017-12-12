@@ -56,7 +56,7 @@ export const Contributor = new SimpleSchema({
     type    : String,
     optional: true
   },
-  // Standard tracking fields minus createdBy and modifiedBy because these are typically created by pulling data from the issue tracker
+  // Standard tracking fields minus createdBy and modifiedBy because these are typically created by pulling data from the item tracker
   dateCreated     : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated

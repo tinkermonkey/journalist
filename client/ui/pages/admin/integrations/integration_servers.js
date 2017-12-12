@@ -9,11 +9,13 @@ import '../../../components/misc/authenticate_server_link';
  * Template Helpers
  */
 Template.IntegrationServers.helpers({
-  types(){
-    return _.invert(IntegrationTypes).map((key) => { return { _id: IntegrationTypes[key], title: Util.camelToTitle(key) }})
+  types () {
+    return _.invert(IntegrationTypes).map((key) => {
+      return { _id: IntegrationTypes[ key ], title: Util.camelToTitle(key) }
+    })
   },
-  servers(){
-    return IntegrationServers.find({}, {sort: {integrationType: 1, title: 1}})
+  servers () {
+    return IntegrationServers.find({}, { sort: { integrationType: 1, title: 1 } })
   }
 });
 
@@ -21,11 +23,11 @@ Template.IntegrationServers.helpers({
  * Template Event Handlers
  */
 Template.IntegrationServers.events({
-  "edited .editable"(e, instance, newValue){
+  "edited .editable" (e, instance, newValue) {
     e.stopImmediatePropagation();
     
     let serverId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey   = $(e.target).attr("data-key");
+        dataKey  = $(e.target).attr("data-key");
     
     console.log('edited:', serverId, dataKey, newValue);
     if (serverId && dataKey) {
@@ -36,14 +38,14 @@ Template.IntegrationServers.events({
       });
     }
   },
-  "click .btn-add-server"(e, instance){
+  "click .btn-add-server" (e, instance) {
     let context = Template.currentData();
     
     RobaDialog.show({
       contentTemplate: "AddRecordForm",
       contentData    : {
         schema: new SimpleSchema({
-          title: {
+          title  : {
             type : String,
             label: "Title"
           },
@@ -82,7 +84,16 @@ Template.IntegrationServers.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-server"(e, instance){
+  "click .btn-update-server-cache" (e, instance) {
+    let server = this;
+    
+    Meteor.call('updateIntegrationServerCache', server._id, function (error, response) {
+      if (error) {
+        RobaDialog.error("Cache update failed: " + error.message);
+      }
+    });
+  },
+  "click .btn-delete-server" (e, instance) {
     let server = this;
     
     RobaDialog.ask('Delete Server?', 'Are you sure that you want to delete the server <span class="label label-primary"> ' + server.title + '</span> ?', () => {

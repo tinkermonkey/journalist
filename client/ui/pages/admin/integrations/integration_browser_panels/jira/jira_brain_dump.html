@@ -18,7 +18,7 @@
     {{#if showLoading }}
       {{> RobaSpinner rainbow=true }}
     {{else}}
-      <pre class="jira-brain-dump-data">{{jiraData}}</pre>
+      <pre class="jira-brain-dump-data">{{renderJson jiraData}}</pre>
     {{/if}}
   </div>
 </template>

@@ -3,7 +3,7 @@
     <thead>
     <tr>
       <th>Integration</th>
-      <th>Issue Type</th>
+      <th>Item Type</th>
       <th>Details</th>
       <th></th>
     </tr>
@@ -13,7 +13,7 @@
       <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
           data-pk="{{_id}}">
         <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes}}</td>
-        <td>{{> EditableEnumSelector dataKey="issueType" value=issueType enum=IssueTypes}}</td>
+        <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes}}</td>
         <td>{{> Template.dynamic template=integrationPanel }}</td>
         <td class="open-link">
           <a class="link-red hidden-control btn-delete-integration">

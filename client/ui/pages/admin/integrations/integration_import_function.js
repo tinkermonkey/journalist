@@ -1,6 +1,7 @@
 import './integration_import_function.html';
 import { Template } from 'meteor/templating';
 import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
+import './integration_server_import_testbed';
 
 /**
  * Template Helpers

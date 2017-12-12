@@ -7,10 +7,7 @@ import '../../../../../components/misc/json_info_link';
  */
 Template.JiraBrainDump.helpers({
   jiraData () {
-    let jiraData = Template.instance().jiraData.get();
-    if (jiraData) {
-      return JSON.stringify(jiraData, null, '\t')
-    }
+    return Template.instance().jiraData.get();
   },
   showLoading () {
     return Template.instance().showLoading.get();

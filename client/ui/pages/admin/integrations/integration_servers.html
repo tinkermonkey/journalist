@@ -17,6 +17,7 @@
             <th>Modified</th>
             <th>Status</th>
             <th></th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
@@ -37,6 +38,14 @@
               <td>{{dateFormat dateModified}}</td>
               <td>
                 {{> AuthenticateServerLink }}
+              </td>
+              <td>
+                {{#if isAuthenticated}}
+                  <a class="hidden-control btn-update-server-cache">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    Update Cache
+                  </a>
+                {{/if}}
               </td>
               <td>
                 <a class="link-red hidden-control btn-delete-server">

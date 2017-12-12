@@ -145,6 +145,6 @@ Projects.helpers({
    * Get all of the integrations for this project
    */
   integrations(){
-    return Integrations.find({projectId: this._id}, {sort: {issueType: 1, integrationType: 1}})
+    return Integrations.find({projectId: this._id}, {sort: {itemType: 1, integrationType: 1}})
   }
 });

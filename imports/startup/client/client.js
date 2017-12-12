@@ -5,7 +5,7 @@ import { moment } from 'meteor/momentjs:moment';
 import { Util } from '../../api/util.js';
 import { Contributors } from '../../api/contributors/contributors.js';
 import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions';
-import { IssueTypes } from '../../api/imported_issues/issue_types.js';
+import { ItemTypes } from '../../api/imported_items/item_types.js';
 import { IntegrationTypes } from '../../api/integrations/integration_types.js';
 import { Projects } from '../../api/projects/projects.js';
 import { ProjectTypes } from '../../api/projects/project_types.js';
@@ -41,8 +41,8 @@ AutoForm.hooks({
  * Enums
  */
 
-Template.registerHelper('IssueTypes', function () {
-  return IssueTypes
+Template.registerHelper('ItemTypes', function () {
+  return ItemTypes
 });
 Template.registerHelper('IntegrationTypes', function () {
   return IntegrationTypes
@@ -107,9 +107,19 @@ Template.registerHelper('contributorName', function (contributorId) {
     return contributor.name;
   }
 });
+Template.registerHelper('renderJson', function (data) {
+  if (data) {
+    return JSON.stringify(data, null, '\t')
+  }
+});
+Template.registerHelper('camelToTitle', function (value) {
+  if (value) {
+    return Util.camelToTitle(value);
+  }
+});
 Template.registerHelper('renderUserType', function () {
   let usertype = (this && this.usertype) || this;
-  if (usertype) {
+  if (usertype !== null) {
     return Util.capitalize(_.invert(UserTypes)[ usertype ]);
   }
 });
@@ -121,6 +131,11 @@ Template.registerHelper('renderTeamRole', function (roleId) {
     } else {
       return 'Unknown'
     }
+  }
+});
+Template.registerHelper('renderIntegrationType', function (type) {
+  if (type !== null) {
+    return Util.capitalize(_.invert(IntegrationTypes)[ type ]);
   }
 });
 Template.registerHelper('contributorSelectorContext', function () {

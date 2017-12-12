@@ -2,6 +2,7 @@ import { Integrator } from './integrator';
 import { IntegrationTypes } from '../integration_types';
 import { Meteor } from "meteor/meteor";
 import { MongoCookieStore } from './mongo_cookie_store';
+import { Util } from '../../util';
 
 // Pull in the jira connector
 const JiraConnector = require('jira-connector'),
@@ -142,6 +143,86 @@ export class JiraIntegrator extends Integrator {
     let self = this;
     
     return self.fetchData('myself', 'getMyself');
+  }
+  
+  /**
+   * Update all of the cached data for this server
+   */
+  updateCachedData () {
+    debug && console.log('JiraIntegrator.updateCachedData:', this.provider && this.provider.server.title);
+    let self = this;
+    
+    // Cache the list of projects
+    self.provider.storeCachedItem('projectList', self.fetchData('project', 'getAllProjects').response);
+    
+    // Cache the list of fields and create synthetic keys based on the field name for custom fields
+    let fields = self.fetchData('field', 'getAllFields').response;
+    fields.forEach((field) => {
+      if (field.custom) {
+        let syntheticKey = Util.wordsToCamel(field.name);
+        
+        // Make sure it's unique
+        let dupes = fields.filter((checkField) => {
+          return checkField.key === syntheticKey || checkField.syntheticKey === syntheticKey
+        });
+        if (dupes.length) {
+          syntheticKey = syntheticKey + "_" + field.schema.customId
+        }
+        
+        field.syntheticKey = syntheticKey.toLowerCase();
+      }
+    });
+    self.provider.storeCachedItem('fieldList', fields);
+  }
+  
+  /**
+   * Test out an import function
+   * @param importFunction
+   * @param identifier
+   */
+  testImportFunction (importFunction, identifier) {
+    debug && console.log('JiraIntegrator.testImportFunction:', this.provider && this.provider.server.title);
+    let self    = this,
+        rawItem = self.fetchData('issue', 'getIssue', { issueKey: identifier }).response;
+    
+    return {
+      rawItem      : rawItem,
+      postProcessed: self.postProcessIssue(rawItem),
+      importedItem : {}
+    }
+  }
+  
+  /**
+   * Post process a raw issue
+   * @param rawIssue
+   */
+  postProcessIssue (rawIssue) {
+    debug && console.log('JiraIntegrator.postProcessIssue:', this.provider && this.provider.server.title);
+    let self           = this,
+        processedIssue = { fields: {} };
+    
+    // Replace all of the custom field keys with the synthetic keys
+    _.keys(rawIssue).forEach((topLevelKey) => {
+      if (topLevelKey === 'fields') {
+        _.keys(rawIssue.fields).forEach((fieldKey) => {
+          let processedKey = fieldKey;
+          if (fieldKey.match(/customfield_/i)) {
+            // look up a synthetic key
+            let fieldDef = self.provider.cache.fieldList.find(field => field.key === fieldKey);
+            if (fieldDef && fieldDef.syntheticKey) {
+              processedKey = fieldDef.syntheticKey;
+            }
+          }
+  
+          // Deep copy the key:value over
+          processedIssue.fields[ processedKey ] = JSON.parse(JSON.stringify(rawIssue.fields[ fieldKey ]));
+        });
+      } else {
+        processedIssue[ topLevelKey ] = JSON.parse(JSON.stringify(rawIssue[ topLevelKey ]));
+      }
+    });
+    
+    return processedIssue
   }
   
   /**
