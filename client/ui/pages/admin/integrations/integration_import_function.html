@@ -7,7 +7,7 @@
             <ol class="breadcrumb">
               <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
               <li><a href="{{pathFor 'Integrations' }}">Integrations</a></li>
-              <li class="active">Integration Function</li>
+              <li class="active">Import Function</li>
             </ol>
             
             <h1>{{title}}</h1>
@@ -15,19 +15,53 @@
         </div>
         
         <div class="row">
-          <div class="col-md-12">
-            <h2>Code</h2>
+          <div class="col-md-8">
+            <h2>Execution Context</h2>
+            <p>
+              This code will be executed as a function with the variable <code>rawItem</code> passed in containing the raw Javascript
+              Object from the integration.
+            </p>
+            <p>
+              Whatever is returned from this function will be stored as the imported item and needs to be an object to be valid.
+            </p>
             
-            <div class="alert alert-info">
-              <p>
-                This code will be executed with the variable <i>rawItem</i> containing the raw Javascript Object from the integration.
-              </p>
-              <p>
-                Whatever is returned from this function needs to be an object and will be stored as the imported item.
-              </p>
-            </div>
+            <h2>Schema Reference</h2>
+            <p>
+              Your function should populate the following parameters in order to be imported properly:
+            </p>
+            
+            <table class="table data-table">
+              <thead>
+              <tr>
+                <th>Param</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+              </thead>
+              <tbody>
+              {{#each importedItemFieldReference}}
+                <tr class="data-table-row {{#if isOdd @index}}odd{{/if}}">
+                  <td>{{key}}</td>
+                  <td>{{type}}</td>
+                  <td>
+                    {{#if optional}}
+                      <i>(optional)</i>
+                    {{/if}}
+                    {{label}}
+                  </td>
+                </tr>
+              {{/each}}
+              </tbody>
+            </table>
+            
+            <h2>Function Code</h2>
             
             {{> EditableCode value=code dataKey="code" emptyText="Enter function code" language="javascript" mode="inline" autoHeight=true }}
+          </div>
+          <div class="col-md-4">
+            <h2>Field Reference</h2>
+            
+            {{> IntegrationServerFieldReference }}
           </div>
         </div>
         <div class="row">

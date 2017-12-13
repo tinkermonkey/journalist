@@ -60,7 +60,13 @@
           {{#if result}}
             {{#RobaTabGroup name="testbed-tabs" navClass="nav-tabs"}}
               {{#RobaTab name="imported" title="Imported"}}
-                <pre class="jira-brain-dump-data">{{renderJson result.importedItem}}</pre>
+                {{#if result.importResult.error}}
+                  <div class="alert alert-danger">
+                    <b>Import failed:</b>
+                    {{result.importResult.error}}
+                  </div>
+                {{/if}}
+                <pre class="jira-brain-dump-data">{{renderJson result.importResult.item}}</pre>
               {{/RobaTab}}
               {{#RobaTab name="post-processed" title="Post Processed"}}
                 <pre class="jira-brain-dump-data">{{renderJson result.postProcessed}}</pre>

@@ -1,5 +1,6 @@
 import { Ping } from 'meteor/frpz:ping';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
+import { ImportedItem, ImportedItems } from '../../api/imported_items/imported_items';
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { IntegrationTypes } from '../../api/integrations/integration_types';
 import { ConfluenceIntegrator } from '../../api/integrations/integrators/confluence_integrator';
@@ -18,7 +19,7 @@ export class IntegrationServiceProvider {
     
     // Store the document
     self.server = server;
-  
+    
     // Initialize the local cache of integration data
     self.cache = {};
     self.loadCachedData();
@@ -286,6 +287,44 @@ export class IntegrationServiceProvider {
   }
   
   /**
+   * Pass an item through an import function to produce an importedItem
+   * @param importFunction
+   * @param item
+   */
+  importItem (importFunction, item) {
+    debug && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title);
+    let self = this;
+    
+    // Attempt to process the item through the import function
+    try {
+      let fn           = new Function('rawIssue', importFunction.code),
+          importedItem = fn(item);
+      
+      // Validate the processed item against the importedItem schema
+      try {
+        ImportedItem.validate(importedItem);
+        
+        return {
+          success: true,
+          item   : importedItem
+        }
+      } catch (e) {
+        return {
+          success: false,
+          error  : e.toString(),
+          item   : importedItem
+        }
+      }
+    } catch (e) {
+      return {
+        success: false,
+        error  : e.toString()
+      }
+    }
+    
+  }
+  
+  /**
    * Test an import function
    * @param importFunction
    * @param identifier
@@ -295,6 +334,19 @@ export class IntegrationServiceProvider {
     let self = this;
     
     return self.integrator.testImportFunction(importFunction, identifier);
+  }
+  
+  /**
+   * Store an imported item
+   * @param item
+   */
+  storeImportedItem (item) {
+    debug && console.log('IntegrationServiceProvider.storeImportedItem:', this.server._id, this.server.title, item && item.identifier);
+    let self = this;
+    
+    ImportedItems.upsert({}, {
+      $set: item
+    });
   }
   
   /**

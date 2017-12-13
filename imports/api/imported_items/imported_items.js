@@ -1,7 +1,5 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Util } from '../util.js';
-import { SchemaHelpers } from '../schema_helpers.js';
 import { ItemTypes } from './item_types';
 
 /**
@@ -15,58 +13,66 @@ export const ImportedItem = new SimpleSchema({
     type: String
   },
   // Overall type of this item:
-  itemType: {
-    type: Number,
+  itemType     : {
+    type         : Number,
     allowedValues: _.values(ItemTypes)
   },
   // Primary identifier in the originating system
-  identifier: {
-    type: String
+  identifier   : {
+    type : String,
+    label: 'Primary identifier for this item in the reference system (issue key, etc)'
   },
-  title: {
-    type: String
+  title        : {
+    type : String,
+    label: 'Description title for this item'
   },
-  description: {
-    type: String
+  description  : {
+    type : String,
+    label: 'Long for description of this item, typically an issue body or such'
   },
   // The imported item document object
-  document: {
-    type: Object,
+  document     : {
+    type    : Object,
     blackbox: true
   },
   // _id of the contributor designated as the owner of this item
-  owner: {
-    type: String,
-    optional: true
+  owner        : {
+    type    : String,
+    optional: true,
+    label   : 'The identifier of the Contributor who owns this item'
   },
   // Date the item was created in the originating system
-  dateCreated: {
-    type: Date,
-    optional: true
+  dateCreated  : {
+    type    : Date,
+    optional: true,
+    label   : 'The date this item was created'
   },
   // Contributor who created the item in the originating system
-  createdBy: {
-    type: String,
-    optional: true
+  createdBy    : {
+    type    : String,
+    optional: true,
+    label   : 'The identifier of the Contributor who created this item'
   },
   // Date the item was last modified in the originating system
-  dateModified: {
-    type: Date,
-    optional: true
+  dateModified : {
+    type    : Date,
+    optional: true,
+    label   : 'The date this item was last modified'
   },
   // Contributor who last modified the item in the originating system
-  modifiedBy: {
-    type: String,
-    optional: true
+  modifiedBy   : {
+    type    : String,
+    optional: true,
+    label   : 'The identifier of the Contributor who last modified this item'
   },
   // Date this item was last imported from the originating system
-  lastImported: {
-    type: Date,
+  lastImported : {
+    type    : Date,
     optional: true
   },
   // Date this item was first imported from the originating system
   firstImported: {
-    type: Date,
+    type    : Date,
     optional: true
   }
 });
@@ -76,9 +82,15 @@ ImportedItems.attachSchema(ImportedItem);
 
 // These are server side only
 ImportedItems.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+  remove () {
+    return true;
+  },
+  insert () {
+    return true;
+  },
+  update () {
+    return true;
+  }
 });
 
 /**

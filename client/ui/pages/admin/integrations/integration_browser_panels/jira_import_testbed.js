@@ -17,11 +17,23 @@ Template.JiraImportTestbed.helpers({
     let functionId     = FlowRouter.getParam('functionId'),
         importFunction = IntegrationImportFunctions.findOne(functionId);
     
-    return IntegrationServers.find({ integrationType: importFunction.integrationType, isActive: true });
+    return IntegrationServers.find({ integrationType: importFunction.integrationType, isActive: true }, {sort: {title: 1}});
   },
   server () {
     let serverId = Template.instance().serverId.get();
-    return IntegrationServers.findOne(serverId)
+    if (serverId) {
+      return IntegrationServers.findOne(serverId)
+    } else {
+      let functionId     = FlowRouter.getParam('functionId'),
+          importFunction = IntegrationImportFunctions.findOne(functionId),
+          server         = IntegrationServers.findOne({
+            integrationType: importFunction.integrationType,
+            isActive: true
+          }, { sort: { title: 1 } });
+      if (server) {
+        Template.instance().serverId.set(server._id)
+      }
+    }
   },
   result () {
     return Template.instance().result.get();
@@ -52,6 +64,10 @@ Template.JiraImportTestbed.events({
       // Convert the payload to JSON
       instance.doorbell.set(Date.now());
     }
+  },
+  'submit .navbar-form'(e, instance){
+    e.preventDefault();
+    instance.$('.btn-load').trigger('click')
   }
 });
 
@@ -85,6 +101,7 @@ Template.JiraImportTestbed.onCreated(() => {
             instance.error.set(error);
             instance.result.set();
           } else {
+            console.info('JiraImportTestbed fetchData:', response);
             instance.error.set();
             instance.result.set(response);
           }

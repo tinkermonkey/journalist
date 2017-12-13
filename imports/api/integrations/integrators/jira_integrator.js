@@ -5,11 +5,13 @@ import { MongoCookieStore } from './mongo_cookie_store';
 import { Util } from '../../util';
 
 // Pull in the jira connector
-const JiraConnector = require('jira-connector'),
-      ToughCookie   = require('tough-cookie'),
-      request       = require('request'),
-      useMongoStore = false,
-      debug         = true;
+const JiraConnector   = require('jira-connector'),
+      ToughCookie     = require('tough-cookie'),
+      path            = require('path'),
+      FileCookieStore = require('tough-cookie-filestore'),
+      request         = require('request'),
+      useMongoStore   = true,
+      debug           = true;
 
 // Ignore self-signed errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -62,15 +64,19 @@ export class JiraIntegrator extends Integrator {
     // If we're authenticated
     if (authResult.success) {
       // Store the authentication token for re-use
-      debug && console.log('JiraIntegrator.authenticate cookies:', self.cookieStore.getAllCookiesSync());
-      self.provider.storeAuthData({
-        cookies: self.cookieStore.getAllCookiesSync().map((cookie) => {
-          return {
-            str : cookie.cookieString(),
-            data: cookie.toJSON()
-          }
-        })
-      });
+      if (0) {
+        debug && console.log('JiraIntegrator.authenticate cookies:', self.cookieStore.getAllCookiesSync());
+        self.provider.storeAuthData({
+          cookies: self.cookieStore.getAllCookiesSync().map((cookie) => {
+            return {
+              str : cookie.cookieString(),
+              data: cookie.toJSON()
+            }
+          })
+        });
+      } else {
+        console.error('Cookies:', self.cookieJar);
+      }
     } else {
       // Make sure the server is marked unathenticated
       self.provider.clearAuthData();
@@ -106,13 +112,15 @@ export class JiraIntegrator extends Integrator {
               }
             });
             console.log('Restored cookie:', cookie.toJSON());
+            /*
             self.cookieStore.putCookie(cookie, () => {
             });
+            */
           } catch (e) {
             console.error('JiraIntegrator.reAuthenticate cookie parse failed:', cookieData, e);
           }
         });
-        debug && console.log('JiraIntegrator.reAuthenticate cookies:', self.cookieStore.getAllCookiesSync());
+        //debug && console.log('JiraIntegrator.reAuthenticate cookies:', self.cookieStore.getAllCookiesSync());
       }
       
       // Create the Jira client
@@ -182,13 +190,14 @@ export class JiraIntegrator extends Integrator {
    */
   testImportFunction (importFunction, identifier) {
     debug && console.log('JiraIntegrator.testImportFunction:', this.provider && this.provider.server.title);
-    let self    = this,
-        rawItem = self.fetchData('issue', 'getIssue', { issueKey: identifier }).response;
+    let self              = this,
+        rawItem           = self.fetchData('issue', 'getIssue', { issueKey: identifier }).response,
+        postProcessedItem = self.postProcessItem(rawItem);
     
     return {
       rawItem      : rawItem,
-      postProcessed: self.postProcessIssue(rawItem),
-      importedItem : {}
+      postProcessed: postProcessedItem,
+      importResult : self.provider.importItem(importFunction, postProcessedItem)
     }
   }
   
@@ -196,14 +205,15 @@ export class JiraIntegrator extends Integrator {
    * Post process a raw issue
    * @param rawIssue
    */
-  postProcessIssue (rawIssue) {
-    debug && console.log('JiraIntegrator.postProcessIssue:', this.provider && this.provider.server.title);
+  postProcessItem (rawIssue) {
+    debug && console.log('JiraIntegrator.postProcessItem:', this.provider && this.provider.server.title);
     let self           = this,
-        processedIssue = { fields: {} };
+        processedIssue = {};
     
     // Replace all of the custom field keys with the synthetic keys
     _.keys(rawIssue).forEach((topLevelKey) => {
       if (topLevelKey === 'fields') {
+        processedIssue.fields = {};
         _.keys(rawIssue.fields).forEach((fieldKey) => {
           let processedKey = fieldKey;
           if (fieldKey.match(/customfield_/i)) {
@@ -213,7 +223,7 @@ export class JiraIntegrator extends Integrator {
               processedKey = fieldDef.syntheticKey;
             }
           }
-  
+          
           // Deep copy the key:value over
           processedIssue.fields[ processedKey ] = JSON.parse(JSON.stringify(rawIssue.fields[ fieldKey ]));
         });
