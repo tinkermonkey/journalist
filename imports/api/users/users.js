@@ -54,8 +54,15 @@ Users.helpers({
       // 3A) The current user is this user
       // OR
       // 3B) The current user is an administrator
-      Meteor.call('addContributor', user.emails[0].address, user.emails[0].address, user.profile.name);
-      
+      //Meteor.call('addContributor', user.emails[0].address, user.emails[0].address, user.profile.name);
+      Contributors.insert({
+        identifier: user.emails[0].address,
+        email     : user.emails[0].address,
+        name      : user.profile.name,
+        userId    : user._id,
+        usertype  : user.usertype
+      });
+ 
       // Grab the new record
       contributor = Contributors.findOne({ userId: user._id });
       //console.log('Users contributor created:', contributor);
