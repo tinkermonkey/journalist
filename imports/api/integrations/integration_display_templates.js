@@ -1,60 +1,66 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { IntegrationTypes } from './integration_types';
-import { ItemTypes } from '../imported_items/item_types';
+import { SchemaHelpers } from '../schema_helpers';
 
 /**
  * ============================================================================
- * IntegrationImportFunctions
+ * IntegrationDisplayTemplates
  * ============================================================================
  */
-export const IntegrationImportFunction = new SimpleSchema({
-  title          : {
+export const IntegrationDisplayTemplate = new SimpleSchema({
+  title            : {
     type: String
   },
-  integrationType: {
-    type         : Number,
-    allowedValues: _.values(IntegrationTypes)
-  },
-  itemTypes      : {
-    type         : [ Number ],
-    allowedValues: _.values(ItemTypes)
-  },
-  description    : {
+  templateLayout   : {
     type    : String,
     optional: true
   },
-  code           : {
+  templateHelpers  : {
+    type    : String,
+    optional: true
+  },
+  templateEvents   : {
+    type    : String,
+    optional: true
+  },
+  templateCreated  : {
+    type    : String,
+    optional: true
+  },
+  templateRendered : {
+    type    : String,
+    optional: true
+  },
+  templateDestroyed: {
     type    : String,
     optional: true
   },
   // Standard tracking fields
-  dateCreated    : {
+  dateCreated      : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy      : {
+  createdBy        : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified   : {
+  dateModified     : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy     : {
+  modifiedBy       : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
 });
 
-export const IntegrationImportFunctions = new Mongo.Collection("integration_import_functions");
-IntegrationImportFunctions.attachSchema(IntegrationImportFunction);
-ChangeTracker.trackChanges(IntegrationImportFunctions, 'IntegrationImportFunctions');
+export const IntegrationDisplayTemplates = new Mongo.Collection("integration_display_templates");
+IntegrationDisplayTemplates.attachSchema(IntegrationDisplayTemplate);
+ChangeTracker.trackChanges(IntegrationDisplayTemplates, 'IntegrationDisplayTemplates');
 
 // These are server side only
-IntegrationImportFunctions.deny({
+IntegrationDisplayTemplates.deny({
   remove () {
     return true;
   },
@@ -69,4 +75,4 @@ IntegrationImportFunctions.deny({
 /**
  * Helpers
  */
-IntegrationImportFunctions.helpers({});
+IntegrationDisplayTemplates.helpers({});

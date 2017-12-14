@@ -10,6 +10,7 @@ import '../../../client/ui/layouts/authenticated_layout.js';
 import '../../../client/ui/pages/admin/contributors/admin_contributors.js';
 import '../../../client/ui/pages/admin/admin_home/admin_home.js';
 import '../../../client/ui/pages/admin/integrations/integrations.js';
+import '../../../client/ui/pages/admin/integrations/integration_display_template.js';
 import '../../../client/ui/pages/admin/integrations/integration_import_function.js';
 import '../../../client/ui/pages/admin/integrations/integration_server_browser.js';
 import '../../../client/ui/pages/admin/projects/admin_projects.js';
@@ -114,6 +115,13 @@ FlowRouter.route('/admin/integration_server_browser/:serverId', {
   name: 'IntegrationServerBrowser',
   action() {
     BlazeLayout.render('AdminLayout', { main: 'IntegrationServerBrowser' });
+  }
+});
+
+FlowRouter.route('/admin/integration_display_template/:templateId', {
+  name: 'IntegrationDisplayTemplate',
+  action() {
+    BlazeLayout.render('AdminLayout', { main: 'IntegrationDisplayTemplate' });
   }
 });
 

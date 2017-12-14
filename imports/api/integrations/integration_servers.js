@@ -82,4 +82,9 @@ IntegrationServers.deny({
 /**
  * Helpers
  */
-IntegrationServers.helpers({});
+IntegrationServers.helpers({
+  // Common method for creating the contributor identifiers per server
+  contributorIdentifier(key){
+    return this._id + '.' + key
+  }
+});

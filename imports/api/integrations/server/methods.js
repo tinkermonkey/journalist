@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { Auth } from '../../auth';
 import { Integrations } from '../integrations';
+import { IntegrationDisplayTemplates } from '../integration_display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationService } from '../../../modules/integration_service/integration_service';
@@ -184,13 +185,13 @@ Meteor.methods({
   updateIntegrationServerCache (serverId) {
     console.log('updateIntegrationServerCache:', serverId);
     let user = Auth.requireAuthentication();
-  
+    
     // Validate the data is complete
     check(serverId, String);
-  
+    
     // Get the server record to make sure this is authorized
     let server = IntegrationServers.findOne(serverId);
-  
+    
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (server) {
@@ -202,30 +203,27 @@ Meteor.methods({
       console.error('Non-admin user tried to update the cache of an integration server:', user.username, key, value, serverId);
       throw new Meteor.Error(403);
     }
-    },
+  },
   
   /**
    * Add an integration import function
    * @param title
    * @param integrationType
-   * @param itemType
    */
-  addIntegrationImportFunction (title, integrationType, itemType) {
-    console.log('addIntegrationImportFunction:', title, integrationType, itemType);
+  addIntegrationImportFunction (title, integrationType) {
+    console.log('addIntegrationImportFunction:', title, integrationType);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
     check(title, String);
     check(integrationType, Number);
-    check(itemType, Number);
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       // Insert the project percent
       IntegrationImportFunctions.insert({
         title          : title,
-        integrationType: integrationType,
-        itemType       : itemType
+        integrationType: integrationType
       });
     } else {
       console.error('Non-admin user tried to add an integration import function:', user.username, title);
@@ -285,6 +283,85 @@ Meteor.methods({
       }
     } else {
       console.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Add an integration display template
+   * @param title
+   */
+  addIntegrationDisplayTemplate (title) {
+    console.log('addIntegrationDisplayTemplate:', title);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(title, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // Insert the project percent
+      IntegrationDisplayTemplates.insert({
+        title: title
+      });
+    } else {
+      console.error('Non-admin user tried to add an integration display template:', user.username, title);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Remove an integration display template
+   * @param templateId
+   */
+  deleteIntegrationDisplayTemplate (templateId) {
+    console.log('deleteIntegrationDisplayTemplate:', templateId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(templateId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // Delete the contributor
+      IntegrationDisplayTemplates.remove(templateId);
+    } else {
+      console.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Edit an integration display template record
+   * @param templateId
+   * @param key
+   * @param value
+   */
+  editIntegrationDisplayTemplate (templateId, key, value) {
+    console.log('editIntegrationDisplayTemplate:', templateId, key);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(templateId, String);
+    check(key, String);
+    check(value, Match.Any);
+    
+    // Get the display template record to make sure this is authorized
+    let displayTemplate = IntegrationDisplayTemplates.findOne(templateId);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (displayTemplate) {
+        let update    = {};
+        update[ key ] = value;
+        
+        // Update the contributor
+        IntegrationDisplayTemplates.update(templateId, { $set: update });
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to edit an integration display template:', user.username, key, templateId);
       throw new Meteor.Error(403);
     }
   },

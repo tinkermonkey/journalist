@@ -31,7 +31,6 @@ Meteor.startup(() => {
     let admin = Meteor.users.findOne(adminId);
     console.log('Inserting contributor record for user:', admin);
     Contributors.insert({
-      identifier: admin.emails[ 0 ].address,
       email     : admin.emails[ 0 ].address,
       name      : admin.profile.name,
       userId    : adminId,

@@ -55,7 +55,6 @@ Users.helpers({
       // OR
       // 3B) The current user is an administrator
       Contributors.insert({
-        identifier: user.emails[ 0 ].address,
         email     : user.emails[ 0 ].address,
         name      : user.profile.name,
         userId    : user._id,

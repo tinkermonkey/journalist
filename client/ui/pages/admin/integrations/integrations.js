@@ -2,6 +2,7 @@ import './integrations.html';
 import { Template } from 'meteor/templating';
 import './integration_servers';
 import './integration_import_functions';
+import './integration_display_templates';
 
 /**
  * Template Helpers

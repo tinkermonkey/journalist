@@ -45,10 +45,6 @@ Template.AdminContributors.events({
       contentTemplate: "AddRecordForm",
       contentData    : {
         schema: new SimpleSchema({
-          identifier: {
-            type : String,
-            label: 'Identifier'
-          },
           email     : {
             type : String,
             regEx: SimpleSchema.RegEx.Email,
@@ -74,7 +70,7 @@ Template.AdminContributors.events({
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Create the contributor
-            Meteor.call('addContributor', formData.identifier, formData.email, formData.name, roleDefinition._id, (error, response) => {
+            Meteor.call('addContributor', formData.email, formData.name, roleDefinition._id, (error, response) => {
               if (error) {
                 RobaDialog.error('Failed to create contributor:' + error.toString())
               } else {
@@ -94,7 +90,7 @@ Template.AdminContributors.events({
     let contributorId = $(e.target).closest(".data-table-row").attr("data-pk"),
         contributor   = Contributors.findOne(contributorId);
     
-    RobaDialog.ask('Delete Contributor?', 'Are you sure that you want to delete the contributor <span class="label label-primary"> ' + contributor.identifier + '</span> ?', () => {
+    RobaDialog.ask('Delete Contributor?', 'Are you sure that you want to delete the contributor <span class="label label-primary"> ' + contributor.email + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteContributor', contributorId, function (error, response) {
         if (error) {

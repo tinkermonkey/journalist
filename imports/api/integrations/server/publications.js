@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Integrations } from '../integrations';
+import { IntegrationDisplayTemplates } from '../integration_display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationServerCaches } from '../integration_server_caches';
@@ -83,6 +84,16 @@ Meteor.publish('integration_import_function', function (importFunctionId) {
     } else {
       console.warn('integration_import_functions requested by non-admin:', this.userId, user && user.username)
     }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_display_templates', function () {
+  console.info('Publish: integration_display_templates');
+  if (this.userId) {
+    return IntegrationDisplayTemplates.find({});
   } else {
     this.ready();
     return [];

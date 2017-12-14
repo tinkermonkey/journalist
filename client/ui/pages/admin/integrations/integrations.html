@@ -10,9 +10,21 @@
         <h1>Integrations</h1>
       </div>
     </div>
-  
-    {{> IntegrationServers }}
-  
-    {{> IntegrationImportFunctions }}
+    
+    <div class="row">
+      <div class="col-md-12">
+        {{#RobaTabGroup name="integration-tabs" navClass="nav-tabs"}}
+          {{#RobaTab name="servers" title="Servers"}}
+            {{> IntegrationServers }}
+          {{/RobaTab}}
+          {{#RobaTab name="import-functions" title="Import Functions"}}
+            {{> IntegrationImportFunctions }}
+          {{/RobaTab}}
+          {{#RobaTab name="display-templates" title="Display Templates"}}
+            {{> IntegrationDisplayTemplates }}
+          {{/RobaTab}}
+        {{/RobaTabGroup}}
+      </div>
+    </div>
   </div>
 </template>

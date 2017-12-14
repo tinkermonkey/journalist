@@ -50,9 +50,9 @@ Template.IntegrationImportFunctions.events({
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Create the importFunction
-            Meteor.call('addIntegrationImportFunction', formData.title, formData.integrationType, formData.itemType, (error, response) => {
+            Meteor.call('addIntegrationImportFunction', formData.title, formData.integrationType, (error, response) => {
               if (error) {
-                RobaDialog.error('Failed to create importFunction:' + error.toString())
+                RobaDialog.error('Failed to create import function:' + error.toString())
               } else {
                 RobaDialog.hide();
               }
@@ -69,7 +69,7 @@ Template.IntegrationImportFunctions.events({
   "click .btn-delete-import-function" (e, instance) {
     let importFunction = this;
     
-    RobaDialog.ask('Delete Server?', 'Are you sure that you want to delete the import function <span class="label label-primary"> ' + importFunction.title + '</span> ?', () => {
+    RobaDialog.ask('Delete Function?', 'Are you sure that you want to delete the import function <span class="label label-primary"> ' + importFunction.title + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteIntegrationImportFunction', importFunction._id, function (error, response) {
         if (error) {

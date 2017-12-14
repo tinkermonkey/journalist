@@ -184,6 +184,17 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
+   * Fetch an item from the integration server
+   * @param identifier
+   */
+  fetchItem (identifier) {
+    debug && console.log('JiraIntegrator.fetchItem:', this.provider && this.provider.server.title, identifier);
+    let self = this;
+    
+    return self.fetchData('issue', 'getIssue', { issueKey: identifier }).response;
+  }
+  
+  /**
    * Test out an import function
    * @param importFunction
    * @param identifier
@@ -203,18 +214,20 @@ export class JiraIntegrator extends Integrator {
   
   /**
    * Post process a raw issue
-   * @param rawIssue
+   * @param rawItem
    */
-  postProcessItem (rawIssue) {
+  postProcessItem (rawItem) {
     debug && console.log('JiraIntegrator.postProcessItem:', this.provider && this.provider.server.title);
     let self           = this,
         processedIssue = {};
     
     // Replace all of the custom field keys with the synthetic keys
-    _.keys(rawIssue).forEach((topLevelKey) => {
+    // Replace all of the people records with links to contributors
+    _.keys(rawItem).forEach((topLevelKey) => {
       if (topLevelKey === 'fields') {
         processedIssue.fields = {};
-        _.keys(rawIssue.fields).forEach((fieldKey) => {
+        
+        _.keys(rawItem.fields).forEach((fieldKey) => {
           let processedKey = fieldKey;
           if (fieldKey.match(/customfield_/i)) {
             // look up a synthetic key
@@ -225,14 +238,46 @@ export class JiraIntegrator extends Integrator {
           }
           
           // Deep copy the key:value over
-          processedIssue.fields[ processedKey ] = JSON.parse(JSON.stringify(rawIssue.fields[ fieldKey ]));
+          processedIssue.fields[ processedKey ] = JSON.parse(JSON.stringify(rawItem.fields[ fieldKey ]));
         });
       } else {
-        processedIssue[ topLevelKey ] = JSON.parse(JSON.stringify(rawIssue[ topLevelKey ]));
+        processedIssue[ topLevelKey ] = JSON.parse(JSON.stringify(rawItem[ topLevelKey ]));
       }
     });
     
     return processedIssue
+  }
+  
+  /**
+   * Specialized post-processing to identify all contributors and replace those values with a contributor._id
+   * @param processedData
+   * @param level Recursion level
+   */
+  processItemForContributors (processedData, level) {
+    debug && console.log('JiraIntegrator.processItemForContributors:', this.provider && this.provider.server.title, level || 0);
+    let self = this;
+    
+    // Guard against out of control recursion
+    level = level || 0;
+    if (level > 25) {
+      console.error('JiraIntegrator.processItemForContributors deep recursion:', level);
+      return;
+    }
+    
+    // Deep process this issue (recursively call this function for all fields with an object value
+    _.keys(processedData).forEach((key) => {
+      // If this key points to an object, analyze it
+      if (_.isObject(processedData[ key ])) {
+        // Process contributors down to contributor ids
+        let rawValue = processedData[ key ];
+        if (rawValue.self && rawValue.self.match(/\/user\?/i)) {
+          processedData[ key ] = self.provider.findOrCreateContributor(rawValue.key, rawValue.emailAddress, rawValue.displayName, rawValue)
+        } else {
+          // If it's not a contributor, call this function on the data
+          self.processItemForContributors(processedData[ key ], level + 1);
+        }
+      }
+    });
   }
   
   /**

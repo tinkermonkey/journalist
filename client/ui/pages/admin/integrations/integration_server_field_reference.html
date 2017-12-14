@@ -38,38 +38,40 @@
   {{/if}}
   
   {{#if Template.subscriptionsReady}}
-    {{#if cachedFieldList.value.length}}
-      {{#if searchTerm}}
-        {{#if searchResults.length}}
-          {{#each searchResults}}
-            <div class="well well-sm">
-              <h4>
-                {{name}}
-                <span class="pull-right">
+    {{#if server}}
+      {{#if cachedFieldList.value.length}}
+        {{#if searchTerm}}
+          {{#if searchResults.length}}
+            {{#each searchResults}}
+              <div class="well well-sm">
+                <h4>
+                  {{name}}
+                  <span class="pull-right">
             <small>{{> JsonInfoLink data=this placement='left'}}</small>
             </span>
-              </h4>
-              {{#if syntheticKey}}
-                <dt>Processed Key</dt>
-                <dd>{{syntheticKey}}</dd>
-                <dt>Raw Key</dt>
-                <dd>{{key}}</dd>
-              {{else}}
-                <dt>Key</dt>
-                <dd>{{key}}</dd>
-              {{/if}}
+                </h4>
+                {{#if syntheticKey}}
+                  <dt>Processed Key</dt>
+                  <dd>{{syntheticKey}}</dd>
+                  <dt>Raw Key</dt>
+                  <dd>{{key}}</dd>
+                {{else}}
+                  <dt>Key</dt>
+                  <dd>{{key}}</dd>
+                {{/if}}
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="alert">
+              No fields found
             </div>
-          {{/each}}
-        {{else}}
-          <div class="alert">
-            No fields found
-          </div>
+          {{/if}}
         {{/if}}
+      {{else}}
+        <div class="alert alert-warning">
+          There are no cached fields for this server
+        </div>
       {{/if}}
-    {{else}}
-      <div class="alert alert-warning">
-        There are no cached fields for this server
-      </div>
     {{/if}}
   {{/if}}
 </template>

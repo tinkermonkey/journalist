@@ -18,16 +18,23 @@ import { UserTypes } from '../users/user_types.js';
  * ============================================================================
  */
 export const Contributor = new SimpleSchema({
-  // Primary identifier for this contributor, typically email address
-  identifier      : {
-    type: String
-  },
   email           : {
     type : String,
     regEx: SimpleSchema.RegEx.Email
   },
   name            : {
     type    : String,
+    optional: true
+  },
+  // Set of identifiers used by various integrations to denote this contributor
+  identifiers     : {
+    type    : [ String ],
+    optional: true
+  },
+  // Hashmap of profiles from the various integration servers, keyed by the server _id
+  profiles        : {
+    type    : Object,
+    blackbox: true,
     optional: true
   },
   // _id of the Contributor who manages this contributor
@@ -174,9 +181,9 @@ Contributors.helpers({
    * @return {cursor}
    */
   managesTeam (teamId) {
-    let contributor = this,
-      contributorManagesManager = false;
-
+    let contributor               = this,
+        contributorManagesManager = false;
+    
     // Get the list of managers for the team that this contributor manages
     ContributorTeamRoles.find({ teamId: teamId, contributorId: { $in: contributor.allStaffIds() } }).forEach((teamRole) => {
       contributorManagesManager = contributorManagesManager || teamRole.roleDefinition().isManager
@@ -191,7 +198,7 @@ Contributors.helpers({
    */
   directStaff (sortBy) {
     let contributor = this;
-  
+    
     // Default sort
     sortBy = sortBy || { name: 1 };
     

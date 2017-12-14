@@ -9,17 +9,15 @@ import { Auth } from '../../auth.js';
 Meteor.methods({
   /**
    * Create a new contributor
-   * @param identifier
    * @param email
    * @param name
    * @param roleId
    */
-  addContributor (identifier, email, name, roleId) {
-    console.log('addContributor:', identifier, email, name, roleId);
+  addContributor (email, name, roleId) {
+    console.log('addContributor:', email, name, roleId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
-    check(identifier, String);
     check(email, String);
     check(name, String);
     check(roleId, String);
@@ -27,12 +25,11 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       // Check for uniqueness
-      let check = Contributors.find({ identifier: identifier }).count();
+      let check = Contributors.find({ email: email }).count();
       
       if (check === 0) {
         // Create the contributor
         let contributorId = Contributors.insert({
-          identifier: identifier,
           email     : email,
           name      : name,
           roleId    : roleId
@@ -45,7 +42,7 @@ Meteor.methods({
           Contributors.update(contributorId, { $set: { userId: user._id, usertype: user.usertype } })
         }
       } else {
-        console.error('Contributor already exists:', identifier);
+        console.error('Contributor already exists:', email);
         throw new Meteor.Error(500);
       }
     } else {

@@ -1,12 +1,14 @@
 import { Ping } from 'meteor/frpz:ping';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
-import { ImportedItem, ImportedItems } from '../../api/imported_items/imported_items';
+import { Contributors } from '../../api/contributors/contributors';
+import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
+import { ImportedItemTestSchema, ImportedItems } from '../../api/imported_items/imported_items';
+import { IntegrationServerCaches } from '../../api/integrations/integration_server_caches';
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { IntegrationTypes } from '../../api/integrations/integration_types';
+import { UserTypes } from '../../api/users/user_types';
 import { ConfluenceIntegrator } from '../../api/integrations/integrators/confluence_integrator';
 import { JiraIntegrator } from '../../api/integrations/integrators/jira_integrator';
-import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
-import { IntegrationServerCaches } from '../../api/integrations/integration_server_caches';
 
 const { URL } = require('url');
 
@@ -21,7 +23,7 @@ export class IntegrationServiceProvider {
     self.server = server;
     
     // Initialize the local cache of integration data
-    self.cache = {};
+    self.cache = { contributors: {} };
     self.loadCachedData();
     
     // Parse the base url
@@ -289,20 +291,23 @@ export class IntegrationServiceProvider {
   /**
    * Pass an item through an import function to produce an importedItem
    * @param importFunction
-   * @param item
+   * @param processedItem
    */
-  importItem (importFunction, item) {
+  importItem (importFunction, processedItem) {
     debug && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title);
     let self = this;
     
     // Attempt to process the item through the import function
     try {
-      let fn           = new Function('rawIssue', importFunction.code),
-          importedItem = fn(item);
+      let importFn     = new Function('processedItem', importFunction.code),
+          importedItem = importFn(processedItem);
+      
+      // Store the full processedItem as the document field
+      importedItem.document = processedItem;
       
       // Validate the processed item against the importedItem schema
       try {
-        ImportedItem.validate(importedItem);
+        ImportedItemTestSchema.validate(importedItem);
         
         return {
           success: true,
@@ -325,15 +330,46 @@ export class IntegrationServiceProvider {
   }
   
   /**
-   * Test an import function
+   * Test an import function by fetching an issue and running it through the pipeline
    * @param importFunction
    * @param identifier
    */
   testImportFunction (importFunction, identifier) {
     debug && console.log('IntegrationServiceProvider.testImportFunction:', this.server._id, this.server.title);
+    let self          = this,
+        rawItem       = self.integrator.fetchItem(identifier),
+        processedItem = self.postProcessItem(rawItem);
+    
+    return {
+      rawItem      : rawItem,
+      processedItem: processedItem,
+      importResult : self.importItem(importFunction, processedItem)
+    }
+  }
+  
+  /**
+   * Post process a raw issue
+   * @param rawItem
+   */
+  postProcessItem (rawItem) {
+    debug && console.log('IntegrationServiceProvider.postProcessItem:', this.server._id, this.server.title);
+    let self          = this,
+        processedItem = self.integrator.postProcessItem(rawItem);
+    
+    self.processItemForContributors(processedItem);
+    
+    return processedItem;
+  }
+  
+  /**
+   * Replace all of the raw contributor identifiers on an issue with contributor _ids
+   * @param processedItem
+   */
+  processItemForContributors (processedItem) {
+    debug && console.log('IntegrationServiceProvider.processItemForContributors:', this.server._id, this.server.title);
     let self = this;
     
-    return self.integrator.testImportFunction(importFunction, identifier);
+    self.integrator.processItemForContributors(processedItem);
   }
   
   /**
@@ -347,6 +383,57 @@ export class IntegrationServiceProvider {
     ImportedItems.upsert({}, {
       $set: item
     });
+  }
+  
+  /**
+   * Given a key identifier (email address, etc), find or create a contributor record to match
+   * Maintain a local cache of contributors that have been identified
+   * @param key
+   * @param email
+   * @param name
+   * @param rawData
+   */
+  findOrCreateContributor (key, email, name, rawData) {
+    debug && console.log('IntegrationServiceProvider.findOrCreateContributor:', this.server._id, this.server.title, key);
+    let self = this;
+    
+    // Validate the data to make sure it's safe to proceed
+    if (!_.isString(key) && key.length && _.isString(email) && email.length && _.isString(name) && name.length) {
+      console.error('IntegrationServiceProvider.findOrCreateContributor passed invalid data:', key, email, name);
+      return rawData;
+    }
+    
+    // Check the local cache
+    if (self.cache.contributors[ key ]) {
+      return self.cache.contributors[ key ]
+    } else {
+      // Check the db for a known contributor
+      let identifier  = self.server.contributorIdentifier(key),
+          contributor = Contributors.findOne({ identifiers: identifier });
+      
+      if (contributor) {
+        self.cache.contributors[ key ] = contributor._id;
+      } else {
+        // Check for a contributor with this email address
+        contributor = Contributors.findOne({ email: email });
+        
+        if (contributor) {
+          self.cache.contributors[ key ] = contributor._id;
+        } else {
+          // Create the contributor
+          let doc                         = {
+            email      : email,
+            name       : name,
+            identifiers: [ identifier ],
+            profiles   : {},
+            usertype   : UserTypes.contributor
+          };
+          doc.profiles[ self.server._id ] = _.isObject(rawData) ? rawData : { data: rawData };
+          self.cache.contributors[ key ]  = Contributors.insert(doc);
+        }
+      }
+      return self.cache.contributors[ key ]
+    }
   }
   
   /**

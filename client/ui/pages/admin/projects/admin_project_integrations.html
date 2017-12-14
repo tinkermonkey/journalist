@@ -12,8 +12,8 @@
     {{#each integrations}}
       <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
           data-pk="{{_id}}">
-        <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes}}</td>
-        <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes}}</td>
+        <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Integration Type" }}</td>
+        <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes emptyText="Item Type" }}</td>
         <td>{{> Template.dynamic template=integrationPanel }}</td>
         <td class="open-link">
           <a class="link-red hidden-control btn-delete-integration">

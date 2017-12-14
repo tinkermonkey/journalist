@@ -1,7 +1,6 @@
 import './integration_server_field_reference.html';
 import { Template } from 'meteor/templating';
 import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
-import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
 import { IntegrationServerCaches } from '../../../../../imports/api/integrations/integration_server_caches';
 
 /**
@@ -9,22 +8,29 @@ import { IntegrationServerCaches } from '../../../../../imports/api/integrations
  */
 Template.IntegrationServerFieldReference.helpers({
   servers () {
-    let functionId     = FlowRouter.getParam('functionId'),
-        importFunction = IntegrationImportFunctions.findOne(functionId);
+    let context = this.context,
+        query   = { isActive: true };
     
-    return IntegrationServers.find({ integrationType: importFunction.integrationType, isActive: true }, { sort: { title: 1 } });
+    if (context && context.integrationType) {
+      query.integrationType = context.integrationType;
+    }
+    
+    return IntegrationServers.find(query, { sort: { title: 1 } });
   },
   server () {
     let serverId = Template.instance().serverId.get();
     if (serverId) {
       return IntegrationServers.findOne(serverId)
     } else {
-      let functionId     = FlowRouter.getParam('functionId'),
-          importFunction = IntegrationImportFunctions.findOne(functionId),
-          server         = IntegrationServers.findOne({
-            integrationType: importFunction.integrationType,
-            isActive       : true
-          }, { sort: { title: 1 } });
+      let context = this.context,
+          query   = { isActive: true };
+      
+      if (context && context.integrationType) {
+        query.integrationType = context.integrationType;
+      }
+      
+      let server = IntegrationServers.findOne(query, { sort: { title: 1 } });
+      
       if (server) {
         Template.instance().serverId.set(server._id)
       }
@@ -96,6 +102,7 @@ Template.IntegrationServerFieldReference.onCreated(() => {
   instance.autorun(() => {
     let serverId = instance.serverId.get();
     
+    instance.subscribe('integration_servers');
     instance.subscribe('integration_server', serverId);
     instance.subscribe('integration_server_cache', serverId);
   })

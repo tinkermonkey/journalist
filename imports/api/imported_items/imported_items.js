@@ -39,7 +39,7 @@ export const ImportedItem = new SimpleSchema({
   owner        : {
     type    : String,
     optional: true,
-    label   : 'The identifier of the Contributor who owns this item'
+    label   : 'The _id of the Contributor who owns this item'
   },
   // Date the item was created in the originating system
   dateCreated  : {
@@ -51,7 +51,7 @@ export const ImportedItem = new SimpleSchema({
   createdBy    : {
     type    : String,
     optional: true,
-    label   : 'The identifier of the Contributor who created this item'
+    label   : 'The _id of the Contributor who created this item'
   },
   // Date the item was last modified in the originating system
   dateModified : {
@@ -63,7 +63,7 @@ export const ImportedItem = new SimpleSchema({
   modifiedBy   : {
     type    : String,
     optional: true,
-    label   : 'The identifier of the Contributor who last modified this item'
+    label   : 'The _id of the Contributor who last modified this item'
   },
   // Date this item was last imported from the originating system
   lastImported : {
@@ -76,6 +76,10 @@ export const ImportedItem = new SimpleSchema({
     optional: true
   }
 });
+
+// Create a schema for validating imported items before they're stored
+// The omitted fields are added post import processing so they will not be present at import validation
+export const ImportedItemTestSchema = new SimpleSchema(_.omit(ImportedItem.schema(), 'integrationId', 'itemType'));
 
 export const ImportedItems = new Mongo.Collection('imported_items');
 ImportedItems.attachSchema(ImportedItem);

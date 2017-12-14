@@ -15,7 +15,6 @@
               <table class="table data-table full-width border-bottom">
                 <thead>
                 <tr>
-                  <th>Identifier</th>
                   <th>Email</th>
                   <th>Name</th>
                   <th>Manager</th>
@@ -31,7 +30,6 @@
                 {{#each contributors}}
                   <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
                       data-pk="{{_id}}">
-                    <td>{{> EditableTextField dataKey="identifier" value=identifier emptyText="Identifier" }}</td>
                     <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" }}</td>
                     <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" }}</td>
                     <td>{{> EditableRecordSelector managerSelectorContext }}</td>
