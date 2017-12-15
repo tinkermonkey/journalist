@@ -27,6 +27,26 @@ export const Integration = new SimpleSchema({
     type: Number,
     allowedValues: _.values(ItemTypes)
   },
+  // The _id of the integration import function to use
+  importFunction: {
+    type: String,
+    optional: true
+  },
+  // The _id of the integration display template to use for previewing items
+  previewDisplayTemplate: {
+    type: String,
+    optional: true
+  },
+  // The _id of the integration display template to use for details views of items
+  detailDisplayTemplate: {
+    type: String,
+    optional: true
+  },
+  // The list of _id of the calculated fields to use
+  calculatedFields: {
+    type: [String],
+    optional: true
+  },
   // Configuration blob
   details: {
     type: Object,

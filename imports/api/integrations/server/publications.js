@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Integrations } from '../integrations';
+import { IntegrationCalculatedFields } from '../integration_calculated_fields';
 import { IntegrationDisplayTemplates } from '../integration_display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
@@ -13,6 +14,21 @@ Meteor.publish('integrations', function (projectId) {
       return Integrations.find({ projectId: projectId });
     } else {
       console.warn('integrations requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration', function (integrationId) {
+  console.info('Publish: integration', integrationId);
+  if (this.userId && integrationId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return Integrations.find({ _id: integrationId });
+    } else {
+      console.warn('integration requested by non-admin:', this.userId, user && user.username)
     }
   } else {
     this.ready();
@@ -94,6 +110,36 @@ Meteor.publish('integration_display_templates', function () {
   console.info('Publish: integration_display_templates');
   if (this.userId) {
     return IntegrationDisplayTemplates.find({});
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_calculated_fields', function () {
+  console.info('Publish: integration_calculated_fields');
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationCalculatedFields.find({});
+    } else {
+      console.warn('integration_calculated_fields requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_calculated_field', function (calculatedFieldId) {
+  console.info('Publish: integration_calculated_field', calculatedFieldId);
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationCalculatedFields.find({ _id: calculatedFieldId });
+    } else {
+      console.warn('integration_calculated_fields requested by non-admin:', this.userId, user && user.username)
+    }
   } else {
     this.ready();
     return [];

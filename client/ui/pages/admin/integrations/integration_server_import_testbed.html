@@ -1,3 +1,5 @@
 <template name="IntegrationServerImportTestbed">
-  {{> Template.dynamic template=integrationImportTestbedPanel }}
+  {{#if context}}
+    {{> Template.dynamic template=integrationImportTestbedPanel }}
+  {{/if}}
 </template>

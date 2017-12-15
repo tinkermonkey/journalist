@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { Auth } from '../../auth';
 import { Integrations } from '../integrations';
+import { IntegrationCalculatedFields } from '../integration_calculated_fields';
 import { IntegrationDisplayTemplates } from '../integration_display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
@@ -50,7 +51,6 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Delete the contributor
       Integrations.remove(integrationId);
     } else {
       console.error('Non-admin user tried to delete an integration:', user.username, integrationId);
@@ -135,7 +135,6 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Delete the contributor
       IntegrationServers.remove(serverId);
     } else {
       console.error('Non-admin user tried to delete an integration server:', user.username, serverId);
@@ -244,7 +243,6 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Delete the contributor
       IntegrationImportFunctions.remove(functionId);
     } else {
       console.error('Non-admin user tried to delete an integration import function:', user.username, functionId);
@@ -323,7 +321,6 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Delete the contributor
       IntegrationDisplayTemplates.remove(templateId);
     } else {
       console.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
@@ -362,6 +359,84 @@ Meteor.methods({
       }
     } else {
       console.error('Non-admin user tried to edit an integration display template:', user.username, key, templateId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Add an integration calculated field
+   * @param title
+   */
+  addIntegrationCalculatedField (title) {
+    console.log('addIntegrationCalculatedField:', title);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(title, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // Insert the project percent
+      IntegrationCalculatedFields.insert({
+        title: title
+      });
+    } else {
+      console.error('Non-admin user tried to add an integration calculated field:', user.username, title);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Remove an integration calculated field
+   * @param fieldId
+   */
+  deleteIntegrationCalculatedField (fieldId) {
+    console.log('deleteIntegrationCalculatedField:', fieldId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(fieldId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      IntegrationCalculatedFields.remove(fieldId);
+    } else {
+      console.error('Non-admin user tried to delete an integration calculated field:', user.username, fieldId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Edit an integration calculated field record
+   * @param fieldId
+   * @param key
+   * @param value
+   */
+  editIntegrationCalculatedField (fieldId, key, value) {
+    console.log('editIntegrationCalculatedField:', fieldId, key);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(fieldId, String);
+    check(key, String);
+    check(value, Match.Any);
+    
+    // Get the calculated Field record to make sure this is authorized
+    let calculatedField = IntegrationCalculatedFields.findOne(fieldId);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (calculatedField) {
+        let update    = {};
+        update[ key ] = value;
+        
+        // Update the contributor
+        IntegrationCalculatedFields.update(fieldId, { $set: update });
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to edit an integration calculated field:', user.username, key, fieldId);
       throw new Meteor.Error(403);
     }
   },

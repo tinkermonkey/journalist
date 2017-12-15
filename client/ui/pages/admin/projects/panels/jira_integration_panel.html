@@ -1,10 +1,8 @@
 <template name="JiraIntegrationPanel">
   <div>
+    <h2>Issue Select Query</h2>
     <div>
-      <label>Select Query</label>
-      <div>
-        {{> EditableTextArea dataKey='details.selectQuery' value=details.selectQuery emptyText='Enter the item select query' }}
-      </div>
+      {{> EditableTextArea dataKey='details.selectQuery' value=details.selectQuery emptyText='Enter the item select query' }}
     </div>
   </div>
 </template>

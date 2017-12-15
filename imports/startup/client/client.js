@@ -5,8 +5,11 @@ import { moment } from 'meteor/momentjs:moment';
 import { Util } from '../../api/util.js';
 import { Contributors } from '../../api/contributors/contributors.js';
 import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions';
-import { ItemTypes } from '../../api/imported_items/item_types.js';
 import { IntegrationTypes } from '../../api/integrations/integration_types.js';
+import { IntegrationCalculatedFields } from '../../api/integrations/integration_calculated_fields.js';
+import { IntegrationDisplayTemplates } from '../../api/integrations/integration_display_templates.js';
+import { IntegrationImportFunctions } from '../../api/integrations/integration_import_functions.js';
+import { ItemTypes } from '../../api/imported_items/item_types.js';
 import { Projects } from '../../api/projects/projects.js';
 import { ProjectTypes } from '../../api/projects/project_types.js';
 import { Teams } from '../../api/teams/teams';
@@ -223,6 +226,52 @@ Template.registerHelper('projectSelectorContext', function () {
     dataKey     : 'projectId',
     collection  : Projects,
     emptyText   : 'Select project',
+    cssClass    : 'inline-block',
+    query       : {}
+  }
+});
+Template.registerHelper('importFunctionSelectorContext', function () {
+  let record = this;
+  
+  return {
+    valueField  : '_id',
+    displayField: 'title',
+    value       : record.importFunction,
+    dataKey     : 'importFunction',
+    collection  : IntegrationImportFunctions,
+    emptyText   : 'Select import function',
+    cssClass    : 'inline-block',
+    query       : {}
+  }
+});
+Template.registerHelper('calculatedFieldsChecklistContext', function () {
+  let record = this;
+  
+  return {
+    valueField  : '_id',
+    displayField: 'title',
+    value       : record.calculatedFields,
+    dataKey     : 'calculatedFields',
+    collection  : IntegrationCalculatedFields,
+    emptyText   : 'Select calculated fields',
+    cssClass    : 'inline-block',
+    query       : {}
+  }
+});
+Template.registerHelper('displayTemplateSelectorContext', function (fieldName) {
+  let record = this;
+  
+  if(!_.isString(fieldName) || _.isString(fieldName) && !fieldName.length){
+    fieldName = 'displayTemplate'
+  }
+  
+  return {
+    valueField  : '_id',
+    displayField: 'title',
+    value       : record[fieldName],
+    dataKey     : fieldName,
+    collection  : IntegrationDisplayTemplates,
+    emptyText   : 'Select display template',
     cssClass    : 'inline-block',
     query       : {}
   }

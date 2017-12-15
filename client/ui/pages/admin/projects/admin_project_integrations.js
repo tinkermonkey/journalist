@@ -1,23 +1,13 @@
 import './admin_project_integrations.html';
 import { Template } from 'meteor/templating';
 import { Integrations } from '../../../../../imports/api/integrations/integrations';
-import { IntegrationTypes } from '../../../../../imports/api/integrations/integration_types';
 import './add_integration_form';
-import './panels/jira_integration_panel';
+import './admin_project_integration';
 
 /**
  * Template Helpers
  */
-Template.AdminProjectIntegrations.helpers({
-  integrationPanel(){
-    switch(this.integrationType){
-      case IntegrationTypes.jira:
-        return 'JiraIntegrationPanel'
-      case IntegrationTypes.confluence:
-        return 'ConfluenceIntegrationPanel'
-    }
-  }
-});
+Template.AdminProjectIntegrations.helpers({});
 
 /**
  * Template Event Handlers
@@ -104,7 +94,11 @@ Template.AdminProjectIntegrations.events({
  * Template Created
  */
 Template.AdminProjectIntegrations.onCreated(() => {
-
+  let instance = Template.instance();
+  
+  instance.subscribe('integration_display_templates');
+  instance.subscribe('integration_import_functions');
+  instance.subscribe('integration_calculated_fields');
 });
 
 /**
