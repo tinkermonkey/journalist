@@ -1,6 +1,7 @@
 import './admin_contributors.html';
 import { Template } from 'meteor/templating';
 import { Contributors } from '../../../../../imports/api/contributors/contributors.js';
+import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions.js';
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
 
@@ -8,8 +9,13 @@ import '../../../components/team_roles/editable_team_roster.js';
  * Template Helpers
  */
 Template.AdminContributors.helpers({
-  contributors(){
-    return Contributors.find({}, { sort: { email: 1 } })
+  roleDefinitions () {
+    let definitions = ContributorRoleDefinitions.find({}, { sort: { order: 1 } }).fetch();
+    definitions.push({ title: "Unassigned" });
+    return definitions
+  },
+  contributors () {
+    return Contributors.find({ roleId: this._id }, { sort: { email: 1 } })
   }
 });
 
@@ -17,11 +23,11 @@ Template.AdminContributors.helpers({
  * Template Event Handlers
  */
 Template.AdminContributors.events({
-  "edited .editable"(e, instance, newValue){
+  "edited .editable" (e, instance, newValue) {
     e.stopImmediatePropagation();
     
     let contributorId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey   = $(e.target).attr("data-key");
+        dataKey       = $(e.target).attr("data-key");
     
     console.log('AdminContributors edited:', contributorId, dataKey, newValue);
     if (contributorId && dataKey) {
@@ -32,23 +38,19 @@ Template.AdminContributors.events({
       });
     }
   },
-  "click .btn-add-contributor"(e, instance){
-    let context = Template.currentData();
+  "click .btn-add-contributor" (e, instance) {
+    let roleDefinition = this;
     
     RobaDialog.show({
       contentTemplate: "AddRecordForm",
       contentData    : {
         schema: new SimpleSchema({
-          identifier      : {
-            type : String,
-            label: 'Identifier'
-          },
-          email           : {
+          email     : {
             type : String,
             regEx: SimpleSchema.RegEx.Email,
             label: 'Email'
           },
-          name            : {
+          name      : {
             type    : String,
             optional: true,
             label   : 'Name'
@@ -68,7 +70,7 @@ Template.AdminContributors.events({
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Create the contributor
-            Meteor.call('addContributor', formData.identifier, formData.email, formData.name, (error, response) => {
+            Meteor.call('addContributor', formData.email, formData.name, roleDefinition._id, (error, response) => {
               if (error) {
                 RobaDialog.error('Failed to create contributor:' + error.toString())
               } else {
@@ -84,11 +86,11 @@ Template.AdminContributors.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-contributor"(e, instance){
+  "click .btn-delete-contributor" (e, instance) {
     let contributorId = $(e.target).closest(".data-table-row").attr("data-pk"),
         contributor   = Contributors.findOne(contributorId);
     
-    RobaDialog.ask('Delete Contributor?', 'Are you sure that you want to delete the contributor <span class="label label-primary"> ' + contributor.identifier + '</span> ?', () => {
+    RobaDialog.ask('Delete Contributor?', 'Are you sure that you want to delete the contributor <span class="label label-primary"> ' + contributor.email + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteContributor', contributorId, function (error, response) {
         if (error) {

@@ -19,8 +19,8 @@
               <h3>Reporting</h3>
               {{> StatusReportSettings sourceCollection='Tasks' sourceId=_id contributorId=contributorId }}
   
-              <h4>Assign Report</h4>
-              {{> AssignReport }}
+              <h4>Active Reports</h4>
+              {{> ActiveReports sourceCollection='Tasks' sourceId=_id contributorId=contributorId}}
             {{/if}}
           {{/unless}}
         </div>

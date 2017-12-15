@@ -1,0 +1,13 @@
+<template name="JiraApplicationInfo">
+  <h2>
+    Application Info
+    <small>
+      <a class="pull-right btn-refresh">
+        <span class="glyphicon glyphicon-refresh"></span>
+      </a>
+    </small>
+  </h2>
+  
+  {{> JiraBrainDump title="Sever Info" module="serverInfo" method="getServerInfo" payload=serverInfoPayload}}
+  {{> JiraBrainDump title="Myself" module="myself" method="getMyself"}}
+</template>

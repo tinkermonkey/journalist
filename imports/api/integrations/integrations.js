@@ -3,7 +3,9 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { IssueTypes } from '../imported_issues/issue_types';
+import { ItemTypes } from '../imported_items/item_types';
+import { IntegrationTypes } from './integration_types';
+import { Projects } from '../projects/projects';
 
 /**
  * ============================================================================
@@ -15,15 +17,41 @@ export const Integration = new SimpleSchema({
   projectId: {
     type: String
   },
-  // Overall type of this issue:
-  issueType: {
+  // Type of integration
+  integrationType: {
     type: Number,
-    allowedValues: _.values(IssueTypes)
+    allowedValues: _.values(IntegrationTypes)
+  },
+  // Type of items this integration provides
+  itemType: {
+    type: Number,
+    allowedValues: _.values(ItemTypes)
+  },
+  // The _id of the integration import function to use
+  importFunction: {
+    type: String,
+    optional: true
+  },
+  // The _id of the integration display template to use for previewing items
+  previewDisplayTemplate: {
+    type: String,
+    optional: true
+  },
+  // The _id of the integration display template to use for details views of items
+  detailDisplayTemplate: {
+    type: String,
+    optional: true
+  },
+  // The list of _id of the calculated fields to use
+  calculatedFields: {
+    type: [String],
+    optional: true
   },
   // Configuration blob
-  config: {
+  details: {
     type: Object,
-    blackbox: true
+    blackbox: true,
+    optional: true
   },
   // Standard tracking fields
   dateCreated: {
@@ -41,7 +69,7 @@ export const Integration = new SimpleSchema({
   modifiedBy: {
     type: String,
     autoValue: SchemaHelpers.autoValueModifiedBy
-  },
+  }
 });
 
 export const Integrations = new Mongo.Collection('integrations');
@@ -58,4 +86,14 @@ Integrations.deny({
 /**
  * Helpers
  */
-Integrations.helpers({});
+Integrations.helpers({
+  integrationTypeTitle(){
+    return Util.camelToTitle(_.invert(IntegrationTypes)[this.integrationType])
+  },
+  itemTypeTitle(){
+    return Util.camelToTitle(_.invert(ItemTypes)[this.itemType])
+  },
+  project(){
+    return Projects.findOne({_id: this.projectId})
+  }
+});

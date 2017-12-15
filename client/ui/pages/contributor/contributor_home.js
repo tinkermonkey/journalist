@@ -1,22 +1,32 @@
 import './contributor_home.html';
 import './contributor_home.css';
+import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Contributors } from '../../../../imports/api/contributors/contributors';
+import { Users } from '../../../../imports/api/users/users';
 import './contributor_sidebar.js';
 import './contributor_banner.js';
 import './contributor_header.js';
 import './contributor_status_reports_due.js';
+import '../../components/document_status_reports/document_status_reports';
 
 /**
  * Template Helpers
  */
 Template.ContributorHome.helpers({
-  contributor(){
+  contributor () {
     let contributorId = FlowRouter.getParam('contributorId');
-    if(contributorId){
+    if (contributorId) {
       return Contributors.findOne(contributorId)
     } else {
       return Meteor.user().contributor()
+    }
+  },
+  shouldSeeReports () {
+    let contributor = this,
+        user        = Users.findOne(Meteor.userId());
+    if (user) {
+      return user.contributor()._id === contributor._id || user.managesContributor(contributor._id) || user.isAdmin();
     }
   }
 });

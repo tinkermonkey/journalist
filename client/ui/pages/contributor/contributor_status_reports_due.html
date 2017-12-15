@@ -1,18 +1,31 @@
 <template name="ContributorStatusReportsDue">
-  {{#if statusReportsDue.count}}
-    <h3>Status Reports Due</h3>
-    
-    {{#each statusReportsDue}}
-      <div class="no-wrap">
-        <ol class="breadcrumb">
-          <li class="active">{{sourceCollection}}</li>
-          <li>
-            <a href="{{pathFor sourceCollectionRouteName sourceCollectionRouteParam}}">{{#with sourceDocument}}{{title}}{{/with}}</a></li>
-          <li>
-            due {{dateFormat nextDue 'ddd MMM Do'}} at {{dateFormat nextDue 'h:mm a'}}
-          </li>
-        </ol>
+  {{#if Template.subscriptionsReady}}
+    {{#if statusReportsDue.length}}
+      <h3>Status Reports Due</h3>
+      
+      <div class="status-reports-due">
+        {{#each statusReportsDue}}
+          <div class="no-wrap" data-pk="{{_id}}">
+            <ol class="breadcrumb">
+              <li class="active">{{sourceCollection}}</li>
+              <li>
+                <a href="{{pathFor sourceDetails.routeName sourceRouteParamValue}}">{{sourceLabel}}</a>
+              </li>
+              <li>
+                due <span class="{{isImminentReport}}">{{fromNow dueDate}}</span>
+                ({{dateFormat dueDate 'ddd MMM Do'}} at {{dateFormat dueDate 'h:mm a'}})
+              </li>
+              <li class="btn-file-report">
+                <a href="{{pathFor sourceDetails.routeName sourceRouteParamValue}}?action=report">
+                  <span class="glyphicon glyphicon-comment"></span>
+                </a>
+              </li>
+            </ol>
+          </div>
+        {{/each}}
       </div>
-    {{/each}}
+    {{/if}}
+  {{else}}
+    {{> RobaSpinner rainbow=true}}
   {{/if}}
 </template>

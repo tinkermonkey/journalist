@@ -1,0 +1,13 @@
+<template name="AuthenticateServerLink">
+  {{#if isAuthenticated}}
+    <a class="btn-log-out-server">
+      <span class="glyphicon glyphicon-log-out"></span>
+      Log Out
+    </a>
+  {{else}}
+    <a class="btn-log-in-server">
+      <span class="glyphicon glyphicon-log-in"></span>
+      Log In
+    </a>
+  {{/if}}
+</template>

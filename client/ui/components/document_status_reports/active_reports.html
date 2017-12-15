@@ -1,0 +1,22 @@
+<template name="ActiveReports">
+  <div>
+    {{#if Template.subscriptionsReady}}
+      <div>
+        <table class="table data-table">
+          {{#each activeReports }}
+            <tr>
+              <td><a href="{{pathFor 'ContributorHome' contributorId=contributorId}}">{{contributorName contributorId}}</a></td>
+              <td>due {{fromNow dueDate}}</td>
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+      <a class="btn-assign-report">
+        <span class="glyphicon glyphicon-send"></span>
+        Assign a single report
+      </a>
+    {{else}}
+      {{> RobaSpinner rainbow=true }}
+    {{/if}}
+  </div>
+</template>

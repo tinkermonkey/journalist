@@ -1,0 +1,16 @@
+<template name="AddReportForm">
+  <div>
+    {{#autoForm schema=getSchema id="serverMethodForm" type="normal"}}
+      <fieldset>
+        <label for="contributorId" class="control-label">Assignee</label>
+        <select class="form-control" name="contributorId" data-schema-key="contributorId" required>
+          {{#each contributorOptions}}
+            <option value="{{_id}}">{{name}}</option>
+          {{/each}}
+        </select>
+  
+        {{> afQuickField name='dueDate' type='datetime-local'}}
+      </fieldset>
+    {{/autoForm}}
+  </div>
+</template>

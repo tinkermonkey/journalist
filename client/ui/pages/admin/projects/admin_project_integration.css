@@ -1,0 +1,7 @@
+.integration-config-table {
+  width: auto !important;
+}
+
+.integration-config-table td:first-child {
+  font-weight: bold;
+}

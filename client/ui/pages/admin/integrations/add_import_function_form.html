@@ -1,0 +1,17 @@
+<template name="AddImportFunctionForm">
+  <div>
+    {{#autoForm schema=getSchema id="serverMethodForm" type="normal"}}
+      <fieldset>
+        {{> afQuickField name='title'}}
+        
+        <label for="integrationType" class="control-label">Integration Type</label>
+        <select class="form-control" name="integrationType" data-schema-key="integrationType" required>
+          {{#each integrationTypeOptions}}
+            <option value="{{_id}}">{{title}}</option>
+          {{/each}}
+        </select>
+        
+      </fieldset>
+    {{/autoForm}}
+  </div>
+</template>

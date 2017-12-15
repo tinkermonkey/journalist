@@ -1,18 +1,18 @@
 <template name="EditableContributorRoles">
   <div class="editable editable-contributor-roles show-controls-on-hover" data-pk="{{_id}}">
     <table class="table data-table overhang-table-left">
-      {{#each roles}}
-        <tr class="data-table-row {{#if isNewRecord}}new-record{{/if}}" data-pk="{{_id}}">
+      {{#each contributorRoles}}
+        <tr class="data-table-row" data-pk="{{_id}}">
           <td class="open-link">
             <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=teamId}}">
               <span class="glyphicon glyphicon-folder-open"></span>
             </a>
           </td>
-          {{#unless ../hasSameRole}}
-            <td>{{> EditableEnumSelector dataKey="role" value=role enum=ContributorRoles}}</td>
-          {{/unless}}
           <td>
-            {{> EditableRecordSelector teamSelectorContext }}
+            <span class="team-title">{{> EditableRecordSelector teamSelectorContext }}</span>
+          {{#unless ../hasSameRole}}
+            {{> EditableRecordSelector roleSelectorContext }}
+          {{/unless}}
           </td>
           <td class="text-right">
             <a class="btn-delete-role link-red hidden-control">
@@ -31,6 +31,7 @@
     {{#if hasCapacity}}
       <a class="btn-add-role hidden-control">
         <span class="glyphicon glyphicon-plus-sign"></span>
+        Add Team Role
       </a>
     {{/if}}
   </div>

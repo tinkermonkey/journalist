@@ -1,0 +1,77 @@
+<template name="IntegrationServerFieldReference">
+  {{#if servers.count}}
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              {{#if server}}
+                {{server.title}}
+              {{else}}
+                Server
+              {{/if}}
+              
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu server-dropdown">
+              {{#each servers}}
+                <li><a>{{title}}</a></li>
+              {{/each}}
+            </ul>
+          </li>
+        </ul>
+        {{#if server}}
+          {{#if cachedFieldList.value.length}}
+            <form class="navbar-form navbar-left">
+              <div class="form-group">
+                <input type="text" class="form-control input-field-search" placeholder="Search">
+              </div>
+            </form>
+          {{/if}}
+        {{/if}}
+      </div>
+    </nav>
+  {{else}}
+    <div class="alert alert-warning">
+      Configure an integration server to see field reference information
+    </div>
+  {{/if}}
+  
+  {{#if Template.subscriptionsReady}}
+    {{#if server}}
+      {{#if cachedFieldList.value.length}}
+        {{#if searchTerm}}
+          {{#if searchResults.length}}
+            {{#each searchResults}}
+              <div class="well well-sm">
+                <h4>
+                  {{name}}
+                  <span class="pull-right">
+            <small>{{> JsonInfoLink data=this placement='left'}}</small>
+            </span>
+                </h4>
+                {{#if syntheticKey}}
+                  <dt>Processed Key</dt>
+                  <dd>{{syntheticKey}}</dd>
+                  <dt>Raw Key</dt>
+                  <dd>{{key}}</dd>
+                {{else}}
+                  <dt>Key</dt>
+                  <dd>{{key}}</dd>
+                {{/if}}
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="alert">
+              No fields found
+            </div>
+          {{/if}}
+        {{/if}}
+      {{else}}
+        <div class="alert alert-warning">
+          There are no cached fields for this server
+        </div>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+</template>

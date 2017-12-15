@@ -88,7 +88,7 @@ Template.DocumentStatusReports.events({
   
     if (canFileReport && context.sourceCollection && context.sourceId) {
       // Create a new report
-      Meteor.call('addStatusReport', currentContributor._id, context.sourceCollection, context.sourceId, StatusReportStates.inProgress, (error, response) => {
+      Meteor.call('addStatusReport', currentContributor._id, context.sourceCollection, context.sourceId, StatusReportStates.inProgress, context.nextDue, (error, response) => {
         if (error) {
           RobaDialog.error('Adding report failed:' + error.toString());
         } else {

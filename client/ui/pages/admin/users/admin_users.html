@@ -1,14 +1,23 @@
 <template name="AdminUsers">
   {{#if Template.subscriptionsReady}}
     <div class="container">
-      <h1>Administrators</h1>
-      {{> AdminUserList usertype=UserTypes.administrator }}
-      
-      <h1>Managers</h1>
-      {{> AdminUserList usertype=UserTypes.manager }}
-      
-      <h1>Contributors</h1>
-      {{> AdminUserList usertype=UserTypes.contributor }}
+      <div class="row">
+        <div class="col-md-12">
+          <ol class="breadcrumb">
+            <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+            <li class="active">Users</li>
+          </ol>
+          
+          <h1>Administrators</h1>
+          {{> AdminUserList usertype=UserTypes.administrator }}
+  
+          <h1>Managers</h1>
+          {{> AdminUserList usertype=UserTypes.manager }}
+  
+          <h1>Contributors</h1>
+          {{> AdminUserList usertype=UserTypes.contributor }}
+        </div>
+      </div>
     </div>
   {{else}}
     {{> AppLoading}}

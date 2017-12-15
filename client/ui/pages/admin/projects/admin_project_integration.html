@@ -1,0 +1,77 @@
+<template name="AdminProjectIntegration">
+  {{#if Template.subscriptionsReady }}
+    {{#with integration}}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'AdminProjects' }}">Projects</a></li>
+              <li><a href="{{pathFor 'AdminProjectHome' projectId=projectId }}">{{project.title}}</a></li>
+              <li class="active">Project Integration</li>
+            </ol>
+            
+            <h1>{{project.title}} Integration</h1>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-8">
+            <h2>Configuration</h2>
+            <table class="table data-table table-striped integration-config-table">
+              <tbody>
+              <tr>
+                <td>Integration Type</td>
+                <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Integration Type" }}</td>
+              </tr>
+              <tr>
+                <td>Item Type</td>
+                <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes emptyText="Item Type" }}</td>
+              </tr>
+              <tr>
+                <td>Import Function</td>
+                <td>{{> EditableRecordSelector importFunctionSelectorContext }}</td>
+              </tr>
+              <tr>
+                <td>Preview Template</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplate' }}</td>
+              </tr>
+              <tr>
+                <td>Detail Template</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplate' }}</td>
+              </tr>
+              <tr>
+                <td>Calculated Fields</td>
+                <td>{{> EditableRecordChecklist calculatedFieldsChecklistContext }}</td>
+              </tr>
+              </tbody>
+            </table>
+  
+            {{#RobaTabGroup name="integration-tabs" navClass="nav-tabs"}}
+              {{#RobaTab name="details" title="Integration Details"}}
+                {{> Template.dynamic template=integrationPanel }}
+              {{/RobaTab}}
+              {{#RobaTab name="cache" title="Import Testbed"}}
+  
+              {{/RobaTab}}
+              {{#RobaTab name="preview" title="Preview Template"}}
+
+              {{/RobaTab}}
+              {{#RobaTab name="testbed" title="Display Template"}}
+
+              {{/RobaTab}}
+            {{/RobaTabGroup}}
+  
+          </div>
+          <div class="col-md-4">
+            <h2>Field Reference</h2>
+            
+            {{> IntegrationServerFieldReference context=this }}
+          </div>
+        </div>
+      </div>
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

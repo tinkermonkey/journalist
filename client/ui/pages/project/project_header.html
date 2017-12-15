@@ -7,5 +7,14 @@
         {{description}}
       {{/if}}
     </div>
+    <div class="project-header-teams">
+      <div class="flex">
+        {{#each teams}}
+          <div class="project-team-roster">
+            {{> ProjectTeamRoster project=.. team=this}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
   </div>
 </template>

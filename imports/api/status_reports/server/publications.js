@@ -43,9 +43,28 @@ Meteor.publish('incomplete_reports', function (sourceCollection, sourceId) {
     return StatusReports.find({
       sourceCollection: sourceCollection,
       sourceId        : sourceId,
-      state           : {$ne: StatusReportStates.submitted },
+      state           : { $ne: StatusReportStates.submitted },
       contributorId   : { $in: contributorList }
     });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('contributor_incomplete_reports', function (contributorId) {
+  console.log('Publish: contributor_incomplete_reports', contributorId);
+  if (this.userId) {
+    let user = Meteor.user();
+    if (user.managesContributor(contributorId) || user.contributor()._id === contributorId) {
+      return StatusReports.find({
+        state        : { $ne: StatusReportStates.submitted },
+        contributorId: contributorId
+      });
+    } else {
+      this.ready();
+      return [];
+    }
   } else {
     this.ready();
     return [];

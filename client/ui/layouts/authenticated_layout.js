@@ -22,13 +22,15 @@ Template.AuthenticatedLayout.onCreated(() => {
   let instance = Template.instance();
   
   instance.subscribe('contributors');
+  instance.subscribe('contributor_role_definitions');
   instance.subscribe('contributor_team_roles');
   instance.subscribe('contributor_project_assignments');
   instance.subscribe('efforts');
+  instance.subscribe('integration_display_templates');
   instance.subscribe('priorities');
   instance.subscribe('projects');
   instance.subscribe('status_report_settings');
-  instance.subscribe('system_status_metrics');
+  instance.subscribe('system_health_metrics');
   instance.subscribe('user_level');
   instance.subscribe('tasks');
   instance.subscribe('teams');

@@ -1,0 +1,12 @@
+
+.json-info-link-container {
+  display: inline-block;
+}
+
+.json-info-link-container .popover {
+  max-width: none;
+}
+
+.json-info-link-content {
+  white-space: pre-wrap;
+}

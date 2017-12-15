@@ -3,14 +3,12 @@
     <table class="table data-table">
       {{#each projectAssignments}}
         <tr class="data-table-row blue" data-pk="{{_id}}">
-          <td>
-            <span class="glyphicon glyphicon-adjust"></span>
+          <td class="project-assignment-icon-col">
+            <span class="glyphicon glyphicon-dashboard"></span>
           </td>
-          <td>
-            {{#if showPercent}}
-              {{> EditableTextField dataKey="percent" value=percent emptyText="Percent" dataType="number" cssClass="inline-block"}}
-              %
-            {{/if}}
+          <td class="project-assignment-percent-col">
+            {{> EditableTextField dataKey="percent" value=percent emptyText="Percent" dataType="number" cssClass="inline-block"}}
+            %
           </td>
           <td>
             {{> EditableRecordSelector projectSelectorContext }}
@@ -21,13 +19,11 @@
             </a>
           </td>
         </tr>
-        {{#if showPercent}}
           <tr class="project-commitment-row">
             <td colspan="4">
               <div class="project-percent-committed" style="width: {{percent}}%;"></div>
             </td>
           </tr>
-        {{/if}}
       {{/each}}
     </table>
     {{#if contributor.hasCapacity}}

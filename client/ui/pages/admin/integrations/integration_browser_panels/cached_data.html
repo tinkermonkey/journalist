@@ -1,0 +1,27 @@
+<template name="CachedData">
+  <div class="alert">
+    <a class="btn-update-cache">Update Cache</a>
+  </div>
+  
+  {{#if cachedItems.count}}
+    {{#RobaTabGroup name="cache-tabs" navClass="nav-tabs"}}
+      {{#each cachedItems}}
+        {{#RobaTab name=key title=getTabTitle}}
+          <h2>
+            {{camelToTitle key}}
+          </h2>
+          <div>
+            {{key}} has {{value.length}} items, last updated {{dateFormat timestamp 'M/D/Y h:mm:ss a'}}
+          </div>
+          {{#each value}}
+            <pre class="jira-brain-dump-data">{{renderJson this}}</pre>
+          {{/each}}
+        {{/RobaTab}}
+      {{/each}}
+    {{/RobaTabGroup}}
+  {{else}}
+    <div class="alert alert-info">
+      There is no cached data for this server
+    </div>
+  {{/if}}
+</template>

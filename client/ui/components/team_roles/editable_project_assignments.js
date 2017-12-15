@@ -1,7 +1,6 @@
 import './editable_project_assignments.html';
 import { Template } from 'meteor/templating';
 import { Contributors } from '../../../../imports/api/contributors/contributors';
-import { ContributorRoles } from '../../../../imports/api/contributors/contributor_roles';
 import { ContributorProjectAssignments } from '../../../../imports/api/contributors/contributor_project_assignments';
 import './add_assignment_form.js';
 
@@ -9,12 +8,6 @@ import './add_assignment_form.js';
  * Template Helpers
  */
 Template.EditableProjectAssignments.helpers({
-  showPercent () {
-    let teamRole = this.teamRole();
-    if(teamRole){
-      return teamRole.role === ContributorRoles.developer || teamRole.role === ContributorRoles.qa
-    }
-  },
   hasCapacity(){
     let contributor = Contributors.findOne(this.contributorId);
     return contributor.hasCapacity()

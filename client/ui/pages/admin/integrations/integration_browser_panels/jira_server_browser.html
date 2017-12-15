@@ -1,0 +1,20 @@
+<template name="JiraServerBrowser">
+  <div class="row">
+    <div class="col-md-12">
+      {{#RobaTabGroup name="server-tabs" navClass="nav-tabs"}}
+        {{#RobaTab name="application" title="Application"}}
+          {{> JiraApplicationInfo }}
+        {{/RobaTab}}
+        {{#RobaTab name="projects" title="Projects"}}
+          {{> JiraProjectList }}
+        {{/RobaTab}}
+        {{#RobaTab name="testbed" title="Testbed"}}
+          {{> JiraTestbed }}
+        {{/RobaTab}}
+        {{#RobaTab name="cache" title="Cached Data"}}
+          {{> CachedData }}
+        {{/RobaTab}}
+      {{/RobaTabGroup}}
+    </div>
+  </div>
+</template>

@@ -7,13 +7,11 @@
           <h1>{{name}}</h1>
           {{> ContributorHeader }}
           
-          {{#if isCurrentContributor _id}}
+          {{#if shouldSeeReports }}
             {{> ContributorStatusReportsDue }}
           {{/if}}
           
-          {{#if userManagesContributor _id}}
-            {{> ContributorStatusReportsDue }}
-          {{/if}}
+          {{> DocumentStatusReports sourceCollection='Contributors' sourceId=_id contributorId=contributorId }}
         </div>
         <div class="col-md-3">
           {{> ContributorSidebar }}

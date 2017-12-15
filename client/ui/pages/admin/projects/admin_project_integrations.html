@@ -1,0 +1,47 @@
+<template name="AdminProjectIntegrations">
+  {{#if Template.subscriptionsReady}}
+    <table class="table data-table border-bottom">
+      <thead>
+      <tr>
+        <th></th>
+        <th>Integration</th>
+        <th>Item Type</th>
+        <th>Import Function</th>
+        <th>Preview Template</th>
+        <th>Detail Template</th>
+        <th>Calculated Fields</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      {{#each integrations}}
+        <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+            data-pk="{{_id}}">
+          <td class="open-link">
+            <a class="hidden-control" href="{{pathFor 'AdminProjectIntegration' integrationId=_id}}">
+              <span class="glyphicon glyphicon-folder-open"></span>
+            </a>
+          </td>
+          <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Integration Type" }}</td>
+          <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes emptyText="Item Type" }}</td>
+          <td>{{> EditableRecordSelector importFunctionSelectorContext }}</td>
+          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplate' }}</td>
+          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplate' }}</td>
+          <td>{{> EditableRecordChecklist calculatedFieldsChecklistContext }}</td>
+          <td class="open-link">
+            <a class="link-red hidden-control btn-delete-integration">
+              <span class="glyphicon glyphicon-minus-sign"></span>
+            </a>
+          </td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+    <button class="btn btn-xs btn-primary btn-add-integration">
+      <span class="glyphicon glyphicon-plus"></span>
+      Add Integration
+    </button>
+  {{else}}
+    {{> RobaSpinner rainbow=true }}
+  {{/if}}
+</template>

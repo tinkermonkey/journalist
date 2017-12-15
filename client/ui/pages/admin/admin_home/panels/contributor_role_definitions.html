@@ -1,0 +1,33 @@
+<template name="ContributorRoleDefinitions">
+  {{#if Template.subscriptionsReady }}
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Contributor Role Definitions</h1>
+        <table class="table data-table sortable-table">
+          <thead>
+          <tr>
+            <th></th>
+            <th>Role Title</th>
+            <th>Is Management Role</th>
+            <th></th>
+          </tr>
+          </thead>
+          {{#each roleDefinitions}}
+            <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{order}}">
+              <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
+              <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+              <td>{{> EditableCheckbox dataKey="isManager" value=isManager cssClass="blue"}}</td>
+              <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
+            </tr>
+          {{/each}}
+        </table>
+        <button class="btn btn-xs btn-primary btn-add-definition">
+          <span class="glyphicon glyphicon-plus"></span>
+          Add Role Definition
+        </button>
+      </div>
+    </div>
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

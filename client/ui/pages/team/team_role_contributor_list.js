@@ -6,8 +6,9 @@ import { Teams } from '../../../../imports/api/teams/teams';
  * Template Helpers
  */
 Template.TeamRoleContributorList.helpers({
-  contributorsInRole(teamId, role){
-    return Teams.findOne(teamId).contributorsInRole(role)
+  contributorsInRole(teamId, roleId){
+    //console.log('contributorsInRole:', teamId, roleId);
+    return Teams.findOne(teamId).contributorsInRole(roleId)
   }
 });
 

@@ -1,0 +1,24 @@
+<template name="JiraBrainDump">
+  <div class="jira-brain-dump">
+    <h3>
+      {{title}}
+      <small>
+        <a class="pull-right btn-refresh">
+          <span class="glyphicon glyphicon-refresh"></span>
+        </a>
+      </small>
+    </h3>
+    {{#if error}}
+      <div class="alert alert-warning">
+        <b>Loading info failed:</b>
+        <div>{{ error }}</div>
+      </div>
+    {{/if}}
+  
+    {{#if showLoading }}
+      {{> RobaSpinner rainbow=true }}
+    {{else}}
+      <pre class="jira-brain-dump-data">{{renderJson jiraData}}</pre>
+    {{/if}}
+  </div>
+</template>
