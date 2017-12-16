@@ -1,0 +1,73 @@
+<template name="JiraIntegrationQueryTestbed">
+  {{#with integration}}
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        {{#if server.isAuthenticated}}
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                 aria-expanded="false">
+                {{#if query}}
+                  {{query.title}}
+                {{else}}
+                  Query
+                {{/if}}
+                
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu query-dropdown">
+                {{#each ../queryDefinitions}}
+                  <li><a>{{title}}</a></li>
+                {{/each}}
+              </ul>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-left">
+            <button class="btn btn-default btn-run-query" type="button">Go</button>
+          </form>
+        {{else}}
+          {{#with server}}
+            <ul class="nav navbar-nav">
+              <li>
+                {{> AuthenticateServerLink }}
+              </li>
+            </ul>
+          {{else}}
+          
+          {{/with}}
+        {{/if}}
+      </div>
+    </nav>
+    
+    {{#if error}}
+      <div class="alert alert-warning">
+        <b>Loading result failed:</b>
+        <div>{{ error }}</div>
+      </div>
+    {{else}}
+      {{#if showLoading }}
+        {{> RobaSpinner rainbow=true }}
+      {{else}}
+        {{#if result}}
+          {{#RobaTabGroup name="testbed-tabs" navClass="nav-tabs"}}
+            {{#RobaTab name="imported" title="Imported"}}
+              {{#if result.importResult.error}}
+                <div class="alert alert-danger">
+                  <b>Import failed:</b>
+                  {{result.importResult.error}}
+                </div>
+              {{/if}}
+              <pre class="jira-brain-dump-data">{{renderJson result.importResult.item}}</pre>
+            {{/RobaTab}}
+            {{#RobaTab name="post-processed" title="Post Processed"}}
+              <pre class="jira-brain-dump-data">{{renderJson result.processedItem}}</pre>
+            {{/RobaTab}}
+            {{#RobaTab name="raw" title="Raw Result"}}
+              <pre class="jira-brain-dump-data">{{renderJson result.rawItem}}</pre>
+            {{/RobaTab}}
+          {{/RobaTabGroup}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  {{/with}}
+</template>

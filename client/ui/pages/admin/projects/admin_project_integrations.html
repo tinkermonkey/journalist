@@ -4,7 +4,7 @@
       <thead>
       <tr>
         <th></th>
-        <th>Integration</th>
+        <th>Server</th>
         <th>Item Type</th>
         <th>Import Function</th>
         <th>Preview Template</th>
@@ -22,11 +22,11 @@
               <span class="glyphicon glyphicon-folder-open"></span>
             </a>
           </td>
-          <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Integration Type" }}</td>
+          <td>{{> EditableRecordSelector serverSelectorContext }}</td>
           <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes emptyText="Item Type" }}</td>
           <td>{{> EditableRecordSelector importFunctionSelectorContext }}</td>
-          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplate' }}</td>
-          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplate' }}</td>
+          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplateId' }}</td>
+          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplateId' }}</td>
           <td>{{> EditableRecordChecklist calculatedFieldsChecklistContext }}</td>
           <td class="open-link">
             <a class="link-red hidden-control btn-delete-integration">

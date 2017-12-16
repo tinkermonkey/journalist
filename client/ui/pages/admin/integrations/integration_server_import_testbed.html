@@ -1,5 +1,15 @@
 <template name="IntegrationServerImportTestbed">
   {{#if context}}
-    {{> Template.dynamic template=integrationImportTestbedPanel }}
+    {{#if integrationImportTestbedPanel}}
+      {{> Template.dynamic template=integrationImportTestbedPanel }}
+    {{else}}
+      <div class="alert alert-warning">
+        It's unclear which integration type import testbed to show
+      </div>
+    {{/if}}
+  {{else}}
+    <div class="alert alert-warning">
+      Not enough context to provide a testbed
+    </div>
   {{/if}}
 </template>

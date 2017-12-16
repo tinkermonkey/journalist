@@ -5,6 +5,8 @@ import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { ItemTypes } from '../imported_items/item_types';
 import { IntegrationTypes } from './integration_types';
+import { IntegrationCalculatedFields } from './integration_calculated_fields';
+import { IntegrationServers } from './integration_servers';
 import { Projects } from '../projects/projects';
 
 /**
@@ -14,60 +16,59 @@ import { Projects } from '../projects/projects';
  */
 export const Integration = new SimpleSchema({
   // Project to which this integration belongs
-  projectId: {
+  projectId               : {
     type: String
   },
-  // Type of integration
-  integrationType: {
-    type: Number,
-    allowedValues: _.values(IntegrationTypes)
+  // The server to fetch data from
+  serverId                : {
+    type: String
   },
   // Type of items this integration provides
-  itemType: {
-    type: Number,
+  itemType                : {
+    type         : Number,
     allowedValues: _.values(ItemTypes)
   },
   // The _id of the integration import function to use
-  importFunction: {
-    type: String,
+  importFunctionId        : {
+    type    : String,
     optional: true
   },
   // The _id of the integration display template to use for previewing items
-  previewDisplayTemplate: {
-    type: String,
+  previewDisplayTemplateId: {
+    type    : String,
     optional: true
   },
   // The _id of the integration display template to use for details views of items
-  detailDisplayTemplate: {
-    type: String,
+  detailDisplayTemplateId : {
+    type    : String,
     optional: true
   },
   // The list of _id of the calculated fields to use
-  calculatedFields: {
-    type: [String],
+  calculatedFieldIds      : {
+    type    : [ String ],
     optional: true
   },
   // Configuration blob
-  details: {
-    type: Object,
+  details                 : {
+    type    : Object,
     blackbox: true,
     optional: true
   },
   // Standard tracking fields
-  dateCreated: {
-    type: Date,
+  dateCreated             : {
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy: {
-    type: String,
+  createdBy               : {
+    type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
-    type: Date,
+  dateModified            : {
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy: {
-    type: String,
+  modifiedBy              : {
+    type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
 });
@@ -78,22 +79,36 @@ ChangeTracker.trackChanges(Integrations, 'Integrations');
 
 // These are server side only
 Integrations.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+  remove () {
+    return true;
+  },
+  insert () {
+    return true;
+  },
+  update () {
+    return true;
+  }
 });
 
 /**
  * Helpers
  */
 Integrations.helpers({
-  integrationTypeTitle(){
-    return Util.camelToTitle(_.invert(IntegrationTypes)[this.integrationType])
+  integrationTypeTitle () {
+    return Util.camelToTitle(_.invert(IntegrationTypes)[ this.integrationType ])
   },
-  itemTypeTitle(){
-    return Util.camelToTitle(_.invert(ItemTypes)[this.itemType])
+  itemTypeTitle () {
+    return Util.camelToTitle(_.invert(ItemTypes)[ this.itemType ])
   },
-  project(){
-    return Projects.findOne({_id: this.projectId})
+  project () {
+    return Projects.findOne({ _id: this.projectId })
+  },
+  server () {
+    return IntegrationServers.findOne({ _id: this.serverId })
+  },
+  calculatedFields () {
+    if (this.calculatedFieldIds && this.calculatedFieldIds.length) {
+      return IntegrationCalculatedFields.find({ _id: { $in: this.calculatedFieldIds } }, { sort: { title: 1 } });
+    }
   }
 });

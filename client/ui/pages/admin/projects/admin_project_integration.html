@@ -20,48 +20,76 @@
             <h2>Configuration</h2>
             <table class="table data-table table-striped integration-config-table">
               <tbody>
-              <tr>
-                <td>Integration Type</td>
-                <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Integration Type" }}</td>
+              <tr class="show-controls-on-hover">
+                <td>Server</td>
+                <td>
+                  <a class="hidden-control" href="{{pathFor 'IntegrationServerBrowser' serverId=serverId }}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td>{{> EditableRecordSelector serverSelectorContext }}</td>
               </tr>
               <tr>
                 <td>Item Type</td>
+                <td></td>
                 <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes emptyText="Item Type" }}</td>
               </tr>
-              <tr>
+              <tr class="show-controls-on-hover">
                 <td>Import Function</td>
+                <td>
+                  <a class="hidden-control" href="{{pathFor 'IntegrationImportFunction' functionId=importFunctionId }}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
                 <td>{{> EditableRecordSelector importFunctionSelectorContext }}</td>
               </tr>
-              <tr>
+              <tr class="show-controls-on-hover">
                 <td>Preview Template</td>
-                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplate' }}</td>
+                <td>
+                  <a class="hidden-control" href="{{pathFor 'IntegrationDisplayTemplate' templateId=previewDisplayTemplateId }}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplateId' }}</td>
               </tr>
-              <tr>
+              <tr class="show-controls-on-hover">
                 <td>Detail Template</td>
-                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplate' }}</td>
+                <td>
+                  <a class="hidden-control" href="{{pathFor 'IntegrationDisplayTemplate' templateId=detailDisplayTemplateId }}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplateId' }}</td>
               </tr>
-              <tr>
+              <tr class="show-controls-on-hover">
                 <td>Calculated Fields</td>
+                <td>
+                  {{#each calculatedFields}}
+                    <a class="hidden-control" href="{{pathFor 'IntegrationCalculatedField' fieldId=this }}">
+                      <span class="glyphicon glyphicon-folder-open"></span>
+                    </a>
+                  {{/each}}
+                </td>
                 <td>{{> EditableRecordChecklist calculatedFieldsChecklistContext }}</td>
               </tr>
               </tbody>
             </table>
-  
+            
             {{#RobaTabGroup name="integration-tabs" navClass="nav-tabs"}}
               {{#RobaTab name="details" title="Integration Details"}}
-                {{> Template.dynamic template=integrationPanel }}
+                {{> AdminProjectIntegrationDetails }}
               {{/RobaTab}}
               {{#RobaTab name="cache" title="Import Testbed"}}
-  
+                {{> IntegrationServerImportTestbed context=this}}
               {{/RobaTab}}
               {{#RobaTab name="preview" title="Preview Template"}}
-
+              
               {{/RobaTab}}
               {{#RobaTab name="testbed" title="Display Template"}}
-
+              
               {{/RobaTab}}
             {{/RobaTabGroup}}
-  
+          
           </div>
           <div class="col-md-4">
             <h2>Field Reference</h2>

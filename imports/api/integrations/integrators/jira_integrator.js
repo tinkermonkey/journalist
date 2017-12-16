@@ -5,13 +5,14 @@ import { MongoCookieStore } from './mongo_cookie_store';
 import { Util } from '../../util';
 
 // Pull in the jira connector
-const JiraConnector   = require('jira-connector'),
-      ToughCookie     = require('tough-cookie'),
-      path            = require('path'),
-      FileCookieStore = require('tough-cookie-filestore'),
-      request         = require('request'),
-      useMongoStore   = true,
-      debug           = true;
+const JiraConnector    = require('jira-connector'),
+      ToughCookie      = require('tough-cookie'),
+      request          = require('request'),
+      useMongoStore    = true,
+      debug            = true,
+      queryDefinitions = {
+        master: "Master Select Query"
+      };
 
 // Ignore self-signed errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -37,6 +38,13 @@ export class JiraIntegrator extends Integrator {
     this.cookieJar = request.jar(this.cookieStore);
     
     return this;
+  }
+  
+  /**
+   * Return this class' query definition set
+   */
+  static queryDefinitions () {
+    return queryDefinitions
   }
   
   /**
@@ -160,27 +168,32 @@ export class JiraIntegrator extends Integrator {
     debug && console.log('JiraIntegrator.updateCachedData:', this.provider && this.provider.server.title);
     let self = this;
     
-    // Cache the list of projects
-    self.provider.storeCachedItem('projectList', self.fetchData('project', 'getAllProjects').response);
-    
-    // Cache the list of fields and create synthetic keys based on the field name for custom fields
-    let fields = self.fetchData('field', 'getAllFields').response;
-    fields.forEach((field) => {
-      if (field.custom) {
-        let syntheticKey = Util.wordsToCamel(field.name);
-        
-        // Make sure it's unique
-        let dupes = fields.filter((checkField) => {
-          return checkField.key === syntheticKey || checkField.syntheticKey === syntheticKey
-        });
-        if (dupes.length) {
-          syntheticKey = syntheticKey + "_" + field.schema.customId
+    // If connected, otherwise the cached values would be wiped
+    if (self.client) {
+      // Cache the list of projects
+      self.provider.storeCachedItem('projectList', self.fetchData('project', 'getAllProjects').response);
+      
+      // Cache the list of fields and create synthetic keys based on the field name for custom fields
+      let fields = self.fetchData('field', 'getAllFields').response;
+      fields.forEach((field) => {
+        if (field.custom) {
+          let syntheticKey = Util.wordsToCamel(field.name);
+          
+          // Make sure it's unique
+          let dupes = fields.filter((checkField) => {
+            return checkField.key === syntheticKey || checkField.syntheticKey === syntheticKey
+          });
+          if (dupes.length) {
+            syntheticKey = syntheticKey + "_" + field.schema.customId
+          }
+          
+          field.syntheticKey = syntheticKey.toLowerCase();
         }
-        
-        field.syntheticKey = syntheticKey.toLowerCase();
-      }
-    });
-    self.provider.storeCachedItem('fieldList', fields);
+      });
+      self.provider.storeCachedItem('fieldList', fields);
+    } else {
+      console.warn('JiraIntegrator.updateCachedData: ignoring request, server not connected');
+    }
   }
   
   /**

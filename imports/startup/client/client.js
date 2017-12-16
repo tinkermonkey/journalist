@@ -5,10 +5,11 @@ import { moment } from 'meteor/momentjs:moment';
 import { Util } from '../../api/util.js';
 import { Contributors } from '../../api/contributors/contributors.js';
 import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions';
-import { IntegrationTypes } from '../../api/integrations/integration_types.js';
 import { IntegrationCalculatedFields } from '../../api/integrations/integration_calculated_fields.js';
 import { IntegrationDisplayTemplates } from '../../api/integrations/integration_display_templates.js';
 import { IntegrationImportFunctions } from '../../api/integrations/integration_import_functions.js';
+import { IntegrationServers} from '../../api/integrations/integration_servers';
+import { IntegrationTypes } from '../../api/integrations/integration_types.js';
 import { ItemTypes } from '../../api/imported_items/item_types.js';
 import { Projects } from '../../api/projects/projects.js';
 import { ProjectTypes } from '../../api/projects/project_types.js';
@@ -230,14 +231,28 @@ Template.registerHelper('projectSelectorContext', function () {
     query       : {}
   }
 });
+Template.registerHelper('serverSelectorContext', function () {
+  let record = this;
+  
+  return {
+    valueField  : '_id',
+    displayField: 'title',
+    value       : record.serverId,
+    dataKey     : 'serverId',
+    collection  : IntegrationServers,
+    emptyText   : 'Select server',
+    cssClass    : 'inline-block',
+    query       : {}
+  }
+});
 Template.registerHelper('importFunctionSelectorContext', function () {
   let record = this;
   
   return {
     valueField  : '_id',
     displayField: 'title',
-    value       : record.importFunction,
-    dataKey     : 'importFunction',
+    value       : record.importFunctionId,
+    dataKey     : 'importFunctionId',
     collection  : IntegrationImportFunctions,
     emptyText   : 'Select import function',
     cssClass    : 'inline-block',
@@ -250,8 +265,8 @@ Template.registerHelper('calculatedFieldsChecklistContext', function () {
   return {
     valueField  : '_id',
     displayField: 'title',
-    value       : record.calculatedFields,
-    dataKey     : 'calculatedFields',
+    value       : record.calculatedFieldIds,
+    dataKey     : 'calculatedFieldIds',
     collection  : IntegrationCalculatedFields,
     emptyText   : 'Select calculated fields',
     cssClass    : 'inline-block',

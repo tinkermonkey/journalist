@@ -73,6 +73,15 @@ export class IntegrationServiceProvider {
     self.updateCacheServiceJob();
   }
   
+  static queryDefinitions(integrationType){
+    switch (integrationType){
+      case IntegrationTypes.jira:
+        return JiraIntegrator.queryDefinitions();
+      case IntegrationTypes.confluence:
+        return ConfluenceIntegrator.queryDefinitions();
+    }
+  }
+  
   /**
    * Create or update the cron job for updating the server health
    */
@@ -272,20 +281,24 @@ export class IntegrationServiceProvider {
     debug && console.log('IntegrationServiceProvider.storeCachedItem:', this.server._id, this.server.title);
     let self = this;
     
-    // Update the local in memory value
-    self.cache[ key ] = value;
-    
-    // Update the stored value
-    IntegrationServerCaches.upsert({
-      serverId: self.server._id,
-      key     : key
-    }, {
-      $set: {
+    if(value){
+      // Update the local in memory value
+      self.cache[ key ] = value;
+  
+      // Update the stored value
+      IntegrationServerCaches.upsert({
         serverId: self.server._id,
-        key     : key,
-        value   : value
-      }
-    });
+        key     : key
+      }, {
+        $set: {
+          serverId: self.server._id,
+          key     : key,
+          value   : value
+        }
+      });
+    } else {
+      console.error('IntegrationServiceProvider.storeCachedItem passed an empty value for key:', key);
+    }
   }
   
   /**

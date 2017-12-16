@@ -9,15 +9,24 @@ import './integration_browser_panels/confluence_import_testbed';
  */
 Template.IntegrationServerImportTestbed.helpers({
   integrationImportTestbedPanel () {
-    let context = this.context;
+    let context = this.context,
+        integrationType;
     
     if (context && context.integrationType) {
-      switch (context.integrationType) {
-        case IntegrationTypes.confluence:
-          return "ConfluenceImportTestbed";
-        case IntegrationTypes.jira:
-          return "JiraImportTestbed";
+      integrationType = context.integrationType
+    } else if (context && context.server) {
+      if (_.isFunction(context.server)) {
+        integrationType = context.server().integrationType
+      } else if (_.isObject(context.server)) {
+        integrationType = context.server.integrationType
       }
+    }
+    
+    switch (integrationType) {
+      case IntegrationTypes.confluence:
+        return "ConfluenceImportTestbed";
+      case IntegrationTypes.jira:
+        return "JiraImportTestbed";
     }
   }
   

@@ -25,8 +25,6 @@ Template.AdminProjectIntegrations.events({
       Meteor.call('editIntegration', integrationId, dataKey, newValue, (error, response) => {
         if (error) {
           RobaDialog.error('Failed to edit project integration:' + error.toString())
-        } else {
-          RobaDialog.hide();
         }
       });
     }
@@ -53,7 +51,7 @@ Template.AdminProjectIntegrations.events({
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Create the project
-            Meteor.call('addIntegration', project._id, formData.integrationType, formData.itemType, (error, response) => {
+            Meteor.call('addIntegration', project._id, formData.serverId, formData.itemType, (error, response) => {
               if (error) {
                 RobaDialog.error('Failed to create project integration:' + error.toString())
               } else {
@@ -78,7 +76,8 @@ Template.AdminProjectIntegrations.events({
         integration   = Integrations.findOne(integrationId);
     
     RobaDialog.ask('Delete Integration?', 'Are you sure that you want to delete the integration of <span class="label label-primary">' +
-        integration.integrationTypeTitle() + '</span> on the <span class="label label-primary">' + integration.project().title + '</span> project ' +
+        integration.server().title + '</span> on the <span class="label label-primary">' +
+        integration.project().title + '</span> project ' +
         'for <span class="label label-primary">' + integration.itemTypeTitle() + '</span> items?', () => {
       RobaDialog.hide();
       Meteor.call('deleteIntegration', integrationId, function (error, response) {
@@ -96,9 +95,10 @@ Template.AdminProjectIntegrations.events({
 Template.AdminProjectIntegrations.onCreated(() => {
   let instance = Template.instance();
   
+  instance.subscribe('integration_calculated_fields');
   instance.subscribe('integration_display_templates');
   instance.subscribe('integration_import_functions');
-  instance.subscribe('integration_calculated_fields');
+  instance.subscribe('integration_servers');
 });
 
 /**

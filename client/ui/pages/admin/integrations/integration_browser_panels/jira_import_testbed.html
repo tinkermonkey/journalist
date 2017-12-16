@@ -3,8 +3,9 @@
     <div class="container-fluid">
       {{#if servers.count}}
         <ul class="nav navbar-nav">
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          <li class="dropdown {{#if context.serverId}}disabled{{/if}}">
+            <a class="dropdown-toggle {{#if context.serverId}}disabled{{/if}}" data-toggle="dropdown" role="button" aria-haspopup="true"
+               aria-expanded="false">
               {{#if server}}
                 {{server.title}}
               {{else}}

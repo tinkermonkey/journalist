@@ -103,8 +103,10 @@ Template.IntegrationServerFieldReference.onCreated(() => {
     let serverId = instance.serverId.get();
     
     instance.subscribe('integration_servers');
-    instance.subscribe('integration_server', serverId);
-    instance.subscribe('integration_server_cache', serverId);
+    if(serverId){
+      instance.subscribe('integration_server', serverId);
+      instance.subscribe('integration_server_cache', serverId);
+    }
   })
 });
 

@@ -1,0 +1,21 @@
+<template name="JiraIntegrationDetailPanel">
+  {{#unless showLoading}}
+    {{#if queryDefinitions.length}}
+      {{#each queryDefinitions}}
+        <h2>{{title}}</h2>
+        <div>
+          {{> EditableTextArea dataKey=fieldKey value=fieldValue emptyText='Enter a query' }}
+        </div>
+      {{/each}}
+      
+      <h2>Query Testbed</h2>
+      {{> JiraIntegrationQueryTestbed integration=this queryDefinitions=queryDefinitions }}
+    {{else}}
+      <div class="alert alert-danger">
+        No query definitions found
+      </div>
+    {{/if}}
+  {{else}}
+    {{> RobaSpinner rainbow=true}}
+  {{/unless}}
+</template>

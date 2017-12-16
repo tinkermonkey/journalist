@@ -27,7 +27,8 @@ export const Project = new SimpleSchema({
   // Project Type
   projectType: {
     type: Number,
-    allowedValues: _.values(ProjectTypes)
+    allowedValues: _.values(ProjectTypes),
+    optional: true
   },
   // Contributor that is the primary owner of this project
   owner       : {

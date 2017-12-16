@@ -5,9 +5,15 @@
       Log Out
     </a>
   {{else}}
-    <a class="btn-log-in-server">
-      <span class="glyphicon glyphicon-log-in"></span>
-      Log In
-    </a>
+    {{#if isActive}}
+      <a class="btn-log-in-server">
+        <span class="glyphicon glyphicon-log-in"></span>
+        Log In
+      </a>
+    {{else}}
+      <a class="btn-log-activate-server" href="{{pathFor 'Integrations'}}">
+        <span class="text-danger">Please activate this server</span>
+      </a>
+    {{/if}}
   {{/if}}
 </template>

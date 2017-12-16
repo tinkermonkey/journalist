@@ -2,9 +2,9 @@
   <div>
     {{#autoForm schema=getSchema id="serverMethodForm" type="normal"}}
       <fieldset>
-        <label for="integrationType" class="control-label">Integration Type</label>
-        <select class="form-control" name="integrationType" data-schema-key="integrationType" required>
-          {{#each integrationTypeOptions}}
+        <label for="serverId" class="control-label">Server</label>
+        <select class="form-control" name="serverId" data-schema-key="serverId" required>
+          {{#each serverOptions}}
             <option value="{{_id}}">{{title}}</option>
           {{/each}}
         </select>

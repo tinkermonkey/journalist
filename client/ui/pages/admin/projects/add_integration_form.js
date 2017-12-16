@@ -1,15 +1,15 @@
 import './add_integration_form.html';
 import { Template } from 'meteor/templating';
 import { Util } from '../../../../../imports/api/util';
-import { IntegrationTypes } from '../../../../../imports/api/integrations/integration_types';
+import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
 import { ItemTypes } from '../../../../../imports/api/imported_items/item_types';
 
 let schema = new SimpleSchema({
-  integrationType: {
-    type : String
+  serverId: {
+    type: String
   },
   itemType: {
-    type : String
+    type: String
   }
 });
 
@@ -20,11 +20,13 @@ Template.AddIntegrationForm.helpers({
   getSchema () {
     return schema
   },
-  integrationTypeOptions() {
-    return _.keys(IntegrationTypes).map((key) => { return {_id: IntegrationTypes[key], title: Util.camelToTitle(key)}})
+  serverOptions () {
+    return IntegrationServers.find({}, { sort: { title: 1 } })
   },
   itemTypeOptions () {
-    return _.keys(ItemTypes).map((key) => { return {_id: ItemTypes[key], title: Util.camelToTitle(key)}})
+    return _.keys(ItemTypes).map((key) => {
+      return { _id: ItemTypes[ key ], title: Util.camelToTitle(key) }
+    })
   }
 });
 

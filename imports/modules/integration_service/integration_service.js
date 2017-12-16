@@ -53,6 +53,13 @@ export const IntegrationService = {
   },
   
   /**
+   * Provide a set of query definitions
+   */
+  queryDefinitions(integrationType){
+   return IntegrationServiceProvider.queryDefinitions(integrationType);
+  },
+  
+  /**
    * Create a new service provider
    * @param {*} server
    */

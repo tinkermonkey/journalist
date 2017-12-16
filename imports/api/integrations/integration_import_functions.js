@@ -20,7 +20,8 @@ export const IntegrationImportFunction = new SimpleSchema({
   },
   itemTypes      : {
     type         : [ Number ],
-    allowedValues: _.values(ItemTypes)
+    allowedValues: _.values(ItemTypes),
+    optional: true
   },
   description    : {
     type    : String,

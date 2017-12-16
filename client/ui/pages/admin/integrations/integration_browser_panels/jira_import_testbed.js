@@ -8,27 +8,29 @@ import { IntegrationServers } from '../../../../../../imports/api/integrations/i
  */
 Template.JiraImportTestbed.helpers({
   integrationType () {
-    let functionId     = FlowRouter.getParam('functionId'),
+    let functionId     = Template.instance().functionId.get(),
         importFunction = IntegrationImportFunctions.findOne(functionId);
     
     return importFunction.integrationType;
   },
   servers () {
-    let functionId     = FlowRouter.getParam('functionId'),
+    let functionId     = Template.instance().functionId.get(),
         importFunction = IntegrationImportFunctions.findOne(functionId);
     
-    return IntegrationServers.find({ integrationType: importFunction.integrationType, isActive: true }, {sort: {title: 1}});
+    if (importFunction) {
+      return IntegrationServers.find({ integrationType: importFunction.integrationType, isActive: true }, { sort: { title: 1 } });
+    }
   },
   server () {
     let serverId = Template.instance().serverId.get();
     if (serverId) {
       return IntegrationServers.findOne(serverId)
     } else {
-      let functionId     = FlowRouter.getParam('functionId'),
+      let functionId     = Template.instance().functionId.get(),
           importFunction = IntegrationImportFunctions.findOne(functionId),
           server         = IntegrationServers.findOne({
             integrationType: importFunction.integrationType,
-            isActive: true
+            isActive       : true
           }, { sort: { title: 1 } });
       if (server) {
         Template.instance().serverId.set(server._id)
@@ -65,7 +67,7 @@ Template.JiraImportTestbed.events({
       instance.doorbell.set(Date.now());
     }
   },
-  'submit .navbar-form'(e, instance){
+  'submit .navbar-form' (e, instance) {
     e.preventDefault();
     instance.$('.btn-load').trigger('click')
   }
@@ -80,16 +82,35 @@ Template.JiraImportTestbed.onCreated(() => {
   instance.result      = new ReactiveVar();
   instance.doorbell    = new ReactiveVar(Date.now());
   instance.error       = new ReactiveVar();
+  instance.functionId  = new ReactiveVar();
   instance.serverId    = new ReactiveVar();
   instance.showLoading = new ReactiveVar(false);
   
   instance.autorun(() => {
-    let functionId = FlowRouter.getParam('functionId'),
+    let context = Template.currentData().context;
+    
+    if (context) {
+      // Scrub the context for a function _id
+      if (context.functionId || context.importFunctionId) {
+        instance.functionId.set(context.functionId || context.importFunctionId);
+      } else {
+        console.error('JiraImportTestbed: cannot determine function context');
+        return;
+      }
+      
+      // Pull the serverId out of the context if it exists
+      if (context.serverId) {
+        instance.serverId.set(context.serverId);
+      }
+    }
+  });
+  
+  instance.autorun(() => {
+    let functionId = instance.functionId.get(),
         doorBell   = instance.doorbell.get(),
         serverId   = instance.serverId.get();
     
-    // Fetch the project list
-    if (serverId) {
+    if (serverId && functionId && instance.isRendered) {
       let itemKey = instance.$('.input-item-key').val();
       if (itemKey) {
         console.log('JiraImportTestbed fetching results for', serverId, doorBell, itemKey);
@@ -115,7 +136,9 @@ Template.JiraImportTestbed.onCreated(() => {
  * Template Rendered
  */
 Template.JiraImportTestbed.onRendered(() => {
+  let instance = Template.instance();
   
+  instance.isRendered = true;
 });
 
 /**
