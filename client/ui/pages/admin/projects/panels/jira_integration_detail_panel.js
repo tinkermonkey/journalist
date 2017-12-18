@@ -16,7 +16,7 @@ Template.JiraIntegrationDetailPanel.helpers({
         return {
           queryKey: key,
           fieldKey: 'details.' + key,
-          fieldvalue: integration.details ? integration.details[key] : null,
+          fieldValue: integration.details ? integration.details[key] : null,
           title: queryDefinitions.definitions[ key ],
         }
       })

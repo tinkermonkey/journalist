@@ -23,7 +23,7 @@
             </li>
           </ul>
           <form class="navbar-form navbar-left">
-            <button class="btn btn-default btn-run-query" type="button">Go</button>
+            <button class="btn btn-default btn-run-query" type="button">Test</button>
           </form>
         {{else}}
           {{#with server}}
@@ -49,23 +49,95 @@
         {{> RobaSpinner rainbow=true }}
       {{else}}
         {{#if result}}
-          {{#RobaTabGroup name="testbed-tabs" navClass="nav-tabs"}}
-            {{#RobaTab name="imported" title="Imported"}}
-              {{#if result.importResult.error}}
-                <div class="alert alert-danger">
-                  <b>Import failed:</b>
-                  {{result.importResult.error}}
-                </div>
-              {{/if}}
-              <pre class="jira-brain-dump-data">{{renderJson result.importResult.item}}</pre>
-            {{/RobaTab}}
-            {{#RobaTab name="post-processed" title="Post Processed"}}
-              <pre class="jira-brain-dump-data">{{renderJson result.processedItem}}</pre>
-            {{/RobaTab}}
-            {{#RobaTab name="raw" title="Raw Result"}}
-              <pre class="jira-brain-dump-data">{{renderJson result.rawItem}}</pre>
-            {{/RobaTab}}
-          {{/RobaTabGroup}}
+          {{#if result.success}}
+            {{#RobaTabGroup name="testbed-tabs" navClass="nav-tabs"}}
+              {{#RobaTab name="imported" title="Imported"}}
+                
+                {{#if result.importResult.failures.length}}
+                  <h3>Import Failures</h3>
+                  
+                  <table class="table data-table">
+                    <tbody>
+                    {{#each result.importResult.failures}}
+                      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
+                        <td>{{> JsonInfoLink cssClass="hidden-control" data=this }}</td>
+                        <td>{{id}}</td>
+                        <td>{{key}}</td>
+                        <td>{{error}}</td>
+                      </tr>
+                    {{/each}}
+                    </tbody>
+                  </table>
+                  
+                  <h3>Successful Imports</h3>
+                {{/if}}
+                
+                <table class="table data-table">
+                  <thead>
+                  <tr>
+                    <th></th>
+                    <th>Identifier</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Owner</th>
+                    <th>Date Modified</th>
+                    <th>Created By</th>
+                    <th>Date Created</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {{#each result.importResult.items}}
+                    <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
+                      <td>{{> JsonInfoLink cssClass="hidden-control" data=this }}</td>
+                      <td>{{identifier}}</td>
+                      <td>{{title}}</td>
+                      <td>{{{description}}}</td>
+                      <td>{{contributorName owner}}</td>
+                      <td>{{dateFormat dateModified}}</td>
+                      <td>{{contributorName createdBy}}</td>
+                      <td>{{dateFormat dateCreated}}</td>
+                    </tr>
+                  {{/each}}
+                  </tbody>
+                </table>
+              
+              {{/RobaTab}}
+              {{#RobaTab name="post-processed" title="Post Processed"}}
+                
+                <table class="table data-table">
+                  <thead>
+                  <tr>
+                    <th></th>
+                    <th>Id</th>
+                    <th>Key</th>
+                    <th>Self</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {{#each result.processedItems}}
+                    <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
+                      <td>{{> JsonInfoLink cssClass="hidden-control" data=this }}</td>
+                      <td>{{id}}</td>
+                      <td>{{key}}</td>
+                      <td><a href="{{self}}" target="_blank">{{self}}</a></td>
+                    </tr>
+                  {{/each}}
+                  </tbody>
+                </table>
+              
+              {{/RobaTab}}
+              {{#RobaTab name="raw" title="Raw Result"}}
+                
+                <pre class="jira-brain-dump-data">{{renderJson result.rawResult}}</pre>
+              
+              {{/RobaTab}}
+            {{/RobaTabGroup}}
+          {{else}}
+            <div class="alert alert-danger">
+              <b>Query failed:</b>
+              {{result.error}}
+            </div>
+          {{/if}}
         {{/if}}
       {{/if}}
     {{/if}}

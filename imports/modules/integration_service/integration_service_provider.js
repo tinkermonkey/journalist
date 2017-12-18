@@ -2,7 +2,7 @@ import { Ping } from 'meteor/frpz:ping';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Contributors } from '../../api/contributors/contributors';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
-import { ImportedItemTestSchema, ImportedItems } from '../../api/imported_items/imported_items';
+import { ImportedItems, ImportedItemTestSchema } from '../../api/imported_items/imported_items';
 import { IntegrationServerCaches } from '../../api/integrations/integration_server_caches';
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { IntegrationTypes } from '../../api/integrations/integration_types';
@@ -73,13 +73,27 @@ export class IntegrationServiceProvider {
     self.updateCacheServiceJob();
   }
   
-  static queryDefinitions(integrationType){
-    switch (integrationType){
+  /**
+   * Return the query definitions for an integration type
+   * @param integrationType
+   */
+  static queryDefinitions (integrationType) {
+    switch (integrationType) {
       case IntegrationTypes.jira:
         return JiraIntegrator.queryDefinitions();
       case IntegrationTypes.confluence:
         return ConfluenceIntegrator.queryDefinitions();
     }
+  }
+  
+  /**
+   * Fetch the map of integration calls that can be made for this integration
+   */
+  integrationCallMap(){
+    debug && console.log('IntegrationServiceProvider.integrationCallMap:', this.server._id, this.server.title);
+    let self = this;
+    
+    return self.integrator.integrationCallMap();
   }
   
   /**
@@ -281,10 +295,10 @@ export class IntegrationServiceProvider {
     debug && console.log('IntegrationServiceProvider.storeCachedItem:', this.server._id, this.server.title);
     let self = this;
     
-    if(value){
+    if (value) {
       // Update the local in memory value
       self.cache[ key ] = value;
-  
+      
       // Update the stored value
       IntegrationServerCaches.upsert({
         serverId: self.server._id,
@@ -339,7 +353,33 @@ export class IntegrationServiceProvider {
         error  : e.toString()
       }
     }
+  }
+  
+  /**
+   * Pass an array of items through an import function to produce an array of importedItems
+   * @param importFunction
+   * @param processedItems
+   */
+  importItems (importFunction, processedItems) {
+    debug && console.log('IntegrationServiceProvider.importItems:', this.server._id, this.server.title, processedItems.length);
+    let self   = this,
+        result = {
+          items   : [],
+          failures: []
+        };
     
+    // import each of the processed items
+    processedItems.forEach((item) => {
+      let importResult = self.importItem(importFunction, item);
+      if (importResult.success === true) {
+        result.items.push(importResult.item)
+      } else {
+        importResult.processedItem = item;
+        result.failures.push(importResult)
+      }
+    });
+    
+    return result
   }
   
   /**
@@ -358,6 +398,18 @@ export class IntegrationServiceProvider {
       processedItem: processedItem,
       importResult : self.importItem(importFunction, processedItem)
     }
+  }
+  
+  /**
+   * Test an integration by executing the query to fetch some issues and returning the imported (but not stored) results
+   * @param integration
+   * @param details
+   */
+  testIntegration (integration, details) {
+    debug && console.log('IntegrationServiceProvider.testIntegration:', this.server._id, this.server.title, integration._id);
+    let self = this;
+    
+    return self.integrator.testIntegration(integration, details)
   }
   
   /**

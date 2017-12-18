@@ -12,7 +12,18 @@ const JiraConnector    = require('jira-connector'),
       debug            = true,
       queryDefinitions = {
         master: "Master Select Query"
-      };
+      },
+      pageSize         = 100,
+      mapIgnoreModules = [
+        'promise',
+        'requestLib',
+        'basic_auth',
+        'cookie_jar'
+      ],
+      defaultExpand    = [
+        'worklog',
+        'changelog'
+      ];
 
 // Ignore self-signed errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -48,12 +59,40 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
+   * Fetch the map of integration calls that can be made for this integration
+   */
+  integrationCallMap () {
+    debug && console.log('JiraIntegrator.integrationCallMap:', this.provider.server.title);
+    let self = this;
+    
+    if (self.client) {
+      return _.keys(self.client)
+          .filter((moduleKey) => {
+            return !_.contains(mapIgnoreModules, moduleKey)
+          })
+          .map((moduleKey) => {
+            if (_.isObject(self.client[ moduleKey ])) {
+              return {
+                name   : moduleKey,
+                methods: _.keys(self.client[ moduleKey ]).filter((methodKey) => {
+                  return _.isFunction(self.client[ moduleKey ][ methodKey ])
+                }).sort()
+              }
+            }
+          }).filter((module) => {
+            return module && module.methods && module.methods.length > 0
+          })
+          .sort();
+    }
+  }
+  
+  /**
    * Authenticate this integrator
    * @param username
    * @param password
    */
   authenticate (username, password) {
-    debug && console.log('JiraIntegrator.authenticate:', this.provider && this.provider.server.title);
+    debug && console.log('JiraIntegrator.authenticate:', this.provider.server.title);
     let self = this;
     
     // Create the Jira client
@@ -98,7 +137,7 @@ export class JiraIntegrator extends Integrator {
    * @param authData
    */
   reAuthenticate (authData) {
-    console.log('JiraIntegrator.reAuthenticate:', this.provider && this.provider.server.title);
+    console.log('JiraIntegrator.reAuthenticate:', this.provider.server.title);
     let self = this;
     
     if (authData && authData.cookies) {
@@ -155,7 +194,7 @@ export class JiraIntegrator extends Integrator {
    * Verify that the client is still authenticated
    */
   checkAuthentication () {
-    debug && console.log('JiraIntegrator.checkAuthentication:', this.provider && this.provider.server.title);
+    debug && console.log('JiraIntegrator.checkAuthentication:', this.provider.server.title);
     let self = this;
     
     return self.fetchData('myself', 'getMyself');
@@ -165,7 +204,7 @@ export class JiraIntegrator extends Integrator {
    * Update all of the cached data for this server
    */
   updateCachedData () {
-    debug && console.log('JiraIntegrator.updateCachedData:', this.provider && this.provider.server.title);
+    debug && console.log('JiraIntegrator.updateCachedData:', this.provider.server.title);
     let self = this;
     
     // If connected, otherwise the cached values would be wiped
@@ -201,10 +240,10 @@ export class JiraIntegrator extends Integrator {
    * @param identifier
    */
   fetchItem (identifier) {
-    debug && console.log('JiraIntegrator.fetchItem:', this.provider && this.provider.server.title, identifier);
+    debug && console.log('JiraIntegrator.fetchItem:', this.provider.server.title, identifier);
     let self = this;
     
-    return self.fetchData('issue', 'getIssue', { issueKey: identifier }).response;
+    return self.fetchData('issue', 'getIssue', { issueKey: identifier, expand: defaultExpand }).response;
   }
   
   /**
@@ -213,9 +252,9 @@ export class JiraIntegrator extends Integrator {
    * @param identifier
    */
   testImportFunction (importFunction, identifier) {
-    debug && console.log('JiraIntegrator.testImportFunction:', this.provider && this.provider.server.title);
+    debug && console.log('JiraIntegrator.testImportFunction:', this.provider.server.title);
     let self              = this,
-        rawItem           = self.fetchData('issue', 'getIssue', { issueKey: identifier }).response,
+        rawItem           = self.fetchItem(identifier).response,
         postProcessedItem = self.postProcessItem(rawItem);
     
     return {
@@ -226,11 +265,65 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
+   * Test out an import function
+   * @param integration
+   * @param details
+   */
+  testIntegration (integration, details) {
+    debug && console.log('JiraIntegrator.testIntegration:', this.provider.server.title, integration._id);
+    let self      = this,
+        query     = integration.details[ details.queryKey ],
+        rawResult = self.executeQuery(query, 0, 5);
+    
+    if (rawResult.success === true) {
+      try {
+        let postProcessedItems = rawResult.response.issues.map((rawItem) => {
+          return self.provider.postProcessItem(rawItem)
+        });
+        return {
+          success       : true,
+          rawResult     : rawResult,
+          processedItems: postProcessedItems,
+          importResult  : self.provider.importItems(integration.importFunction(), postProcessedItems)
+        }
+      } catch (e) {
+        return {
+          success: false,
+          error  : e.toString()
+        }
+      }
+    } else {
+      return rawResult
+    }
+  }
+  
+  /**
+   * Execute a query and return the raw results
+   * @param jql
+   * @param startAt
+   * @param maxResults
+   * @param fields
+   * @param expand
+   */
+  executeQuery (jql, startAt, maxResults, fields, expand) {
+    debug && console.log('JiraIntegrator.executeQuery:', this.provider.server.title, jql, startAt);
+    let self = this;
+    
+    return self.fetchData('search', 'search', {
+      jql       : jql,
+      startAt   : startAt || 0,
+      maxResults: maxResults || pageSize,
+      fields    : fields,
+      expand    : expand || defaultExpand
+    })
+  }
+  
+  /**
    * Post process a raw issue
    * @param rawItem
    */
   postProcessItem (rawItem) {
-    debug && console.log('JiraIntegrator.postProcessItem:', this.provider && this.provider.server.title);
+    debug && console.log('JiraIntegrator.postProcessItem:', this.provider.server.title);
     let self           = this,
         processedIssue = {};
     
@@ -267,7 +360,7 @@ export class JiraIntegrator extends Integrator {
    * @param level Recursion level
    */
   processItemForContributors (processedData, level) {
-    debug && console.log('JiraIntegrator.processItemForContributors:', this.provider && this.provider.server.title, level || 0);
+    debug && console.log('JiraIntegrator.processItemForContributors:', this.provider.server.title, level || 0);
     let self = this;
     
     // Guard against out of control recursion
@@ -300,7 +393,7 @@ export class JiraIntegrator extends Integrator {
    * @param {*} payload
    */
   fetchData (module, method, payload) {
-    debug && console.log('JiraIntegrator.fetchData:', this.provider && this.provider.server.title, module, method);
+    debug && console.log('JiraIntegrator.fetchData:', this.provider.server.title, module, method);
     let self = this;
     
     if (_.isObject(module)) {

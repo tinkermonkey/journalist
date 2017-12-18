@@ -1,6 +1,7 @@
 import './integration_server_import_testbed.html';
 import { Template } from 'meteor/templating';
 import { IntegrationTypes } from '../../../../../imports/api/integrations/integration_types';
+import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
 import './integration_browser_panels/jira_import_testbed';
 import './integration_browser_panels/confluence_import_testbed';
 
@@ -11,15 +12,12 @@ Template.IntegrationServerImportTestbed.helpers({
   integrationImportTestbedPanel () {
     let context = this.context,
         integrationType;
-    
-    if (context && context.integrationType) {
-      integrationType = context.integrationType
-    } else if (context && context.server) {
-      if (_.isFunction(context.server)) {
-        integrationType = context.server().integrationType
-      } else if (_.isObject(context.server)) {
-        integrationType = context.server.integrationType
-      }
+  
+    if (context && context.integrationType != null) {
+      integrationType = context.integrationType;
+    } else if (context && context.serverId) {
+      let server      = IntegrationServers.findOne(context.serverId);
+      integrationType = server && server.integrationType;
     }
     
     switch (integrationType) {
@@ -29,7 +27,6 @@ Template.IntegrationServerImportTestbed.helpers({
         return "JiraImportTestbed";
     }
   }
-  
 });
 
 /**

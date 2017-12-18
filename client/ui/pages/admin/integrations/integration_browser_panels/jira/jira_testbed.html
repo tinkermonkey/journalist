@@ -8,16 +8,64 @@
     </small>
   </h2>
   
-  <nav class="navbar navbar-default">
+  <nav class="navbar navbar-default navbar-testbed">
     <div class="container-fluid">
-      <form class="navbar-form navbar-left">
-        <div class="form-group">
-          <input type="text" class="form-control input-module" placeholder="Module">
-          <input type="text" class="form-control input-method" placeholder="Method">
-          <input type="text" class="form-control input-payload" placeholder="Payload">
-        </div>
-        <button class="btn btn-default btn-load" type="button">Go</button>
-      </form>
+      {{#if callMap}}
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              {{#if module}}
+                {{camelToTitle module}}
+              {{else}}
+                Module
+              {{/if}}
+              
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu module-dropdown">
+              {{#each modules}}
+                <li><a>{{camelToTitle this}}</a></li>
+              {{/each}}
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              {{#if method}}
+                {{camelToTitle method}}
+              {{else}}
+                Method
+              {{/if}}
+              
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu method-dropdown">
+              {{#if module}}
+                {{#each methods}}
+                  <li><a>{{camelToTitle this}}</a></li>
+                {{/each}}
+              {{else}}
+                <li class="disabled"><a>Select a module</a></li>
+              {{/if}}
+            </ul>
+          </li>
+        </ul>
+        <form class="navbar-form navbar-right">
+          <div class="form-group">
+            <input type="text" class="form-control input-payload" placeholder="Payload">
+          </div>
+          <button class="btn btn-default btn-load" type="button">Go</button>
+        </form>
+      {{else}}
+        <ul class="nav navbar-nav">
+          <li>
+            <a>
+              Loading....
+            </a>
+          </li>
+        </ul>
+      {{/if}}
     </div>
   </nav>
   

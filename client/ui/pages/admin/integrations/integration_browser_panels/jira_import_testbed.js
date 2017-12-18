@@ -11,7 +11,7 @@ Template.JiraImportTestbed.helpers({
     let functionId     = Template.instance().functionId.get(),
         importFunction = IntegrationImportFunctions.findOne(functionId);
     
-    return importFunction.integrationType;
+    return importFunction && importFunction.integrationType;
   },
   servers () {
     let functionId     = Template.instance().functionId.get(),
@@ -36,6 +36,9 @@ Template.JiraImportTestbed.helpers({
         Template.instance().serverId.set(server._id)
       }
     }
+  },
+  functionId () {
+    return Template.instance().functionId.get();
   },
   result () {
     return Template.instance().result.get();
@@ -94,8 +97,14 @@ Template.JiraImportTestbed.onCreated(() => {
       if (context.functionId || context.importFunctionId) {
         instance.functionId.set(context.functionId || context.importFunctionId);
       } else {
-        console.error('JiraImportTestbed: cannot determine function context');
-        return;
+        // Try pulling it out of the url
+        let functionId = FlowRouter.getParam('functionId');
+        if(functionId){
+          instance.functionId.set(functionId);
+        } else {
+          console.error('JiraImportTestbed: cannot determine function context');
+          return;
+        }
       }
       
       // Pull the serverId out of the context if it exists

@@ -74,7 +74,7 @@
               </tr>
               </tbody>
             </table>
-            
+  
             {{#RobaTabGroup name="integration-tabs" navClass="nav-tabs"}}
               {{#RobaTab name="details" title="Integration Details"}}
                 {{> AdminProjectIntegrationDetails }}
@@ -83,18 +83,23 @@
                 {{> IntegrationServerImportTestbed context=this}}
               {{/RobaTab}}
               {{#RobaTab name="preview" title="Preview Template"}}
-              
+    
               {{/RobaTab}}
               {{#RobaTab name="testbed" title="Display Template"}}
-              
+    
               {{/RobaTab}}
             {{/RobaTabGroup}}
-          
+
           </div>
           <div class="col-md-4">
             <h2>Field Reference</h2>
             
             {{> IntegrationServerFieldReference context=this }}
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-12">
           </div>
         </div>
       </div>

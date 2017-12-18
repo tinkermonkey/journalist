@@ -113,13 +113,13 @@ Meteor.methods({
         if (integration.serverId && integration.server()) {
           return IntegrationService.queryDefinitions(integration.server().integrationType);
         } else {
-          throw new Meteor.error(500, 'Integration does not have a valid server');
+          throw new Meteor.Error(500, 'Integration does not have a valid server');
         }
       } else {
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to test an integration:', user.username, key, integrationId);
+      console.error('Non-admin user tried to test an integration:', user.username, integrationId);
       throw new Meteor.Error(403);
     }
   },
@@ -135,7 +135,7 @@ Meteor.methods({
     
     // Validate the data is complete
     check(integrationId, String);
-    check(details, String);
+    check(details, Object);
     
     // Get the import function record to make sure this is authorized
     let integration = Integrations.findOne(integrationId);
@@ -143,9 +143,7 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (integration) {
-        let server = IntegrationServers.findOne(integration.serverId);
-        
-        //return IntegrationService.getServiceProvider(server).testImportFunction(importFunction);
+        return IntegrationService.testIntegration(integration, details);
       } else {
         throw new Meteor.Error(404);
       }
@@ -235,6 +233,33 @@ Meteor.methods({
       }
     } else {
       console.error('Non-admin user tried to edit an integration server:', user.username, key, value, serverId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Fetch the integration call map for this integration
+   * @param serverId
+   */
+  getIntegrationServerCallMap (serverId) {
+    console.log('getIntegrationCallMap:', serverId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(serverId, String);
+    
+    // Get the import function record to make sure this is authorized
+    let server = IntegrationServers.findOne(serverId);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (server) {
+        return IntegrationService.getServiceProvider(server).integrationCallMap();
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to get a server call map:', user.username, serverId);
       throw new Meteor.Error(403);
     }
   },

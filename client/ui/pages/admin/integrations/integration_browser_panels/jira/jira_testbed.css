@@ -1,0 +1,24 @@
+.navbar-testbed .container-fluid {
+  display : flex;
+  width   : 100%;
+}
+
+.navbar-testbed .nav {
+  flex-shrink : 0;
+  display     : inline-flex;
+}
+
+.navbar-testbed .navbar-form {
+  flex-basis : 100%;
+  display    : inline-flex;
+}
+
+.navbar-testbed .navbar-form .form-group {
+  width        : 100%;
+  margin-right : 3px;
+}
+
+.navbar-testbed .navbar-form .form-group .input-payload {
+  width      : 100%;
+  flex-basis : 100%;
+}

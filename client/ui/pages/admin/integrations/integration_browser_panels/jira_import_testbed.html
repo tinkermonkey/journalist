@@ -1,88 +1,94 @@
 <template name="JiraImportTestbed">
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      {{#if servers.count}}
-        <ul class="nav navbar-nav">
-          <li class="dropdown {{#if context.serverId}}disabled{{/if}}">
-            <a class="dropdown-toggle {{#if context.serverId}}disabled{{/if}}" data-toggle="dropdown" role="button" aria-haspopup="true"
-               aria-expanded="false">
-              {{#if server}}
-                {{server.title}}
-              {{else}}
-                Server
-              {{/if}}
-              
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu server-dropdown">
-              {{#each servers}}
-                <li><a>{{title}}</a></li>
-              {{/each}}
-            </ul>
-          </li>
-        </ul>
-      {{else}}
-        <ul class="nav navbar-nav">
-          <li><a href="{{pathFor 'Integrations'}}">Please activate at least one {{renderIntegrationType integrationType}} server</a></li>
-        </ul>
-      {{/if}}
-      {{#if server.isAuthenticated}}
-        <form class="navbar-form navbar-left">
-          <div class="form-group">
-            <input type="text" class="form-control input-item-key" placeholder="Jira Issue Key">
-          </div>
-          <button class="btn btn-default btn-load" type="button" disabled="{{#unless server}}disabled{{/unless}}">Go</button>
-        </form>
-      {{else}}
-        {{#with server}}
+  {{#if functionId}}
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        {{#if servers.count}}
           <ul class="nav navbar-nav">
-            <li>
-              {{> AuthenticateServerLink }}
+            <li class="dropdown {{#if context.serverId}}disabled{{/if}}">
+              <a class="dropdown-toggle {{#if context.serverId}}disabled{{/if}}" data-toggle="dropdown" role="button" aria-haspopup="true"
+                 aria-expanded="false">
+                {{#if server}}
+                  {{server.title}}
+                {{else}}
+                  Server
+                {{/if}}
+                
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu server-dropdown">
+                {{#each servers}}
+                  <li><a>{{title}}</a></li>
+                {{/each}}
+              </ul>
             </li>
           </ul>
         {{else}}
-        
-        {{/with}}
-      {{/if}}
-    </div>
-  </nav>
-  
-  {{#if servers.count}}
-    {{#if error}}
-      <div class="alert alert-warning">
-        <b>Loading result failed:</b>
-        <div>{{ error }}</div>
-      </div>
-    {{else}}
-      {{#if showLoading }}
-        {{> RobaSpinner rainbow=true }}
-      {{else}}
-        {{#if server}}
-          {{#if result}}
-            {{#RobaTabGroup name="testbed-tabs" navClass="nav-tabs"}}
-              {{#RobaTab name="imported" title="Imported"}}
-                {{#if result.importResult.error}}
-                  <div class="alert alert-danger">
-                    <b>Import failed:</b>
-                    {{result.importResult.error}}
-                  </div>
-                {{/if}}
-                <pre class="jira-brain-dump-data">{{renderJson result.importResult.item}}</pre>
-              {{/RobaTab}}
-              {{#RobaTab name="post-processed" title="Post Processed"}}
-                <pre class="jira-brain-dump-data">{{renderJson result.processedItem}}</pre>
-              {{/RobaTab}}
-              {{#RobaTab name="raw" title="Raw Result"}}
-                <pre class="jira-brain-dump-data">{{renderJson result.rawItem}}</pre>
-              {{/RobaTab}}
-            {{/RobaTabGroup}}
-          {{/if}}
+          <ul class="nav navbar-nav">
+            <li><a href="{{pathFor 'Integrations'}}">Please activate at least one {{renderIntegrationType integrationType}} server</a></li>
+          </ul>
+        {{/if}}
+        {{#if server.isAuthenticated}}
+          <form class="navbar-form navbar-left">
+            <div class="form-group">
+              <input type="text" class="form-control input-item-key" placeholder="Jira Issue Key">
+            </div>
+            <button class="btn btn-default btn-load" type="button" disabled="{{#unless server}}disabled{{/unless}}">Go</button>
+          </form>
         {{else}}
-          <div class="alert alert-warning">
-            Please select a server to test this on
-          </div>
+          {{#with server}}
+            <ul class="nav navbar-nav">
+              <li>
+                {{> AuthenticateServerLink }}
+              </li>
+            </ul>
+          {{else}}
+          
+          {{/with}}
+        {{/if}}
+      </div>
+    </nav>
+    
+    {{#if servers.count}}
+      {{#if error}}
+        <div class="alert alert-warning">
+          <b>Loading result failed:</b>
+          <div>{{ error }}</div>
+        </div>
+      {{else}}
+        {{#if showLoading }}
+          {{> RobaSpinner rainbow=true }}
+        {{else}}
+          {{#if server}}
+            {{#if result}}
+              {{#RobaTabGroup name="testbed-tabs" navClass="nav-tabs"}}
+                {{#RobaTab name="imported" title="Imported"}}
+                  {{#if result.importResult.error}}
+                    <div class="alert alert-danger">
+                      <b>Import failed:</b>
+                      {{result.importResult.error}}
+                    </div>
+                  {{/if}}
+                  <pre class="jira-brain-dump-data">{{renderJson result.importResult.item}}</pre>
+                {{/RobaTab}}
+                {{#RobaTab name="post-processed" title="Post Processed"}}
+                  <pre class="jira-brain-dump-data">{{renderJson result.processedItem}}</pre>
+                {{/RobaTab}}
+                {{#RobaTab name="raw" title="Raw Result"}}
+                  <pre class="jira-brain-dump-data">{{renderJson result.rawItem}}</pre>
+                {{/RobaTab}}
+              {{/RobaTabGroup}}
+            {{/if}}
+          {{else}}
+            <div class="alert alert-warning">
+              Please select a server to test this on
+            </div>
+          {{/if}}
         {{/if}}
       {{/if}}
     {{/if}}
+  {{else}}
+    <div class="alert alert-danger">
+      Could not determine testbed import function
+    </div>
   {{/if}}
 </template>

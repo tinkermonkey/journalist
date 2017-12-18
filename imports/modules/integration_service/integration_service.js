@@ -196,10 +196,10 @@ export const IntegrationService = {
   /**
    * Fetch data from a service provider
    * @param server
-   * @param server
+   * @param request
    */
   fetchData (server, request) {
-    console.log('IntegrationService.fetchData:', server._id, server.title);
+    debug && console.log('IntegrationService.fetchData:', server._id, server.title);
     let service = this,
         provider = service.getServiceProvider(server);
     
@@ -208,6 +208,19 @@ export const IntegrationService = {
     } else {
       throw new Meteor.Error(404, "Service Provider not found");
     }
+  },
+  
+  /**
+   * Test a project integration including remote query and item processing
+   * @param integration {Integration}
+   * @param details {Object}
+   */
+  testIntegration(integration, details){
+    console.log('IntegrationService.testIntegration:', integration._id);
+    let service = this,
+        provider = service.getServiceProvider(integration.server());
+    
+    return provider.testIntegration(integration, details)
   },
   
   /**

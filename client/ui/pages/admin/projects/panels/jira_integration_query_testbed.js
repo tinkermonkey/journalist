@@ -20,29 +20,29 @@ Template.JiraIntegrationQueryTestbed.helpers({
  * Template Event Handlers
  */
 Template.JiraIntegrationQueryTestbed.events({
-  "click .btn-run-query" (e, instance) {
+  'click .btn-run-query' (e, instance) {
     let data  = Template.currentData(),
         query = instance.query.get();
     
     if (data.integration && data.integration.serverId) {
       instance.showLoading.set(true);
-      Meteor.call('testIntegrationImportFunction', data.integration._id, { query: query }, (error, response) => {
+      Meteor.call('testIntegration', data.integration._id, { queryKey: query.queryKey }, (error, response) => {
         instance.showLoading.set(false);
         if (error) {
-          console.error('JiraIntegrationQueryTestbed fetchData failed:', error);
+          console.error('JiraIntegrationQueryTestbed testIntegration failed:', error);
           instance.error.set(error);
           instance.result.set();
         } else {
-          console.info('JiraIntegrationQueryTestbed fetchData:', response);
+          console.info('JiraIntegrationQueryTestbed testIntegration response:', response);
           instance.error.set();
           instance.result.set(response);
         }
       });
     }
   },
-  "click .query-dropdown li" (e, instance) {
+  'click .query-dropdown li' (e, instance) {
     let query = this;
-    console.log("Query selected:", query);
+    console.log('Query selected:', query);
     Template.instance().query.set(query);
   }
 });
@@ -59,7 +59,15 @@ Template.JiraIntegrationQueryTestbed.onCreated(() => {
   instance.showLoading = new ReactiveVar(false);
   
   instance.autorun(() => {
-    console.log("JiraIntegrationQueryTestbed:", Template.currentData())
+    let query = instance.query.get(),
+        context = Template.currentData();
+    
+    console.log('JiraIntegrationQueryTestbed:', context);
+    
+    if(!query && context && context.queryDefinitions && context.queryDefinitions.length){
+      console.log('JiraIntegrationQueryTestbed auto-setting query:', query);
+      instance.query.set(context.queryDefinitions[0]);
+    }
   })
 });
 

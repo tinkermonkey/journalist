@@ -3,10 +3,11 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { ItemTypes } from '../imported_items/item_types';
-import { IntegrationTypes } from './integration_types';
 import { IntegrationCalculatedFields } from './integration_calculated_fields';
+import { IntegrationImportFunctions } from './integration_import_functions';
 import { IntegrationServers } from './integration_servers';
+import { IntegrationTypes } from './integration_types';
+import { ItemTypes } from '../imported_items/item_types';
 import { Projects } from '../projects/projects';
 
 /**
@@ -99,6 +100,9 @@ Integrations.helpers({
   },
   itemTypeTitle () {
     return Util.camelToTitle(_.invert(ItemTypes)[ this.itemType ])
+  },
+  importFunction () {
+    return IntegrationImportFunctions.findOne({ _id: this.importFunctionId })
   },
   project () {
     return Projects.findOne({ _id: this.projectId })
