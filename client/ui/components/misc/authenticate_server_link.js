@@ -23,7 +23,12 @@ Template.AuthenticateServerLink.events({
           },
           password: {
             type : String,
-            label: "Password"
+            label: "Password",
+            autoform: {
+              afFieldInput: {
+                type: "password"
+              }
+            }
           }
         })
       },
