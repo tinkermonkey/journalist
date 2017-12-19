@@ -96,6 +96,7 @@ Template.JiraTestbed.events({
       });
       if (module) {
         instance.module.set(moduleName);
+        instance.method.set();
       }
     }
   },
@@ -116,7 +117,7 @@ Template.JiraTestbed.events({
       }
     }
   },
-  'submit .navbar-testbed form'(e, instance){
+  'submit .navbar-testbed form' (e, instance) {
     e.preventDefault();
     $('.navbar-testbed .btn-load').trigger('click');
   }

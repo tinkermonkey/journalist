@@ -21,8 +21,10 @@ const JiraConnector    = require('jira-connector'),
         'cookie_jar'
       ],
       defaultExpand    = [
-        'worklog',
-        'changelog'
+        'attachment',
+        'changelog',
+        'comments',
+        'worklog'
       ];
 
 // Ignore self-signed errors
@@ -212,6 +214,9 @@ export class JiraIntegrator extends Integrator {
       // Cache the list of projects
       self.provider.storeCachedItem('projectList', self.fetchData('project', 'getAllProjects').response);
       
+      // Cache the list of status'
+      self.provider.storeCachedItem('statusList', self.fetchData('status', 'getAllStatuses').response);
+      
       // Cache the list of fields and create synthetic keys based on the field name for custom fields
       let fields = self.fetchData('field', 'getAllFields').response;
       fields.forEach((field) => {
@@ -329,11 +334,11 @@ export class JiraIntegrator extends Integrator {
     
     // Replace all of the custom field keys with the synthetic keys
     // Replace all of the people records with links to contributors
-    _.keys(rawItem).forEach((topLevelKey) => {
+    _.keys(rawItem).sort().forEach((topLevelKey) => {
       if (topLevelKey === 'fields') {
         processedIssue.fields = {};
         
-        _.keys(rawItem.fields).forEach((fieldKey) => {
+        _.keys(rawItem.fields).sort().forEach((fieldKey) => {
           let processedKey = fieldKey;
           if (fieldKey.match(/customfield_/i)) {
             // look up a synthetic key
