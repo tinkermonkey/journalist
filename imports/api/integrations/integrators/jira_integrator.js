@@ -10,10 +10,10 @@ const JiraConnector    = require('jira-connector'),
       request          = require('request'),
       useMongoStore    = true,
       debug            = true,
+      trace            = false,
       queryDefinitions = {
         master: "Master Select Query"
       },
-      pageSize         = 100,
       mapIgnoreModules = [
         'promise',
         'requestLib',
@@ -214,8 +214,11 @@ export class JiraIntegrator extends Integrator {
       // Cache the list of projects
       self.provider.storeCachedItem('projectList', self.fetchData('project', 'getAllProjects').response);
       
-      // Cache the list of status'
+      // Cache the list of statuses
       self.provider.storeCachedItem('statusList', self.fetchData('status', 'getAllStatuses').response);
+      
+      // Cache the list of issue types
+      self.provider.storeCachedItem('issueTypeList', self.fetchData('issueType', 'getAllIssueTypes').response);
       
       // Cache the list of fields and create synthetic keys based on the field name for custom fields
       let fields = self.fetchData('field', 'getAllFields').response;
@@ -278,7 +281,7 @@ export class JiraIntegrator extends Integrator {
     debug && console.log('JiraIntegrator.testIntegration:', this.provider.server.title, integration._id);
     let self      = this,
         query     = integration.details[ details.queryKey ],
-        rawResult = self.executeQuery(query, 0, 5);
+        rawResult = self.executeQuery(query, 0, details.limit || 5);
     
     if (rawResult.success === true) {
       try {
@@ -303,7 +306,7 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
-   * Execute a query and return the raw results
+   * Execute a query and return the raw results, following the paging in order to fetch the full results set
    * @param jql
    * @param startAt
    * @param maxResults
@@ -312,15 +315,56 @@ export class JiraIntegrator extends Integrator {
    */
   executeQuery (jql, startAt, maxResults, fields, expand) {
     debug && console.log('JiraIntegrator.executeQuery:', this.provider.server.title, jql, startAt);
-    let self = this;
+    let self             = this,
+        result           = self.fetchData('search', 'search', {
+          jql       : jql,
+          startAt   : startAt || 0,
+          maxResults: maxResults,
+          fields    : fields,
+          expand    : expand || defaultExpand
+        }),
+        cumulativeIssues = [];
     
-    return self.fetchData('search', 'search', {
-      jql       : jql,
-      startAt   : startAt || 0,
-      maxResults: maxResults || pageSize,
-      fields    : fields,
-      expand    : expand || defaultExpand
-    })
+    // Check to see if everything was returned in the initial request
+    if (result.success === true && result.response) {
+      if ((maxResults && result.response.maxResults >= maxResults) || (result.response.maxResults >= result.response.total)) {
+        return result
+      } else {
+        debug && console.log('JiraIntegrator.executeQuery paging further results:', result.response.maxResults, 'of', result.response.total, 'loaded');
+        
+        // Stash the results from the initial request
+        cumulativeIssues = cumulativeIssues.concat(result.response.issues);
+        
+        // If not, page through the results (if needed) to get the full set
+        let pageSize  = result.response.maxResults,
+            pageCount = Math.ceil(result.response.total / pageSize),
+            i;
+        for (i = 2; i <= pageCount; i++) {
+          debug && console.log('JiraIntegrator.executeQuery loading page:', i, 'of', pageCount, ', ', cumulativeIssues.length, 'issues loaded');
+          result = self.fetchData('search', 'search', {
+            jql       : jql,
+            startAt   : (i - 1) * pageSize,
+            maxResults: maxResults,
+            fields    : fields,
+            expand    : expand || defaultExpand
+          });
+          
+          // append the results
+          if (result.success === true && result.response) {
+            debug && console.log('JiraIntegrator.executeQuery paging result starting at:', (i - 1) * pageSize, 'of', result.response.total, 'loaded');
+            cumulativeIssues = cumulativeIssues.concat(result.response.issues);
+          } else {
+            return result
+          }
+        }
+        
+        // Return the full list as the payload of the last response
+        result.response.issues = cumulativeIssues;
+        return result
+      }
+    } else {
+      return result
+    }
   }
   
   /**
@@ -328,7 +372,7 @@ export class JiraIntegrator extends Integrator {
    * @param rawItem
    */
   postProcessItem (rawItem) {
-    debug && console.log('JiraIntegrator.postProcessItem:', this.provider.server.title);
+    trace && console.log('JiraIntegrator.postProcessItem:', this.provider.server.title);
     let self           = this,
         processedIssue = {};
     
@@ -365,7 +409,7 @@ export class JiraIntegrator extends Integrator {
    * @param level Recursion level
    */
   processItemForContributors (processedData, level) {
-    debug && console.log('JiraIntegrator.processItemForContributors:', this.provider.server.title, level || 0);
+    trace && console.log('JiraIntegrator.processItemForContributors:', this.provider.server.title, level || 0);
     let self = this;
     
     // Guard against out of control recursion
@@ -427,7 +471,7 @@ export class JiraIntegrator extends Integrator {
             })
             .await();
         
-        //debug && console.log('JiraIntegrator.fetchData result:', module, method, result);
+        trace && console.log('JiraIntegrator.fetchData result:', module, method, result);
         
         return result
       } catch (e) {

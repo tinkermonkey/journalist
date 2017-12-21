@@ -1,3 +1,4 @@
+import { check } from 'meteor/check';
 import { Ping } from 'meteor/frpz:ping';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Contributors } from '../../api/contributors/contributors';
@@ -12,14 +13,19 @@ import { JiraIntegrator } from '../../api/integrations/integrators/jira_integrat
 
 const { URL } = require('url');
 
-let debug = true;
+let debug = true,
+    trace = false;
 
 export class IntegrationServiceProvider {
+  /**
+   * IntegrationServiceProvider provides connectivity to IntegrationAgents
+   * @param server {IntegrationServer}
+   */
   constructor (server) {
     console.log('Creating new IntegrationServiceProvider:', server._id, server.title);
     let self = this;
     
-    // Store the document
+    // Store the server document
     self.server = server;
     
     // Initialize the local cache of integration data
@@ -36,7 +42,7 @@ export class IntegrationServiceProvider {
     // Set the server auth flag to unauthenticated
     IntegrationServers.update({ _id: self.server._id }, { $set: { isAuthenticated: false } });
     
-    // Observe the collection for document updates
+    // Observe the IntegrationServers collection for document updates
     // Needs to be deferred because you can't create observers in a call stack from another observer
     Meteor.defer(() => {
       self.observer = IntegrationServers.find({ _id: self.server._id }).observe({
@@ -89,7 +95,7 @@ export class IntegrationServiceProvider {
   /**
    * Fetch the map of integration calls that can be made for this integration
    */
-  integrationCallMap(){
+  integrationCallMap () {
     debug && console.log('IntegrationServiceProvider.integrationCallMap:', this.server._id, this.server.title);
     let self = this;
     
@@ -321,7 +327,7 @@ export class IntegrationServiceProvider {
    * @param processedItem
    */
   importItem (importFunction, processedItem) {
-    debug && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title);
+    trace && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title);
     let self = this;
     
     // Attempt to process the item through the import function
@@ -378,6 +384,8 @@ export class IntegrationServiceProvider {
         result.failures.push(importResult)
       }
     });
+  
+    debug && console.log('IntegrationServiceProvider.importItems complete:', this.server._id, this.server.title, processedItems.length);
     
     return result
   }
@@ -417,7 +425,7 @@ export class IntegrationServiceProvider {
    * @param rawItem
    */
   postProcessItem (rawItem) {
-    debug && console.log('IntegrationServiceProvider.postProcessItem:', this.server._id, this.server.title);
+    trace && console.log('IntegrationServiceProvider.postProcessItem:', this.server._id, this.server.title);
     let self          = this,
         processedItem = self.integrator.postProcessItem(rawItem);
     
@@ -431,7 +439,7 @@ export class IntegrationServiceProvider {
    * @param processedItem
    */
   processItemForContributors (processedItem) {
-    debug && console.log('IntegrationServiceProvider.processItemForContributors:', this.server._id, this.server.title);
+    trace && console.log('IntegrationServiceProvider.processItemForContributors:', this.server._id, this.server.title);
     let self = this;
     
     self.integrator.processItemForContributors(processedItem);
@@ -441,13 +449,27 @@ export class IntegrationServiceProvider {
    * Store an imported item
    * @param item
    */
-  storeImportedItem (item) {
-    debug && console.log('IntegrationServiceProvider.storeImportedItem:', this.server._id, this.server.title, item && item.identifier);
+  storeImportedItem (integrationId, itemType, item) {
+    trace && console.log('IntegrationServiceProvider.storeImportedItem:', this.server._id, this.server.title, item && item.identifier);
     let self = this;
     
-    ImportedItems.upsert({}, {
-      $set: item
-    });
+    check(integrationId, String);
+    check(itemType, Number);
+    check(item, Object);
+    check(item.identifier, String);
+    
+    if (item.identifier.length) {
+      ImportedItems.upsert({
+        integrationId: integrationId,
+        itemType     : itemType,
+        identifier   : item.identifier
+      }, {
+        $set: item
+      });
+    } else {
+      console.error('IntegrationServiceProvider.storeImportedItem failed:', this.server._id, this.server.title, item && item.identifier);
+      throw new Meteor.Error(500, 'storeImportedItem could not determine item identifier')
+    }
   }
   
   /**
@@ -459,7 +481,7 @@ export class IntegrationServiceProvider {
    * @param rawData
    */
   findOrCreateContributor (key, email, name, rawData) {
-    debug && console.log('IntegrationServiceProvider.findOrCreateContributor:', this.server._id, this.server.title, key);
+    trace && console.log('IntegrationServiceProvider.findOrCreateContributor:', this.server._id, this.server.title, key);
     let self = this;
     
     // Validate the data to make sure it's safe to proceed
@@ -495,6 +517,7 @@ export class IntegrationServiceProvider {
           };
           doc.profiles[ self.server._id ] = _.isObject(rawData) ? rawData : { data: rawData };
           self.cache.contributors[ key ]  = Contributors.insert(doc);
+          debug && console.log('IntegrationServiceProvider.findOrCreateContributor created contributor:', key);
         }
       }
       return self.cache.contributors[ key ]

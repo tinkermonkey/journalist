@@ -74,22 +74,7 @@
               </tr>
               </tbody>
             </table>
-  
-            {{#RobaTabGroup name="integration-tabs" navClass="nav-tabs"}}
-              {{#RobaTab name="details" title="Integration Details"}}
-                {{> AdminProjectIntegrationDetails }}
-              {{/RobaTab}}
-              {{#RobaTab name="cache" title="Import Testbed"}}
-                {{> IntegrationServerImportTestbed context=this}}
-              {{/RobaTab}}
-              {{#RobaTab name="preview" title="Preview Template"}}
-    
-              {{/RobaTab}}
-              {{#RobaTab name="testbed" title="Display Template"}}
-    
-              {{/RobaTab}}
-            {{/RobaTabGroup}}
-
+          
           </div>
           <div class="col-md-4">
             <h2>Field Reference</h2>
@@ -100,6 +85,23 @@
         
         <div class="row">
           <div class="col-md-12">
+            {{#RobaTabGroup name="integration-tabs" navClass="nav-tabs"}}
+              {{#RobaTab name="details" title="Integration Details"}}
+                {{> AdminProjectIntegrationDetails }}
+              {{/RobaTab}}
+              {{#RobaTab name="cache" title="Import Testbed"}}
+                {{> IntegrationServerImportTestbed context=this}}
+              {{/RobaTab}}
+              {{#RobaTab name="preview" title="Preview Template"}}
+              
+              {{/RobaTab}}
+              {{#RobaTab name="testbed" title="Display Template"}}
+              
+              {{/RobaTab}}
+              {{#RobaTab name="imported-issues" title="Imported Issues"}}
+              
+              {{/RobaTab}}
+            {{/RobaTabGroup}}
           </div>
         </div>
       </div>
