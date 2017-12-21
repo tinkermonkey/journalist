@@ -1,23 +1,24 @@
 import './top_nav.html';
-
+import './top_nav.css';
 import { Template } from 'meteor/templating';
 import { SystemHealthMetrics } from '../../../../imports/api/system_health_metrics/system_health_metrics';
+import './status_menu_item'
 
 /**
  * Template Helpers
  */
 Template.TopNav.helpers({
-  statusMetrics(){
-    return SystemHealthMetrics.find({}, { sort: { isHealthy: 1, key: 1 } })
+  statusMetrics (type) {
+    return SystemHealthMetrics.find({ type: type }, { sort: { isHealthy: 1, title: 1 } })
   },
-  statusSummary(){
+  statusSummary () {
     let status = SystemHealthMetrics.find({}).map((metric) => {
       return metric.isHealthy
     }).reduce((acc, val) => {
       return acc && val
     }, true);
     return {
-      title    : 'System Health',
+      title    : status === true ? 'System Healthy' : 'System Unhealthy',
       isHealthy: status
     }
   }
@@ -26,9 +27,7 @@ Template.TopNav.helpers({
 /**
  * Template Event Handlers
  */
-Template.TopNav.events({
-
-});
+Template.TopNav.events({});
 
 /**
  * Template Created
