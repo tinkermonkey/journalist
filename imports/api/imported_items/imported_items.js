@@ -12,6 +12,10 @@ export const ImportedItem = new SimpleSchema({
   integrationId: {
     type: String
   },
+  // The home of this item
+  projectId    : {
+    type: String
+  },
   // Overall type of this item:
   itemType     : {
     type         : Number,
@@ -79,7 +83,7 @@ export const ImportedItem = new SimpleSchema({
 
 // Create a schema for validating imported items before they're stored
 // The omitted fields are added post import processing so they will not be present at import validation
-export const ImportedItemTestSchema = new SimpleSchema(_.omit(ImportedItem.schema(), 'integrationId', 'itemType'));
+export const ImportedItemTestSchema = new SimpleSchema(_.omit(ImportedItem.schema(), 'integrationId', 'projectId', 'itemType'));
 
 export const ImportedItems = new Mongo.Collection('imported_items');
 ImportedItems.attachSchema(ImportedItem);

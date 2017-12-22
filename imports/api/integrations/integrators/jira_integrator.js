@@ -6,9 +6,7 @@ import { Util } from '../../util';
 
 // Pull in the jira connector
 const JiraConnector    = require('jira-connector'),
-      ToughCookie      = require('tough-cookie'),
       request          = require('request'),
-      useMongoStore    = true,
       debug            = true,
       trace            = false,
       queryDefinitions = {
@@ -40,14 +38,8 @@ export class JiraIntegrator extends Integrator {
     this.type = IntegrationTypes.jira;
     
     // Create a cookie jar and load any stored data from Mongo
-    if (useMongoStore) {
-      this.cookieStore = new MongoCookieStore(this.provider.trackerKey);
-      this.cookieStore.restoreCookies();
-    } else {
-      this.cookieStore                   = new ToughCookie.MemoryCookieStore();
-      this.cookieStore.synchronous       = true;
-      this.cookieStore.getAllCookiesSync = Meteor.wrapAsync(this.cookieStore.getAllCookies);
-    }
+    this.cookieStore = new MongoCookieStore(this.provider.trackerKey);
+    this.cookieStore.restoreCookies();
     this.cookieJar = request.jar(this.cookieStore);
     
     return this;
@@ -112,20 +104,9 @@ export class JiraIntegrator extends Integrator {
     
     // If we're authenticated
     if (authResult.success) {
-      // Store the authentication token for re-use
-      if (0) {
-        debug && console.log('JiraIntegrator.authenticate cookies:', self.cookieStore.getAllCookiesSync());
-        self.provider.storeAuthData({
-          cookies: self.cookieStore.getAllCookiesSync().map((cookie) => {
-            return {
-              str : cookie.cookieString(),
-              data: cookie.toJSON()
-            }
-          })
-        });
-      } else {
-        console.error('Cookies:', self.cookieJar);
-      }
+      // Store the auth data for re-use
+      let base64auth = Buffer.from(username + ':' + password).toString('base64');
+      self.provider.storeAuthData({ base64: base64auth })
     } else {
       // Make sure the server is marked unathenticated
       self.provider.clearAuthData();
@@ -140,56 +121,31 @@ export class JiraIntegrator extends Integrator {
    */
   reAuthenticate (authData) {
     console.log('JiraIntegrator.reAuthenticate:', this.provider.server.title);
-    let self = this;
+    let self           = this,
+        connectionInfo = {
+          host      : self.provider.url.hostname,
+          cookie_jar: self.cookieJar
+        };
     
-    if (authData && authData.cookies) {
-      if (!useMongoStore) {
-        // Add the stored cookies to the jar
-        authData.cookies.forEach((cookieData) => {
-          console.log('Restoring cookie data:', cookieData);
-          try {
-            let cookie = request.cookie(cookieData.str);
-            _.keys(cookieData.data).forEach((key) => {
-              
-              switch (key) {
-                case 'creation':
-                case 'lastAccessed':
-                  cookie[ key ] = new Date(cookieData.data[ key ]);
-                  break;
-                default:
-                  cookie[ key ] = cookieData.data[ key ];
-              }
-            });
-            console.log('Restored cookie:', cookie.toJSON());
-            /*
-            self.cookieStore.putCookie(cookie, () => {
-            });
-            */
-          } catch (e) {
-            console.error('JiraIntegrator.reAuthenticate cookie parse failed:', cookieData, e);
-          }
-        });
-        //debug && console.log('JiraIntegrator.reAuthenticate cookies:', self.cookieStore.getAllCookiesSync());
+    // if there's stored base64 auth data
+    if (authData && authData.base64) {
+      connectionInfo.basic_auth = {
+        base64: authData.base64
       }
-      
-      // Create the Jira client
-      self.client = new JiraConnector({
-        host      : self.provider.url.hostname,
-        cookie_jar: self.cookieJar
-      });
-      
-      // Test it out
-      let authResult = self.checkAuthentication();
-      
-      if (!authResult.success) {
-        // Make sure the server is marked unathenticated
-        self.provider.clearAuthData();
-      }
-      
-      return authResult;
-    } else {
-      return { success: false, error: 'No stored auth data' };
     }
+    
+    // Create the Jira client
+    self.client = new JiraConnector(connectionInfo);
+    
+    // Test it out
+    let authResult = self.checkAuthentication();
+    
+    if (!authResult.success) {
+      // Make sure the server is marked unathenticated
+      self.provider.clearAuthData();
+    }
+    
+    return authResult;
   }
   
   /**
@@ -273,7 +229,7 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
-   * Test out an import function
+   * Test out an integration pipeline
    * @param integration
    * @param details
    */
@@ -303,6 +259,15 @@ export class JiraIntegrator extends Integrator {
     } else {
       return rawResult
     }
+  }
+  
+  /**
+   * Take in a query and append the criteria to limit the results to items with updates newer that the limitDate
+   * @param query
+   * @param limitDate
+   */
+  appendUpdateLimitToQuery (query, limitDate) {
+    return query + ' AND updated > "' + moment(limitDate).format('YYYY/MM/DD HH:mm') + '"'
   }
   
   /**
@@ -364,6 +329,29 @@ export class JiraIntegrator extends Integrator {
       }
     } else {
       return result
+    }
+  }
+  
+  /**
+   * Take a raw query result and return an array of post-processed items
+   * @param jql
+   * @param startAt
+   * @param maxResults
+   * @param fields
+   * @param expand
+   */
+  executeAndProcessQuery (jql, startAt, maxResults, fields, expand) {
+    debug && console.log('JiraIntegrator.executeAndProcessQuery:', this.provider.server.title);
+    let self      = this,
+        rawResult = self.executeQuery(jql, startAt, maxResults, fields, expand);
+    
+    if (rawResult && rawResult.success && rawResult.response) {
+      return rawResult.response.issues.map((rawItem) => {
+        return self.provider.postProcessItem(rawItem)
+      });
+    } else {
+      console.error('JiraIntegrator.executeAndProcessQuery encountered error:', rawResult);
+      throw new Meteor.Error(500, 'JiraIntegrator.executeAndProcessQuery failed');
     }
   }
   

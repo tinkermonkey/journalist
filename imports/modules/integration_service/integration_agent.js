@@ -1,6 +1,7 @@
+//import { moment } from 'meteor/momentjs:moment';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Integrations } from '../../api/integrations/integrations';
-import { IntegrationService } from './integration_service';
+import { ImportedItems } from '../../api/imported_items/imported_items';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 
 let debug = true,
@@ -10,16 +11,17 @@ export class IntegrationAgent {
   /**
    * IntegrationServiceProvider provides connectivity to IntegrationAgents
    * @param integration {Integration}
+   * @param serviceProvider {IntegrationServiceProvider}
    */
-  constructor (integration) {
+  constructor (integration, serviceProvider) {
     console.log('Creating new IntegrationAgent:', integration._id);
     let self = this;
     
     self.integration     = integration;
-    self.serviceProvider = IntegrationService.getServiceProvider(integration.server());
+    self.serviceProvider = serviceProvider;
     
     if (!self.serviceProvider) {
-      console.error('IntegrationAgent could not find service provider:', IntegrationService.providers, integration.server());
+      console.error('IntegrationAgent could not find service provider:', integration.server());
     }
     
     // Initialize the health tracker
@@ -35,17 +37,9 @@ export class IntegrationAgent {
           
           // Update the local cache of the document
           self.integration = newDoc;
-          
-          // If the server has changed, get the new service provider
-          if (newDoc.serverId !== oldDoc.serverId) {
-            self.serviceProvider = IntegrationService.getServiceProvider({ _id: newDoc.serverId, title: 'Updated server' });
-          }
         }
       });
     });
-    
-    // Schedule the health check job
-    self.updateHealthCheckJob();
     
     // Schedule the job to run the query periodically
     self.queryJobKeys = [];
@@ -57,13 +51,12 @@ export class IntegrationAgent {
    */
   updateQueryJobs () {
     debug && console.log('IntegrationAgent.updateQueryJobs:', this.integration._id);
-    let self = this;
+    let self             = this,
+        queryDefinitions = self.serviceProvider.getQueryDefinitions();
     
     // Get the query definitions
-    if (self.serviceProvider && self.serviceProvider.integrator) {
-      self.queryDefs = self.serviceProvider.integrator.queryDefinitions();
-      
-      _.keys(self.queryDefs).forEach((queryKey) => {
+    if (queryDefinitions) {
+      _.keys(queryDefinitions).forEach((queryKey) => {
         let queryJobKey = self.trackerKey + '-query-' + queryKey;
         self.queryJobKeys.push(queryKey);
         SyncedCron.remove(queryJobKey);
@@ -71,7 +64,7 @@ export class IntegrationAgent {
         SyncedCron.add({
           name: queryJobKey,
           schedule (parser) {
-            let parserText = 'every 60 seconds';
+            let parserText = 'every 1 minutes';
             debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', queryJobKey, "'", parserText, "'");
             return parser.text(parserText);
           },
@@ -84,52 +77,57 @@ export class IntegrationAgent {
   }
   
   /**
-   * Create or update the cron job for updating the server health
-   */
-  updateHealthCheckJob () {
-    debug && console.log('IntegrationAgent.updateHealthCheckJob:', this.integration._id);
-    let self = this;
-    
-    SyncedCron.remove(self.trackerKey);
-    
-    SyncedCron.add({
-      name: self.trackerKey,
-      schedule (parser) {
-        let parserText = 'every 5 minutes';
-        debug && console.log('IntegrationAgent.updateHealthCheckJob setting schedule:', self.integration._id, "'", parserText, "'");
-        return parser.text(parserText);
-      },
-      job () {
-        self.checkHealth();
-      }
-    });
-  }
-  
-  /**
-   * Check the health of this integration
-   */
-  checkHealth () {
-    debug && console.log('IntegrationAgent.checkHealth:', this.integration._id);
-    let self    = this,
-        healthy = true,
-        details;
-    
-    if (self.serviceProvider && self.serviceProvider.integrator) {
-    
-    } else {
-      healthy = false;
-      details = { error: 'Service provider not available' }
-    }
-    
-    HealthTracker.update(self.trackerKey, healthy, details);
-  }
-  
-  /**
    * Execute the query
    */
   executeQuery (queryKey) {
     debug && console.log('IntegrationAgent.executeQuery:', this.integration._id, queryKey);
-    let self = this;
+    let self  = this,
+        query = self.integration.details[ queryKey ];
+    
+    if (self.serviceProvider.isHealthy()) {
+      try {
+        // Determine when the last import was to pull in the updates
+        let startTime        = Date.now(),
+            mostRecentImport = ImportedItems.findOne({ integrationId: self.integration._id }, { lastImported: -1 }),
+            lastUpdate;
+        
+        if (mostRecentImport && mostRecentImport.lastImported) {
+          lastUpdate = mostRecentImport.lastImported;
+        } else {
+          lastUpdate = moment().subtract(6, 'months').hours(0).minutes(0).seconds(0);
+        }
+        
+        // Append the update limit to the query
+        query = self.serviceProvider.integrator.appendUpdateLimitToQuery(query, lastUpdate);
+        
+        // Fetch the data from the service provider
+        let importResult = self.serviceProvider.importItemsFromQuery(self.integration.importFunction(), query);
+        
+        if (importResult.items && importResult.items.length) {
+          debug && console.log('IntegrationAgent.executeQuery returned:', this.integration._id, queryKey, importResult.items.length);
+          
+          // Persist all of the results
+          importResult.items.forEach((item) => {
+            self.serviceProvider.storeImportedItem(self.integration._id, self.integration.projectId, self.integration.itemType, item);
+          });
+          
+          HealthTracker.update(self.trackerKey, true, {
+            message: importResult.items.length + ' items imported in ' + moment.duration(Date.now() - startTime).seconds() + ' s'
+          });
+        } else if (importResult.failures && importResult.failures.length) {
+          console.error('IntegrationAgent.executeQuery item processing failed:', importResult.failures.length);
+          HealthTracker.update(self.trackerKey, false, { message: 'Import failed for all items' });
+        } else {
+          // Healthy
+          HealthTracker.update(self.trackerKey, true, { message: 'No updates since ' + moment(lastUpdate).format('MM/DD hh:mm a') });
+        }
+      } catch (e) {
+        console.error('IntegrationAgent.executeQuery failed:', queryKey, e);
+        HealthTracker.update(self.trackerKey, false, { message: 'Query execution failed' });
+      }
+    } else {
+      HealthTracker.update(self.trackerKey, false, { message: 'Service provider is not healthy' });
+    }
   }
   
   /**

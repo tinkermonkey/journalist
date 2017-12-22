@@ -4,12 +4,14 @@ import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Contributors } from '../../api/contributors/contributors';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 import { ImportedItems, ImportedItemTestSchema } from '../../api/imported_items/imported_items';
+import { Integrations } from '../../api/integrations/integrations';
 import { IntegrationServerCaches } from '../../api/integrations/integration_server_caches';
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { IntegrationTypes } from '../../api/integrations/integration_types';
 import { UserTypes } from '../../api/users/user_types';
 import { ConfluenceIntegrator } from '../../api/integrations/integrators/confluence_integrator';
 import { JiraIntegrator } from '../../api/integrations/integrators/jira_integrator';
+import { IntegrationAgent } from './integration_agent';
 
 const { URL } = require('url');
 
@@ -23,7 +25,9 @@ export class IntegrationServiceProvider {
    */
   constructor (server) {
     console.log('Creating new IntegrationServiceProvider:', server._id, server.title);
-    let self = this;
+    let self     = this;
+    self.agents  = {};
+    self.healthy = false; // until proven otherwise
     
     // Store the server document
     self.server = server;
@@ -62,7 +66,7 @@ export class IntegrationServiceProvider {
       });
     });
     
-    // Create the Integrator
+    // Create the Integrator for this provider
     switch (self.server.integrationType) {
       case IntegrationTypes.jira:
         self.integrator = new JiraIntegrator(self);
@@ -71,6 +75,22 @@ export class IntegrationServiceProvider {
         self.integrator = new ConfluenceIntegrator(self);
         break;
     }
+    
+    // Monitor the Integrations collection to respond to additions, deletions, and modifications
+    self.integrationObserver = Integrations.find({ serverId: self.server._id }).observe({
+      added (integration) {
+        debug && console.log('IntegrationServiceProvider.integrationObserver.added:', integration._id);
+        Meteor.defer(() => {
+          self.createIntegrationAgent(integration);
+        });
+      },
+      removed (integration) {
+        console.log('IntegrationServiceProvider.integrationObserver.removed:', integration._id);
+        Meteor.defer(() => {
+          self.destroyIntegrationAgent(integration);
+        });
+      }
+    });
     
     // Schedule the health check job
     self.updateHealthCheckJob();
@@ -90,6 +110,13 @@ export class IntegrationServiceProvider {
       case IntegrationTypes.confluence:
         return ConfluenceIntegrator.queryDefinitions();
     }
+  }
+  
+  /**
+   * Get the query definitions for this provider
+   */
+  getQueryDefinitions () {
+    return IntegrationServiceProvider.queryDefinitions(this.server.integrationType)
   }
   
   /**
@@ -152,42 +179,52 @@ export class IntegrationServiceProvider {
   checkHealth () {
     debug && console.log('IntegrationServiceProvider.checkHealth:', this.server._id, this.server.title);
     let self    = this,
-        healthy = true,
         details = {};
+    
+    self.healthy = true;
     
     // Make sure there's something to connect to
     if (self.url && self.url.hostname) {
       // Ping the server
       debug && console.log('IntegrationServiceProvider.checkHealth pinging server:', self.url.hostname, self.url.port);
       try {
-        let status = Ping.host(self.url.hostname, 3);
-        healthy    = status.online === true;
-        if (!healthy) {
+        let status   = Ping.host(self.url.hostname, 3);
+        self.healthy = status.online === true;
+        if (!self.healthy) {
           debug && console.log('IntegrationServiceProvider.checkHealth ping status:', status);
-          details.error = "Server did not respond to ping requests";
+          details.message = "Server did not respond to ping requests";
         }
       } catch (e) {
         console.error('IntegrationServiceProvider.checkHealth ping failed:', self.url.hostname, e);
-        HealthTracker.update(self.trackerKey, false, { error: 'Ping failed' });
+        HealthTracker.update(self.trackerKey, false, { message: 'Ping failed' });
         return;
       }
       
       // Check an authenticated end point to make sure the server is authenticated
-      if (healthy) {
+      if (self.healthy) {
         let authResult = self.integrator.checkAuthentication();
-        healthy        = authResult.success === true;
-        if (!healthy) {
+        self.healthy   = authResult.success === true;
+        if (!self.healthy) {
           debug && console.log('IntegrationServiceProvider.checkHealth auth result:', authResult);
-          details.error = "Server is not authenticated";
+          details.message = "Server is not authenticated";
           IntegrationServers.update({ _id: self.server._id }, { $set: { isAuthenticated: false } });
         }
       }
       
       // Update the status
-      HealthTracker.update(self.trackerKey, healthy, details);
+      HealthTracker.update(self.trackerKey, self.healthy, details);
     } else {
-      HealthTracker.update(self.trackerKey, false, { error: 'No valid URL for server' });
+      self.healthy = false;
+      HealthTracker.update(self.trackerKey, self.healthy, { message: 'No valid URL for server' });
     }
+  }
+  
+  /**
+   * Return the health based on the last check
+   * @return {boolean}
+   */
+  isHealthy () {
+    return this.healthy
   }
   
   /**
@@ -384,10 +421,24 @@ export class IntegrationServiceProvider {
         result.failures.push(importResult)
       }
     });
-  
+    
     debug && console.log('IntegrationServiceProvider.importItems complete:', this.server._id, this.server.title, processedItems.length);
     
     return result
+  }
+  
+  /**
+   * Import the results of a query
+   * @param importFunction {IntegrationImportFunction}
+   * @param query {String}
+   * @param limit {Number} optional
+   */
+  importItemsFromQuery (importFunction, query, limit) {
+    debug && console.log('IntegrationServiceProvider.importItemsFromQuery:', this.server._id, this.server.title);
+    let self           = this,
+        processedItems = self.integrator.executeAndProcessQuery(query, 0, limit);
+    
+    return self.importItems(importFunction, processedItems)
   }
   
   /**
@@ -447,20 +498,28 @@ export class IntegrationServiceProvider {
   
   /**
    * Store an imported item
+   * @param integrationId
+   * @param projectId
+   * @param itemType {ItemTypes}
    * @param item
    */
-  storeImportedItem (integrationId, itemType, item) {
+  storeImportedItem (integrationId, projectId, itemType, item) {
     trace && console.log('IntegrationServiceProvider.storeImportedItem:', this.server._id, this.server.title, item && item.identifier);
     let self = this;
     
     check(integrationId, String);
+    check(projectId, String);
     check(itemType, Number);
     check(item, Object);
     check(item.identifier, String);
     
     if (item.identifier.length) {
+      // Set the lastImported date
+      item.lastImported = Date.now();
+      
       ImportedItems.upsert({
         integrationId: integrationId,
+        projectId    : projectId,
         itemType     : itemType,
         identifier   : item.identifier
       }, {
@@ -521,6 +580,81 @@ export class IntegrationServiceProvider {
         }
       }
       return self.cache.contributors[ key ]
+    }
+  }
+  
+  /**
+   * Create a new integration agent
+   * @param {*} integration
+   */
+  createIntegrationAgent (integration) {
+    console.log('IntegrationServiceProvider.createIntegrationAgent:', integration._id);
+    let self = this;
+    
+    // Create the service if the integration is active
+    let agent = self.getIntegrationAgent(integration);
+    if (agent == null) {
+      self.setIntegrationAgent(integration, new IntegrationAgent(integration, self));
+    } else {
+      console.error('IntegrationServiceProvider.createIntegrationAgent integration already exists:', integration._id);
+    }
+  }
+  
+  /**
+   * Set the IntegrationAgent for a given integration
+   * @param integration {IntegrationServer}
+   * @param agent {IntegrationAgent}
+   */
+  setIntegrationAgent (integration, agent) {
+    debug && console.log('IntegrationServiceProvider.setIntegrationAgent:', integration._id);
+    
+    this.agents[ integration._id ] = agent;
+  }
+  
+  /**
+   * Retrieve the IntegrationAgent for a given integration
+   * @param integration {IntegrationServer}
+   */
+  getIntegrationAgent (integration) {
+    debug && console.log('IntegrationServiceProvider.getIntegrationAgent:', integration._id);
+    
+    return this.agents && this.agents[ integration._id ];
+  }
+  
+  /**
+   * Handle a change to a integration agent
+   * Really only care about active/inactive, other changes are handled by the provider itself
+   * @param {*} newDoc
+   * @param {*} oldDoc
+   */
+  updateIntegrationAgent (newDoc, oldDoc) {
+    console.log('IntegrationServiceProvider.updateIntegrationAgent:', newDoc._id);
+    let self = this;
+    
+    // Respond to integration active flag changes
+    /*
+    if (newDoc.isActive !== oldDoc.isActive) {
+      if (newDoc.isActive) {
+        self.createIntegrationAgent(newDoc);
+      } else {
+        self.destroyIntegrationAgent(newDoc);
+      }
+    }
+    */
+  }
+  
+  /**
+   * Destroy a service provider
+   * @param {*} integration
+   */
+  destroyIntegrationAgent (integration) {
+    console.log('IntegrationServiceProvider.destroyIntegrationAgent:', integration._id);
+    let self  = this,
+        agent = self.getServiceProvider(integration);
+    
+    if (agent) {
+      agent.destroy();
+      delete self.agents[ integration._id ];
     }
   }
   

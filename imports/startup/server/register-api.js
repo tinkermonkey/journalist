@@ -15,8 +15,8 @@ import '../../api/efforts/server/publications.js';
 //import '../../api/features/server/publications.js';
 
 // Imported Items
-//import '../../api/imported_items/server/methods.js';
-//import '../../api/imported_items/server/publications.js';
+import '../../api/imported_items/server/methods.js';
+import '../../api/imported_items/server/publications.js';
 
 // Integrations
 import '../../api/integrations/server/methods.js';
