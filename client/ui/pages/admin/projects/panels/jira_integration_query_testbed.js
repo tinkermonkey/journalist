@@ -11,6 +11,12 @@ Template.JiraIntegrationQueryTestbed.helpers({
   query () {
     return Template.instance().query.get();
   },
+  limitOptions () {
+    return [ 5, 10, 15, 20, 25, 50, 100 ]
+  },
+  limit () {
+    return Template.instance().limit.get();
+  },
   result () {
     return Template.instance().result.get();
   }
@@ -22,11 +28,12 @@ Template.JiraIntegrationQueryTestbed.helpers({
 Template.JiraIntegrationQueryTestbed.events({
   'click .btn-run-query' (e, instance) {
     let data  = Template.currentData(),
+        limit = instance.limit.get(),
         query = instance.query.get();
     
     if (data.integration && data.integration.serverId) {
       instance.showLoading.set(true);
-      Meteor.call('testIntegration', data.integration._id, { queryKey: query.queryKey }, (error, response) => {
+      Meteor.call('testIntegration', data.integration._id, { queryKey: query.queryKey, limit: limit }, (error, response) => {
         instance.showLoading.set(false);
         if (error) {
           console.error('JiraIntegrationQueryTestbed testIntegration failed:', error);
@@ -44,6 +51,13 @@ Template.JiraIntegrationQueryTestbed.events({
     let query = this;
     console.log('Query selected:', query);
     Template.instance().query.set(query);
+  },
+  'click .limit-dropdown li' (e, instance) {
+    let limit = $(e.target).closest('li').attr('data-value');
+    if (limit) {
+      console.log('Limit selected:', limit);
+      Template.instance().limit.set(limit);
+    }
   }
 });
 
@@ -54,19 +68,20 @@ Template.JiraIntegrationQueryTestbed.onCreated(() => {
   let instance = Template.instance();
   
   instance.query       = new ReactiveVar();
+  instance.limit       = new ReactiveVar(5);
   instance.result      = new ReactiveVar();
   instance.error       = new ReactiveVar();
   instance.showLoading = new ReactiveVar(false);
   
   instance.autorun(() => {
-    let query = instance.query.get(),
+    let query   = instance.query.get(),
         context = Template.currentData();
     
     console.log('JiraIntegrationQueryTestbed:', context);
     
-    if(!query && context && context.queryDefinitions && context.queryDefinitions.length){
+    if (!query && context && context.queryDefinitions && context.queryDefinitions.length) {
       console.log('JiraIntegrationQueryTestbed auto-setting query:', query);
-      instance.query.set(context.queryDefinitions[0]);
+      instance.query.set(context.queryDefinitions[ 0 ]);
     }
   })
 });

@@ -6,14 +6,12 @@ import { Util } from '../../util';
 
 // Pull in the jira connector
 const JiraConnector    = require('jira-connector'),
-      ToughCookie      = require('tough-cookie'),
       request          = require('request'),
-      useMongoStore    = true,
       debug            = true,
+      trace            = false,
       queryDefinitions = {
         master: "Master Select Query"
       },
-      pageSize         = 100,
       mapIgnoreModules = [
         'promise',
         'requestLib',
@@ -40,14 +38,8 @@ export class JiraIntegrator extends Integrator {
     this.type = IntegrationTypes.jira;
     
     // Create a cookie jar and load any stored data from Mongo
-    if (useMongoStore) {
-      this.cookieStore = new MongoCookieStore(this.provider.trackerKey);
-      this.cookieStore.restoreCookies();
-    } else {
-      this.cookieStore                   = new ToughCookie.MemoryCookieStore();
-      this.cookieStore.synchronous       = true;
-      this.cookieStore.getAllCookiesSync = Meteor.wrapAsync(this.cookieStore.getAllCookies);
-    }
+    this.cookieStore = new MongoCookieStore(this.provider.trackerKey);
+    this.cookieStore.restoreCookies();
     this.cookieJar = request.jar(this.cookieStore);
     
     return this;
@@ -112,20 +104,9 @@ export class JiraIntegrator extends Integrator {
     
     // If we're authenticated
     if (authResult.success) {
-      // Store the authentication token for re-use
-      if (0) {
-        debug && console.log('JiraIntegrator.authenticate cookies:', self.cookieStore.getAllCookiesSync());
-        self.provider.storeAuthData({
-          cookies: self.cookieStore.getAllCookiesSync().map((cookie) => {
-            return {
-              str : cookie.cookieString(),
-              data: cookie.toJSON()
-            }
-          })
-        });
-      } else {
-        console.error('Cookies:', self.cookieJar);
-      }
+      // Store the auth data for re-use
+      let base64auth = Buffer.from(username + ':' + password).toString('base64');
+      self.provider.storeAuthData({ base64: base64auth })
     } else {
       // Make sure the server is marked unathenticated
       self.provider.clearAuthData();
@@ -140,56 +121,31 @@ export class JiraIntegrator extends Integrator {
    */
   reAuthenticate (authData) {
     console.log('JiraIntegrator.reAuthenticate:', this.provider.server.title);
-    let self = this;
+    let self           = this,
+        connectionInfo = {
+          host      : self.provider.url.hostname,
+          cookie_jar: self.cookieJar
+        };
     
-    if (authData && authData.cookies) {
-      if (!useMongoStore) {
-        // Add the stored cookies to the jar
-        authData.cookies.forEach((cookieData) => {
-          console.log('Restoring cookie data:', cookieData);
-          try {
-            let cookie = request.cookie(cookieData.str);
-            _.keys(cookieData.data).forEach((key) => {
-              
-              switch (key) {
-                case 'creation':
-                case 'lastAccessed':
-                  cookie[ key ] = new Date(cookieData.data[ key ]);
-                  break;
-                default:
-                  cookie[ key ] = cookieData.data[ key ];
-              }
-            });
-            console.log('Restored cookie:', cookie.toJSON());
-            /*
-            self.cookieStore.putCookie(cookie, () => {
-            });
-            */
-          } catch (e) {
-            console.error('JiraIntegrator.reAuthenticate cookie parse failed:', cookieData, e);
-          }
-        });
-        //debug && console.log('JiraIntegrator.reAuthenticate cookies:', self.cookieStore.getAllCookiesSync());
+    // if there's stored base64 auth data
+    if (authData && authData.base64) {
+      connectionInfo.basic_auth = {
+        base64: authData.base64
       }
-      
-      // Create the Jira client
-      self.client = new JiraConnector({
-        host      : self.provider.url.hostname,
-        cookie_jar: self.cookieJar
-      });
-      
-      // Test it out
-      let authResult = self.checkAuthentication();
-      
-      if (!authResult.success) {
-        // Make sure the server is marked unathenticated
-        self.provider.clearAuthData();
-      }
-      
-      return authResult;
-    } else {
-      return { success: false, error: 'No stored auth data' };
     }
+    
+    // Create the Jira client
+    self.client = new JiraConnector(connectionInfo);
+    
+    // Test it out
+    let authResult = self.checkAuthentication();
+    
+    if (!authResult.success) {
+      // Make sure the server is marked unathenticated
+      self.provider.clearAuthData();
+    }
+    
+    return authResult;
   }
   
   /**
@@ -214,8 +170,11 @@ export class JiraIntegrator extends Integrator {
       // Cache the list of projects
       self.provider.storeCachedItem('projectList', self.fetchData('project', 'getAllProjects').response);
       
-      // Cache the list of status'
+      // Cache the list of statuses
       self.provider.storeCachedItem('statusList', self.fetchData('status', 'getAllStatuses').response);
+      
+      // Cache the list of issue types
+      self.provider.storeCachedItem('issueTypeList', self.fetchData('issueType', 'getAllIssueTypes').response);
       
       // Cache the list of fields and create synthetic keys based on the field name for custom fields
       let fields = self.fetchData('field', 'getAllFields').response;
@@ -270,7 +229,7 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
-   * Test out an import function
+   * Test out an integration pipeline
    * @param integration
    * @param details
    */
@@ -278,7 +237,7 @@ export class JiraIntegrator extends Integrator {
     debug && console.log('JiraIntegrator.testIntegration:', this.provider.server.title, integration._id);
     let self      = this,
         query     = integration.details[ details.queryKey ],
-        rawResult = self.executeQuery(query, 0, 5);
+        rawResult = self.executeQuery(query, 0, details.limit || 5);
     
     if (rawResult.success === true) {
       try {
@@ -303,7 +262,16 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
-   * Execute a query and return the raw results
+   * Take in a query and append the criteria to limit the results to items with updates newer that the limitDate
+   * @param query
+   * @param limitDate
+   */
+  appendUpdateLimitToQuery (query, limitDate) {
+    return query + ' AND updated > "' + moment(limitDate).format('YYYY/MM/DD HH:mm') + '"'
+  }
+  
+  /**
+   * Execute a query and return the raw results, following the paging in order to fetch the full results set
    * @param jql
    * @param startAt
    * @param maxResults
@@ -312,15 +280,79 @@ export class JiraIntegrator extends Integrator {
    */
   executeQuery (jql, startAt, maxResults, fields, expand) {
     debug && console.log('JiraIntegrator.executeQuery:', this.provider.server.title, jql, startAt);
-    let self = this;
+    let self             = this,
+        result           = self.fetchData('search', 'search', {
+          jql       : jql,
+          startAt   : startAt || 0,
+          maxResults: maxResults,
+          fields    : fields,
+          expand    : expand || defaultExpand
+        }),
+        cumulativeIssues = [];
     
-    return self.fetchData('search', 'search', {
-      jql       : jql,
-      startAt   : startAt || 0,
-      maxResults: maxResults || pageSize,
-      fields    : fields,
-      expand    : expand || defaultExpand
-    })
+    // Check to see if everything was returned in the initial request
+    if (result.success === true && result.response) {
+      if ((maxResults && result.response.maxResults >= maxResults) || (result.response.maxResults >= result.response.total)) {
+        return result
+      } else {
+        debug && console.log('JiraIntegrator.executeQuery paging further results:', result.response.maxResults, 'of', result.response.total, 'loaded');
+        
+        // Stash the results from the initial request
+        cumulativeIssues = cumulativeIssues.concat(result.response.issues);
+        
+        // If not, page through the results (if needed) to get the full set
+        let pageSize  = result.response.maxResults,
+            pageCount = Math.ceil(result.response.total / pageSize),
+            i;
+        for (i = 2; i <= pageCount; i++) {
+          debug && console.log('JiraIntegrator.executeQuery loading page:', i, 'of', pageCount, ', ', cumulativeIssues.length, 'issues loaded');
+          result = self.fetchData('search', 'search', {
+            jql       : jql,
+            startAt   : (i - 1) * pageSize,
+            maxResults: maxResults,
+            fields    : fields,
+            expand    : expand || defaultExpand
+          });
+          
+          // append the results
+          if (result.success === true && result.response) {
+            debug && console.log('JiraIntegrator.executeQuery paging result starting at:', (i - 1) * pageSize, 'of', result.response.total, 'loaded');
+            cumulativeIssues = cumulativeIssues.concat(result.response.issues);
+          } else {
+            return result
+          }
+        }
+        
+        // Return the full list as the payload of the last response
+        result.response.issues = cumulativeIssues;
+        return result
+      }
+    } else {
+      return result
+    }
+  }
+  
+  /**
+   * Take a raw query result and return an array of post-processed items
+   * @param jql
+   * @param startAt
+   * @param maxResults
+   * @param fields
+   * @param expand
+   */
+  executeAndProcessQuery (jql, startAt, maxResults, fields, expand) {
+    debug && console.log('JiraIntegrator.executeAndProcessQuery:', this.provider.server.title);
+    let self      = this,
+        rawResult = self.executeQuery(jql, startAt, maxResults, fields, expand);
+    
+    if (rawResult && rawResult.success && rawResult.response) {
+      return rawResult.response.issues.map((rawItem) => {
+        return self.provider.postProcessItem(rawItem)
+      });
+    } else {
+      console.error('JiraIntegrator.executeAndProcessQuery encountered error:', rawResult);
+      throw new Meteor.Error(500, 'JiraIntegrator.executeAndProcessQuery failed');
+    }
   }
   
   /**
@@ -328,7 +360,7 @@ export class JiraIntegrator extends Integrator {
    * @param rawItem
    */
   postProcessItem (rawItem) {
-    debug && console.log('JiraIntegrator.postProcessItem:', this.provider.server.title);
+    trace && console.log('JiraIntegrator.postProcessItem:', this.provider.server.title);
     let self           = this,
         processedIssue = {};
     
@@ -365,7 +397,7 @@ export class JiraIntegrator extends Integrator {
    * @param level Recursion level
    */
   processItemForContributors (processedData, level) {
-    debug && console.log('JiraIntegrator.processItemForContributors:', this.provider.server.title, level || 0);
+    trace && console.log('JiraIntegrator.processItemForContributors:', this.provider.server.title, level || 0);
     let self = this;
     
     // Guard against out of control recursion
@@ -427,7 +459,7 @@ export class JiraIntegrator extends Integrator {
             })
             .await();
         
-        //debug && console.log('JiraIntegrator.fetchData result:', module, method, result);
+        trace && console.log('JiraIntegrator.fetchData result:', module, method, result);
         
         return result
       } catch (e) {

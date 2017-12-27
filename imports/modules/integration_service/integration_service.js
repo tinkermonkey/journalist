@@ -1,7 +1,7 @@
 import { SyncedCron } from 'meteor/percolate:synced-cron';
+import { IntegrationServiceProvider } from './integration_service_provider';
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
-import { IntegrationServiceProvider } from './integration_service_provider';
 
 let debug = true;
 
@@ -14,36 +14,36 @@ export const IntegrationService = {
    */
   start () {
     console.log('IntegrationService.start');
-    let service = this;
+    let self = this;
     
     // Initialize the IntegrationService health tracker
     HealthTracker.add('integration-service', 'Integration Service');
     
     // Create a place to store the service providers
-    service.providers = {};
+    self.providers = {};
     
     // Start Synced Cron
     SyncedCron.stop(); // Clear everything out
     SyncedCron.start();
     
     // Monitor the IntegrationServers collection to respond to additions, deletions, and modifications
-    service.serverObserver = IntegrationServers.find({}).observe({
+    self.serverObserver = IntegrationServers.find({}).observe({
       added (server) {
         debug && console.log('IntegrationService.serverObserver.added:', server._id, server.title);
         Meteor.defer(() => {
-          service.createServiceProvider(server);
+          self.createServiceProvider(server);
         });
       },
       changed (newDoc, oldDoc) {
         debug && console.log('IntegrationService.serverObserver.changed:', newDoc._id, newDoc.title);
         Meteor.defer(() => {
-          service.updateServiceProvider(newDoc, oldDoc);
+          self.updateServiceProvider(newDoc, oldDoc);
         });
       },
       removed (server) {
         console.log('IntegrationService.serverObserver.removed:', server._id, server.title);
         Meteor.defer(() => {
-          service.destroyServiceProvider(server);
+          self.destroyServiceProvider(server);
         });
       }
     });
@@ -55,8 +55,8 @@ export const IntegrationService = {
   /**
    * Provide a set of query definitions
    */
-  queryDefinitions(integrationType){
-   return IntegrationServiceProvider.queryDefinitions(integrationType);
+  queryDefinitions (integrationType) {
+    return IntegrationServiceProvider.queryDefinitions(integrationType);
   },
   
   /**
@@ -65,20 +65,20 @@ export const IntegrationService = {
    */
   createServiceProvider (server) {
     console.log('IntegrationService.createServiceProvider:', server._id, server.title);
-    let service = this;
+    let self = this;
     
     // Create the service if the server is active
     if (server.isActive) {
-      let provider = service.getServiceProvider(server);
+      let provider = self.getServiceProvider(server);
       if (provider == null) {
         // Create the service provider record
-        service.setServiceProvider(server, new IntegrationServiceProvider(server));
-
+        self.setServiceProvider(server, new IntegrationServiceProvider(server));
+        
         // Try to re-authenticate
-        service.getServiceProvider(server).reAuthenticate();
-
+        self.getServiceProvider(server).reAuthenticate();
+        
         // Update the health of the provider
-        service.getServiceProvider(server).checkHealth();
+        self.getServiceProvider(server).checkHealth();
       } else {
         console.error('IntegrationService.createServiceProvider provider already exists:', server._id, server.title);
       }
@@ -89,8 +89,8 @@ export const IntegrationService = {
   
   /**
    * Set the IntegrationServiceProvider for a given server
-   * @param server
-   * @param provider
+   * @param server {IntegrationServer}
+   * @param provider {IntegrationServiceProvider}
    */
   setServiceProvider (server, provider) {
     debug && console.log('IntegrationService.setServiceProvider:', server._id, server.title);
@@ -100,7 +100,7 @@ export const IntegrationService = {
   
   /**
    * Retrieve the IntegrationServiceProvider for a given server
-   * @param server
+   * @param server {IntegrationServer}
    */
   getServiceProvider (server) {
     debug && console.log('IntegrationService.getServiceProvider:', server._id, server.title);
@@ -116,14 +116,14 @@ export const IntegrationService = {
    */
   updateServiceProvider (newDoc, oldDoc) {
     console.log('IntegrationService.updateServiceProvider:', newDoc._id, newDoc.title, newDoc.isActive);
-    let service = this;
+    let self = this;
     
     // Respond to server active flag changes
     if (newDoc.isActive !== oldDoc.isActive) {
       if (newDoc.isActive) {
-        service.createServiceProvider(newDoc);
+        self.createServiceProvider(newDoc);
       } else {
-        service.destroyServiceProvider(newDoc);
+        self.destroyServiceProvider(newDoc);
       }
     }
   },
@@ -134,12 +134,12 @@ export const IntegrationService = {
    */
   destroyServiceProvider (server) {
     console.log('IntegrationService.destroyServiceProvider:', server._id, server.title);
-    let service  = this,
-        provider = service.getServiceProvider(server);
+    let self  = this,
+        provider = self.getServiceProvider(server);
     
     if (provider) {
       provider.destroy();
-      delete service.providers[ server._id ];
+      delete self.providers[ server._id ];
     }
   },
   
@@ -151,10 +151,10 @@ export const IntegrationService = {
    */
   authenticateServiceProvider (server, username, password) {
     console.log('IntegrationService.authenticateServiceProvider:', server._id, server.title, username);
-    let service = this,
-        provider = service.getServiceProvider(server);
+    let self  = this,
+        provider = self.getServiceProvider(server);
     
-    if(provider){
+    if (provider) {
       return provider.authenticate(username, password);
     } else {
       throw new Meteor.Error(404, "Service Provider not found");
@@ -167,10 +167,10 @@ export const IntegrationService = {
    */
   unAuthenticateServiceProvider (server) {
     console.log('IntegrationService.authenticateServiceProvider:', server._id, server.title);
-    let service = this,
-        provider = service.getServiceProvider(server);
+    let self  = this,
+        provider = self.getServiceProvider(server);
     
-    if(provider){
+    if (provider) {
       return provider.unAuthenticate();
     } else {
       throw new Meteor.Error(404, "Service Provider not found");
@@ -183,10 +183,10 @@ export const IntegrationService = {
    */
   checkServiceProviderHealth (server) {
     console.log('IntegrationService.checkServiceProviderHealth:', server._id, server.title);
-    let service = this,
-        provider = service.getServiceProvider(server);
+    let self  = this,
+        provider = self.getServiceProvider(server);
     
-    if(provider){
+    if (provider) {
       return provider.checkHealth();
     } else {
       throw new Meteor.Error(404, "Service Provider not found");
@@ -200,10 +200,10 @@ export const IntegrationService = {
    */
   fetchData (server, request) {
     debug && console.log('IntegrationService.fetchData:', server._id, server.title);
-    let service = this,
-        provider = service.getServiceProvider(server);
+    let self  = this,
+        provider = self.getServiceProvider(server);
     
-    if(provider){
+    if (provider) {
       return provider.fetchData(request);
     } else {
       throw new Meteor.Error(404, "Service Provider not found");
@@ -215,10 +215,10 @@ export const IntegrationService = {
    * @param integration {Integration}
    * @param details {Object}
    */
-  testIntegration(integration, details){
+  testIntegration (integration, details) {
     console.log('IntegrationService.testIntegration:', integration._id);
-    let service = this,
-        provider = service.getServiceProvider(integration.server());
+    let self  = this,
+        provider = self.getServiceProvider(integration.server());
     
     return provider.testIntegration(integration, details)
   },
@@ -228,9 +228,9 @@ export const IntegrationService = {
    */
   stop () {
     console.log('IntegrationService.stop');
-    let service = this;
+    let self = this;
     
     // Update the IntegrationService health tracker
-    service.serverObserver.stop();
+    self.serverObserver.stop();
   }
 };

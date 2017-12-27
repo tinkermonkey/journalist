@@ -95,9 +95,6 @@ Integrations.deny({
  * Helpers
  */
 Integrations.helpers({
-  integrationTypeTitle () {
-    return Util.camelToTitle(_.invert(IntegrationTypes)[ this.integrationType ])
-  },
   itemTypeTitle () {
     return Util.camelToTitle(_.invert(ItemTypes)[ this.itemType ])
   },

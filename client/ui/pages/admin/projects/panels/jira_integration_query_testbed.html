@@ -22,6 +22,25 @@
               </ul>
             </li>
           </ul>
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                 aria-expanded="false">
+                {{#if limit}}
+                  Limit: {{limit}}
+                {{else}}
+                  Select Limit
+                {{/if}}
+                
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu limit-dropdown">
+                {{#each limitOptions}}
+                  <li data-value="{{this}}"><a>{{this}}</a></li>
+                {{/each}}
+              </ul>
+            </li>
+          </ul>
           <form class="navbar-form navbar-left">
             <button class="btn btn-default btn-run-query" type="button">Test</button>
           </form>
@@ -54,13 +73,16 @@
               {{#RobaTab name="imported" title="Imported"}}
                 
                 {{#if result.importResult.failures.length}}
-                  <h3>Import Failures</h3>
+                  <h3>
+                    Import Failures
+                    <small>({{result.importResult.failures.length}})</small>
+                  </h3>
                   
                   <table class="table data-table">
                     <tbody>
                     {{#each result.importResult.failures}}
                       <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
-                        <td>{{> JsonInfoLink cssClass="hidden-control" data=this }}</td>
+                        <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right' }}</td>
                         <td>{{id}}</td>
                         <td>{{key}}</td>
                         <td>{{error}}</td>
@@ -68,10 +90,12 @@
                     {{/each}}
                     </tbody>
                   </table>
-                  
-                  <h3>Successful Imports</h3>
                 {{/if}}
                 
+                <h3>
+                  Successful Imports
+                  <small>({{result.importResult.items.length}})</small>
+                </h3>
                 <table class="table data-table">
                   <thead>
                   <tr>
@@ -88,11 +112,11 @@
                   <tbody>
                   {{#each result.importResult.items}}
                     <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
-                      <td>{{> JsonInfoLink cssClass="hidden-control" data=this }}</td>
+                      <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right' }}</td>
                       <td>{{identifier}}</td>
-                      <td>{{title}}</td>
-                      <td>{{{description}}}</td>
-                      <td>{{contributorName owner}}</td>
+                      <td class="force-wrap">{{title}}</td>
+                      <td class="force-wrap">{{{description}}}</td>
+                      <td class="force-wrap">{{contributorName owner}}</td>
                       <td>{{dateFormat dateModified}}</td>
                       <td>{{contributorName createdBy}}</td>
                       <td>{{dateFormat dateCreated}}</td>
@@ -103,7 +127,10 @@
               
               {{/RobaTab}}
               {{#RobaTab name="post-processed" title="Post Processed"}}
-                
+                <h3>
+                  Post Processed Items
+                  <small>({{result.processedItems.length}})</small>
+                </h3>
                 <table class="table data-table">
                   <thead>
                   <tr>
@@ -116,7 +143,7 @@
                   <tbody>
                   {{#each result.processedItems}}
                     <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
-                      <td>{{> JsonInfoLink cssClass="hidden-control" data=this }}</td>
+                      <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right' }}</td>
                       <td>{{id}}</td>
                       <td>{{key}}</td>
                       <td><a href="{{self}}" target="_blank">{{self}}</a></td>
