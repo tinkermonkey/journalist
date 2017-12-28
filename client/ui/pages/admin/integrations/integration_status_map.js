@@ -116,7 +116,6 @@ Template.IntegrationStatusMap.onCreated(() => {
         if (error) {
           console.error('getIntegrationServerStatusList failed:', error);
         } else {
-          //console.log('getIntegrationServerStatusList returned:', response);
           instance.statusList.set(response);
         }
       });
@@ -135,6 +134,7 @@ Template.IntegrationStatusMap.onRendered(() => {
     
     if (statusList) {
       setTimeout(() => {
+        instance.$('.status-card').height('auto');
         instance.$('.status-card').draggable({
           revert        : true,
           revertDuration: 0
