@@ -5,6 +5,8 @@ import { IntegrationDisplayTemplates } from '../integration_display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationServerCaches } from '../integration_server_caches';
+import { IntegrationStatusMaps } from '../integration_status_maps';
+import { IntegrationStatusMappings } from '../integration_status_mappings';
 
 Meteor.publish('integrations', function (projectId) {
   console.info('Publish: integrations', projectId);
@@ -139,6 +141,51 @@ Meteor.publish('integration_calculated_field', function (calculatedFieldId) {
       return IntegrationCalculatedFields.find({ _id: calculatedFieldId });
     } else {
       console.warn('integration_calculated_fields requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_status_maps', function () {
+  console.info('Publish: integration_status_maps');
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationStatusMaps.find({});
+    } else {
+      console.warn('integration_calculated_fields requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_status_map', function (mapId) {
+  console.info('Publish: integration_status_map', mapId);
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationStatusMaps.find({_id: mapId});
+    } else {
+      console.warn('integration_calculated_fields requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_status_mappings', function (mapId) {
+  console.info('Publish: integration_status_mappings', mapId);
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationStatusMappings.find({ mapId: mapId });
+    } else {
+      console.warn('integration_status_mappings requested by non-admin:', this.userId, user && user.username)
     }
   } else {
     this.ready();

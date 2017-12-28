@@ -81,6 +81,21 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
+   * Retrieve a normalized list of statuses from the cache for this server
+   */
+  getCachedStatusList () {
+    debug && console.log('JiraIntegrator.getCachedStatusList:', this.provider.server.title);
+    let self        = this,
+        statusCache = self.provider.getCachedData('statusList');
+    
+    if (statusCache && statusCache.length) {
+      return statusCache.map((status) => {
+        return { id: status.id, title: status.name, description: status.description, rawData: status }
+      })
+    }
+  }
+  
+  /**
    * Authenticate this integrator
    * @param username
    * @param password

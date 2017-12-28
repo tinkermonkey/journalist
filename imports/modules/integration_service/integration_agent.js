@@ -17,7 +17,7 @@ export class IntegrationAgent {
     console.log('Creating new IntegrationAgent:', integration._id);
     let self = this;
     
-    self.integration     = integration;
+    self.integration     = Integrations.findOne({ _id: integration._id });
     self.serviceProvider = serviceProvider;
     
     if (!self.serviceProvider) {
@@ -36,7 +36,7 @@ export class IntegrationAgent {
           debug && console.log('IntegrationAgent.observer.changed:', newDoc._id, newDoc.title);
           
           // Update the local cache of the document
-          self.integration = newDoc;
+          self.integration = Integrations.findOne({ _id: self.integration._id });
         }
       });
     });

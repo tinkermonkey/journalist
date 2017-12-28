@@ -29,7 +29,7 @@ Template.IntegrationServers.events({
     let serverId = $(e.target).closest(".data-table-row").attr("data-pk"),
         dataKey  = $(e.target).attr("data-key");
     
-    console.log('edited:', serverId, dataKey, newValue);
+    console.log('IntegrationServers edited:', serverId, dataKey, newValue);
     if (serverId && dataKey) {
       Meteor.call('editIntegrationServer', serverId, dataKey, newValue, (error, response) => {
         if (error) {

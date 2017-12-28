@@ -130,6 +130,16 @@ export class IntegrationServiceProvider {
   }
   
   /**
+   * Retrieve a normalized list of statuses from the cache for this server
+   */
+  getCachedStatusList (){
+    debug && console.log('IntegrationServiceProvider.getCachedStatusList:', this.server._id, this.server.title);
+    let self = this;
+    
+    return self.integrator.getCachedStatusList();
+  }
+  
+  /**
    * Create or update the cron job for updating the server health
    */
   updateHealthCheckJob () {
@@ -356,6 +366,17 @@ export class IntegrationServiceProvider {
     } else {
       console.error('IntegrationServiceProvider.storeCachedItem passed an empty value for key:', key);
     }
+  }
+  
+  /**
+   * Return the cached values for a given key
+   * @param key
+   */
+  getCachedData(key){
+    debug && console.log('IntegrationServiceProvider.getCachedData:', this.server._id, this.server.title, key);
+    let self = this;
+    
+    return self.cache[key]
   }
   
   /**

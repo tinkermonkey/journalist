@@ -1,0 +1,98 @@
+<template name="IntegrationStatusMap">
+  {{#if Template.subscriptionsReady }}
+    {{#with statusMap}}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'Integrations' }}">Integrations</a></li>
+              <li class="active">Status Map</li>
+            </ol>
+            
+            <h1>
+              {{title}}
+              <small>({{server.title}})</small>
+            </h1>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-7">
+            <h2>Work Phases</h2>
+            {{#RobaTabGroup name="phase-tabs" navClass="nav-tabs"}}
+              {{#each workPhases}}
+                {{#RobaTab name=key title=title}}
+                  <h3>{{title}} Phase</h3>
+                  <table class="table data-table">
+                    <thead>
+                    <tr>
+                      {{#each workStates}}
+                        <th>{{title}}</th>
+                      {{/each}}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="data-table-row">
+                      {{#each workStates}}
+                        <td>
+                          <div class="status-drop-box" data-state-key="{{key}}" data-phase-key="{{../key}}">
+                            {{#each ../../mappedPhaseStatuses ../key key}}
+                              <div class="status-card mapped-status-card show-controls-on-hover" data-id="{{status.id}}">
+                                <div class="flex">
+                                  {{> JsonInfoLink cssClass="hidden-control" data=this.status}}
+                                  <span>
+                                    <strong>{{status.title}}</strong>
+                                  </span>
+                                  <span class="pull-right">
+                                    <a class="btn-remove-status-mapping hidden-control link-red">
+                                      <span class="glyphicon glyphicon-remove-circle"></span>
+                                    </a>
+                                  </span>
+                                </div>
+                              </div>
+                            {{/each}}
+                          </div>
+                        </td>
+                      {{/each}}
+                    </tr>
+                    </tbody>
+                  </table>
+                {{/RobaTab}}
+              {{/each}}
+            {{/RobaTabGroup}}
+          </div>
+          <div class="col-md-5">
+            <h2>Statuses</h2>
+            {{#RobaTabGroup name="status-tabs" navClass="nav-tabs"}}
+              {{#RobaTab name="unmapped" title="Unmapped"}}
+                <h3>Unmapped Statuses</h3>
+                <div>
+                  {{#each unmappedStatuses}}
+                    <div class="status-card unmapped-status-card show-controls-on-hover" data-id="{{id}}">
+                      <div class="flex">
+                        {{> JsonInfoLink cssClass="hidden-control" data=this}}
+                        <span>
+                          <strong>{{title}}</strong>
+                        </span>
+                        <span>
+                          {{description}}
+                        </span>
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+              {{/RobaTab}}
+              {{#RobaTab name="reference" title="Reference"}}
+                <h3>Status Reference</h3>
+                {{> IntegrationServerStatusReference}}
+              {{/RobaTab}}
+            {{/RobaTabGroup}}
+          </div>
+        </div>
+      </div>
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

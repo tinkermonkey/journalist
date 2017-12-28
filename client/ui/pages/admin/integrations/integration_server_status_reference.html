@@ -1,0 +1,25 @@
+<template name="IntegrationServerStatusReference">
+  <table class="table data-table border-bottom">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Id</th>
+      <th>Title</th>
+      <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    {{#each statusList}}
+      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
+        <td class="icon-link">
+          {{> JsonInfoLink cssClass="hidden-control" data=this.rawData }}
+        </td>
+        <td>{{id}}</td>
+        <td>{{title}}</td>
+        <td>{{description}}</td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>

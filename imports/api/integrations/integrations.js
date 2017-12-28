@@ -6,7 +6,6 @@ import { SchemaHelpers } from '../schema_helpers.js';
 import { IntegrationCalculatedFields } from './integration_calculated_fields';
 import { IntegrationImportFunctions } from './integration_import_functions';
 import { IntegrationServers } from './integration_servers';
-import { IntegrationTypes } from './integration_types';
 import { ItemTypes } from '../imported_items/item_types';
 import { Projects } from '../projects/projects';
 
