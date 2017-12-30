@@ -589,6 +589,9 @@ export class IntegrationServiceProvider {
       return rawData;
     }
     
+    // Force the email and key to lowercase
+    email = email.toLowerCase();
+    
     // Check the local cache
     if (self.cache.contributors[ key ]) {
       return self.cache.contributors[ key ]

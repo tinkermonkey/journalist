@@ -15,7 +15,7 @@ Template.AdminContributors.helpers({
     return definitions
   },
   contributors () {
-    return Contributors.find({ roleId: this._id }, { sort: { email: 1 } })
+    return Contributors.find({ roleId: this._id }, { sort: { name: 1 } })
   }
 });
 
