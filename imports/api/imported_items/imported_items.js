@@ -30,11 +30,12 @@ export const ImportedItem = new SimpleSchema({
   },
   title        : {
     type : String,
-    label: 'Description title for this item'
+    label: 'Summary title for this item'
   },
   description  : {
     type : String,
-    label: 'Long for description of this item, typically an issue body or such'
+    label: 'Long form description of this item, typically an issue body or such',
+    optional: true
   },
   // The imported item document object
   document     : {
