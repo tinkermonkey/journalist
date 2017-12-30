@@ -31,7 +31,7 @@ Template.JiraImportTestbed.helpers({
           server         = IntegrationServers.findOne({
             integrationType: importFunction.integrationType,
             isActive       : true
-          }, { sort: { title: 1 } });
+          }, { sort: { isAuthenticated: -1, title: 1 } });
       if (server) {
         Template.instance().serverId.set(server._id)
       }

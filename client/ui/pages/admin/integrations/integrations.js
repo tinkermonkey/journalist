@@ -4,7 +4,6 @@ import './integration_servers';
 import './integration_import_functions';
 import './integration_display_templates';
 import './integration_calculated_fields';
-import './integration_status_maps';
 
 /**
  * Template Helpers

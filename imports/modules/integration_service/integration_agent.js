@@ -104,7 +104,7 @@ export class IntegrationAgent {
         let importResult = self.serviceProvider.importItemsFromQuery(self.integration.importFunction(), query);
         
         if (importResult.items && importResult.items.length) {
-          debug && console.log('IntegrationAgent.executeQuery returned:', this.integration._id, queryKey, importResult.items.length);
+          debug && console.log('IntegrationAgent.executeQuery returned:', self.integration._id, queryKey, importResult.items.length);
           
           // Persist all of the results
           importResult.items.forEach((item) => {
@@ -122,7 +122,7 @@ export class IntegrationAgent {
           HealthTracker.update(self.trackerKey, true, { message: 'No updates since ' + moment(lastUpdate).format('MM/DD hh:mm a') });
         }
       } catch (e) {
-        console.error('IntegrationAgent.executeQuery failed:', queryKey, e);
+        console.error('IntegrationAgent.executeQuery failed:', queryKey, self.integration, e);
         HealthTracker.update(self.trackerKey, false, { message: 'Query execution failed' });
       }
     } else {

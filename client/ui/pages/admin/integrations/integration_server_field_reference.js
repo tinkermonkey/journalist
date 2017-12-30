@@ -29,7 +29,7 @@ Template.IntegrationServerFieldReference.helpers({
         query.integrationType = context.integrationType;
       }
       
-      let server = IntegrationServers.findOne(query, { sort: { title: 1 } });
+      let server = IntegrationServers.findOne(query, { sort: { isAuthenticated: -1, title: 1 } });
       
       if (server) {
         Template.instance().serverId.set(server._id)
@@ -103,7 +103,7 @@ Template.IntegrationServerFieldReference.onCreated(() => {
     let serverId = instance.serverId.get();
     
     instance.subscribe('integration_servers');
-    if(serverId){
+    if (serverId) {
       instance.subscribe('integration_server', serverId);
       instance.subscribe('integration_server_cache', serverId);
     }

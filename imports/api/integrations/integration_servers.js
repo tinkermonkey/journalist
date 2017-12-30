@@ -9,53 +9,60 @@ import { IntegrationTypes } from './integration_types';
  * ============================================================================
  */
 export const IntegrationServer = new SimpleSchema({
-  title          : {
+  title               : {
     type: String
   },
-  integrationType: {
+  integrationType     : {
     type         : Number,
     allowedValues: _.values(IntegrationTypes)
   },
-  baseUrl        : {
+  baseUrl             : {
     type: String
   },
-  authData       : {
+  authData            : {
     type    : Object,
     blackbox: true,
     optional: true
   },
-  healthCheckFrequency : {
-    type: String,
+  healthCheckFrequency: {
+    type        : String,
     defaultValue: 'every 5 minutes'
   },
-  cacheUpdateFrequency : {
-    type: String,
+  cacheUpdateFrequency: {
+    type        : String,
     defaultValue: 'every 30 minutes'
   },
-  isActive       : {
+  // Mapping of a remote status identifier to a work state and work phase
+  // This serves as a lookup for those two items which will be set as attributes on the importedItem doc
+  statusMap           : {
+    type    : Object,
+    blackbox: true,
+    optional: true
+  },
+  isActive            : {
     type        : Boolean,
     optional    : true,
     defaultValue: false
   },
-  isAuthenticated: {
+  isAuthenticated     : {
     type        : Boolean,
     optional    : true,
     defaultValue: false
   },
   // Standard tracking fields
-  dateCreated    : {
+  dateCreated         : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy      : {
+  createdBy           : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified   : {
+  dateModified        : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy     : {
+  modifiedBy          : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -84,7 +91,30 @@ IntegrationServers.deny({
  */
 IntegrationServers.helpers({
   // Common method for creating the contributor identifiers per server
-  contributorIdentifier(key){
+  contributorIdentifier (key) {
     return this._id + '.' + key
+  },
+  
+  /**
+   * Get the list of mapped statuses for a phase and state combination
+   * @param workPhaseKey
+   * @param workStateKey
+   * @return {[String]}
+   */
+  mappedPhaseStatuses (workPhaseKey, workStateKey) {
+    let statusMap     = this.statusMap,
+        phaseStatuses = [];
+    
+    if (_.isObject(statusMap)) {
+      _.keys(statusMap).forEach((rawStatusId) => {
+        if (statusMap[ rawStatusId ].workPhase === workPhaseKey && statusMap[ rawStatusId ].workState === workStateKey) {
+          phaseStatuses.push(statusMap[ rawStatusId ])
+        }
+      })
+    }
+    
+    //console.log('IntegrationServers.mappedPhaseStatuses:', statusMap, workPhaseKey, workStateKey);
+    
+    return phaseStatuses
   }
 });

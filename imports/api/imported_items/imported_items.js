@@ -1,6 +1,8 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ItemTypes } from './item_types';
+import { ImportedItemWorkPhases } from './imported_item_work_phases';
+import { ImportedItemWorkStates } from './imported_item_work_states';
 
 /**
  * ============================================================================
@@ -39,11 +41,30 @@ export const ImportedItem = new SimpleSchema({
     type    : Object,
     blackbox: true
   },
-  // _id of the contributor designated as the owner of this item
   owner        : {
     type    : String,
     optional: true,
     label   : 'The _id of the Contributor who owns this item'
+  },
+// The descriptive label of the status of this issue (Assigned, Closed, etc)
+  statusLabel  : {
+    type    : String,
+    optional: true
+  },
+  // The ID that identifies this status in the server`s status map
+  statusId     : {
+    type    : String,
+    optional: true
+  },
+  workPhase    : {
+    type         : Number,
+    allowedValues: _.values(ImportedItemWorkPhases),
+    optional     : true
+  },
+  workState    : {
+    type         : Number,
+    allowedValues: _.values(ImportedItemWorkStates),
+    optional     : true
   },
   // Date the item was created in the originating system
   dateCreated  : {

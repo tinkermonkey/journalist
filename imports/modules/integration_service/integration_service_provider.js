@@ -132,7 +132,7 @@ export class IntegrationServiceProvider {
   /**
    * Retrieve a normalized list of statuses from the cache for this server
    */
-  getCachedStatusList (){
+  getCachedStatusList () {
     debug && console.log('IntegrationServiceProvider.getCachedStatusList:', this.server._id, this.server.title);
     let self = this;
     
@@ -372,11 +372,11 @@ export class IntegrationServiceProvider {
    * Return the cached values for a given key
    * @param key
    */
-  getCachedData(key){
+  getCachedData (key) {
     debug && console.log('IntegrationServiceProvider.getCachedData:', this.server._id, this.server.title, key);
     let self = this;
     
-    return self.cache[key]
+    return self.cache[ key ]
   }
   
   /**
@@ -395,6 +395,12 @@ export class IntegrationServiceProvider {
       
       // Store the full processedItem as the document field
       importedItem.document = processedItem;
+      
+      // Copy over all of the status information
+      importedItem.statusId    = processedItem.statusId;
+      importedItem.statusLabel = processedItem.statusLabel;
+      importedItem.workPhase   = processedItem.workPhase;
+      importedItem.workState   = processedItem.workState;
       
       // Validate the processed item against the importedItem schema
       try {
@@ -503,6 +509,8 @@ export class IntegrationServiceProvider {
     
     self.processItemForContributors(processedItem);
     
+    self.processItemForStatus(processedItem);
+    
     return processedItem;
   }
   
@@ -515,6 +523,17 @@ export class IntegrationServiceProvider {
     let self = this;
     
     self.integrator.processItemForContributors(processedItem);
+  }
+  
+  /**
+   * Use the status map for this server to append the workState and workPhase values for this issue
+   * @param processedItem
+   */
+  processItemForStatus (processedItem) {
+    trace && console.log('IntegrationServiceProvider.processItemForStatus:', this.server._id, this.server.title);
+    let self = this;
+    
+    self.integrator.processItemForStatus(processedItem, self.server.statusMap);
   }
   
   /**

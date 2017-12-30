@@ -4,6 +4,7 @@ import './jira/jira_application_info';
 import './jira/jira_project_list';
 import './jira/jira_testbed';
 import './cached_data';
+import '../integration_server_status_map';
 
 /**
  * Template Helpers

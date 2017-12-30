@@ -2,6 +2,9 @@
   <div class="row">
     <div class="col-md-12">
       {{#RobaTabGroup name="server-tabs" navClass="nav-tabs"}}
+        {{#RobaTab name="statusMap" title="Status Map"}}
+          {{> IntegrationServerStatusMap }}
+        {{/RobaTab}}
         {{#RobaTab name="application" title="Application"}}
           {{> JiraApplicationInfo }}
         {{/RobaTab}}

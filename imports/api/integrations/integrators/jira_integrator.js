@@ -3,6 +3,8 @@ import { IntegrationTypes } from '../integration_types';
 import { Meteor } from "meteor/meteor";
 import { MongoCookieStore } from './mongo_cookie_store';
 import { Util } from '../../util';
+import { ImportedItemWorkPhases } from '../../imported_items/imported_item_work_phases';
+import { ImportedItemWorkStates } from '../../imported_items/imported_item_work_states';
 
 // Pull in the jira connector
 const JiraConnector    = require('jira-connector'),
@@ -187,6 +189,9 @@ export class JiraIntegrator extends Integrator {
       
       // Cache the list of statuses
       self.provider.storeCachedItem('statusList', self.fetchData('status', 'getAllStatuses').response);
+      
+      // Cache the list of resolutions
+      self.provider.storeCachedItem('resolutionList', self.fetchData('resolution', 'getAllResolutions').response);
       
       // Cache the list of issue types
       self.provider.storeCachedItem('issueTypeList', self.fetchData('issueType', 'getAllIssueTypes').response);
@@ -436,6 +441,27 @@ export class JiraIntegrator extends Integrator {
         }
       }
     });
+  }
+  
+  /**
+   * Use the status map for this server to append the workState and workPhase values for this issue
+   * @param processedItem
+   * @param statusMap
+   */
+  processItemForStatus (processedItem, statusMap) {
+    trace && console.log('IntegrationServiceProvider.processItemForStatus:', this.server._id, this.server.title);
+    let self = this;
+    
+    // Check to see if there is
+    if (processedItem.fields && processedItem.fields.status) {
+      if (statusMap && statusMap[ processedItem.fields.status.id ]) {
+        let mappedStatus          = statusMap[ processedItem.fields.status.id ];
+        processedItem.statusId    = processedItem.fields.status.id;
+        processedItem.statusLabel = processedItem.fields.status.name;
+        processedItem.workPhase   = ImportedItemWorkPhases[ mappedStatus.workPhase ];
+        processedItem.workState   = ImportedItemWorkStates[ mappedStatus.workState ];
+      }
+    }
   }
   
   /**

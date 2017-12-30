@@ -1,6 +1,7 @@
-import './integration_status_map.html';
+import './integration_server_status_map.html';
+import './integration_server_status_map.css';
 import { Template } from 'meteor/templating';
-import { IntegrationStatusMaps } from '../../../../../imports/api/integrations/integration_status_maps';
+import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
 import { ImportedItemWorkStates } from '../../../../../imports/api/imported_items/imported_item_work_states';
 import { ImportedItemWorkPhases } from '../../../../../imports/api/imported_items/imported_item_work_phases';
 import { Util } from '../../../../../imports/api/util';
@@ -9,10 +10,17 @@ import './integration_server_status_reference';
 /**
  * Template Helpers
  */
-Template.IntegrationStatusMap.helpers({
+Template.IntegrationServerStatusMap.helpers({
+  server () {
+    let serverId = FlowRouter.getParam('serverId');
+    
+    return IntegrationServers.findOne(serverId)
+  },
   statusMap () {
-    let mapId = FlowRouter.getParam('mapId');
-    return IntegrationStatusMaps.findOne(mapId)
+    let serverId = FlowRouter.getParam('serverId'),
+        server   = IntegrationServers.findOne(serverId);
+    
+    return server && server.statusMap || {}
   },
   workStates () {
     return _.keys(ImportedItemWorkStates).map((workState) => {
@@ -25,9 +33,9 @@ Template.IntegrationStatusMap.helpers({
     })
   },
   unmappedStatuses () {
-    let map              = this,
+    let statusMap        = this,
         statusList       = Template.instance().statusList.get() || [],
-        mappedStatuses   = _.keys(map.mapping || {}),
+        mappedStatuses   = _.keys(statusMap),
         unmappedStatuses = [];
     
     statusList.forEach((status) => {
@@ -43,7 +51,7 @@ Template.IntegrationStatusMap.helpers({
 /**
  * Template Event Handlers
  */
-Template.IntegrationStatusMap.events({
+Template.IntegrationServerStatusMap.events({
   'drop .status-drop-box' (e, instance, ui) {
     let dropBox       = $(e.target),
         statusElement = ui.helper,
@@ -51,24 +59,25 @@ Template.IntegrationStatusMap.events({
         phaseKey      = dropBox.attr('data-phase-key'),
         stateKey      = dropBox.attr('data-state-key'),
         statusId      = statusElement.attr('data-id'),
-        status        = _.findWhere(statusList, { id: statusId }),
-        mapId         = FlowRouter.getParam('mapId'),
-        statusMap     = IntegrationStatusMaps.findOne(mapId);
+        rawStatus     = _.findWhere(statusList, { id: statusId }),
+        serverId      = FlowRouter.getParam('serverId'),
+        server        = IntegrationServers.findOne(serverId),
+        statusMap     = server.statusMap || {};
     
-    console.log('Drop:', status, phaseKey, stateKey, statusId, statusMap);
+    console.log('Drop:', rawStatus, phaseKey, stateKey, statusId, statusMap);
     
-    if (status && phaseKey && stateKey && statusId && statusMap) {
-      let mapping         = statusMap.mapping || {};
-      mapping[ statusId ] = {
+    if (rawStatus && phaseKey && stateKey && statusId) {
+      statusMap[ statusId ] = {
         workPhase: phaseKey,
         workState: stateKey,
-        status   : status
+        status   : rawStatus
       };
-      Meteor.call('editIntegrationStatusMap', statusMap._id, 'mapping', mapping, (error, response) => {
+      Meteor.call('editIntegrationServer', serverId, 'statusMap', statusMap, (error, response) => {
         if (error) {
-          console.error('editIntegrationStatusMap failed:', error);
+          console.error('editIntegrationServer failed:', error);
         } else {
-          console.log('editIntegrationStatusMap returned:', response);
+          console.log('editIntegrationServer returned:', response);
+          instance.$('.status-card').height('auto');
         }
       });
     }
@@ -76,19 +85,19 @@ Template.IntegrationStatusMap.events({
   'click .btn-remove-status-mapping' (e, instance) {
     let statusElement = $(e.target).closest('.status-card'),
         statusId      = statusElement.attr('data-id'),
-        mapId         = FlowRouter.getParam('mapId'),
-        statusMap     = IntegrationStatusMaps.findOne(mapId);
+        serverId      = FlowRouter.getParam('serverId'),
+        server        = IntegrationServers.findOne(serverId),
+        statusMap     = server.statusMap || {};
     
     console.log('Remove Status Mapping:', statusId, statusMap);
     
     if (statusId && statusMap) {
-      let mapping = statusMap.mapping || {};
-      delete mapping[ statusId ];
-      Meteor.call('editIntegrationStatusMap', statusMap._id, 'mapping', mapping, (error, response) => {
+      delete statusMap[ statusId ];
+      Meteor.call('editIntegrationServer', serverId, 'statusMap', statusMap, (error, response) => {
         if (error) {
-          console.error('editIntegrationStatusMap failed:', error);
+          console.error('editIntegrationServer failed:', error);
         } else {
-          console.log('editIntegrationStatusMap returned:', response);
+          console.log('editIntegrationServer returned:', response);
         }
       });
     }
@@ -98,35 +107,30 @@ Template.IntegrationStatusMap.events({
 /**
  * Template Created
  */
-Template.IntegrationStatusMap.onCreated(() => {
+Template.IntegrationServerStatusMap.onCreated(() => {
   let instance = Template.instance();
   
   instance.statusList = new ReactiveVar();
-  instance.subscribe('integration_servers');
   
   instance.autorun(() => {
-    let mapId     = FlowRouter.getParam('mapId'),
-        statusMap = IntegrationStatusMaps.findOne(mapId);
+    let serverId = FlowRouter.getParam('serverId');
     
-    instance.subscribe('integration_status_map', mapId);
-    instance.subscribe('integration_status_mappings', mapId);
+    instance.subscribe('integration_server', serverId);
     
-    if (statusMap && statusMap.serverId) {
-      Meteor.call('getIntegrationServerStatusList', statusMap.serverId, (error, response) => {
-        if (error) {
-          console.error('getIntegrationServerStatusList failed:', error);
-        } else {
-          instance.statusList.set(response);
-        }
-      });
-    }
+    Meteor.call('getIntegrationServerStatusList', serverId, (error, response) => {
+      if (error) {
+        console.error('getIntegrationServerStatusList failed:', error);
+      } else {
+        instance.statusList.set(response);
+      }
+    });
   })
 });
 
 /**
  * Template Rendered
  */
-Template.IntegrationStatusMap.onRendered(() => {
+Template.IntegrationServerStatusMap.onRendered(() => {
   let instance = Template.instance();
   
   instance.autorun(() => {
@@ -134,7 +138,6 @@ Template.IntegrationStatusMap.onRendered(() => {
     
     if (statusList) {
       setTimeout(() => {
-        instance.$('.status-card').height('auto');
         instance.$('.status-card').draggable({
           revert        : true,
           revertDuration: 0
@@ -153,6 +156,6 @@ Template.IntegrationStatusMap.onRendered(() => {
 /**
  * Template Destroyed
  */
-Template.IntegrationStatusMap.onDestroyed(() => {
+Template.IntegrationServerStatusMap.onDestroyed(() => {
   
 });

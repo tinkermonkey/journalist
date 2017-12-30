@@ -1,25 +1,12 @@
-<template name="IntegrationStatusMap">
+<template name="IntegrationServerStatusMap">
   {{#if Template.subscriptionsReady }}
-    {{#with statusMap}}
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <ol class="breadcrumb">
-              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
-              <li><a href="{{pathFor 'Integrations' }}">Integrations</a></li>
-              <li class="active">Status Map</li>
-            </ol>
-            
-            <h1>
-              {{title}}
-              <small>({{server.title}})</small>
-            </h1>
-          </div>
-        </div>
+    {{#with server}}
+      {{#with statusMap}}
+        <h2>Status Map</h2>
         
         <div class="row">
           <div class="col-md-7">
-            <h2>Work Phases</h2>
+            <h3>Work Phases</h3>
             {{#RobaTabGroup name="phase-tabs" navClass="nav-tabs"}}
               {{#each workPhases}}
                 {{#RobaTab name=key title=title}}
@@ -37,7 +24,7 @@
                       {{#each workStates}}
                         <td>
                           <div class="status-drop-box" data-state-key="{{key}}" data-phase-key="{{../key}}">
-                            {{#each ../../mappedPhaseStatuses ../key key}}
+                            {{#each ../../../mappedPhaseStatuses ../key key}}
                               <div class="status-card mapped-status-card show-controls-on-hover" data-id="{{status.id}}">
                                 <div class="flex">
                                   {{> JsonInfoLink cssClass="hidden-control" data=this.status}}
@@ -63,7 +50,7 @@
             {{/RobaTabGroup}}
           </div>
           <div class="col-md-5">
-            <h2>Statuses</h2>
+            <h3>Statuses</h3>
             {{#RobaTabGroup name="status-tabs" navClass="nav-tabs"}}
               {{#RobaTab name="unmapped" title="Unmapped"}}
                 <h3>Unmapped Statuses</h3>
@@ -84,13 +71,13 @@
                 </div>
               {{/RobaTab}}
               {{#RobaTab name="reference" title="Reference"}}
-                <h3>Status Reference</h3>
+                <h4>Status Reference</h4>
                 {{> IntegrationServerStatusReference}}
               {{/RobaTab}}
             {{/RobaTabGroup}}
           </div>
         </div>
-      </div>
+      {{/with}}
     {{/with}}
   {{else}}
     {{> AppLoading }}

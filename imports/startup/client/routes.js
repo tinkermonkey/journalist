@@ -14,7 +14,6 @@ import '../../../client/ui/pages/admin/integrations/integration_calculated_field
 import '../../../client/ui/pages/admin/integrations/integration_display_template.js';
 import '../../../client/ui/pages/admin/integrations/integration_import_function.js';
 import '../../../client/ui/pages/admin/integrations/integration_server_browser.js';
-import '../../../client/ui/pages/admin/integrations/integration_status_map.js';
 import '../../../client/ui/pages/admin/projects/admin_projects.js';
 import '../../../client/ui/pages/admin/projects/admin_project_integration.js';
 import '../../../client/ui/pages/admin/teams/admin_teams.js';
@@ -118,13 +117,6 @@ FlowRouter.route('/admin/integration_server_browser/:serverId', {
   name: 'IntegrationServerBrowser',
   action() {
     BlazeLayout.render('AdminLayout', { main: 'IntegrationServerBrowser' });
-  }
-});
-
-FlowRouter.route('/admin/integration_status_map/:mapId', {
-  name: 'IntegrationStatusMap',
-  action() {
-    BlazeLayout.render('AdminLayout', { main: 'IntegrationStatusMap' });
   }
 });
 
