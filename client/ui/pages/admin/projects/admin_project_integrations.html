@@ -10,6 +10,7 @@
         <th>Preview Template</th>
         <th>Detail Template</th>
         <th>Calculated Fields</th>
+        <th>Items</th>
         <th></th>
       </tr>
       </thead>
@@ -28,6 +29,7 @@
           <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplateId' }}</td>
           <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplateId' }}</td>
           <td>{{> EditableRecordChecklist calculatedFieldsChecklistContext }}</td>
+          <td>{{importedItemCount.count}}</td>
           <td class="open-link">
             <a class="link-red hidden-control btn-delete-integration">
               <span class="glyphicon glyphicon-minus-sign"></span>

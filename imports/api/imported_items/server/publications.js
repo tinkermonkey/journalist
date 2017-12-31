@@ -33,17 +33,17 @@ Meteor.publish('integration_imported_item_count', function (integrationId) {
         added  : function (id) {
           count++;
           if (!initializing) {
-            self.changed('counts', 'importedItemsCount', { count: count });
+            self.changed('imported_item_counts', integrationId, { count: count });
           }
         },
         removed: function (id) {
           count--;
-          self.changed('counts', 'importedItemsCount', { count: count });
+          self.changed('imported_item_counts', integrationId, { count: count });
         }
       });
   
   initializing = false;
-  self.added('counts', 'importedItemsCount', { count: count });
+  self.added('imported_item_counts', integrationId, { count: count });
   self.ready();
   
   self.onStop(function () {

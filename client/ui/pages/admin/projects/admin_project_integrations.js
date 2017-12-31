@@ -1,13 +1,21 @@
 import './admin_project_integrations.html';
 import { Template } from 'meteor/templating';
 import { Integrations } from '../../../../../imports/api/integrations/integrations';
+import { ImportedItemCounts } from './imported_item_counts';
+import { Util } from '../../../../../imports/api/util';
 import './add_integration_form';
 import './admin_project_integration';
 
 /**
  * Template Helpers
  */
-Template.AdminProjectIntegrations.helpers({});
+Template.AdminProjectIntegrations.helpers({
+  importedItemCount () {
+    let integration = this;
+    console.log('importedItemCount:', integration._id, ImportedItemCounts.findOne(integration._id));
+    return ImportedItemCounts.findOne(integration._id)
+  }
+});
 
 /**
  * Template Event Handlers
@@ -99,6 +107,29 @@ Template.AdminProjectIntegrations.onCreated(() => {
   instance.subscribe('integration_display_templates');
   instance.subscribe('integration_import_functions');
   instance.subscribe('integration_servers');
+  
+  instance.subscribedIntegrations = [];
+  
+  instance.autorun(() => {
+    let projectId = FlowRouter.getParam('projectId');
+    
+    if (projectId) {
+      console.log('AdminProjectIntegrations autorun');
+      Integrations.find({ projectId: projectId }).forEach((integration) => {
+        if (!_.contains(instance.subscribedIntegrations, integration._id)) {
+          console.log('AdminProjectIntegrations autorun subscribing to integration issue count:', integration._id);
+          instance.subscribedIntegrations.push(integration._id);
+          instance.subscribe('integration_imported_item_count', integration._id)
+        }
+      })
+    }
+  });
+  
+  instance.autorun(() => {
+    let counts = ImportedItemCounts.find({}).fetch();
+    
+    console.log(Util.timestamp(), 'counts:', counts);
+  })
 });
 
 /**

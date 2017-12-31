@@ -590,7 +590,7 @@ export class IntegrationServiceProvider {
     }
     
     // Force the email and key to lowercase
-    email = email.toLowerCase();
+    email = email.toLowerCase().trim();
     
     // Check the local cache
     if (self.cache.contributors[ key ]) {
