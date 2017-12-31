@@ -345,10 +345,10 @@ export class IntegrationServiceProvider {
    * @param value
    */
   storeCachedItem (key, value) {
-    debug && console.log('IntegrationServiceProvider.storeCachedItem:', this.server._id, this.server.title);
+    debug && console.log('IntegrationServiceProvider.storeCachedItem:', this.server._id, this.server.title, key);
     let self = this;
     
-    if (value) {
+    if (value && _.isArray(value)) {
       // Update the local in memory value
       self.cache[ key ] = value;
       
@@ -364,7 +364,7 @@ export class IntegrationServiceProvider {
         }
       });
     } else {
-      console.error('IntegrationServiceProvider.storeCachedItem passed an empty value for key:', key);
+      console.error('IntegrationServiceProvider.storeCachedItem passed an invalid value for key:', key, value);
     }
   }
   

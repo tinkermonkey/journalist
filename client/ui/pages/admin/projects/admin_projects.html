@@ -13,6 +13,7 @@
             <thead>
             <tr>
               <th></th>
+              <th></th>
               <th>Title</th>
               <th>Description</th>
               <th>Type</th>
@@ -31,9 +32,14 @@
                     <span class="glyphicon glyphicon-folder-open"></span>
                   </a>
                 </td>
-                <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-                <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" }}</td>
-                <td>{{> EditableEnumSelector dataKey="projectType" value=projectType enum=ProjectTypes emptyText="Project Type" }}</td>
+                <td class="open-link">
+                  <a class="hidden-control" href="{{pathFor 'ProjectHome' projectId=_id}}">
+                    <span class="glyphicon glyphicon-home"></span>
+                  </a>
+                </td>
+                <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" mode="popup" }}</td>
+                <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" mode="popup" }}</td>
+                <td>{{> EditableEnumSelector dataKey="projectType" value=projectType enum=ProjectTypes emptyText="Project Type" mode="popup" }}</td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
                 <td>{{dateFormat dateModified}}</td>
                 <td>{{dateFormat dateCreated}}</td>

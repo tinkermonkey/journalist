@@ -2,14 +2,14 @@
   <table class="table data-table full-width border-bottom">
     <thead>
     <tr>
+      <th></th>
       <th>Email</th>
       <th>Name</th>
-      <th>Manager</th>
       <th>Default Role</th>
       <th>User</th>
       <th>Type</th>
+      <th>Manager</th>
       <th>Modified</th>
-      <th>Created</th>
       <th>Active</th>
       <th></th>
     </tr>
@@ -18,9 +18,13 @@
     {{#each contributors}}
       <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}"
           data-pk="{{_id}}">
-        <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" }}</td>
-        <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" }}</td>
-        <td>{{> EditableRecordSelector managerSelectorContext }}</td>
+        <td class="open-link">
+          <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=_id}}">
+            <span class="glyphicon glyphicon-home"></span>
+          </a>
+        </td>
+        <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" mode="popup" }}</td>
+        <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" mode="popup" }}</td>
         <td>{{> EditableRecordSelector roleSelectorContext }}</td>
         <td>
           {{#with user}}
@@ -29,10 +33,10 @@
             <span class="label label-warning">No</span>
           {{/with}}
         </td>
-        <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes emptyText="Select"}}</td>
+        <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes emptyText="Select" mode="popup" }}</td>
+        <td>{{> EditableRecordSelector managerSelectorContext }}</td>
         <td>{{dateFormat dateModified}}</td>
-        <td>{{dateFormat dateCreated}}</td>
-        <td>{{> EditableCheckbox dataKey="isActive" value=isActive}}</td>
+        <td>{{> EditableCheckbox dataKey="isActive" value=isActive mode="popup" }}</td>
         <td>
           <a class="link-red hidden-control btn-delete-contributor">
             <span class="glyphicon glyphicon-minus-sign"></span>

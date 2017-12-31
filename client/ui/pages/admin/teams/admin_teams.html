@@ -12,6 +12,7 @@
           <table class="table data-table full-width border-bottom">
             <thead>
             <tr>
+              <th></th>
               <th>Title</th>
               <th>Owner</th>
               <th>Default Reporter</th>
@@ -23,6 +24,11 @@
             <tbody>
             {{#each teams}}
               <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+                <td class="open-link">
+                  <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=_id}}">
+                    <span class="glyphicon glyphicon-home"></span>
+                  </a>
+                </td>
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
                 <td>{{> EditableRecordSelector reporterSelectorContext }}</td>
