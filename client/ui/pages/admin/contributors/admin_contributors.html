@@ -9,58 +9,41 @@
           </ol>
           
           <h1>Contributors</h1>
-          {{#each roleDefinitions}}
-            <div class="contributor-role">
-              <h3>{{title}}s</h3>
-              <table class="table data-table full-width border-bottom">
-                <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Name</th>
-                  <th>Manager</th>
-                  <th>Default Role</th>
-                  <th>User</th>
-                  <th>Type</th>
-                  <th>Modified</th>
-                  <th>Created</th>
-                  <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {{#each contributors}}
-                  <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
-                      data-pk="{{_id}}">
-                    <td>{{> EditableTextField dataKey="email" value=email emptyText="Email" }}</td>
-                    <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" }}</td>
-                    <td>{{> EditableRecordSelector managerSelectorContext }}</td>
-                    <td>{{> EditableRecordSelector roleSelectorContext }}</td>
-                    <td>
-                      {{#with user}}
-                        <span class="label label-success">Yes</span>
-                      {{else}}
-                        <span class="label label-warning">No</span>
-                      {{/with}}
-                    </td>
-                    <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes emptyText="Select"}}</td>
-                    <td>{{dateFormat dateModified}}</td>
-                    <td>{{dateFormat dateCreated}}</td>
-                    <td>
-                      <a class="link-red hidden-control btn-delete-contributor">
-                        <span class="glyphicon glyphicon-minus-sign"></span>
-                      </a>
-                    </td>
-                  </tr>
-                {{/each}}
-                </tbody>
-              </table>
-              {{#if _id}}
-                <button class="btn btn-xs btn-primary btn-add-contributor">
-                  <span class="glyphicon glyphicon-plus"></span>
-                  Add {{title}}
-                </button>
-              {{/if}}
-            </div>
-          {{/each}}
+          
+          {{#RobaTabGroup name="phase-tabs" navClass="nav-tabs"}}
+            {{#RobaTab name="active" title="Active"}}
+              {{#each roleDefinitions}}
+                <div class="contributor-role">
+                  <h3>{{title}}s</h3>
+                  
+                  {{> AdminContributorsTable contributors=contributors }}
+                  
+                  {{#if _id}}
+                    <button class="btn btn-xs btn-primary btn-add-contributor">
+                      <span class="glyphicon glyphicon-plus"></span>
+                      Add {{title}}
+                    </button>
+                  {{/if}}
+                </div>
+              {{/each}}
+            {{/RobaTab}}
+            {{#RobaTab name="unassigned" title="Unassigned"}}
+              <div class="contributor-role">
+                <h3>Contributors without a default role</h3>
+                
+                {{> AdminContributorsTable contributors=unassignedContributors }}
+              
+              </div>
+            {{/RobaTab}}
+            {{#RobaTab name="inactive" title="Inactive"}}
+              <div class="contributor-role">
+                <h3>Inactive Contributors</h3>
+                
+                {{> AdminContributorsTable contributors=inactiveContributors }}
+              
+              </div>
+            {{/RobaTab}}
+          {{/RobaTabGroup}}
         </div>
       </div>
     </div>

@@ -4,18 +4,23 @@ import { Contributors } from '../../../../../imports/api/contributors/contributo
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions.js';
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
+import './admin_contributors_table';
 
 /**
  * Template Helpers
  */
 Template.AdminContributors.helpers({
   roleDefinitions () {
-    let definitions = ContributorRoleDefinitions.find({}, { sort: { order: 1 } }).fetch();
-    definitions.push({ title: "Unassigned" });
-    return definitions
+    return ContributorRoleDefinitions.find({}, { sort: { order: 1 } })
   },
   contributors () {
-    return Contributors.find({ roleId: this._id }, { sort: { name: 1 } })
+    return Contributors.find({ roleId: this._id, isActive: true }, { sort: { name: 1 } })
+  },
+  inactiveContributors () {
+    return Contributors.find({ isActive: false }, { sort: { name: 1 } })
+  },
+  unassignedContributors () {
+    return Contributors.find({ roleId: { $exists: false }, isActive: true }, { sort: { name: 1 } })
   }
 });
 
@@ -45,12 +50,12 @@ Template.AdminContributors.events({
       contentTemplate: "AddRecordForm",
       contentData    : {
         schema: new SimpleSchema({
-          email     : {
+          email: {
             type : String,
             regEx: SimpleSchema.RegEx.Email,
             label: 'Email'
           },
-          name      : {
+          name : {
             type    : String,
             optional: true,
             label   : 'Name'

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import { Auth } from '../../auth.js';
 import { Contributors } from '../../contributors/contributors.js';
 import { Users } from '../users.js';
@@ -60,7 +60,7 @@ Meteor.methods({
     // Validate
     check(userId, String);
     check(key, String);
-    check(value, String);
+    check(value, Match.Any);
     
     // Validate that the key is one of the few editable fields
     if(_.contains(['username', 'email', 'name', 'usertype'], key)){

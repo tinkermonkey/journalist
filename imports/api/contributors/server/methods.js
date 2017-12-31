@@ -64,7 +64,7 @@ Meteor.methods({
     // Validate the data is complete
     check(contributorId, String);
     check(key, String);
-    check(value, String);
+    check(value, Match.Any);
     
     // Get the contributor record to make sure this is authorized
     let contributor = Contributors.findOne(contributorId);

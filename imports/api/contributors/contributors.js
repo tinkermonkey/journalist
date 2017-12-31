@@ -37,6 +37,10 @@ export const Contributor = new SimpleSchema({
     blackbox: true,
     optional: true
   },
+  isActive          : {
+    type        : Boolean,
+    defaultValue: true
+  },
   // _id of the Contributor who manages this contributor
   managerId       : {
     type    : String,
