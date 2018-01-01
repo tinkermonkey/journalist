@@ -79,11 +79,17 @@ export class C3DonutWrapper {
     
     // Aggregate the data
     data.forEach((row) => {
-      let column = row[ self.config.attribute ];
-      if (column) {
+      let column = row[ self.config.attribute ] || self.config.countNull ? 'null' : undefined;
+      if (column !== undefined) {
         if (!map[ column ]) {
+          let title = Util.camelToTitle(column);
+          
+          if (self.config.renderLabel && _.isFunction(self.config.renderLabel)) {
+            title = self.config.renderLabel(column);
+          }
+          
           map[ column ] = {
-            title: self.config.renderLabel && _.isFunction(self.config.renderLabel) ? self.config.renderLabel(column) : Util.camelToTitle(column),
+            title: title,
             value: 0
           }
         }

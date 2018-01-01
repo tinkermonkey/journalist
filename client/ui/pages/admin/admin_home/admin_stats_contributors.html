@@ -2,6 +2,8 @@
   {{#if Template.subscriptionsReady}}
     <div class="flex">
       {{> DonutChart contributorRolesContext }}
+      {{> DonutChart contributorTypeContext }}
+      {{> DonutChart contributorIsActiveContext }}
     </div>
   {{else}}
     {{> RobaSpinner rainbow=true }}

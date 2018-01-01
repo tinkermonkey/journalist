@@ -2,6 +2,8 @@ import './admin_stats_contributors.html';
 import { Template } from 'meteor/templating';
 import { Contributors } from '../../../../../imports/api/contributors/contributors';
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
+import { UserTypes } from '../../../../../imports/api/users/user_types';
+import { Util } from '../../../../../imports/api/util';
 
 /**
  * Template Helpers
@@ -12,11 +14,44 @@ Template.AdminStatsContributors.helpers({
     return {
       cssClass: 'donut-flex',
       config  : {
-        title    : 'Roles',
+        title    : 'Contributor Roles',
+        countNull: true,
         attribute: 'roleId',
-        renderLabel (roleId) {
-          let roleDefinition = ContributorRoleDefinitions.findOne(roleId);
-          return roleDefinition && roleDefinition.title
+        renderLabel (value) {
+          if (value !== 'null') {
+            let roleDefinition = ContributorRoleDefinitions.findOne(value);
+            return roleDefinition && roleDefinition.title
+          } else {
+            return 'Unassigned'
+          }
+        }
+      },
+      data    : data.fetch()
+    }
+  },
+  contributorTypeContext () {
+    let data = Contributors.find();
+    return {
+      cssClass: 'donut-flex',
+      config  : {
+        title    : 'Contributor Types',
+        attribute: 'usertype',
+        renderLabel (value) {
+          return Util.camelToTitle(_.invert(UserTypes)[ value ])
+        }
+      },
+      data    : data.fetch()
+    }
+  },
+  contributorIsActiveContext () {
+    let data = Contributors.find();
+    return {
+      cssClass: 'donut-flex',
+      config  : {
+        title    : 'Contributor Is Active',
+        attribute: 'isActive',
+        renderLabel (value) {
+          return value ? 'Yes' : 'No'
         }
       },
       data    : data.fetch()
