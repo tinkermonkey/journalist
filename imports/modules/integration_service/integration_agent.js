@@ -131,6 +131,21 @@ export class IntegrationAgent {
   }
   
   /**
+   * Execute all of the queries on-demand
+   */
+  executeAllQueries () {
+    debug && console.log('IntegrationAgent.executeAllQueries:', this.integration._id);
+    let self             = this,
+        queryDefinitions = self.serviceProvider.getQueryDefinitions();
+    
+    if (queryDefinitions) {
+      _.keys(queryDefinitions).forEach((queryKey) => {
+        self.executeQuery(queryKey);
+      });
+    }
+  }
+  
+  /**
    * Shut this agent down in prep for being deleted
    */
   destroy () {

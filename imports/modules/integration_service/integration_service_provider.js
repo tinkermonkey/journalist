@@ -668,10 +668,14 @@ export class IntegrationServiceProvider {
     // Create the service if the integration is active
     let agent = self.getIntegrationAgent(integration);
     if (agent == null) {
-      self.setIntegrationAgent(integration, new IntegrationAgent(integration, self));
+      agent = new IntegrationAgent(integration, self);
+      self.setIntegrationAgent(integration, agent);
     } else {
       console.error('IntegrationServiceProvider.createIntegrationAgent integration already exists:', integration._id);
     }
+    
+    // Execute the queries to get fresh data
+    agent.executeAllQueries();
   }
   
   /**
