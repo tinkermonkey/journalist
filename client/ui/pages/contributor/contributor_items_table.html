@@ -7,9 +7,7 @@
       <th>Title</th>
       <th>Description</th>
       <th>Owner</th>
-      <th>Date Modified</th>
-      <th>Created By</th>
-      <th>Date Created</th>
+      <th>Last Modified</th>
     </tr>
     </thead>
     <tbody>
@@ -22,8 +20,6 @@
           <td class="force-wrap">{{{description}}}</td>
           <td class="force-wrap">{{contributorName owner}}</td>
           <td>{{dateFormat dateModified}}</td>
-          <td>{{contributorName createdBy}}</td>
-          <td>{{dateFormat dateCreated}}</td>
         </tr>
       {{/each}}
     {{/if}}

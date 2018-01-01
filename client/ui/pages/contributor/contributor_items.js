@@ -1,52 +1,29 @@
 import './contributor_items.html';
 import { Template } from 'meteor/templating';
-import {ImportedItemWorkPhases} from '../../../../imports/api/imported_items/imported_item_work_phases';
-import {ImportedItemWorkStates} from '../../../../imports/api/imported_items/imported_item_work_states';
+import { ImportedItemWorkStates } from '../../../../imports/api/imported_items/imported_item_work_states';
+import { Util } from '../../../../imports/api/util';
 
 /**
  * Template Helpers
  */
 Template.ContributorItems.helpers({
-  needsToBeWorkedItemsContext () {
-    let contributor = this;
+  workStates () {
+    return _.keys(ImportedItemWorkStates).map((key) => {
+      return { key: key, title: Util.camelToTitle(key) }
+    })
+  },
+  workStateAssignedItemsContext (contributor) {
+    let workStateKey = this.key;
     return {
-      query: { owner: contributor._id, workState: ImportedItemWorkStates.needsToBeWorked },
+      query: { owner: contributor._id, workState: ImportedItemWorkStates[ workStateKey ] },
       sort : { dateModified: -1 }
     }
   },
-  beingWorkedOnItemsContext () {
-    let contributor = this;
+  workStateCreatedItemsContext (contributor) {
+    let workStateKey = this.key;
     return {
-      query: { owner: contributor._id, workState: ImportedItemWorkStates.beingWorkedOn },
-      sort: { dateModified: -1 }
-    }
-  },
-  completedItemsContext () {
-    let contributor = this;
-    return {
-      query: { owner: contributor._id, workState: ImportedItemWorkStates.workCompleted },
-      sort: { dateModified: -1 }
-    }
-  },
-  createdNeedsToBeWorkedItemsContext () {
-    let contributor = this;
-    return {
-      query: { createdBy: contributor._id, workState: ImportedItemWorkStates.needsToBeWorked },
+      query: { createdBy: contributor._id, workState: ImportedItemWorkStates[ workStateKey ] },
       sort : { dateModified: -1 }
-    }
-  },
-  createdBeingWorkedOnItemsContext () {
-    let contributor = this;
-    return {
-      query: { createdBy: contributor._id, workState: ImportedItemWorkStates.beingWorkedOn },
-      sort: { dateModified: -1 }
-    }
-  },
-  createdCompletedItemsContext () {
-    let contributor = this;
-    return {
-      query: { createdBy: contributor._id, workState: ImportedItemWorkStates.workCompleted },
-      sort: { dateModified: -1 }
     }
   }
 });
