@@ -8,7 +8,8 @@ import './contributor_sidebar.js';
 import './contributor_banner.js';
 import './contributor_header.js';
 import './contributor_status_reports_due.js';
-import '../../components/document_status_reports/document_status_reports';
+import '../../components/document_status_reports/document_status_reports.js';
+import './contributor_items.js';
 
 /**
  * Template Helpers

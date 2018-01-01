@@ -1,0 +1,35 @@
+<template name="ContributorItemsTable">
+  <table class="table data-table border-bottom">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Identifier</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Owner</th>
+      <th>Date Modified</th>
+      <th>Created By</th>
+      <th>Date Created</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#if Template.subscriptionsReady}}
+      {{#each importedItemCrumbs}}
+        <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
+          <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right'}}</td>
+          <td>{{identifier}}</td>
+          <td class="force-wrap">{{title}}</td>
+          <td class="force-wrap">{{{description}}}</td>
+          <td class="force-wrap">{{contributorName owner}}</td>
+          <td>{{dateFormat dateModified}}</td>
+          <td>{{contributorName createdBy}}</td>
+          <td>{{dateFormat dateCreated}}</td>
+        </tr>
+      {{/each}}
+    {{/if}}
+    </tbody>
+  </table>
+  {{#unless Template.subscriptionsReady}}
+    {{> RobaSpinner rainbow=true}}
+  {{/unless}}
+</template>

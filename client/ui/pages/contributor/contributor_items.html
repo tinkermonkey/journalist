@@ -1,3 +1,26 @@
 <template name="ContributorItems">
-  contributor_items
+  {{#RobaTabGroup name="contributor-item-tabs" navClass="nav-tabs"}}
+    {{#RobaTab name="need-to-be-worked" title="Need To Be Worked"}}
+      {{> ContributorItemsTable needsToBeWorkedItemsContext }}
+    {{/RobaTab}}
+    {{#RobaTab name="being-worked" title="Being Worked On"}}
+      {{> ContributorItemsTable beingWorkedOnItemsContext }}
+    {{/RobaTab}}
+    {{#RobaTab name="completed" title="Completed"}}
+      {{> ContributorItemsTable completedItemsContext }}
+    {{/RobaTab}}
+    {{#RobaTab name="created-items" title="Items Created"}}
+      {{#RobaTabGroup name="contributor-item-tabs" navClass="nav-tabs"}}
+        {{#RobaTab name="need-to-be-worked" title="Need To Be Worked"}}
+          {{> ContributorItemsTable createdNeedsToBeWorkedItemsContext }}
+        {{/RobaTab}}
+        {{#RobaTab name="being-worked" title="Being Worked On"}}
+          {{> ContributorItemsTable createdBeingWorkedOnItemsContext }}
+        {{/RobaTab}}
+        {{#RobaTab name="completed" title="Completed"}}
+          {{> ContributorItemsTable createdCompletedItemsContext }}
+        {{/RobaTab}}
+      {{/RobaTabGroup}}
+    {{/RobaTab}}
+  {{/RobaTabGroup}}
 </template>

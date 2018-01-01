@@ -7,7 +7,7 @@
           <h1>{{name}}</h1>
           {{> ContributorHeader }}
           
-          {{#RobaTabGroup name="contributor-tabs" cssClass="nav-tabs"}}
+          {{#RobaTabGroup name="contributor-tabs" navClass="nav-tabs"}}
             {{#if shouldSeeReports }}
               {{#RobaTab name="status-report-due" title="Status Reports Due"}}
                 {{> ContributorStatusReportsDue }}
@@ -19,6 +19,7 @@
             {{/RobaTab}}
   
             {{#RobaTab name="imported-items" title="Items"}}
+              <h2>{{name}}`s items</h2>
               {{> ContributorItems }}
             {{/RobaTab}}
           {{/RobaTabGroup}}
