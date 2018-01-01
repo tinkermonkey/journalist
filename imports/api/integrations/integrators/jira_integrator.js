@@ -204,7 +204,7 @@ export class JiraIntegrator extends Integrator {
           
           // Make sure it's unique
           let dupes = fields.filter((checkField) => {
-            return checkField.key === syntheticKey || checkField.syntheticKey === syntheticKey
+            return checkField.id === syntheticKey || checkField.syntheticKey === syntheticKey
           });
           if (dupes.length) {
             syntheticKey = syntheticKey + "_" + field.schema.customId
