@@ -333,7 +333,7 @@ Template.registerHelper('displayTemplateSelectorContext', function (fieldName) {
     fieldName = 'displayTemplate'
   }
   
-  let context = {
+  return {
     valueField  : '_id',
     displayField: 'title',
     value       : record[ fieldName ],
@@ -343,13 +343,7 @@ Template.registerHelper('displayTemplateSelectorContext', function (fieldName) {
     cssClass    : 'inline-block',
     mode        : 'popup',
     query       : {}
-  };
-  
-  if (params && params.hash) {
-    _.extend(context, params.hash);
   }
-  
-  return context
 });
 
 /**
