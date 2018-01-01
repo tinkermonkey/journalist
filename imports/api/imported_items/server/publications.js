@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { ImportedItems } from '../imported_items';
+import { ImportedItemCrumbs } from '../imported_item_crumbs';
 
 Meteor.publish('integration_imported_items', function (integrationId, start, limit) {
   console.log('Publish: integration_imported_items', integrationId, start, limit);
@@ -12,6 +13,26 @@ Meteor.publish('integration_imported_items', function (integrationId, start, lim
       limit: limit,
       skip : start
     });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
+  console.log('Publish: integration_imported_item_crumbs', integrationId);
+  if (this.userId && integrationId) {
+    return ImportedItemCrumbs.find({ integrationId: integrationId });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('team_imported_item_crumbs', function (teamId) {
+  console.log('Publish: team_imported_item_crumbs', teamId);
+  if (this.userId && teamId) {
+    return ImportedItemCrumbs.find({ teamId: teamId });
   } else {
     this.ready();
     return [];
