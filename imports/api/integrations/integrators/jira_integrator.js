@@ -394,7 +394,7 @@ export class JiraIntegrator extends Integrator {
           let processedKey = fieldKey;
           if (fieldKey.match(/customfield_/i)) {
             // look up a synthetic key
-            let fieldDef = self.provider.cache.fieldList.find(field => field.key === fieldKey);
+            let fieldDef = self.provider.cache.fieldList.find((field) => { return field.id === fieldKey});
             if (fieldDef && fieldDef.syntheticKey) {
               processedKey = fieldDef.syntheticKey;
             }
