@@ -196,32 +196,32 @@ export class IntegrationServiceProvider {
   checkHealth () {
     debug && console.log('IntegrationServiceProvider.checkHealth:', this.server._id, this.server.title);
     let self    = this,
-        details = {};
-    
-    self.healthy = true;
+        details = {},
+        healthy = true;
     
     // Make sure there's something to connect to
     if (self.url && self.url.hostname) {
       // Ping the server
       debug && console.log('IntegrationServiceProvider.checkHealth pinging server:', self.url.hostname, self.url.port);
       try {
-        let status   = Ping.host(self.url.hostname, 3);
-        self.healthy = status.online === true;
-        if (!self.healthy) {
+        let status = Ping.host(self.url.hostname, 3);
+        healthy    = status.online === true;
+        if (!healthy) {
           debug && console.log('IntegrationServiceProvider.checkHealth ping status:', status);
           details.message = "Server did not respond to ping requests";
         }
       } catch (e) {
         console.error('IntegrationServiceProvider.checkHealth ping failed:', self.url.hostname, e);
         HealthTracker.update(self.trackerKey, false, { message: 'Ping failed' });
+        self.healthy = false;
         return;
       }
       
       // Check an authenticated end point to make sure the server is authenticated
-      if (self.healthy) {
+      if (healthy) {
         let authResult = self.integrator.checkAuthentication();
-        self.healthy   = authResult.success === true;
-        if (!self.healthy) {
+        healthy        = authResult.success === true;
+        if (!healthy) {
           debug && console.log('IntegrationServiceProvider.checkHealth auth result:', authResult);
           details.message = "Server is not authenticated";
           IntegrationServers.update({ _id: self.server._id }, { $set: { isAuthenticated: false } });
@@ -229,6 +229,7 @@ export class IntegrationServiceProvider {
       }
       
       // Update the status
+      self.healthy = healthy;
       HealthTracker.update(self.trackerKey, self.healthy, details);
     } else {
       self.healthy = false;
