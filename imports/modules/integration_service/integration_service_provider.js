@@ -419,13 +419,14 @@ export class IntegrationServiceProvider {
           contributorId: importedItem.owner,
           projectId    : projectId
         }).map((projectAssignment) => {
-          return projectAssignment.teamRole().teamId
+          let role = projectAssignment.teamRole();
+          return role && role.teamId
         });
       } else if (importedItem.owner) {
         importedItem.teamIds = ContributorTeamRoles.find({
           contributorId: importedItem.owner
         }).map((teamRole) => {
-          return teamId
+          return teamRole.teamId
         });
       }
       
