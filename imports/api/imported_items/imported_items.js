@@ -14,9 +14,14 @@ export const ImportedItem = new SimpleSchema({
   integrationId: {
     type: String
   },
-  // The home of this item
+  // The home project of this item
   projectId    : {
     type: String
+  },
+  // The team(s) that may own this, plural because it can be indeterminate if an owner is on multiple teams for the same project
+  teamIds      : {
+    type    : [ String ],
+    optional: true
   },
   // Overall type of this item:
   itemType     : {
@@ -33,8 +38,8 @@ export const ImportedItem = new SimpleSchema({
     label: 'Summary title for this item'
   },
   description  : {
-    type : String,
-    label: 'Long form description of this item, typically an issue body or such',
+    type    : String,
+    label   : 'Long form description of this item, typically an issue body or such',
     optional: true
   },
   // The imported item document object

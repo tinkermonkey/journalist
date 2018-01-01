@@ -73,12 +73,6 @@ export const IntegrationService = {
       if (provider == null) {
         // Create the service provider record
         self.setServiceProvider(server, new IntegrationServiceProvider(server));
-        
-        // Try to re-authenticate
-        self.getServiceProvider(server).reAuthenticate();
-        
-        // Update the health of the provider
-        self.getServiceProvider(server).checkHealth();
       } else {
         console.error('IntegrationService.createServiceProvider provider already exists:', server._id, server.title);
       }

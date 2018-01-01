@@ -12,7 +12,6 @@ import './admin_project_integration';
 Template.AdminProjectIntegrations.helpers({
   importedItemCount () {
     let integration = this;
-    console.log('importedItemCount:', integration._id, ImportedItemCounts.findOne(integration._id));
     return ImportedItemCounts.findOne(integration._id)
   }
 });
@@ -114,22 +113,14 @@ Template.AdminProjectIntegrations.onCreated(() => {
     let projectId = FlowRouter.getParam('projectId');
     
     if (projectId) {
-      console.log('AdminProjectIntegrations autorun');
       Integrations.find({ projectId: projectId }).forEach((integration) => {
         if (!_.contains(instance.subscribedIntegrations, integration._id)) {
-          console.log('AdminProjectIntegrations autorun subscribing to integration issue count:', integration._id);
           instance.subscribedIntegrations.push(integration._id);
           instance.subscribe('integration_imported_item_count', integration._id)
         }
-      })
+      });
     }
   });
-  
-  instance.autorun(() => {
-    let counts = ImportedItemCounts.find({}).fetch();
-    
-    console.log(Util.timestamp(), 'counts:', counts);
-  })
 });
 
 /**

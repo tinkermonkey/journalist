@@ -2,6 +2,8 @@ import { check } from 'meteor/check';
 import { Ping } from 'meteor/frpz:ping';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Contributors } from '../../api/contributors/contributors';
+import { ContributorTeamRoles } from '../../api/contributors/contributor_team_roles';
+import { ContributorProjectAssignments } from '../../api/contributors/contributor_project_assignments';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 import { ImportedItems, ImportedItemTestSchema } from '../../api/imported_items/imported_items';
 import { Integrations } from '../../api/integrations/integrations';
@@ -97,6 +99,11 @@ export class IntegrationServiceProvider {
     
     // Schedule the cache service job
     self.updateCacheServiceJob();
+    
+    // Try getting up and running again
+    self.reAuthenticate();
+    self.checkHealth();
+    self.updateCachedData();
   }
   
   /**
@@ -336,7 +343,9 @@ export class IntegrationServiceProvider {
     debug && console.log('IntegrationServiceProvider.updateCachedData:', this.server._id, this.server.title);
     let self = this;
     
-    return self.integrator.updateCachedData();
+    if (self.isHealthy()) {
+      return self.integrator.updateCachedData();
+    }
   }
   
   /**
@@ -383,8 +392,9 @@ export class IntegrationServiceProvider {
    * Pass an item through an import function to produce an importedItem
    * @param importFunction
    * @param processedItem
+   * @param projectId
    */
-  importItem (importFunction, processedItem) {
+  importItem (importFunction, processedItem, projectId) {
     trace && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title);
     let self = this;
     
@@ -401,6 +411,22 @@ export class IntegrationServiceProvider {
       importedItem.statusLabel = processedItem.statusLabel;
       importedItem.workPhase   = processedItem.workPhase;
       importedItem.workState   = processedItem.workState;
+      
+      // Try to identify the team
+      if (importedItem.owner && projectId) {
+        importedItem.teamIds = ContributorProjectAssignments.find({
+          contributorId: importedItem.owner,
+          projectId    : projectId
+        }).map((projectAssignment) => {
+          return projectAssignment.teamRole().teamId
+        });
+      } else if (importedItem.owner) {
+        importedItem.teamIds = ContributorTeamRoles.find({
+          contributorId: importedItem.owner
+        }).map((teamRole) => {
+          return teamId
+        });
+      }
       
       // Validate the processed item against the importedItem schema
       try {
@@ -429,8 +455,9 @@ export class IntegrationServiceProvider {
    * Pass an array of items through an import function to produce an array of importedItems
    * @param importFunction
    * @param processedItems
+   * @param projectId
    */
-  importItems (importFunction, processedItems) {
+  importItems (importFunction, processedItems, projectId) {
     debug && console.log('IntegrationServiceProvider.importItems:', this.server._id, this.server.title, processedItems.length);
     let self   = this,
         result = {
@@ -440,7 +467,7 @@ export class IntegrationServiceProvider {
     
     // import each of the processed items
     processedItems.forEach((item) => {
-      let importResult = self.importItem(importFunction, item);
+      let importResult = self.importItem(importFunction, item, projectId);
       if (importResult.success === true) {
         result.items.push(importResult.item)
       } else {
@@ -507,8 +534,10 @@ export class IntegrationServiceProvider {
     let self          = this,
         processedItem = self.integrator.postProcessItem(rawItem);
     
+    // Get all of the contributors involved
     self.processItemForContributors(processedItem);
     
+    // Map the status
     self.processItemForStatus(processedItem);
     
     return processedItem;
