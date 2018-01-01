@@ -10,6 +10,61 @@
       </div>
     </div>
     
-    {{> ContributorRoleDefinitions }}
+    <div class="row">
+      <div class="col-md-3">
+        <h2>Configuration</h2>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <span class="badge">{{calculatedFieldCount}}</span>
+            <a href="{{pathFor 'IntegrationCalculatedFields'}}">Calculated Fields</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{contributorCount}}</span>
+            <a href="{{pathFor 'AdminContributors'}}">Contributors</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{displayTemplateCount}}</span>
+            <a href="{{pathFor 'IntegrationDisplayTemplates'}}">Display Templates</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{importFunctionCount}}</span>
+            <a href="{{pathFor 'IntegrationImportFunctions'}}">Import Functions</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{projectCount}}</span>
+            <a href="{{pathFor 'AdminProjects'}}">Projects</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{roleDefinitionCount}}</span>
+            <a href="{{pathFor 'ContributorRoleDefinitions'}}">Role Definitions</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{serverCount}}</span>
+            <a href="{{pathFor 'IntegrationServers'}}">Servers</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{teamCount}}</span>
+            <a href="{{pathFor 'AdminTeams'}}">Teams</a>
+          </li>
+          <li class="list-group-item">
+            <span class="badge">{{userCount}}</span>
+            <a href="{{pathFor 'AdminUsers'}}">Users</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-9">
+        <h2>Data</h2>
+        
+        <h3>Imported Items</h3>
+        {{> AdminStatsImportedItems }}
+        
+        <h3>Contributors</h3>
+        {{> AdminStatsContributors }}
+        
+        <h3>Teams</h3>
+        {{> AdminStatsTeams }}
+        
+      </div>
+    </div>
   </div>
 </template>

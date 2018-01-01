@@ -1,3 +1,4 @@
+import { Meteor } from "meteor/meteor";
 import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { AutoForm } from 'meteor/aldeed:autoform';
@@ -16,6 +17,7 @@ import { ProjectTypes } from '../../api/projects/project_types.js';
 import { Teams } from '../../api/teams/teams';
 import { Users } from '../../api/users/users';
 import { UserTypes } from '../../api/users/user_types.js';
+import '../../../node_modules/c3/c3.css';
 
 /**
  * Custom autoform hooks to prevent client side inserts
@@ -355,6 +357,20 @@ Template.registerHelper('pathFor', function (routeName, routeParams) {
   } else {
     console.error('pathFor given no route name:', arguments);
   }
+});
+
+/**
+ * Return or generate a unique ID for an element tied to a Template Instance
+ */
+Template.registerHelper("getElementId", function () {
+  let instance = Template.instance();
+  if(!instance.elementId){
+    instance.elementId = "Element_" + Meteor.uuid();
+    if(instance.elementIdReactor){
+      instance.elementIdReactor.set(instance.elementId);
+    }
+  }
+  return instance.elementId;
 });
 
 /**

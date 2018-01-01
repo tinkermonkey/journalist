@@ -1,0 +1,12 @@
+<template name="AdminStatsImportedItems">
+  {{#if Template.subscriptionsReady}}
+    <div class="flex">
+      {{> DonutChart itemTypeChartContext }}
+      {{> DonutChart itemProjectContext }}
+      {{> DonutChart itemWorkStatesContext }}
+      {{> DonutChart itemWorkPhasesContext }}
+    </div>
+  {{else}}
+    {{> RobaSpinner rainbow=true }}
+  {{/if}}
+</template>

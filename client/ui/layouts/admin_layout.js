@@ -20,6 +20,9 @@ Template.AdminLayout.onCreated(() => {
   
   instance.subscribe('contributors');
   instance.subscribe('user_level');
+  instance.subscribe('integration_calculated_fields');
+  instance.subscribe('integration_import_functions');
+  instance.subscribe('integration_servers');
 });
 
 /**

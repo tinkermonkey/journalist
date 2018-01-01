@@ -3,8 +3,8 @@ import { Template } from 'meteor/templating';
 import { Integrations } from '../../../../../imports/api/integrations/integrations';
 import './admin_project_integration_details';
 import './admin_integration_imported_item_browser';
-import '../integrations/integration_server_field_reference';
-import '../integrations/integration_server_import_testbed';
+import '../integration_servers/integration_server_field_reference';
+import '../integration_servers/integration_server_import_testbed';
 
 /**
  * Template Helpers

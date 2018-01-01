@@ -1,0 +1,64 @@
+<template name="IntegrationImportFunctions">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+          <li class="active">Import Functions</li>
+        </ol>
+        
+        <h1>Import Functions</h1>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12">
+        {{#if Template.subscriptionsReady }}
+          <table class="table data-table full-width border-bottom">
+            <thead>
+            <tr>
+              <th></th>
+              <th>Title</th>
+              <th>Integration Type</th>
+              <th>Item Types</th>
+              <th>Code</th>
+              <th>Modified By</th>
+              <th>Modified</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each importFunctions}}
+              <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+                  data-pk="{{_id}}">
+                <td class="open-link">
+                  <a class="hidden-control" href="{{pathFor 'IntegrationImportFunction' functionId=_id}}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+                <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Integration Type"}}</td>
+                <td>{{> EditableEnumChecklist dataKey="itemTypes" value=itemTypes enum=ItemTypes emptyText="Item Types"}}</td>
+                <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter description" }}</td>
+                <td>{{userName modifiedBy}}</td>
+                <td>{{dateFormat dateModified}}</td>
+                <td>
+                  <a class="link-red hidden-control btn-delete-import-function">
+                    <span class="glyphicon glyphicon-minus-sign"></span>
+                  </a>
+                </td>
+              </tr>
+            {{/each}}
+            </tbody>
+          </table>
+          <button class="btn btn-xs btn-primary btn-add-import-function">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add Import Function
+          </button>
+        {{else}}
+          {{> RobaSpinner rainbow=true }}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>

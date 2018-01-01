@@ -1,7 +1,7 @@
 import './integration_display_templates.html';
 import { Template } from 'meteor/templating';
 import { IntegrationDisplayTemplates } from '../../../../../imports/api/integrations/integration_display_templates';
-import './integration_server_field_reference';
+import '../integration_servers/integration_server_field_reference';
 
 /**
  * Template Helpers

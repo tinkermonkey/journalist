@@ -1,6 +1,6 @@
 import './contributor_role_definitions.html';
 import { Template } from 'meteor/templating';
-import { ContributorRoleDefinitions } from '../../../../../../imports/api/contributors/contributor_role_definitions';
+import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
 
 /**
  * Template Helpers

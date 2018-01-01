@@ -1,0 +1,58 @@
+<template name="IntegrationDisplayTemplates">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+          <li class="active">Display Templates</li>
+        </ol>
+        
+        <h1>Display Templates</h1>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12">
+        {{#if Template.subscriptionsReady }}
+          <table class="table data-table full-width border-bottom">
+            <thead>
+            <tr>
+              <th></th>
+              <th>Title</th>
+              <th>Modified By</th>
+              <th>Modified</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each displayTemplates}}
+              <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+                  data-pk="{{_id}}">
+                <td class="open-link">
+                  <a class="hidden-control" href="{{pathFor 'IntegrationDisplayTemplate' templateId=_id}}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+                <td>{{userName modifiedBy}}</td>
+                <td>{{dateFormat dateModified}}</td>
+                <td>
+                  <a class="link-red hidden-control btn-delete-display-template">
+                    <span class="glyphicon glyphicon-minus-sign"></span>
+                  </a>
+                </td>
+              </tr>
+            {{/each}}
+            </tbody>
+          </table>
+          <button class="btn btn-xs btn-primary btn-add-display-template">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add Display Template
+          </button>
+        {{else}}
+          {{> RobaSpinner rainbow=true }}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>

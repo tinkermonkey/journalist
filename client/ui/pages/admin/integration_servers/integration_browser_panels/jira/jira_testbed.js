@@ -154,7 +154,7 @@ Template.JiraTestbed.onCreated(() => {
           instance.callMapError.set(error);
           instance.callMap.set();
         } else {
-          console.info('getIntegrationServerCallMap result:', response);
+          //console.info('getIntegrationServerCallMap result:', response);
           instance.callMapError.set();
           instance.callMap.set(response);
         }

@@ -1,0 +1,9 @@
+<template name="AdminStatsContributors">
+  {{#if Template.subscriptionsReady}}
+    <div class="flex">
+      {{> DonutChart contributorRolesContext }}
+    </div>
+  {{else}}
+    {{> RobaSpinner rainbow=true }}
+  {{/if}}
+</template>

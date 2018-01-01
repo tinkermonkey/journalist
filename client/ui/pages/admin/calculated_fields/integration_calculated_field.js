@@ -1,17 +1,17 @@
-import './integration_import_function.html';
+import './integration_calculated_field.html';
 import { Template } from 'meteor/templating';
-import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
+import { IntegrationCalculatedFields } from '../../../../../imports/api/integrations/integration_calculated_fields';
 import { ImportedItem } from '../../../../../imports/api/imported_items/imported_items';
-import './integration_server_import_testbed';
-import './integration_server_field_reference';
+import '../integration_servers/integration_server_import_testbed';
+import '../integration_servers/integration_server_field_reference';
 
 /**
  * Template Helpers
  */
-Template.IntegrationImportFunction.helpers({
-  importFunction () {
-    let importFunctionId = FlowRouter.getParam('functionId');
-    return IntegrationImportFunctions.findOne(importFunctionId);
+Template.IntegrationCalculatedField.helpers({
+  calculatedField () {
+    let calculatedFieldId = FlowRouter.getParam('fieldId');
+    return IntegrationCalculatedFields.findOne(calculatedFieldId);
   },
   importedItemFieldReference () {
     console.log('ImportedItem:', ImportedItem);
@@ -35,16 +35,16 @@ Template.IntegrationImportFunction.helpers({
 /**
  * Template Event Handlers
  */
-Template.IntegrationImportFunction.events({
+Template.IntegrationCalculatedField.events({
   "edited .editable" (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let importFunctionId = FlowRouter.getParam('functionId'),
+    let calculatedFieldId = FlowRouter.getParam('fieldId'),
         dataKey          = $(e.target).attr("data-key");
     
-    console.log('edited:', importFunctionId, dataKey, newValue);
-    if (importFunctionId && dataKey) {
-      Meteor.call('editIntegrationImportFunction', importFunctionId, dataKey, newValue, (error, response) => {
+    console.log('edited:', calculatedFieldId, dataKey, newValue);
+    if (calculatedFieldId && dataKey) {
+      Meteor.call('editIntegrationCalculatedField', calculatedFieldId, dataKey, newValue, (error, response) => {
         if (error) {
           RobaDialog.error('Update failed:' + error.toString());
         }
@@ -56,28 +56,28 @@ Template.IntegrationImportFunction.events({
 /**
  * Template Created
  */
-Template.IntegrationImportFunction.onCreated(() => {
+Template.IntegrationCalculatedField.onCreated(() => {
   let instance = Template.instance();
   
   instance.subscribe('integration_servers');
   
   instance.autorun(() => {
-    let importFunctionId = FlowRouter.getParam('functionId');
+    let calculatedFieldId = FlowRouter.getParam('fieldId');
     
-    instance.subscribe('integration_import_function', importFunctionId);
+    instance.subscribe('integration_calculated_field', calculatedFieldId);
   })
 });
 
 /**
  * Template Rendered
  */
-Template.IntegrationImportFunction.onRendered(() => {
+Template.IntegrationCalculatedField.onRendered(() => {
   
 });
 
 /**
  * Template Destroyed
  */
-Template.IntegrationImportFunction.onDestroyed(() => {
+Template.IntegrationCalculatedField.onDestroyed(() => {
   
 });

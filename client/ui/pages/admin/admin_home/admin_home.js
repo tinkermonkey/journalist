@@ -1,11 +1,49 @@
 import './admin_home.html';
 import { Template } from 'meteor/templating';
-import './panels/contributor_role_definitions';
+import { Contributors } from '../../../../../imports/api/contributors/contributors';
+import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
+import { IntegrationCalculatedFields } from '../../../../../imports/api/integrations/integration_calculated_fields';
+import { IntegrationDisplayTemplates } from '../../../../../imports/api/integrations/integration_display_templates';
+import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
+import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
+import { Projects } from '../../../../../imports/api/projects/projects';
+import { Teams } from '../../../../../imports/api/teams/teams';
+import { Users } from '../../../../../imports/api/users/users';
+import './admin_stats_imported_items';
+import './admin_stats_contributors';
 
 /**
  * Template Helpers
  */
-Template.AdminHome.helpers({});
+Template.AdminHome.helpers({
+  calculatedFieldCount () {
+    return IntegrationCalculatedFields.find().count()
+  },
+  contributorCount () {
+    return Contributors.find().count()
+  },
+  displayTemplateCount () {
+    return IntegrationDisplayTemplates.find().count()
+  },
+  importFunctionCount () {
+    return IntegrationImportFunctions.find().count()
+  },
+  projectCount () {
+    return Projects.find().count()
+  },
+  roleDefinitionCount () {
+    return ContributorRoleDefinitions.find().count()
+  },
+  serverCount () {
+    return IntegrationServers.find().count()
+  },
+  teamCount () {
+    return Teams.find().count()
+  },
+  userCount () {
+    return Users.find().count()
+  }
+});
 
 /**
  * Template Event Handlers
