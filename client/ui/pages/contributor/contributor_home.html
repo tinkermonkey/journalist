@@ -7,11 +7,21 @@
           <h1>{{name}}</h1>
           {{> ContributorHeader }}
           
-          {{#if shouldSeeReports }}
-            {{> ContributorStatusReportsDue }}
-          {{/if}}
-          
-          {{> DocumentStatusReports sourceCollection='Contributors' sourceId=_id contributorId=contributorId }}
+          {{#RobaTabGroup name="contributor-tabs" cssClass="nav-tabs"}}
+            {{#if shouldSeeReports }}
+              {{#RobaTab name="status-report-due" title="Status Reports Due"}}
+                {{> ContributorStatusReportsDue }}
+              {{/RobaTab}}
+            {{/if}}
+            
+            {{#RobaTab name="status-reports" title="Status Reports"}}
+              {{> DocumentStatusReports sourceCollection='Contributors' sourceId=_id contributorId=contributorId }}
+            {{/RobaTab}}
+  
+            {{#RobaTab name="imported-items" title="Items"}}
+              {{> ContributorItems }}
+            {{/RobaTab}}
+          {{/RobaTabGroup}}
         </div>
         <div class="col-md-3">
           {{> ContributorSidebar }}
