@@ -79,23 +79,24 @@ export class C3DonutWrapper {
     
     // Aggregate the data
     data.forEach((row) => {
-      let column = row[ self.config.attribute ] || self.config.countNull ? 'null' : undefined;
-      if (column !== undefined) {
-        if (!map[ column ]) {
-          let title = Util.camelToTitle(column);
+      let columnKey = row[ self.config.attribute ];
+      
+      if (columnKey === undefined && self.config.countNull === true || _.isString(columnKey) && columnKey.length === 0) {
+        columnKey = 'null';
+      }
+      
+      if (columnKey !== undefined) {
+        if (!map[ columnKey ]) {
+          let title = self.config.renderLabel && _.isFunction(self.config.renderLabel) ? self.config.renderLabel(columnKey) : Util.camelToTitle(columnKey);
           
-          if (self.config.renderLabel && _.isFunction(self.config.renderLabel)) {
-            title = self.config.renderLabel(column);
-          }
-          
-          map[ column ] = {
+          map[ columnKey ] = {
             title: title,
             value: 0
           }
         }
         
         if (self.config.aggregation === 'count') {
-          map[ column ].value += 1;
+          map[ columnKey ].value += 1;
         } else {
           console.error('C3DonutWrapper.parseData unknown aggregation:', self.config.aggregation);
         }
