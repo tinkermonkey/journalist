@@ -6,5 +6,6 @@ export const ItemTypes = {
   roadMapItem  : 4,
   documentation: 5,
   testCase     : 6,
-  testPlan     : 7
+  testPlan     : 7,
+  supportTicket: 8
 };
