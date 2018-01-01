@@ -5,6 +5,7 @@ import { ContributorRoleDefinitions } from '../../../../../imports/api/contribut
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
 import './admin_contributors_table';
+import '../admin_home/admin_stats_contributors';
 
 /**
  * Template Helpers
