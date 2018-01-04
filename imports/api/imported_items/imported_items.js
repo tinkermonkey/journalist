@@ -19,7 +19,7 @@ export const ImportedItem = new SimpleSchema({
     type: String
   },
   // The team(s) that may own this, plural because it can be indeterminate if an owner is on multiple teams for the same project
-  teamIds      : {
+  teamId      : {
     type    : [ String ],
     optional: true
   },
@@ -52,7 +52,7 @@ export const ImportedItem = new SimpleSchema({
     optional: true,
     label   : 'The _id of the Contributor who owns this item'
   },
-// The descriptive label of the status of this issue (Assigned, Closed, etc)
+  // The descriptive label of the status of this issue (Assigned, Closed, etc)
   statusLabel  : {
     type    : String,
     optional: true

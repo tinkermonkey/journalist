@@ -415,7 +415,7 @@ export class IntegrationServiceProvider {
       
       // Try to identify the team
       if (importedItem.owner && projectId) {
-        importedItem.teamIds = ContributorProjectAssignments.find({
+        importedItem.teamId = ContributorProjectAssignments.find({
           contributorId: importedItem.owner,
           projectId    : projectId
         }).map((projectAssignment) => {
@@ -423,7 +423,7 @@ export class IntegrationServiceProvider {
           return role && role.teamId
         });
       } else if (importedItem.owner) {
-        importedItem.teamIds = ContributorTeamRoles.find({
+        importedItem.teamId = ContributorTeamRoles.find({
           contributorId: importedItem.owner
         }).map((teamRole) => {
           return teamRole.teamId

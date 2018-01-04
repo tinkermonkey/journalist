@@ -17,7 +17,7 @@ export const ContributorTeamRole = new SimpleSchema({
     type      : String,
     denyUpdate: true
   },
-  // An array of the teamIds that this role applies to
+  // The teamId that this role applies to
   teamId          : {
     type: String
   },
