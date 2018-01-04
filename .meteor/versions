@@ -94,6 +94,7 @@ mrt:moment-timezone@0.2.1
 natestrauser:x-editable-bootstrap@1.5.2_4
 npm-bcrypt@0.9.3
 npm-mongo@2.2.33
+numeral:numeral@1.5.3_1
 oauth@1.2.1
 oauth1@1.2.0
 observe-sequence@1.0.16
