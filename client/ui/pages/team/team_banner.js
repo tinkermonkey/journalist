@@ -4,9 +4,8 @@ import { ContributorTeamRoles } from '../../../../imports/api/contributors/contr
 import { ContributorProjectAssignments } from '../../../../imports/api/contributors/contributor_project_assignments';
 import { ContributorRoleDefinitions } from '../../../../imports/api/contributors/contributor_role_definitions';
 import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
-import { ImportedItemWorkPhases} from '../../../../imports/api/imported_items/imported_item_work_phases';
-import { ImportedItemWorkStates} from '../../../../imports/api/imported_items/imported_item_work_states';
-import {ItemTypes} from '../../../../imports/api/imported_items/item_types';
+import { ImportedItemWorkPhases } from '../../../../imports/api/imported_items/imported_item_work_phases';
+import { ItemTypes } from '../../../../imports/api/imported_items/item_types';
 import { Projects } from '../../../../imports/api/projects/projects';
 import '../../components/charts/donut_chart';
 import { Util } from '../../../../imports/api/util';
@@ -88,7 +87,7 @@ Template.TeamBanner.helpers({
   },
   teamPlanningTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs({ teamId: team._id, workPhase: ImportedItemWorkPhases.planning });
+        data = ImportedItemCrumbs.find({ teamId: team._id, workPhase: ImportedItemWorkPhases.planning }).fetch();
     
     return {
       cssClass: 'donut-flex',
@@ -114,7 +113,7 @@ Template.TeamBanner.helpers({
   },
   teamImplementingTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs({ teamId: team._id, workPhase: ImportedItemWorkPhases.implementation });
+        data = ImportedItemCrumbs.find({ teamId: team._id, workPhase: ImportedItemWorkPhases.implementation }).fetch();
     
     return {
       cssClass: 'donut-flex',
@@ -140,7 +139,7 @@ Template.TeamBanner.helpers({
   },
   teamVerificationTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs({ teamId: team._id, workPhase: ImportedItemWorkPhases.verification });
+        data = ImportedItemCrumbs.find({ teamId: team._id, workPhase: ImportedItemWorkPhases.verification }).fetch();
     
     return {
       cssClass: 'donut-flex',
