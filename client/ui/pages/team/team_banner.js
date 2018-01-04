@@ -37,7 +37,7 @@ Template.TeamBanner.helpers({
         valueAttribute: 'value',
         chart         : {
           donut: {
-            title: 'Role Capacity (People)',
+            title: { text: [ 'Capacity by role', '(People)' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value && value / 100
@@ -69,7 +69,7 @@ Template.TeamBanner.helpers({
         valueAttribute: 'percent',
         chart         : {
           donut: {
-            title: 'Project Capacity (People)',
+            title: { text: [ 'Capacity by project', '(People)' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value && value / 100
@@ -96,7 +96,7 @@ Template.TeamBanner.helpers({
         valueAttribute: 'itemType',
         chart         : {
           donut: {
-            title: 'Planning',
+            title: { text: [ 'Being planned', '(items)' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value
@@ -122,7 +122,7 @@ Template.TeamBanner.helpers({
         valueAttribute: 'itemType',
         chart         : {
           donut: {
-            title: 'Implementing',
+            title: { text: [ 'Being implemented', '(items)' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value
@@ -148,7 +148,7 @@ Template.TeamBanner.helpers({
         valueAttribute: 'itemType',
         chart         : {
           donut: {
-            title: 'Verifying',
+            title: { text: [ 'Being verified', '(items)' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value

@@ -1,8 +1,13 @@
+import { numeral } from 'meteor/numeral:numeral';
 import { Util } from '../../../../imports/api/util';
 
-let c3    = require('c3'),
-    debug = false,
-    trace = false;
+let c3         = require('c3'),
+    d3         = require('d3'),
+    debug      = false,
+    trace      = false,
+    totalDy    = -0.4,
+    nextDy     = 2.8,
+    standardDy = 1.2;
 
 export class C3DonutWrapper {
   constructor (containerId, config) {
@@ -13,7 +18,9 @@ export class C3DonutWrapper {
     
     // Merge the passed config with the default config
     this.config = _.extend({
-      title      : 'Donut Chart',
+      chart      : {
+        title: 'Donut Chart',
+      },
       aggregation: 'count',
       attribute  : 'value'
     }, config);
@@ -31,21 +38,33 @@ export class C3DonutWrapper {
     self.parseData(data);
     
     // Generate the chart
-    let chartConfig = _.extend({
-      bindto : '#' + self.containerId,
-      data   : {
+    self.chartConfig = _.extend({
+      bindto: '#' + self.containerId,
+      data  : {
         type   : 'donut',
         columns: self.columns
       },
-      donut  : {
-        title: self.config.title
+      donut : {
+        title: 'Donut!'
       },
-      legend : {
+      legend: {
         show: self.columns.length < 5
       }
     }, self.config.chart);
-    trace && console.log(Util.timestamp(), 'C3DonutWrapper.generate chartConfig:', chartConfig);
-    self.chart = c3.generate(chartConfig);
+    
+    // check for a custom title
+    if (!_.isString(self.chartConfig.donut.title)) {
+      debug && console.log('C3DonutWrapper custom title:', chartConfig.donut.title);
+      self.chartConfig.customTitle = _.clone(self.chartConfig.donut.title);
+      self.chartConfig.donut.title = '';
+    }
+    
+    debug && console.log(Util.timestamp(), 'C3DonutWrapper.generate chartConfig:', self.chartConfig);
+    self.chart = c3.generate(self.chartConfig);
+    
+    if (self.chartConfig.customTitle) {
+      self.updateCustomTitle();
+    }
   }
   
   /**
@@ -63,9 +82,48 @@ export class C3DonutWrapper {
       self.chart.load({
         columns: self.columns
       });
+      
+      if (self.chartConfig.customTitle) {
+        self.updateCustomTitle();
+      }
     } else {
       console.error('C3DonutWrapper.update failed because no chart was found');
     }
+  }
+  
+  updateCustomTitle () {
+    debug && console.log(Util.timestamp(), 'C3DonutWrapper.update:', this.containerId, data && data.length);
+    let self = this;
+    
+    self.titleElement = d3.select('#' + self.containerId + ' .c3-chart-arcs-title');
+    self.titleElement.selectAll('*').remove();
+    
+    if (self.chartConfig.customTitle.showTotal) {
+      let total = _.flatten(self.columns).reduce((acc, val) => {
+        return (_.isNumber(val) ? val : 0) + acc
+      }, 0);
+      
+      // Format the total if needed
+      if (self.chartConfig.donut.label && _.isFunction(self.chartConfig.donut.label.format)) {
+        total = self.chartConfig.donut.label.format(total, 1);
+      }
+      
+      self.titleElement
+          .append('tspan')
+          .attr('class', 'donut-total')
+          .attr('x', 0)
+          .attr('dy', totalDy + 'em')
+          .text(total);
+    }
+    
+    self.chartConfig.customTitle.text.forEach((piece, i) => {
+      let dy = self.chartConfig.customTitle.showTotal && i === 0 ? nextDy : i * standardDy;
+      self.titleElement
+          .append('tspan')
+          .attr('x', 0)
+          .attr('dy', dy + 'em')
+          .text(piece);
+    })
   }
   
   /**
