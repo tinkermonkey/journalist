@@ -32,15 +32,15 @@ export class C3DonutWrapper {
     
     // Generate the chart
     let chartConfig = _.extend({
-      bindto: '#' + self.containerId,
-      data  : {
+      bindto : '#' + self.containerId,
+      data   : {
         type   : 'donut',
         columns: self.columns
       },
-      donut : {
+      donut  : {
         title: self.config.title
       },
-      legend: {
+      legend : {
         show: self.columns.length < 5
       }
     }, self.config.chart);
@@ -79,7 +79,14 @@ export class C3DonutWrapper {
     
     // Aggregate the data
     data.forEach((row) => {
-      let columnKey = row[ self.config.attribute ];
+      let columnKey;
+      
+      // If an attribute to pick the data key from is defined, use it
+      if (self.config.keyAttribute) {
+        columnKey = row[ self.config.keyAttribute ]
+      } else {
+        columnKey = row[ self.config.valueAttribute ]
+      }
       
       if (columnKey === undefined && self.config.countNull === true || _.isString(columnKey) && columnKey.length === 0) {
         columnKey = 'null';
@@ -97,6 +104,8 @@ export class C3DonutWrapper {
         
         if (self.config.aggregation === 'count') {
           map[ columnKey ].value += 1;
+        } else if (self.config.aggregation === 'sum') {
+          map[ columnKey ].value += row[ self.config.valueAttribute ];
         } else {
           console.error('C3DonutWrapper.parseData unknown aggregation:', self.config.aggregation);
         }

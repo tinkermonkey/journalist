@@ -12,6 +12,9 @@ export const IntegrationDisplayTemplate = new SimpleSchema({
   title            : {
     type: String
   },
+  templateName     : {
+    type: String
+  },
   templateLayout   : {
     type    : String,
     optional: true

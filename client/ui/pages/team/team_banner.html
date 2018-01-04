@@ -1,5 +1,15 @@
 <template name="TeamBanner">
-  <div class="page-banner team-banner">
-  
-  </div>
+  {{#if Template.subscriptionsReady}}
+    <div class="flex">
+      {{> DonutChart teamCapacityDonutContext }}
+      {{> DonutChart projectCapacityDonutContext }}
+    </div>
+    <div class="flex">
+      {{> DonutChart teamPlanningTicketTypes }}
+      {{> DonutChart teamImplementingTicketTypes }}
+      {{> DonutChart teamVerificationTicketTypes }}
+    </div>
+  {{else}}
+    {{> RobaSpinner rainbow=true}}
+  {{/if}}
 </template>

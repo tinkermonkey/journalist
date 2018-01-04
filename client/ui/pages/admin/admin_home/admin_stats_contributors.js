@@ -16,7 +16,7 @@ Template.AdminStatsContributors.helpers({
       config  : {
         title    : 'Contributor Roles',
         countNull: true,
-        attribute: 'roleId',
+        valueAttribute: 'roleId',
         renderLabel (value) {
           if (value !== 'null') {
             let roleDefinition = ContributorRoleDefinitions.findOne(value);
@@ -35,7 +35,7 @@ Template.AdminStatsContributors.helpers({
       cssClass: 'donut-flex',
       config  : {
         title    : 'Contributor Types',
-        attribute: 'usertype',
+        valueAttribute: 'usertype',
         renderLabel (value) {
           return Util.camelToTitle(_.invert(UserTypes)[ value ])
         }
@@ -49,7 +49,7 @@ Template.AdminStatsContributors.helpers({
       cssClass: 'donut-flex',
       config  : {
         title    : 'Contributor Is Active',
-        attribute: 'isActive',
+        valueAttribute: 'isActive',
         renderLabel (value) {
           return value ? 'Yes' : 'No'
         }

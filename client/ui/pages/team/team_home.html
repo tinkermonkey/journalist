@@ -1,15 +1,22 @@
 <template name="TeamHome">
   {{#with team}}
-    <div class="full-width">{{> TeamBanner }}</div>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-9">
-          <h1>{{title}}</h1>
-          {{> TeamHeader }}
-        </div>
-        <div class="col-md-3">{{> TeamSidebar }}</div>
+    {{#if Template.subscriptionsReady}}
+      <div class="full-width page-banner">
+        <div class="banner-title">{{title}}</div>
+        {{> TeamBanner }}
       </div>
-    </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-9">
+            <h2>Team Members</h2>
+            {{> TeamHeader }}
+          </div>
+          <div class="col-md-3">{{> TeamSidebar }}</div>
+        </div>
+      </div>
+    {{else}}
+      {{> RobaSpinner rainbow=true }}
+    {{/if}}
   {{else}}
     {{> NotFound}}
   {{/with}}

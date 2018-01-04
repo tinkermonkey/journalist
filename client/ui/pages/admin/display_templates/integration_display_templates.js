@@ -42,6 +42,10 @@ Template.IntegrationDisplayTemplates.events({
           title    : {
             type : String,
             label: 'Title'
+          },
+          templateName    : {
+            type : String,
+            label: 'Template Name'
           }
         })
       },

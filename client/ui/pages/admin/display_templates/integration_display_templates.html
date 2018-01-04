@@ -19,6 +19,7 @@
             <tr>
               <th></th>
               <th>Title</th>
+              <th>Template Name</th>
               <th>Modified By</th>
               <th>Modified</th>
               <th></th>
@@ -34,6 +35,7 @@
                   </a>
                 </td>
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+                <td>{{> EditableTextField dataKey="templateName" value=templateName emptyText="Template Name" }}</td>
                 <td>{{userName modifiedBy}}</td>
                 <td>{{dateFormat dateModified}}</td>
                 <td>

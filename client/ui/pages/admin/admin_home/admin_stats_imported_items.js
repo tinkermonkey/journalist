@@ -18,7 +18,7 @@ Template.AdminStatsImportedItems.helpers({
       cssClass: 'donut-flex',
       config  : {
         title    : 'Item Types',
-        attribute: 'itemType',
+        valueAttribute: 'itemType',
         renderLabel (value) {
           return Util.camelToTitle(_.invert(ItemTypes)[ value ])
         },
@@ -32,7 +32,7 @@ Template.AdminStatsImportedItems.helpers({
       cssClass: 'donut-flex',
       config  : {
         title    : 'Projects',
-        attribute: 'projectId',
+        valueAttribute: 'projectId',
         renderLabel (projectId) {
           let project = Projects.findOne(projectId);
           return project && project.title
@@ -47,7 +47,7 @@ Template.AdminStatsImportedItems.helpers({
       cssClass: 'donut-flex',
       config  : {
         title    : 'Work States',
-        attribute: 'workState',
+        valueAttribute: 'workState',
         renderLabel (value) {
           return Util.camelToTitle(_.invert(ImportedItemWorkStates)[ value ])
         },
@@ -61,7 +61,7 @@ Template.AdminStatsImportedItems.helpers({
       cssClass: 'donut-flex',
       config  : {
         title    : 'Work Phases',
-        attribute: 'workPhase',
+        valueAttribute: 'workPhase',
         renderLabel (value) {
           return Util.camelToTitle(_.invert(ImportedItemWorkPhases)[ value ])
         },
