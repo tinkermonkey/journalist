@@ -1,5 +1,5 @@
 import { Integrator } from './integrator';
-import { IntegrationTypes } from '../integration_types';
+import { IntegrationTypes } from '../../../api/integrations/integration_types';
 
 /**
  * Integrator for pulling in confluence pages

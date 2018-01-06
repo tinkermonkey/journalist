@@ -11,8 +11,8 @@ import { IntegrationServerCaches } from '../../api/integrations/integration_serv
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { IntegrationTypes } from '../../api/integrations/integration_types';
 import { UserTypes } from '../../api/users/user_types';
-import { ConfluenceIntegrator } from '../../api/integrations/integrators/confluence_integrator';
-import { JiraIntegrator } from '../../api/integrations/integrators/jira_integrator';
+import { ConfluenceIntegrator } from './integrators/confluence_integrator';
+import { JiraIntegrator } from './integrators/jira_integrator';
 import { IntegrationAgent } from './integration_agent';
 
 const { URL } = require('url');

@@ -1,10 +1,10 @@
 import { Integrator } from './integrator';
-import { IntegrationTypes } from '../integration_types';
+import { IntegrationTypes } from '../../../api/integrations/integration_types';
 import { Meteor } from "meteor/meteor";
 import { MongoCookieStore } from './mongo_cookie_store';
-import { Util } from '../../util';
-import { ImportedItemWorkPhases } from '../../imported_items/imported_item_work_phases';
-import { ImportedItemWorkStates } from '../../imported_items/imported_item_work_states';
+import { Util } from '../../../api/util';
+import { ImportedItemWorkPhases } from '../../../api/imported_items/imported_item_work_phases';
+import { ImportedItemWorkStates } from '../../../api/imported_items/imported_item_work_states';
 
 // Pull in the jira connector
 const JiraConnector    = require('jira-connector'),
