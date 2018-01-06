@@ -37,6 +37,7 @@ Meteor.startup(() => {
       usertype: UserTypes.administrator
     });
     
+    /*
     // Create some role definitions
     [
       'Developer',
@@ -56,6 +57,7 @@ Meteor.startup(() => {
         order: order
       })
     });
+    */
     
     console.info('...Fixture complete');
     console.info('=====================================');
