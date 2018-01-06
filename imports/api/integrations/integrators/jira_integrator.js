@@ -196,6 +196,9 @@ export class JiraIntegrator extends Integrator {
       // Cache the list of issue types
       self.provider.storeCachedItem('issueTypeList', self.fetchData('issueType', 'getAllIssueTypes').response);
       
+      // Cache the list of agile boards
+      self.provider.storeCachedItem('boardList', self.fetchData('board', 'getAllBoards').response);
+      
       // Cache the list of fields and create synthetic keys based on the field name for custom fields
       let fields = self.fetchData('field', 'getAllFields').response;
       fields.forEach((field) => {

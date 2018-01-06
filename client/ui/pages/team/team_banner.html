@@ -1,15 +1,3 @@
 <template name="TeamBanner">
-  {{#if Template.subscriptionsReady}}
-    <div class="flex">
-      {{> DonutChart teamCapacityDonutContext }}
-      {{> DonutChart projectCapacityDonutContext }}
-    </div>
-    <div class="flex">
-      {{> DonutChart teamPlanningTicketTypes }}
-      {{> DonutChart teamImplementingTicketTypes }}
-      {{> DonutChart teamVerificationTicketTypes }}
-    </div>
-  {{else}}
-    {{> RobaSpinner rainbow=true}}
-  {{/if}}
+  {{> Template.dynamic template=teamBannerTemplate}}
 </template>
