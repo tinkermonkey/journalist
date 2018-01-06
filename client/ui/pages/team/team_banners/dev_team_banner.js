@@ -86,7 +86,11 @@ Template.DevTeamBanner.helpers({
   },
   teamPlanningTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs.find({ teamId: team._id, workPhase: ImportedItemWorkPhases.planning }).fetch();
+        data = ImportedItemCrumbs.find({
+          teamId   : team._id,
+          workPhase: ImportedItemWorkPhases.planning,
+          itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
+        }).fetch();
     
     return {
       cssClass: 'donut-flex',
@@ -112,7 +116,11 @@ Template.DevTeamBanner.helpers({
   },
   teamImplementingTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs.find({ teamId: team._id, workPhase: ImportedItemWorkPhases.implementation }).fetch();
+        data = ImportedItemCrumbs.find({
+          teamId   : team._id,
+          workPhase: ImportedItemWorkPhases.implementation,
+          itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
+        }).fetch();
     
     return {
       cssClass: 'donut-flex',
@@ -138,7 +146,11 @@ Template.DevTeamBanner.helpers({
   },
   teamVerificationTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs.find({ teamId: team._id, workPhase: ImportedItemWorkPhases.verification }).fetch();
+        data = ImportedItemCrumbs.find({
+          teamId   : team._id,
+          workPhase: ImportedItemWorkPhases.verification,
+          itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
+        }).fetch();
     
     return {
       cssClass: 'donut-flex',
