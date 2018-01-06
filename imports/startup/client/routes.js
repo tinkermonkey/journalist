@@ -14,6 +14,7 @@ import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_
 import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions.js';
 import '../../../client/ui/pages/admin/display_templates/integration_display_template.js';
 import '../../../client/ui/pages/admin/display_templates/integration_display_templates.js';
+import '../../../client/ui/pages/admin/import_export/import_export.js';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function.js';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_functions.js';
 import '../../../client/ui/pages/admin/integration_servers/integration_servers.js';
@@ -136,6 +137,13 @@ FlowRouter.route('/admin/contributor_role_definitions', {
   name: 'ContributorRoleDefinitions',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'ContributorRoleDefinitions' });
+  }
+});
+
+FlowRouter.route('/admin/import_export', {
+  name: 'ImportExport',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'ImportExport' });
   }
 });
 

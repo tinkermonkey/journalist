@@ -14,6 +14,9 @@ import '../../api/efforts/server/publications.js';
 //import '../../api/features/server/methods.js';
 //import '../../api/features/server/publications.js';
 
+// Import Export tool
+import '../../api/import_export_tool/server/methods.js';
+
 // Imported Items
 import '../../api/imported_items/server/methods.js';
 import '../../api/imported_items/server/publications.js';

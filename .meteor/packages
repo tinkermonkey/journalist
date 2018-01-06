@@ -51,3 +51,7 @@ markdown@1.0.12
 frpz:ping
 numeral:numeral
 spacebars-compiler
+tomi:upload-server
+tomi:upload-jquery
+meteorhacks:picker
+momentjs:moment

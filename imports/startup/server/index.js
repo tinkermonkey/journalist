@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { UploadServer } from 'meteor/tomi:upload-server';
 
 // include the base layer functionality
 import './register-api.js';
@@ -20,4 +21,10 @@ Meteor.startup(() => {
   console.log('===========================');
   HealthTracker.init();
   IntegrationService.start();
+  
+  UploadServer.init({
+    tmpDir: '/tmp/',
+    uploadDir: '/tmp/',
+    checkCreateDirectories: true
+  });
 });

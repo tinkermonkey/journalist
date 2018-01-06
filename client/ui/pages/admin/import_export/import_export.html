@@ -1,0 +1,36 @@
+<template name="ImportExport">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li class="active">Admin Home</li>
+        </ol>
+        
+        <h1>Import Export</h1>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-12">
+          <div class="flex">
+            <div style="flex-basis: 50%; margin-right: 10px;">
+              <h1>Import</h1>
+              <div class="alert alert-info" role="alert">
+                Select an export file to load. Data will be merged with the existing data.
+              </div>
+              {{> upload_bootstrap callbacks=uploadCallbacks}}
+            </div>
+            <div style="flex-basis: 50%;">
+              <h1>Export</h1>
+              <div class="alert alert-info" role="alert">
+                Export the pipeline and decipherer configuration to transfer it to another system.
+              </div>
+              <div class="pull-right">
+                <button class="btn btn-small btn-primary btn-export">Export</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
