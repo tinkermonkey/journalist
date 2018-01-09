@@ -1,10 +1,19 @@
 import './project_banner.html';
 import { Template } from 'meteor/templating';
+import './project_banners/support_project_banner';
 
 /**
  * Template Helpers
  */
-Template.ProjectBanner.helpers({});
+Template.ProjectBanner.helpers({
+  projectBannerTemplate(){
+    let project = this;
+    switch (project.homeBanner){
+      default:
+        return 'SupportProjectBanner'
+    }
+  }
+});
 
 /**
  * Template Event Handlers
