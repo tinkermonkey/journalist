@@ -3,7 +3,7 @@ import { Util } from '../../../../imports/api/util';
 
 let c3         = require('c3'),
     d3         = require('d3'),
-    debug      = false,
+    debug      = true,
     trace      = false,
     totalDy    = -0.4,
     nextDy     = 2.8,
