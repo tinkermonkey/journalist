@@ -88,8 +88,11 @@ export class C3DonutWrapper {
     }
   }
   
+  /**
+   * Update the custom title if one exists
+   */
   updateCustomTitle () {
-    debug && console.log(Util.timestamp(), 'C3DonutWrapper.update:', this.containerId, data && data.length);
+    debug && console.log(Util.timestamp(), 'C3DonutWrapper.update:', this.containerId);
     let self = this;
     
     self.titleElement = d3.select('#' + self.containerId + ' .c3-chart-arcs-title');
