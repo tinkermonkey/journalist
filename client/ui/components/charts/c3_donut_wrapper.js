@@ -18,9 +18,6 @@ export class C3DonutWrapper {
     
     // Merge the passed config with the default config
     this.config = _.extend({
-      chart      : {
-        bindto: '#' + this.containerId,
-      },
       aggregation: 'count',
       attribute  : 'value'
     }, config);
@@ -39,6 +36,7 @@ export class C3DonutWrapper {
     
     // Generate the chart
     self.chartConfig = _.extend({
+      bindto: '#' + this.containerId,
       data  : {
         type   : 'donut',
         columns: self.columns
@@ -53,7 +51,7 @@ export class C3DonutWrapper {
     
     // check for a custom title
     if (!_.isString(self.chartConfig.donut.title)) {
-      debug && console.log('C3DonutWrapper custom title:', chartConfig.donut.title);
+      debug && console.log('C3DonutWrapper custom title:', self.chartConfig.donut.title);
       self.chartConfig.customTitle = _.clone(self.chartConfig.donut.title);
       self.chartConfig.donut.title = '';
     }
