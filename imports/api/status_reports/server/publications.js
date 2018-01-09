@@ -70,3 +70,22 @@ Meteor.publish('contributor_incomplete_reports', function (contributorId) {
     return [];
   }
 });
+
+Meteor.publish('contributor_recent_reports', function (contributorId) {
+  console.log('Publish: contributor_incomplete_reports', contributorId);
+  if (this.userId) {
+    let user = Meteor.user();
+    if (user.managesContributor(contributorId) || user.contributor()._id === contributorId) {
+      return StatusReports.find({
+        contributorId: contributorId,
+        state        : StatusReportStates.submitted,
+      });
+    } else {
+      this.ready();
+      return [];
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});

@@ -6,7 +6,13 @@
           {{#each activeReports }}
             <tr>
               <td><a href="{{pathFor 'ContributorHome' contributorId=contributorId}}">{{contributorName contributorId}}</a></td>
-              <td>due {{fromNow dueDate}}</td>
+              <td>
+                {{#if dueDate}}
+                  due {{fromNow dueDate}}
+                {{else}}
+                  In progress
+                {{/if}}
+              </td>
             </tr>
           {{/each}}
         </table>

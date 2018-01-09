@@ -5,24 +5,33 @@
       
       <div class="status-reports-due">
         {{#each statusReportsDue}}
-          <div class="no-wrap" data-pk="{{_id}}">
+          <div class="status-report-breadcrumbs no-wrap" data-pk="{{_id}}">
             <ol class="breadcrumb">
               <li class="active">{{sourceCollection}}</li>
               <li>
                 <a href="{{pathFor sourceDetails.routeName sourceRouteParamValue}}">{{sourceLabel}}</a>
               </li>
               <li>
-                due <span class="{{isImminentReport}}">{{fromNow dueDate}}</span>
-                ({{dateFormat dueDate 'ddd MMM Do'}} at {{dateFormat dueDate 'h:mm a'}})
+                {{#if dueDate}}
+                  due <span class="{{isImminentReport}}">{{fromNow dueDate}}</span>
+                  ({{dateFormat dueDate 'ddd MMM Do'}} at {{dateFormat dueDate 'h:mm a'}})
+                {{else}}
+                  No due date
+                {{/if}}
+                , last updated {{fromNow dateModified}}
               </li>
-              <li class="btn-file-report">
-                <a href="{{pathFor sourceDetails.routeName sourceRouteParamValue}}?action=report">
-                  <span class="glyphicon glyphicon-comment"></span>
+              <li class="breadcrumb-controls">
+                <a class="btn-file-report">
+                  <span class="glyphicon glyphicon-pencil"></span>
                 </a>
               </li>
             </ol>
           </div>
         {{/each}}
+      </div>
+  
+      <div class="report-form-container">
+  
       </div>
     {{/if}}
   {{else}}

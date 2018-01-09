@@ -19,7 +19,7 @@ export class C3DonutWrapper {
     // Merge the passed config with the default config
     this.config = _.extend({
       chart      : {
-        title: 'Donut Chart',
+        bindto: '#' + this.containerId,
       },
       aggregation: 'count',
       attribute  : 'value'
@@ -39,13 +39,12 @@ export class C3DonutWrapper {
     
     // Generate the chart
     self.chartConfig = _.extend({
-      bindto: '#' + self.containerId,
       data  : {
         type   : 'donut',
         columns: self.columns
       },
       donut : {
-        title: 'Donut!'
+        title: self.config.title || 'Donut Chart'
       },
       legend: {
         show: self.columns.length < 5

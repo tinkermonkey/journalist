@@ -9,6 +9,7 @@ import '../../../client/ui/stylesheets/page_banner.css';
 import '../../../client/ui/stylesheets/show_controls.css';
 import '../../../client/ui/stylesheets/sidebar.css';
 import '../../../client/ui/stylesheets/sortable_table.css';
+import '../../../client/ui/stylesheets/status_reports.css';
 import '../../../client/ui/stylesheets/team_roster_assignments.css';
 
 // Supporting configuration

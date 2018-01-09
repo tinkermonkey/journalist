@@ -13,7 +13,9 @@
             </td>
             <td class="no-wrap">{{dateFormat dueDate}}</td>
             <td><!-- data type specific info goes here --></td>
-            <td>{{#markdown}}{{body}}{{/markdown}}</td>
+            <td>
+              Created on {{dateFormat dateCreated 'MMM Do'}}, last edited {{dateFormat dateModified 'MMM Do'}} at {{dateFormat dateModified 'h:mm a'}}
+            </td>
             <td class="text-right no-wrap">
               <a class="btn-edit-report">
                 <span class="glyphicon glyphicon-open-file"></span>

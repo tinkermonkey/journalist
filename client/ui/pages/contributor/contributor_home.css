@@ -1,21 +1,4 @@
 /**
- * List of reports due
- */
-.status-reports-due ol.breadcrumb .btn-file-report {
-  text-align : right;
-  float      : right;
-}
-
-.status-reports-due ol.breadcrumb .btn-file-report::before {
-  content : none;
-}
-
-.status-reports-due .imminent-report {
-  color       : #ffffff;
-  font-weight : bold;
-}
-
-/**
  * Header
  */
 .contributor-header {

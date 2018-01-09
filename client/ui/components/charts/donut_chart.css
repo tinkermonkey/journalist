@@ -19,3 +19,7 @@
   font-weight: bold;
   opacity: 0.5;
 }
+
+.donut-chart-container .c3-tooltip {
+  white-space: nowrap;
+}

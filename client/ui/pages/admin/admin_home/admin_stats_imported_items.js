@@ -17,7 +17,7 @@ Template.AdminStatsImportedItems.helpers({
     return {
       cssClass: 'donut-flex',
       config  : {
-        title    : 'Item Types',
+        title: { text: [ 'Items', 'By Type' ], showTotal: true },
         valueAttribute: 'itemType',
         renderLabel (value) {
           return Util.camelToTitle(_.invert(ItemTypes)[ value ])
@@ -31,7 +31,7 @@ Template.AdminStatsImportedItems.helpers({
     return {
       cssClass: 'donut-flex',
       config  : {
-        title    : 'Projects',
+        title: { text: [ 'Items', 'By Project' ], showTotal: true },
         valueAttribute: 'projectId',
         renderLabel (projectId) {
           let project = Projects.findOne(projectId);

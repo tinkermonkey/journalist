@@ -14,7 +14,7 @@ Template.AdminStatsContributors.helpers({
     return {
       cssClass: 'donut-flex',
       config  : {
-        title    : 'Contributor Roles',
+        title: { text: [ 'Contributor Roles' ], showTotal: true },
         countNull: true,
         valueAttribute: 'roleId',
         renderLabel (value) {
@@ -34,7 +34,7 @@ Template.AdminStatsContributors.helpers({
     return {
       cssClass: 'donut-flex',
       config  : {
-        title    : 'Contributor Types',
+        title: { text: [ 'Contributor Types' ], showTotal: true },
         valueAttribute: 'usertype',
         renderLabel (value) {
           return Util.camelToTitle(_.invert(UserTypes)[ value ])
@@ -48,7 +48,7 @@ Template.AdminStatsContributors.helpers({
     return {
       cssClass: 'donut-flex',
       config  : {
-        title    : 'Contributor Is Active',
+        title: { text: [ 'Contributors Active' ], showTotal: true },
         valueAttribute: 'isActive',
         renderLabel (value) {
           return value ? 'Yes' : 'No'

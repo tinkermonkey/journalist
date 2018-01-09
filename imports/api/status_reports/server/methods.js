@@ -13,7 +13,7 @@ Meteor.methods({
    * @param sourceCollection {String}
    * @param sourceId {String}
    * @param state {StatusReportStates}
-   * @param dueDate {Date}
+   * @param dueDate {Date} (optional)
    */
   addStatusReport (contributorId, sourceCollection, sourceId, state, dueDate) {
     console.log('addStatusReport:', contributorId, sourceCollection, sourceId, state, dueDate);
@@ -24,10 +24,9 @@ Meteor.methods({
     check(sourceCollection, String);
     check(sourceId, String);
     check(state, Number);
-    check(dueDate, Date);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(contributorId) || user.isAdmin() || user.contributorId === contributorId) {
+    if (user.managesContributor(contributorId) || user.isAdmin() || user.contributorId() === contributorId) {
       // Create the statusReport
       let reportId = StatusReports.insert({
         contributorId   : contributorId,
@@ -55,7 +54,7 @@ Meteor.methods({
       
       return { reportId: reportId }
     } else {
-      console.error('Non-authorized user tried to add a statusReport:', user.username, sourceCollection, sourceId);
+      console.error('Non-authorized user tried to add a statusReport:', user.contributorId(), contributorId, user.username, sourceCollection, sourceId);
       throw new Meteor.Error(403);
     }
   },
@@ -79,7 +78,7 @@ Meteor.methods({
     let statusReport = StatusReports.findOne(statusReportId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(statusReport.contributorId) || user.isAdmin() || user.contributorId === statusReport.contributorId) {
+    if (user.managesContributor(statusReport.contributorId) || user.isAdmin() || user.contributorId() === statusReport.contributorId) {
       let update    = {};
       update[ key ] = value;
       
@@ -136,7 +135,7 @@ Meteor.methods({
     let statusReport = StatusReports.findOne(statusReportId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(statusReport.contributorId) || user.isAdmin() || user.contributorId === statusReport.contributorId) {
+    if (user.managesContributor(statusReport.contributorId) || user.isAdmin() || user.contributorId() === statusReport.contributorId) {
       // Delete the statusReport
       StatusReports.update(statusReportId, {
         $set: {

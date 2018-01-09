@@ -66,5 +66,12 @@ Users.helpers({
       //console.log('Users contributor created:', contributor);
     }
     return contributor
+  },
+  /**
+   * Quick fetch of the contributorId for permissions checks
+   */
+  contributorId(){
+    let contributor = this.contributor();
+    return contributor && contributor._id;
   }
 });

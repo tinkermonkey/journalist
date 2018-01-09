@@ -7,15 +7,15 @@
           <h1>{{name}}</h1>
           {{> ContributorHeader }}
           
-          {{#RobaTabGroup name="contributor-tabs" navClass="nav-tabs"}}
+          {{#RobaTabGroup name="contributor-tabs" navClass="nav-pills"}}
             {{#if shouldSeeReports }}
-              {{#RobaTab name="status-report-due" title="Status Reports Due"}}
+              {{#RobaTab name="status-report-due" title="Reports Due"}}
                 {{> ContributorStatusReportsDue }}
               {{/RobaTab}}
             {{/if}}
             
-            {{#RobaTab name="status-reports" title="Status Reports"}}
-              {{> DocumentStatusReports sourceCollection='Contributors' sourceId=_id contributorId=contributorId }}
+            {{#RobaTab name="status-reports" title="Reports Filed"}}
+              {{> RecentReports }}
             {{/RobaTab}}
   
             {{#RobaTab name="imported-items" title="Items"}}

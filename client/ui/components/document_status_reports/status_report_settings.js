@@ -1,5 +1,4 @@
 import './status_report_settings.html';
-import './status_reports.css';
 import { Template } from 'meteor/templating';
 import { RobaDialog } from 'meteor/austinsand:roba-dialog';
 import { StatusReportSettings } from '../../../../imports/api/status_reports/status_report_settings';

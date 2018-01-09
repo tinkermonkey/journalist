@@ -8,7 +8,7 @@ import './edit_report_form';
  * Template Helpers
  */
 Template.IncompleteReports.helpers({
-  reports(){
+  reports () {
     let context         = this,
         contributor     = Meteor.user().contributor(),
         contributorList = contributor.allStaffIds();
@@ -30,7 +30,7 @@ Template.IncompleteReports.helpers({
  * Template Event Handlers
  */
 Template.IncompleteReports.events({
-  "click .btn-edit-report"(e, instance){
+  "click .btn-edit-report" (e, instance) {
     let reportId = $(e.target).closest(".data-table-row").attr("data-pk");
     
     if (reportId) {
@@ -38,7 +38,7 @@ Template.IncompleteReports.events({
       Blaze.renderWithData(Template.EditReportForm, { reportId: reportId }, $('.report-form-container').get(0));
     }
   },
-  "click .btn-delete-report"(e, instance){
+  "click .btn-delete-report" (e, instance) {
     let reportId = $(e.target).closest(".data-table-row").attr("data-pk");
     
     RobaDialog.ask('Delete Report?', 'Are you sure that you want to delete this report?', () => {
@@ -61,7 +61,14 @@ Template.IncompleteReports.onCreated(() => {
   
   instance.autorun(() => {
     let context = Template.currentData();
-    instance.subscribe('incomplete_reports', context.sourceCollection, context.sourceId);
+    
+    if (context.sourceCollection && context.sourceId) {
+      instance.subscribe('incomplete_reports', context.sourceCollection, context.sourceId);
+    } else if (context._id) {
+      instance.subscribe('contributor_incomplete_reports', context._id);
+    } else {
+      console.error('IncompleteReports cannot determine context:', context._id);
+    }
   });
 });
 
