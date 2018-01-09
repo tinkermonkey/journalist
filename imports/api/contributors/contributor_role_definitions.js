@@ -19,6 +19,14 @@ export const ContributorRoleDefinition = new SimpleSchema({
     type        : Boolean,
     defaultValue: false
   },
+  planCapacity: {
+    type        : Boolean,
+    defaultValue: true
+  },
+  countCapacityAs: {
+    type: String,
+    optional: true
+  },
   // Standard tracking fields
   dateCreated  : {
     type     : Date,
@@ -60,4 +68,26 @@ ContributorRoleDefinitions.deny({
 /**
  * Helpers
  */
-ContributorRoleDefinitions.helpers({});
+ContributorRoleDefinitions.helpers({
+  /**
+   * Return the role definition id that this should be counted as capacity for
+   */
+  capacityRole(){
+    let roleDef = this;
+
+    if(roleDef.countCapacityAs){
+      return ContributorRoleDefinitions.findOne(roleDef.countCapacityAs)
+    } else {
+      return roleDef
+    }
+  },
+
+  /**
+   * Should this role be counted towards capacity
+   */
+  countForCapacity(){
+    let roleDef = this;
+
+    return roleDef.capacityRole().planCapacity === true
+  }
+});

@@ -22,6 +22,8 @@
                   <th></th>
                   <th>Role Title</th>
                   <th>Is Management Role</th>
+                  <th>Plan Capacity</th>
+                  <th>Count As</th>
                   <th></th>
                 </tr>
                 </thead>
@@ -30,6 +32,8 @@
                     <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
                     <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
                     <td>{{> EditableCheckbox dataKey="isManager" value=isManager cssClass="blue"}}</td>
+                    <td>{{> EditableCheckbox dataKey="planCapacity" value=planCapacity cssClass="blue"}}</td>
+                    <td>{{> EditableRecordSelector roleSelectorContext dataKey="countCapacityAs" value=countCapacityAs}}</td>
                     <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
                   </tr>
                 {{/each}}

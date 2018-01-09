@@ -15,9 +15,12 @@ import { Util } from '../../../../../imports/api/util';
 Template.DevTeamBanner.helpers({
   teamCapacityDonutContext () {
     let team = this,
-        data = ContributorTeamRoles.find({ teamId: team._id }).map((teamRole) => {
+        data = ContributorTeamRoles.find({ teamId: team._id })
+        .fetch()
+        .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
+        .map((teamRole) => {
           return {
-            roleId: teamRole.roleId,
+            roleId: teamRole.roleDefinition().capacityRole()._id,
             value : ContributorProjectAssignments.find({
               teamRoleId: teamRole._id
             }).map((projectAssignment) => {
@@ -36,7 +39,7 @@ Template.DevTeamBanner.helpers({
         valueAttribute: 'value',
         chart         : {
           donut: {
-            title: { text: [ 'Capacity by role', '(People)' ], showTotal: true },
+            title: { text: [ 'Capacity (People)', 'by role' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value && value / 100
@@ -54,7 +57,10 @@ Template.DevTeamBanner.helpers({
   },
   projectCapacityDonutContext () {
     let team = this,
-        data = _.flatten(ContributorTeamRoles.find({ teamId: team._id }).map((teamRole) => {
+        data = _.flatten(ContributorTeamRoles.find({ teamId: team._id })
+            .fetch()
+            .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
+            .map((teamRole) => {
           return ContributorProjectAssignments.find({
             teamRoleId: teamRole._id
           }).fetch();
@@ -68,7 +74,7 @@ Template.DevTeamBanner.helpers({
         valueAttribute: 'percent',
         chart         : {
           donut: {
-            title: { text: [ 'Capacity by project', '(People)' ], showTotal: true },
+            title: { text: [ 'Capacity (People)', 'by project' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value && value / 100
@@ -99,7 +105,7 @@ Template.DevTeamBanner.helpers({
         valueAttribute: 'itemType',
         chart         : {
           donut: {
-            title: { text: [ 'Being planned', '(items)' ], showTotal: true },
+            title: { text: [ 'Being planned' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value
@@ -129,7 +135,7 @@ Template.DevTeamBanner.helpers({
         valueAttribute: 'itemType',
         chart         : {
           donut: {
-            title: { text: [ 'Being implemented', '(items)' ], showTotal: true },
+            title: { text: [ 'Being implemented' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value
@@ -159,7 +165,7 @@ Template.DevTeamBanner.helpers({
         valueAttribute: 'itemType',
         chart         : {
           donut: {
-            title: { text: [ 'Being verified', '(items)' ], showTotal: true },
+            title: { text: [ 'Being verified' ], showTotal: true },
             label: {
               format (value, ratio, id) {
                 return value

@@ -197,7 +197,27 @@ export class JiraIntegrator extends Integrator {
       self.provider.storeCachedItem('issueTypeList', self.fetchData('issueType', 'getAllIssueTypes').response);
       
       // Cache the list of agile boards
-      self.provider.storeCachedItem('boardList', self.fetchData('board', 'getAllBoards').response);
+      let boardList = self.fetchData('board', 'getAllBoards').response,
+        sprints = {};
+      if(boardList && boardList.values){
+        self.provider.storeCachedItem('boardList', boardList.values);
+
+        // Get the sprints
+        boardList.values.forEach((board) => {
+          let sprintResult = self.fetchData('board', 'getSprintsForBoard', {boardId: board.id}).response;
+          if(sprintResult && sprintResult.values){
+            sprintResult.values.forEach((sprint) => {
+              if(sprints[sprint.id]){
+                sprints[sprint.id].boards.push(board.id);
+              } else {
+                sprint.boards = [board.id];
+                sprints[sprint.id] = sprint;
+              }
+            });
+          }
+        });
+      }
+      self.provider.storeCachedItem('sprintList', _.values(sprints));
       
       // Cache the list of fields and create synthetic keys based on the field name for custom fields
       let fields = self.fetchData('field', 'getAllFields').response;
@@ -482,6 +502,8 @@ export class JiraIntegrator extends Integrator {
       method  = module.method;
       module  = module.module;
     }
+
+    payload = payload || {};
     
     if (self.client) {
       try {
@@ -505,6 +527,26 @@ export class JiraIntegrator extends Integrator {
         
         trace && console.log('JiraIntegrator.fetchData result:', module, method, result);
         
+        if(result.response && result.response.values && result.response.maxResults && !payload.startAt && !result.response.isLast){
+          let pageSize = result.response.maxResults,
+          accumulatedValues = [].concat(result.response.values),
+            i = 0;
+    
+          while(!result.response.isLast && i < 1000){
+            i += 1;
+            payload.startAt = i * pageSize;
+            trace && console.log('JiraIntegrator.fetchData paging more results:', i, payload.startAt, pageSize);
+            result = self.fetchData(module, method, payload);
+            accumulatedValues = accumulatedValues.concat(result.response.values);
+          }
+          debug && console.log('JiraIntegrator.fetchPagedData paged data complete:', accumulatedValues.length);
+          result.response.isLast = true;
+          result.response.startAt = 0;
+          result.response.maxResults = accumulatedValues.length;
+          result.response.values = accumulatedValues;
+        }
+    
+
         return result
       } catch (e) {
         console.error('JiraIntegrator.fetchData error:', e);
@@ -513,6 +555,38 @@ export class JiraIntegrator extends Integrator {
     } else {
       return { success: false, error: 'No Jira client' };
     }
+  }
+
+  /**
+   * Fetch data that could return more than one page and automatically page if that is the case
+   */
+  fetchPagedData (module, method, payload) {
+    debug && console.log('JiraIntegrator.fetchPagedData:', this.provider.server.title, module, method);
+    let self = this;
+    
+    if (_.isObject(module)) {
+      payload = module.payload;
+      method  = module.method;
+      module  = module.module;
+    }
+
+    let result = self.fetchData(module, method, payload);
+    if(!result.response.isLast){
+      payload = payload || {};
+
+      let pageSize = result.response.maxResults,
+        accumulatedResults = [].contcat(result.response.values),
+        i = 1;
+
+      while(!result.response.isLast){
+        payload.startAt = i * pageSize;
+        result = self.fetchData(module, method, payload);
+        accumulatedResults = accumulatedResults.concat(result.response.values)
+      }
+      debug && console.log('JiraIntegrator.fetchPagedData getting page:', module, method);
+    }
+
+    return result;
   }
   
   /**
