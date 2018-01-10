@@ -1,0 +1,22 @@
+.dashboard-metric-container {
+    display: flex;
+    min-height: 200px;
+    min-width: 200px;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard-metric {
+    text-align: center;
+}
+
+.dashboard-metric-value {
+    margin-top: -48pt;
+    font-size: 64pt;
+    display: block;
+}
+
+.dashboard-metric-title {
+    font-size: inherit;
+    display: block;
+}
