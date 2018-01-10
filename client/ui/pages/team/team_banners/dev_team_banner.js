@@ -8,20 +8,33 @@ import { ItemTypes } from '../../../../../imports/api/imported_items/item_types'
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
 import { ContributorTeamRoles } from '../../../../../imports/api/contributors/contributor_team_roles';
 import { Util } from '../../../../../imports/api/util';
+import '../../../components/charts/donut_chart';
+import '../../../components/charts/dashboard_metric';
+
+let gcd = require('greatest-common-divisor');
 
 /**
  * Template Helpers
  */
 Template.DevTeamBanner.helpers({
-  teamCapacityDonutContext () {
+  reportableRoles() {
     let team = this,
-        data = ContributorTeamRoles.find({ teamId: team._id })
+      data = _.uniq(ContributorTeamRoles.find({ teamId: team._id })
+        .fetch()
+        .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
+        .map((teamRole) => { return teamRole.roleDefinition().capacityRole()._id }));
+
+    return data;
+  },
+  teamCapacityDonutContext() {
+    let team = this,
+      data = ContributorTeamRoles.find({ teamId: team._id })
         .fetch()
         .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
         .map((teamRole) => {
           return {
             roleId: teamRole.roleDefinition().capacityRole()._id,
-            value : ContributorProjectAssignments.find({
+            value: ContributorProjectAssignments.find({
               teamRoleId: teamRole._id
             }).map((projectAssignment) => {
               return projectAssignment.percent || 0
@@ -30,154 +43,235 @@ Template.DevTeamBanner.helpers({
             }, 0)
           }
         });
-    
+
     return {
       cssClass: 'donut-flex',
-      config  : {
-        aggregation   : 'sum',
-        keyAttribute  : 'roleId',
+      config: {
+        aggregation: 'sum',
+        keyAttribute: 'roleId',
         valueAttribute: 'value',
-        chart         : {
+        chart: {
           donut: {
-            title: { text: [ 'Capacity (People)', 'by role' ], showTotal: true },
+            title: { text: ['Capacity by role', , '(People)'], showTotal: true },
             label: {
-              format (value, ratio, id) {
+              format(value, ratio, id) {
                 return value && value / 100
               }
             }
           },
         },
-        renderLabel (value) {
+        renderLabel(value) {
           let definition = ContributorRoleDefinitions.findOne(value);
           return definition && definition.title
         },
       },
-      data    : data
+      data: data
     }
   },
-  projectCapacityDonutContext () {
+  projectCapacityDonutContext() {
     let team = this,
-        data = _.flatten(ContributorTeamRoles.find({ teamId: team._id })
-            .fetch()
-            .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
-            .map((teamRole) => {
+      data = _.flatten(ContributorTeamRoles.find({ teamId: team._id })
+        .fetch()
+        .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
+        .map((teamRole) => {
           return ContributorProjectAssignments.find({
             teamRoleId: teamRole._id
           }).fetch();
         }));
-    
+
     return {
       cssClass: 'donut-flex',
-      config  : {
-        aggregation   : 'sum',
-        keyAttribute  : 'projectId',
+      config: {
+        aggregation: 'sum',
+        keyAttribute: 'projectId',
         valueAttribute: 'percent',
-        chart         : {
+        chart: {
           donut: {
-            title: { text: [ 'Capacity (People)', 'by project' ], showTotal: true },
+            title: { text: ['Capacity by project', '(People)'], showTotal: true },
             label: {
-              format (value, ratio, id) {
+              format(value, ratio, id) {
                 return value && value / 100
               }
             }
           },
         },
-        renderLabel (value) {
+        renderLabel(value) {
           let project = Projects.findOne(value);
           return project && project.title
         },
       },
-      data    : data
+      data: data
     }
   },
-  teamPlanningTicketTypes () {
-    let team = this,
-        data = ImportedItemCrumbs.find({
-          teamId   : team._id,
-          workPhase: ImportedItemWorkPhases.planning,
-          itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
+  roleCapacityDonutContext(roleId, team) {
+    let data = _.flatten(ContributorTeamRoles.find({ teamId: team._id })
+      .fetch()
+      .filter((teamRole) => { return teamRole.roleDefinition().capacityRole()._id === roleId })
+      .map((teamRole) => {
+        return ContributorProjectAssignments.find({
+          teamRoleId: teamRole._id
         }).fetch();
-    
+      })),
+      roleDefinition = ContributorRoleDefinitions.findOne(roleId);
+
     return {
       cssClass: 'donut-flex',
-      config  : {
-        aggregation   : 'count',
-        valueAttribute: 'itemType',
-        chart         : {
+      config: {
+        aggregation: 'sum',
+        keyAttribute: 'projectId',
+        valueAttribute: 'percent',
+        chart: {
           donut: {
-            title: { text: [ 'Being planned' ], showTotal: true },
+            title: { text: [roleDefinition.title, 'Capacity', 'by project'], showTotal: true },
             label: {
-              format (value, ratio, id) {
+              format(value, ratio, id) {
+                return value && value / 100
+              }
+            }
+          },
+        },
+        renderLabel(value) {
+          let project = Projects.findOne(value);
+          return project && project.title
+        },
+      },
+      data: data
+    }
+  },
+  teamPlanningTicketTypes() {
+    let team = this,
+      data = ImportedItemCrumbs.find({
+        teamId: team._id,
+        workPhase: ImportedItemWorkPhases.planning,
+        itemType: { $in: [ItemTypes.feature, ItemTypes.bug] }
+      }).fetch();
+
+    return {
+      cssClass: 'donut-flex',
+      config: {
+        aggregation: 'count',
+        valueAttribute: 'itemType',
+        chart: {
+          donut: {
+            title: { text: ['Being planned'], showTotal: true },
+            label: {
+              format(value, ratio, id) {
                 return value
               }
             }
           },
         },
-        renderLabel (value) {
-          return Util.camelToTitle(_.invert(ItemTypes)[ value ])
+        renderLabel(value) {
+          return Util.camelToTitle(_.invert(ItemTypes)[value])
         },
       },
-      data    : data
+      data: data
     }
   },
-  teamImplementingTicketTypes () {
+  teamImplementingTicketTypes() {
     let team = this,
-        data = ImportedItemCrumbs.find({
-          teamId   : team._id,
-          workPhase: ImportedItemWorkPhases.implementation,
-          itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
-        }).fetch();
-    
+      data = ImportedItemCrumbs.find({
+        teamId: team._id,
+        workPhase: ImportedItemWorkPhases.implementation,
+        itemType: { $in: [ItemTypes.feature, ItemTypes.bug] }
+      }).fetch();
+
     return {
       cssClass: 'donut-flex',
-      config  : {
-        aggregation   : 'count',
+      config: {
+        aggregation: 'count',
         valueAttribute: 'itemType',
-        chart         : {
+        chart: {
           donut: {
-            title: { text: [ 'Being implemented' ], showTotal: true },
+            title: { text: ['Being implemented'], showTotal: true },
             label: {
-              format (value, ratio, id) {
+              format(value, ratio, id) {
                 return value
               }
             }
           },
         },
-        renderLabel (value) {
-          return Util.camelToTitle(_.invert(ItemTypes)[ value ])
+        renderLabel(value) {
+          return Util.camelToTitle(_.invert(ItemTypes)[value])
         },
       },
-      data    : data
+      data: data
     }
   },
-  teamVerificationTicketTypes () {
+  teamVerificationTicketTypes() {
     let team = this,
-        data = ImportedItemCrumbs.find({
-          teamId   : team._id,
-          workPhase: ImportedItemWorkPhases.verification,
-          itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
-        }).fetch();
-    
+      data = ImportedItemCrumbs.find({
+        teamId: team._id,
+        workPhase: ImportedItemWorkPhases.verification,
+        itemType: { $in: [ItemTypes.feature, ItemTypes.bug] }
+      }).fetch();
+
     return {
       cssClass: 'donut-flex',
-      config  : {
-        aggregation   : 'count',
+      config: {
+        aggregation: 'count',
         valueAttribute: 'itemType',
-        chart         : {
+        chart: {
           donut: {
-            title: { text: [ 'Being verified' ], showTotal: true },
+            title: { text: ['Being verified'], showTotal: true },
             label: {
-              format (value, ratio, id) {
+              format(value, ratio, id) {
                 return value
               }
             }
           },
         },
-        renderLabel (value) {
-          return Util.camelToTitle(_.invert(ItemTypes)[ value ])
+        renderLabel(value) {
+          return Util.camelToTitle(_.invert(ItemTypes)[value])
         },
       },
-      data    : data
+      data: data
+    }
+  },
+  devQaBalanceContext() {
+    let team = this,
+      devRole = ContributorRoleDefinitions.findOne({ title: { $regex: 'developer', $options: 'i' } }),
+      qaRole = ContributorRoleDefinitions.findOne({ title: { $regex: 'qa engineer', $options: 'i' } }),
+      devAssignments = ContributorTeamRoles.find({ teamId: team._id })
+        .fetch()
+        .filter((teamRole) => { return teamRole.roleDefinition().capacityRole()._id === devRole._id })
+        .map((teamRole) => {
+          return {
+            roleId: teamRole.roleDefinition().capacityRole()._id,
+            value: ContributorProjectAssignments.find({
+              teamRoleId: teamRole._id
+            }).map((projectAssignment) => {
+              return projectAssignment.percent || 0
+            }).reduce((acc, value) => {
+              return acc + value
+            }, 0)
+          }
+        }),
+      qaAssignments = ContributorTeamRoles.find({ teamId: team._id })
+        .fetch()
+        .filter((teamRole) => { return teamRole.roleDefinition().capacityRole()._id === qaRole._id })
+        .map((teamRole) => {
+          return {
+            roleId: teamRole.roleDefinition().capacityRole()._id,
+            value: ContributorProjectAssignments.find({
+              teamRoleId: teamRole._id
+            }).map((projectAssignment) => {
+              return projectAssignment.percent || 0
+            }).reduce((acc, value) => {
+              return acc + value
+            }, 0)
+          }
+        }),
+      devCapacity = devAssignments.reduce((acc, assignment) => { return acc + assignment.value }, 0),
+      qaCapacity = qaAssignments.reduce((acc, assignment) => { return acc + assignment.value }, 0),
+      commonFactor = gcd(devCapacity, qaCapacity);
+
+
+    console.log('devAssignments:', devAssignments, devCapacity);
+    console.log('qaAssignments:', qaAssignments, qaCapacity);
+    return {
+      value: (devCapacity / commonFactor).toString() + ':' + (qaCapacity / commonFactor).toString(),
+      title: 'Dev:QA Ratio'
     }
   }
 });
@@ -192,10 +286,10 @@ Template.DevTeamBanner.events({});
  */
 Template.DevTeamBanner.onCreated(() => {
   let instance = Template.instance();
-  
+
   instance.autorun(() => {
     let team = Template.currentData();
-    
+
     instance.subscribe('imported_item_crumb_query', { teamId: team._id })
   });
 });
@@ -204,12 +298,12 @@ Template.DevTeamBanner.onCreated(() => {
  * Template Rendered
  */
 Template.DevTeamBanner.onRendered(() => {
-  
+
 });
 
 /**
  * Template Destroyed
  */
 Template.DevTeamBanner.onDestroyed(() => {
-  
+
 });

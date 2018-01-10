@@ -1,8 +1,11 @@
 <template name="DevTeamBanner">
   {{#if Template.subscriptionsReady}}
     <div class="flex">
-      {{> DonutChart teamCapacityDonutContext }}
       {{> DonutChart projectCapacityDonutContext }}
+      {{#each reportableRoles}}
+        {{> DonutChart roleCapacityDonutContext this ..}}
+      {{/each}}
+      {{> DashboardMetric devQaBalanceContext }}
     </div>
     <div class="flex">
       {{> DonutChart teamPlanningTicketTypes }}

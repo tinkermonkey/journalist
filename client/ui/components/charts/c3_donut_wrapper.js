@@ -117,7 +117,7 @@ export class C3DonutWrapper {
     }
     
     self.chartConfig.customTitle.text.forEach((piece, i) => {
-      let dy = self.chartConfig.customTitle.showTotal && i === 0 ? nextDy : i * standardDy;
+      let dy = self.chartConfig.customTitle.showTotal && i === 0 ? nextDy : standardDy;
       self.titleElement
           .append('tspan')
           .attr('x', 0)
