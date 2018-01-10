@@ -11,7 +11,15 @@ import { Util } from '../../../../../imports/api/util';
 import '../../../components/charts/donut_chart';
 import '../../../components/charts/dashboard_metric';
 
-let gcd = require('greatest-common-divisor');
+let gcd = (a, b) => {
+  if (!b) {
+    return a
+  }
+  return gcd(b, a % b)
+},
+  greatestCommonDivisor = (a, b) => {
+    return [a, b].reduce(gcd)
+  };
 
 /**
  * Template Helpers
@@ -264,8 +272,7 @@ Template.DevTeamBanner.helpers({
         }),
       devCapacity = devAssignments.reduce((acc, assignment) => { return acc + assignment.value }, 0),
       qaCapacity = qaAssignments.reduce((acc, assignment) => { return acc + assignment.value }, 0),
-      commonFactor = gcd(devCapacity, qaCapacity);
-
+      commonFactor = greatestCommonDivisor(devCapacity, qaCapacity);
 
     console.log('devAssignments:', devAssignments, devCapacity);
     console.log('qaAssignments:', qaAssignments, qaCapacity);
