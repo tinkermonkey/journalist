@@ -16,6 +16,7 @@
               <th>Title</th>
               <th>Owner</th>
               <th>Default Reporter</th>
+              <th>Banner Template</th>
               <th>Modified</th>
               <th>Created</th>
               <th></th>
@@ -32,6 +33,7 @@
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
                 <td>{{> EditableRecordSelector reporterSelectorContext }}</td>
+                <td>{{> EditableEnumSelector dataKey="bannerTemplate" value=bannerTemplate emptyText="Select Template" enum=TeamHeaderTemplates }}</td>
                 <td>{{dateFormat dateModified}}</td>
                 <td>{{dateFormat dateCreated}}</td>
                 <td>

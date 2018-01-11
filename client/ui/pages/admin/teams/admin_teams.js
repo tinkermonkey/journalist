@@ -1,11 +1,12 @@
 import './admin_teams.html';
 import { Template } from 'meteor/templating';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Contributors } from '../../../../../imports/api/contributors/contributors';
 import { Teams } from '../../../../../imports/api/teams/teams.js';
+import { TeamHeaderTemplates } from '../../../../../imports/api/teams/team_header_templates.js';
+import { UserTypes } from '../../../../../imports/api/users/user_types';
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
-import { UserTypes } from '../../../../../imports/api/users/user_types';
-import { Contributors } from '../../../../../imports/api/contributors/contributors';
 
 /**
  * Template Helpers
@@ -27,6 +28,9 @@ Template.AdminTeams.helpers({
         usertype: { $in: [ UserTypes.manager, UserTypes.administrator ] }
       }
     }
+  },
+  TeamHeaderTemplates () {
+    return TeamHeaderTemplates
   }
 });
 

@@ -17,6 +17,7 @@
               <th>Title</th>
               <th>Description</th>
               <th>Type</th>
+              <th>Banner Template</th>
               <th>Owner</th>
               <th>Modified</th>
               <th>Created</th>
@@ -40,6 +41,7 @@
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" mode="popup" }}</td>
                 <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" mode="popup" }}</td>
                 <td>{{> EditableEnumSelector dataKey="projectType" value=projectType enum=ProjectTypes emptyText="Project Type" mode="popup" }}</td>
+                <td>{{> EditableEnumSelector dataKey="bannerTemplate" value=bannerTemplate emptyText="Select Template" enum=ProjectHeaderTemplates }}</td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
                 <td>{{dateFormat dateModified}}</td>
                 <td>{{dateFormat dateCreated}}</td>

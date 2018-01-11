@@ -1,4 +1,15 @@
-
+/**
+ * Determine the greatest common divisor of two numbers
+ * @param {*} a 
+ * @param {*} b 
+ */
+function gcd(a, b) {
+  if (!b) {
+    return a
+  }
+  return gcd(b, a % b)
+};
+  
 export const Util = {
   /**
    * Return a timestamp string
@@ -60,4 +71,13 @@ export const Util = {
           .replace(/\s/g, "");
     }
   },
+
+  /**
+   * Determine the greatest common divisor of two numbers
+   * @param {*} a 
+   * @param {*} b 
+   */
+  greatestCommonDivisor(a, b) {
+    return [a, b].reduce(gcd)
+  }
 };

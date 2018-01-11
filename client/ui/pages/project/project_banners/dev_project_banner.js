@@ -1,12 +1,13 @@
-import './dev_team_banner.html';
+import './dev_project_banner.html';
 import { Template } from 'meteor/templating';
-import { Projects } from '../../../../../imports/api/projects/projects';
-import { ImportedItemCrumbs } from '../../../../../imports/api/imported_items/imported_item_crumbs';
-import { ImportedItemWorkPhases } from '../../../../../imports/api/imported_items/imported_item_work_phases';
 import { ContributorProjectAssignments } from '../../../../../imports/api/contributors/contributor_project_assignments';
-import { ItemTypes } from '../../../../../imports/api/imported_items/item_types';
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
 import { ContributorTeamRoles } from '../../../../../imports/api/contributors/contributor_team_roles';
+import { ImportedItemCrumbs } from '../../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItemWorkPhases } from '../../../../../imports/api/imported_items/imported_item_work_phases';
+import { ItemTypes } from '../../../../../imports/api/imported_items/item_types';
+import { Projects } from '../../../../../imports/api/projects/projects';
+import { Teams } from '../../../../../imports/api/teams/teams';
 import { Util } from '../../../../../imports/api/util';
 import '../../../components/charts/donut_chart';
 import '../../../components/charts/dashboard_metric';
@@ -14,33 +15,29 @@ import '../../../components/charts/dashboard_metric';
 /**
  * Template Helpers
  */
-Template.DevTeamBanner.helpers({
+Template.DevProjectBanner.helpers({
   reportableRoles() {
-    let team = this,
-      data = _.uniq(ContributorTeamRoles.find({ teamId: team._id })
-        .fetch()
+    let project = this,
+      data = _.uniq(ContributorProjectAssignments.find({ projectId: project._id })
+        .map((projectAssignment) => { return projectAssignment.teamRole() })
         .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
         .map((teamRole) => { return teamRole.roleDefinition().capacityRole()._id }));
 
     return data
   },
-  teamCapacityDonutContext() {
-    let team = this,
-      data = ContributorTeamRoles.find({ teamId: team._id })
-        .fetch()
-        .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
-        .map((teamRole) => {
+  projectCapacityDonutContext() {
+    console.log('projectCapacityDonutContext');
+    let project = this,
+      data = ContributorProjectAssignments.find({ projectId: project._id })
+        .filter((projectAssignment) => { return projectAssignment.teamRole().roleDefinition().countForCapacity() })
+        .map((projectAssignment) => {
           return {
-            roleId: teamRole.roleDefinition().capacityRole()._id,
-            value: ContributorProjectAssignments.find({
-              teamRoleId: teamRole._id
-            }).map((projectAssignment) => {
-              return projectAssignment.percent || 0
-            }).reduce((acc, value) => {
-              return acc + value
-            }, 0)
+            roleId: projectAssignment.teamRole().roleDefinition().capacityRole()._id,
+            value: projectAssignment.percent
           }
         });
+
+    console.log('projectCapacityDonutContext:', data);
 
     return {
       cssClass: 'donut-flex',
@@ -50,7 +47,7 @@ Template.DevTeamBanner.helpers({
         valueAttribute: 'value',
         chart: {
           donut: {
-            title: { text: ['Capacity by role', , '(People)'], showTotal: true },
+            title: { text: ['Capacity by role', '(People)'], showTotal: true },
             label: {
               format(value, ratio, id) {
                 return value && value / 100
@@ -70,7 +67,8 @@ Template.DevTeamBanner.helpers({
     }
   },
   projectCapacityDonutContext() {
-    let team = this,
+      return {};
+    let project = this  ,
       data = _.flatten(ContributorTeamRoles.find({ teamId: team._id })
         .fetch()
         .filter((teamRole) => { return teamRole.roleDefinition().countForCapacity() })
@@ -108,6 +106,7 @@ Template.DevTeamBanner.helpers({
     }
   },
   roleCapacityDonutContext(roleId, team) {
+      return {};
     let data = _.flatten(ContributorTeamRoles.find({ teamId: team._id })
       .fetch()
       .filter((teamRole) => { return teamRole.roleDefinition().capacityRole()._id === roleId })
@@ -146,7 +145,8 @@ Template.DevTeamBanner.helpers({
     }
   },
   teamPlanningTicketTypes() {
-    let team = this,
+      return {};
+    let project = this  ,
       data = ImportedItemCrumbs.find({
         teamId: team._id,
         workPhase: ImportedItemWorkPhases.planning,
@@ -179,7 +179,8 @@ Template.DevTeamBanner.helpers({
     }
   },
   teamImplementingTicketTypes() {
-    let team = this,
+      return {};
+    let project = this  ,
       data = ImportedItemCrumbs.find({
         teamId: team._id,
         workPhase: ImportedItemWorkPhases.implementation,
@@ -212,7 +213,8 @@ Template.DevTeamBanner.helpers({
     }
   },
   teamVerificationTicketTypes() {
-    let team = this,
+      return {};
+    let project = this  ,
       data = ImportedItemCrumbs.find({
         teamId: team._id,
         workPhase: ImportedItemWorkPhases.verification,
@@ -245,7 +247,8 @@ Template.DevTeamBanner.helpers({
     }
   },
   devQaBalanceContext() {
-    let team = this,
+      return {};
+    let project = this  ,
       devRole = ContributorRoleDefinitions.findOne({ title: { $regex: 'developer', $options: 'i' } }),
       qaRole = ContributorRoleDefinitions.findOne({ title: { $regex: 'qa engineer', $options: 'i' } }),
       devAssignments = ContributorTeamRoles.find({ teamId: team._id })
@@ -293,31 +296,31 @@ Template.DevTeamBanner.helpers({
 /**
  * Template Event Handlers
  */
-Template.DevTeamBanner.events({});
+Template.DevProjectBanner.events({});
 
 /**
  * Template Created
  */
-Template.DevTeamBanner.onCreated(() => {
+Template.DevProjectBanner.onCreated(() => {
   let instance = Template.instance();
 
   instance.autorun(() => {
-    let team = Template.currentData();
+    let project = Template.currentData();
 
-    instance.subscribe('imported_item_crumb_query', { teamId: team._id })
+    instance.subscribe('imported_item_crumb_query', { projectId: project._id })
   });
 });
 
 /**
  * Template Rendered
  */
-Template.DevTeamBanner.onRendered(() => {
+Template.DevProjectBanner.onRendered(() => {
 
 });
 
 /**
  * Template Destroyed
  */
-Template.DevTeamBanner.onDestroyed(() => {
+Template.DevProjectBanner.onDestroyed(() => {
 
 });

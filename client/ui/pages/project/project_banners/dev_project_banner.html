@@ -1,0 +1,12 @@
+<template name="DevProjectBanner">
+  {{#if Template.subscriptionsReady}}
+  Dev project banner
+    <div class="flex">
+      {{> DonutChart projectCapacityDonutContext }}
+    </div>
+    <div class="flex">
+    </div>
+  {{else}}
+    {{> RobaSpinner rainbow=true}}
+  {{/if}}
+</template>

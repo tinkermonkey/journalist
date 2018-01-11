@@ -2,6 +2,7 @@ import './admin_projects.html';
 import { Template } from 'meteor/templating';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Projects } from '../../../../../imports/api/projects/projects.js';
+import { ProjectHeaderTemplates } from '../../../../../imports/api/projects/project_header_templates';
 import '../../../components/add_record_form/add_record_form.js';
 import './admin_project_home.js';
 
@@ -11,6 +12,9 @@ import './admin_project_home.js';
 Template.AdminProjects.helpers({
   projects(){
     return Projects.find({}, { sort: { title: 1 } })
+  },
+  ProjectHeaderTemplates () {
+    return ProjectHeaderTemplates
   }
 });
 

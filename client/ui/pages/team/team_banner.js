@@ -8,10 +8,7 @@ import './team_banners/dev_team_banner';
 Template.TeamBanner.helpers({
   teamBannerTemplate(){
     let team = this;
-    switch (team.homeBanner){
-      default:
-        return 'DevTeamBanner'
-    }
+    return team.bannerTemplate || 'DevTeamBanner'
   }
 });
 

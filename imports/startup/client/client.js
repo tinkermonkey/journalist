@@ -348,6 +348,7 @@ Template.registerHelper('displayTemplateSelectorContext', function (fieldName) {
   }
 });
 
+
 /**
  * Simple pathFor helper
  */

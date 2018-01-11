@@ -30,6 +30,11 @@ export const Project = new SimpleSchema({
     allowedValues: _.values(ProjectTypes),
     optional: true
   },
+  // Banner Template
+  bannerTemplate: {
+    type: String,
+    optional: true
+  },
   // Contributor that is the primary owner of this project
   owner       : {
     type    : String,

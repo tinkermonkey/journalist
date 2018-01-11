@@ -1,8 +1,11 @@
 <template name="DashboardMetric">
   <div class="dashboard-metric-container {{cssClass}}">
     <div id="{{getElementId}}" class="dashboard-metric">
-      <span class="dashboard-metric-value">{{value}}</span>
-      <span class="dashboard-metric-title">{{title}}</span>
+      <div class="dashboard-metric-title">{{title}}</div>
+      <div class="dashboard-metric-value-container">
+        <div class="dashboard-metric-value">{{value}}</div>
+        <div class="dashboard-metric-sub-title">{{subTitle}}</div>
+      </div>
     </div>
   </div>
 </template>
