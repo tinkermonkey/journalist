@@ -62,6 +62,11 @@ export const ImportedItem = new SimpleSchema({
     type    : String,
     optional: true
   },
+  statusHistory: {
+    type: [ Object ],
+    blackbox: true,
+    optional: true
+  },
   workPhase    : {
     type         : Number,
     allowedValues: _.values(ImportedItemWorkPhases),

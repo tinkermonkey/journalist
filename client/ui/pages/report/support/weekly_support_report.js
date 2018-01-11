@@ -1,6 +1,6 @@
 import './weekly_support_report.html';
 import { Template } from 'meteor/templating';
-import { moment } from 'meteor/moment:moment';
+import { moment } from 'meteor/momentjs:moment';
 import { ImportedItems } from '../../../../../imports/api/imported_items/imported_items';
 import { ImportedItemCrumbs } from '../../../../../imports/api/imported_items/imported_item_crumbs';
 import { Projects} from '../../../../../imports/api/projects/projects';

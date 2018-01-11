@@ -76,6 +76,9 @@ Template.AdminIntegrationImportedItemBrowser.events({
     if (page) {
       instance.page.set(parseInt(page));
     }
+  },
+  'click .btn-reprocess-issues'(e, instance){
+    
   }
 });
 
