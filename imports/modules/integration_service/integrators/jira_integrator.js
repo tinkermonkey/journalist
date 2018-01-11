@@ -494,7 +494,11 @@ export class JiraIntegrator extends Integrator {
       
       processedItem.changelog.histories.forEach((entry) => {
         let statusChangeList = entry.items.filter((item) => {
-          return item.fieldId && item.fieldId.toLowerCase() === 'status';
+          if(item.fieldId){
+            return item.fieldId && item.fieldId.toLowerCase() === 'status';
+          } else {
+            return item.field && item.field.toLowerCase() === 'status';
+          }
         });
         if (statusChangeList && statusChangeList.length) {
           let item        = statusChangeList[ 0 ],
