@@ -198,20 +198,20 @@ export class JiraIntegrator extends Integrator {
       
       // Cache the list of agile boards
       let boardList = self.fetchData('board', 'getAllBoards').response,
-        sprints = {};
-      if(boardList && boardList.values){
+          sprints   = {};
+      if (boardList && boardList.values) {
         self.provider.storeCachedItem('boardList', boardList.values);
-
+        
         // Get the sprints
         boardList.values.forEach((board) => {
-          let sprintResult = self.fetchData('board', 'getSprintsForBoard', {boardId: board.id}).response;
-          if(sprintResult && sprintResult.values){
+          let sprintResult = self.fetchData('board', 'getSprintsForBoard', { boardId: board.id }).response;
+          if (sprintResult && sprintResult.values) {
             sprintResult.values.forEach((sprint) => {
-              if(sprints[sprint.id]){
-                sprints[sprint.id].boards.push(board.id);
+              if (sprints[ sprint.id ]) {
+                sprints[ sprint.id ].boards.push(board.id);
               } else {
-                sprint.boards = [board.id];
-                sprints[sprint.id] = sprint;
+                sprint.boards        = [ board.id ];
+                sprints[ sprint.id ] = sprint;
               }
             });
           }
@@ -417,7 +417,9 @@ export class JiraIntegrator extends Integrator {
           let processedKey = fieldKey;
           if (fieldKey.match(/customfield_/i)) {
             // look up a synthetic key
-            let fieldDef = self.provider.cache.fieldList.find((field) => { return field.id === fieldKey});
+            let fieldDef = self.provider.cache.fieldList.find((field) => {
+              return field.id === fieldKey
+            });
             if (fieldDef && fieldDef.syntheticKey) {
               processedKey = fieldDef.syntheticKey;
             }
@@ -485,6 +487,46 @@ export class JiraIntegrator extends Integrator {
         processedItem.workState   = ImportedItemWorkStates[ mappedStatus.workState ];
       }
     }
+    
+    // Pull out any status changes from the item's history
+    if (processedItem.changelog && processedItem.changelog.histories && processedItem.changelog.total) {
+      processedItem.statusHistory = [];
+      
+      processedItem.changelog.histories.forEach((entry) => {
+        let statusChangeList = entry.items.filter((item) => {
+          return item.fieldId && item.fieldId.toLowerCase() === 'status';
+        });
+        if (statusChangeList && statusChangeList.length) {
+          let item        = statusChangeList[ 0 ],
+              statusEntry = {
+                changeId: entry.id,
+                date    : moment(entry.created).toDate(),
+                owner   : entry.author,
+                from    : {
+                  id   : item.from,
+                  label: item.fromString
+                },
+                to      : {
+                  id   : item.to,
+                  label: item.toString
+              
+                }
+              };
+          
+          if (statusMap) {
+            let fromStatus = statusMap[ item.from ],
+                toStatus   = statusMap[ item.to ];
+            
+            statusEntry.from.workPhase = ImportedItemWorkPhases[ fromStatus.workPhase ];
+            statusEntry.from.workState = ImportedItemWorkPhases[ fromStatus.workState ];
+            statusEntry.to.workPhase   = ImportedItemWorkPhases[ toStatus.workPhase ];
+            statusEntry.to.workState   = ImportedItemWorkPhases[ toStatus.workState ];
+          }
+          
+          processedItem.statusHistory.push(statusEntry);
+        }
+      })
+    }
   }
   
   /**
@@ -502,7 +544,7 @@ export class JiraIntegrator extends Integrator {
       method  = module.method;
       module  = module.module;
     }
-
+    
     payload = payload || {};
     
     if (self.client) {
@@ -527,26 +569,25 @@ export class JiraIntegrator extends Integrator {
         
         trace && console.log('JiraIntegrator.fetchData result:', module, method, result);
         
-        if(result.response && result.response.values && result.response.maxResults && !payload.startAt && !result.response.isLast){
-          let pageSize = result.response.maxResults,
-          accumulatedValues = [].concat(result.response.values),
-            i = 0;
-    
-          while(!result.response.isLast && i < 1000){
+        if (result.response && result.response.values && result.response.maxResults && !payload.startAt && !result.response.isLast) {
+          let pageSize          = result.response.maxResults,
+              accumulatedValues = [].concat(result.response.values),
+              i                 = 0;
+          
+          while (!result.response.isLast && i < 1000) {
             i += 1;
             payload.startAt = i * pageSize;
             trace && console.log('JiraIntegrator.fetchData paging more results:', i, payload.startAt, pageSize);
-            result = self.fetchData(module, method, payload);
+            result            = self.fetchData(module, method, payload);
             accumulatedValues = accumulatedValues.concat(result.response.values);
           }
           debug && console.log('JiraIntegrator.fetchPagedData paged data complete:', accumulatedValues.length);
-          result.response.isLast = true;
-          result.response.startAt = 0;
+          result.response.isLast     = true;
+          result.response.startAt    = 0;
           result.response.maxResults = accumulatedValues.length;
-          result.response.values = accumulatedValues;
+          result.response.values     = accumulatedValues;
         }
-    
-
+        
         return result
       } catch (e) {
         console.error('JiraIntegrator.fetchData error:', e);
@@ -556,7 +597,7 @@ export class JiraIntegrator extends Integrator {
       return { success: false, error: 'No Jira client' };
     }
   }
-
+  
   /**
    * Fetch data that could return more than one page and automatically page if that is the case
    */
@@ -569,23 +610,23 @@ export class JiraIntegrator extends Integrator {
       method  = module.method;
       module  = module.module;
     }
-
+    
     let result = self.fetchData(module, method, payload);
-    if(!result.response.isLast){
+    if (!result.response.isLast) {
       payload = payload || {};
-
-      let pageSize = result.response.maxResults,
-        accumulatedResults = [].contcat(result.response.values),
-        i = 1;
-
-      while(!result.response.isLast){
-        payload.startAt = i * pageSize;
-        result = self.fetchData(module, method, payload);
+      
+      let pageSize           = result.response.maxResults,
+          accumulatedResults = [].contcat(result.response.values),
+          i                  = 1;
+      
+      while (!result.response.isLast) {
+        payload.startAt    = i * pageSize;
+        result             = self.fetchData(module, method, payload);
         accumulatedResults = accumulatedResults.concat(result.response.values)
       }
       debug && console.log('JiraIntegrator.fetchPagedData getting page:', module, method);
     }
-
+    
     return result;
   }
   

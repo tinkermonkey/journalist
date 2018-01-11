@@ -2,56 +2,60 @@
   <h3>
     Imported Items
   </h3>
-
+  
   <div class="pull-right">
     <button class="btn btn-primary btn-reprocess-issues">
       <span class="glyphicon glyphicon-refresh"></span>
       Reprocess Issues
     </button>
   </div>
-
+  
+  {{#if reprocessing}}
+    {{> RobaSpinner rainbow=true scale=0.5 }}
+  {{/if}}
+  
   <div>
     {{#if multiplePages}}
-    <div>{{fromIndex}} to {{toIndex}} of {{importedItemsCount}}</div>
-    <nav aria-label="Page navigation">
-      <ul class="pagination imported-item-pages">
-        <li data-page="1">
-          <a aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        {{#each pages}}
-        <li class="{{#if isCurrentPage}}active{{/if}}" data-page="{{this}}">
-          <a>{{this}}</a>
-        </li>
-        {{/each}}
-        <li data-page="{{pageCount}}">
-          <a href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+      <div>{{fromIndex}} to {{toIndex}} of {{importedItemsCount}}</div>
+      <nav aria-label="Page navigation">
+        <ul class="pagination imported-item-pages">
+          <li data-page="1">
+            <a aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          {{#each pages}}
+            <li class="{{#if isCurrentPage}}active{{/if}}" data-page="{{this}}">
+              <a>{{this}}</a>
+            </li>
+          {{/each}}
+          <li data-page="{{pageCount}}">
+            <a href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     {{else}}
-    <span>{{importedItemsCount}} items</span>
+      <span>{{importedItemsCount}} items</span>
     {{/if}}
   </div>
-
+  
   <table class="table data-table border-bottom">
     <thead>
-      <tr>
-        <th></th>
-        <th>Identifier</th>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Owner</th>
-        <th>Date Modified</th>
-        <th>Created By</th>
-        <th>Date Created</th>
-      </tr>
+    <tr>
+      <th></th>
+      <th>Identifier</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Owner</th>
+      <th>Date Modified</th>
+      <th>Created By</th>
+      <th>Date Created</th>
+    </tr>
     </thead>
     <tbody>
-      {{#if Template.subscriptionsReady}} {{#each importedItems}}
+    {{#if Template.subscriptionsReady}} {{#each importedItems}}
       <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
         <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right'}}</td>
         <td>{{identifier}}</td>
@@ -62,35 +66,35 @@
         <td>{{contributorName createdBy}}</td>
         <td>{{dateFormat dateCreated}}</td>
       </tr>
-      {{/each}} {{/if}}
+    {{/each}} {{/if}}
     </tbody>
   </table>
   {{#unless Template.subscriptionsReady}} {{> RobaSpinner rainbow=true}} {{/unless}}
-
+  
   <div>
     {{#if multiplePages}}
-    <nav aria-label="Page navigation">
-      <ul class="pagination imported-item-pages">
-        <li data-page="1">
-          <a aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        {{#each pages}}
-        <li class="{{#if isCurrentPage}}active{{/if}}" data-page="{{this}}">
-          <a>{{this}}</a>
-        </li>
-        {{/each}}
-        <li data-page="{{pageCount}}">
-          <a href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    <div>{{fromIndex}} to {{toIndex}} of {{importedItemsCount}}</div>
+      <nav aria-label="Page navigation">
+        <ul class="pagination imported-item-pages">
+          <li data-page="1">
+            <a aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          {{#each pages}}
+            <li class="{{#if isCurrentPage}}active{{/if}}" data-page="{{this}}">
+              <a>{{this}}</a>
+            </li>
+          {{/each}}
+          <li data-page="{{pageCount}}">
+            <a href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div>{{fromIndex}} to {{toIndex}} of {{importedItemsCount}}</div>
     {{else}}
-    <span>{{importedItemsCount}} items</span>
+      <span>{{importedItemsCount}} items</span>
     {{/if}}
   </div>
 

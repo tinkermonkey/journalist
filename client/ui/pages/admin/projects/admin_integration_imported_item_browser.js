@@ -9,6 +9,9 @@ let pageSize = 50;
  * Template Helpers
  */
 Template.AdminIntegrationImportedItemBrowser.helpers({
+  reprocessing(){
+    return Template.instance().reprocessing.get()
+  },
   importedItems () {
     let integration = this;
     return ImportedItems.find({ integrationId: integration._id }, { sort: { identifier: 1 } });
@@ -78,7 +81,18 @@ Template.AdminIntegrationImportedItemBrowser.events({
     }
   },
   'click .btn-reprocess-issues'(e, instance){
+    let integration = this;
     
+    if(integration && integration._id){
+      instance.reprocessing.set(true);
+      Meteor.call('reprocessIntegrationItems', integration._id, (error, response) => {
+        instance.reprocessing.set(false);
+        console.log('reprocessIntegrationItems response:', response);
+        if(error){
+          RobaDialog.error('Reprocessing failed:' + error.toString())
+        }
+      });
+    }
   }
 });
 
@@ -89,6 +103,7 @@ Template.AdminIntegrationImportedItemBrowser.onCreated(() => {
   let instance = Template.instance();
   
   instance.page = new ReactiveVar(1);
+  instance.reprocessing = new ReactiveVar(false);
   
   instance.autorun(() => {
     let integration = Template.currentData(),

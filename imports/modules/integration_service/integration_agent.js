@@ -146,6 +146,46 @@ export class IntegrationAgent {
   }
   
   /**
+   * Reprocess the items that have been imported for an integration via this provider
+   */
+  reprocessItems () {
+    debug && console.log('IntegrationAgent.reprocessItems:', this.integration._id);
+    let self           = this,
+        importFunction = self.integration.importFunction();
+    
+    /*
+    let testIem         = ImportedItems.findOne({ integrationId: self.integration._id }),
+        reprocessedItem = self.serviceProvider.postProcessItem(testIem.document);
+    
+    return {
+      reprocessedItem: reprocessedItem,
+      reimportResult : self.serviceProvider.importItem(importFunction, reprocessedItem, self.integration.projectId)
+    };
+    */
+    
+    // Load all of the items and reprocess them
+    ImportedItems.find({ integrationId: self.integration._id }).forEach((item, i) => {
+      i % 50 === 0 && console.log('IntegrationAgent.reprocessItems reprocessing item', i);
+      
+      let reprocessedItem = self.serviceProvider.postProcessItem(item.document),
+          reimportResult  = self.serviceProvider.importItem(importFunction, reprocessedItem, self.integration.projectId);
+      
+      if(reimportResult.success){
+        try {
+          self.serviceProvider.storeImportedItem(self.integration._id, self.integration.projectId, self.integration.itemType, reimportResult.item);
+        } catch (e) {
+          console.error('IntegrationAgent.reprocessItems storeImportedItem failed:', e);
+          throw new Meteor.Error(e.toString())
+        }
+      } else {
+        console.error('IntegrationAgent.reprocessItems importItem failed:', item.identifier, reimportResult.error);
+      }
+    });
+    
+    debug && console.log('IntegrationAgent.reprocessItems complete:', self.integration._id);
+  }
+  
+  /**
    * Shut this agent down in prep for being deleted
    */
   destroy () {

@@ -697,5 +697,29 @@ Meteor.methods({
       console.error('Non-admin user tried to authenticate an integration server:', user.username, username, serverId);
       throw new Meteor.Error(403);
     }
+  },
+  
+  /**
+   * Run imported items through the processing pipeline again
+   * @param integrationId
+   */
+  reprocessIntegrationItems(integrationId){
+    console.log('reprocessIntegrationItems:', integrationId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(integrationId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // grab the integration
+      let integration = Integrations.findOne(integrationId);
+      
+      return IntegrationService.getServiceProvider(integration.server()).getIntegrationAgent(integration).reprocessItems();
+    } else {
+      console.error('Non-admin user tried to reprocess issues:', user.username, integrationId);
+      throw new Meteor.Error(403);
+    }
+    
   }
 });

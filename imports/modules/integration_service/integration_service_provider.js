@@ -103,7 +103,7 @@ export class IntegrationServiceProvider {
     // Try getting up and running again
     self.reAuthenticate();
     self.checkHealth();
-    self.updateCachedData();
+    //self.updateCachedData();
   }
   
   /**
