@@ -1,0 +1,15 @@
+<template name="ReportLayout">
+  <div class="app-container">
+    {{#if Template.subscriptionsReady}}
+      {{#if currentUser}}
+        <div class="app-content">
+          {{> Template.dynamic template=main }}
+        </div>
+      {{else}}
+        {{> Login }}
+      {{/if}}
+    {{else}}
+      {{> AppLoading}}
+    {{/if}}
+  </div>
+</template>

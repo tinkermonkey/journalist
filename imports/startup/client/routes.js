@@ -3,32 +3,33 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 
 // Import the base templates
-import '../../../client/ui/layouts/unauthenticated_layout.js';
-import '../../../client/ui/layouts/authenticated_layout.js';
+import '../../../client/ui/layouts/unauthenticated_layout';
+import '../../../client/ui/layouts/authenticated_layout';
 
 // Import the pages
-import '../../../client/ui/pages/admin/contributors/admin_contributors.js';
-import '../../../client/ui/pages/admin/admin_home/admin_home.js';
-import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field.js';
-import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields.js';
-import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions.js';
-import '../../../client/ui/pages/admin/display_templates/integration_display_template.js';
-import '../../../client/ui/pages/admin/display_templates/integration_display_templates.js';
-import '../../../client/ui/pages/admin/import_export/import_export.js';
-import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function.js';
-import '../../../client/ui/pages/admin/integration_import_functions/integration_import_functions.js';
-import '../../../client/ui/pages/admin/integration_servers/integration_servers.js';
-import '../../../client/ui/pages/admin/integration_servers/integration_server_browser.js';
-import '../../../client/ui/pages/admin/projects/admin_projects.js';
-import '../../../client/ui/pages/admin/projects/admin_project_integration.js';
-import '../../../client/ui/pages/admin/teams/admin_teams.js';
-import '../../../client/ui/pages/admin/users/admin_users.js';
-import '../../../client/ui/pages/contributor/contributor_home.js';
-import '../../../client/ui/pages/effort/effort.js';
-import '../../../client/ui/pages/project/project_home.js';
-import '../../../client/ui/pages/task/task.js';
-import '../../../client/ui/pages/team/team_home.js';
-import '../../../client/ui/pages/user/user_profile.js';
+import '../../../client/ui/pages/admin/contributors/admin_contributors';
+import '../../../client/ui/pages/admin/admin_home/admin_home';
+import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field';
+import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields';
+import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions';
+import '../../../client/ui/pages/admin/display_templates/integration_display_template';
+import '../../../client/ui/pages/admin/display_templates/integration_display_templates';
+import '../../../client/ui/pages/admin/import_export/import_export';
+import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function';
+import '../../../client/ui/pages/admin/integration_import_functions/integration_import_functions';
+import '../../../client/ui/pages/admin/integration_servers/integration_servers';
+import '../../../client/ui/pages/admin/integration_servers/integration_server_browser';
+import '../../../client/ui/pages/admin/projects/admin_projects';
+import '../../../client/ui/pages/admin/projects/admin_project_integration';
+import '../../../client/ui/pages/admin/teams/admin_teams';
+import '../../../client/ui/pages/admin/users/admin_users';
+import '../../../client/ui/pages/contributor/contributor_home';
+import '../../../client/ui/pages/effort/effort';
+import '../../../client/ui/pages/project/project_home';
+import '../../../client/ui/pages/report/support/weekly_support_report';
+import '../../../client/ui/pages/task/task';
+import '../../../client/ui/pages/team/team_home';
+import '../../../client/ui/pages/user/user_profile';
 
 // Set the layout root element
 BlazeLayout.setRoot('body');
@@ -97,6 +98,18 @@ FlowRouter.route('/user_profile', {
   name: 'UserProfile',
   action () {
     BlazeLayout.render('AuthenticatedLayout', { main: 'UserProfile' });
+  }
+});
+
+/**
+ *
+ * Report Routes
+ *
+ */
+FlowRouter.route('/report/weekly_support_report/:projectId', {
+  name: 'WeeklySupportReport',
+  action () {
+    BlazeLayout.render('ReportLayout', { main: 'WeeklySupportReport' });
   }
 });
 

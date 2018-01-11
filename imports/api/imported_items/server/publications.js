@@ -29,6 +29,16 @@ Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
   }
 });
 
+Meteor.publish('imported_item_query', function (query) {
+  console.log('Publish: imported_item_query');
+  if (this.userId && query && _.isObject(query)) {
+    return ImportedItems.find(query);
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
 Meteor.publish('imported_item_crumb_query', function (query) {
   console.log('Publish: imported_item_crumb_query');
   if (this.userId && query && _.isObject(query)) {
