@@ -46,7 +46,7 @@ Template.DevProjectBanner.helpers({
     console.log('projectCapacityDonutContext:', data);
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'sum',
         keyAttribute  : 'roleId',
@@ -87,7 +87,7 @@ Template.DevProjectBanner.helpers({
             }));
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'sum',
         keyAttribute  : 'projectId',
@@ -128,7 +128,7 @@ Template.DevProjectBanner.helpers({
         roleDefinition = ContributorRoleDefinitions.findOne(roleId);
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'sum',
         keyAttribute  : 'projectId',
@@ -164,7 +164,7 @@ Template.DevProjectBanner.helpers({
         }).fetch();
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'count',
         valueAttribute: 'itemType',
@@ -198,7 +198,7 @@ Template.DevProjectBanner.helpers({
         }).fetch();
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'count',
         valueAttribute: 'itemType',
@@ -232,7 +232,7 @@ Template.DevProjectBanner.helpers({
         }).fetch();
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'count',
         valueAttribute: 'itemType',

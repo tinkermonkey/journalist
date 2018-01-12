@@ -12,7 +12,7 @@ Template.AdminStatsContributors.helpers({
   contributorRolesContext () {
     let data = Contributors.find();
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         title: { text: [ 'Contributor Roles' ], showTotal: true },
         countNull: true,
@@ -32,7 +32,7 @@ Template.AdminStatsContributors.helpers({
   contributorTypeContext () {
     let data = Contributors.find();
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         title: { text: [ 'Contributor Types' ], showTotal: true },
         valueAttribute: 'usertype',
@@ -46,7 +46,7 @@ Template.AdminStatsContributors.helpers({
   contributorIsActiveContext () {
     let data = Contributors.find();
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         title: { text: [ 'Contributors Active' ], showTotal: true },
         valueAttribute: 'isActive',

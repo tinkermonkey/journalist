@@ -26,7 +26,7 @@ Template.DonutChart.onRendered(() => {
   let instance = Template.instance();
   
   // Set the elementId
-  instance.$('.donut-chart').attr('id', instance.elementId);
+  instance.$('.chart').attr('id', instance.elementId);
   
   instance.autorun(() => {
     let context = Template.currentData();

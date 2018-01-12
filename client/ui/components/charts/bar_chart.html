@@ -1,5 +1,8 @@
 <template name="BarChart">
   <div class="bar-chart-container {{cssClass}}">
-    <div id="{{getElementId}}" class="bar-chart"></div>
+      {{#if title}}
+      <h3 class="chart-title">{{title}}</h3>
+      {{/if}}
+      <div id="{{getElementId}}" class="bar-chart"></div>
   </div>
 </template>

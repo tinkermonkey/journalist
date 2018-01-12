@@ -15,7 +15,7 @@ Template.AdminStatsImportedItems.helpers({
   itemTypeChartContext () {
     let data = ImportedItemCrumbs.find();
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         title: { text: [ 'Items', 'By Type' ], showTotal: true },
         valueAttribute: 'itemType',
@@ -29,7 +29,7 @@ Template.AdminStatsImportedItems.helpers({
   itemProjectContext () {
     let data = ImportedItemCrumbs.find();
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         title: { text: [ 'Items', 'By Project' ], showTotal: true },
         valueAttribute: 'projectId',
@@ -44,7 +44,7 @@ Template.AdminStatsImportedItems.helpers({
   itemWorkStatesContext () {
     let data = ImportedItemCrumbs.find();
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         title    : 'Work States',
         valueAttribute: 'workState',
@@ -58,7 +58,7 @@ Template.AdminStatsImportedItems.helpers({
   itemWorkPhasesContext () {
     let data = ImportedItemCrumbs.find();
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         title    : 'Work Phases',
         valueAttribute: 'workPhase',

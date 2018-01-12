@@ -47,7 +47,13 @@ export class C3BarWrapper {
         }
       },
       legend: {
-        show: self.columns.length < 4
+        show: false
+      },
+      padding: {
+        top: 20,
+        bottom: 20,
+        left: 60,
+        right: 60
       }
     }, self.config.chart);
 
@@ -93,7 +99,7 @@ export class C3BarWrapper {
       map = {};
 
     //console.log(Util.timestamp(), 'C3BarWrapper.parseData:', data);
-    self.columns = [data];
+    self.columns = data;
     return
 
     // Aggregate the data

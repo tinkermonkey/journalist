@@ -48,7 +48,7 @@ Template.DevTeamBanner.helpers({
             });
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'sum',
         keyAttribute  : 'roleId',
@@ -88,7 +88,7 @@ Template.DevTeamBanner.helpers({
             }));
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'sum',
         keyAttribute  : 'projectId',
@@ -128,7 +128,7 @@ Template.DevTeamBanner.helpers({
         roleDefinition = ContributorRoleDefinitions.findOne(roleId);
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'sum',
         keyAttribute  : 'projectId',
@@ -163,7 +163,7 @@ Template.DevTeamBanner.helpers({
         }).fetch();
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'count',
         valueAttribute: 'itemType',
@@ -196,7 +196,7 @@ Template.DevTeamBanner.helpers({
         }).fetch();
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'count',
         valueAttribute: 'itemType',
@@ -229,7 +229,7 @@ Template.DevTeamBanner.helpers({
         }).fetch();
     
     return {
-      cssClass: 'donut-flex',
+      cssClass: 'chart-flex',
       config  : {
         aggregation   : 'count',
         valueAttribute: 'itemType',

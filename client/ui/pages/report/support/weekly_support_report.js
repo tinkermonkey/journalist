@@ -26,7 +26,8 @@ Template.WeeklySupportReport.helpers({
       data = _.flatten(supportTickets.map((item) => { return item.document.fields.installationsaffected }));
 
     return {
-      cssClass: 'donut-flex',
+      title: 'Installations Affected',
+      cssClass: 'chart-flex',
       config: {
         callouts: {
           show: true,
@@ -59,7 +60,8 @@ Template.WeeklySupportReport.helpers({
       data = _.flatten(supportTickets.map((item) => { return item.document.fields.supportarea }));
 
     return {
-      cssClass: 'donut-flex',
+      title: 'Support Areas',
+      cssClass: 'chart-flex',
       config: {
         callouts: {
           show: true,
@@ -90,16 +92,45 @@ Template.WeeklySupportReport.helpers({
       segments = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
       dateRange = Template.instance().dateRange.get(),
       supportTickets = Template.instance().supportTickets.get(),
-      ticketAges = supportTickets.map((item) => { return moment().diff(moment(item.dateCreated), 'days') }),
-      segmentedData = segments.map((floor, i) => {
+      linkedItems = Template.instance().linkedItems.get(),
+      fixIdentifiers = ImportedItems.find({ identifier: { $in: linkedItems }, itemType: { $in: [ItemTypes.bug, ItemTypes.feature] } }).map((item) => {
+        return item.identifier
+      }),
+      withFixesAges = supportTickets.filter((item) => {
+        if (item.document.fields.issuelinks.length) {
+          return item.document.fields.issuelinks.reduce((acc, value) => {
+            return acc || _.contains(fixIdentifiers, (value.outwardIssue || value.inwardIssue).key)
+          }, false)
+        }
+        return false
+      })
+        .map((item) => { return moment().diff(moment(item.dateCreated), 'days') }),
+      withFixesData = segments.map((floor, i) => {
         let ceiling = i < segments.length - 1 ? segments[i + 1] : 10000;
         return {
           title: i < segments.length - 1 ? floor.toString() + ' - ' + ceiling.toString() : floor.toString() + '+',
-          value: ticketAges.filter((dataPoint) => { return dataPoint >= floor && dataPoint < ceiling })
+          value: withFixesAges.filter((dataPoint) => { return dataPoint >= floor && dataPoint < ceiling })
+        }
+      }),
+      withoutFixesAges = supportTickets.filter((item) => {
+        if (item.document.fields.issuelinks.length) {
+          return !item.document.fields.issuelinks.reduce((acc, value) => {
+            return acc || _.contains(fixIdentifiers, (value.outwardIssue || value.inwardIssue).key)
+          }, false)
+        }
+        return true
+      })
+        .map((item) => { return moment().diff(moment(item.dateCreated), 'days') }),
+      withoutFixesData = segments.map((floor, i) => {
+        let ceiling = i < segments.length - 1 ? segments[i + 1] : 10000;
+        return {
+          title: i < segments.length - 1 ? floor.toString() + ' - ' + ceiling.toString() : floor.toString() + '+',
+          value: withoutFixesAges.filter((dataPoint) => { return dataPoint >= floor && dataPoint < ceiling })
         }
       });
 
     return {
+      title: 'Ticket Age',
       cssClass: 'bar-flex',
       config: {
         keyAttribute: 'title',
@@ -111,15 +142,18 @@ Template.WeeklySupportReport.helpers({
           axis: {
             x: {
               type: 'category',
-              categories: segmentedData.map((d) => { return d.title })
+              categories: withFixesData.map((d) => { return d.title + ' days' })
             }
           },
           legend: {
-            show: false
+            show: true
           }
         }
       },
-      data: ['Tickets'].concat(segmentedData.map((d) => { return d.value.length }))
+      data: [
+        ['With Fixes'].concat(withFixesData.map((d) => { return d.value.length })),
+        ['Without Fixes'].concat(withoutFixesData.map((d) => { return d.value.length }))
+      ]
     }
   },
   fixVersions() {
@@ -129,13 +163,14 @@ Template.WeeklySupportReport.helpers({
       linkedItems = Template.instance().linkedItems.get(),
       fixVersions = _.flatten(linkedItems.map((itemKey) => {
         let item = ImportedItems.findOne({ 'identifier': itemKey });
-        if(item && item.document.fields.fixVersions){
+        if (item && item.document.fields.fixVersions) {
           return item.document.fields.fixVersions
         }
-      }).filter((item) => { return item !== undefined}));
+      }).filter((item) => { return item !== undefined }));
 
     return {
-      cssClass: 'donut-flex',
+      title: 'Scheduled Fixes',
+      cssClass: 'chart-flex',
       config: {
         callouts: {
           show: true,
@@ -229,12 +264,12 @@ Template.WeeklySupportReport.onCreated(() => {
             }
           });
         }
-      })).filter((item) => { return item !== undefined});
+      })).filter((item) => { return item !== undefined });
 
     instance.supportTickets.set(supportTickets);
     instance.linkedItems.set(linkedItems);
 
-   // console.log('supportTickets autorun:', supportTickets.length);
+    // console.log('supportTickets autorun:', supportTickets.length);
   });
 
   instance.autorun(() => {
