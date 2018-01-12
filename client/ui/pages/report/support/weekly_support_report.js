@@ -7,22 +7,63 @@ import { ItemTypes } from '../../../../../imports/api/imported_items/item_types'
 import { Projects } from '../../../../../imports/api/projects/projects';
 import '../../../components/charts/donut_chart';
 import '../../../components/charts/bar_chart';
+import '../reports.css';
 
 /**
  * Template Helpers
  */
 Template.WeeklySupportReport.helpers({
-  project() {
+  reportProject() {
     let projectId = FlowRouter.getParam('projectId');
     return Projects.findOne(projectId);
   },
   dateRange() {
     return Template.instance().dateRange.get()
   },
+  isForPrint() {
+    return FlowRouter.getQueryParam('print')
+  },
+  linkedFix() {
+    let link = this,
+      issueKey = (link.outwardIssue || link.inwardIssue).key;
+
+    return ImportedItems.findOne({
+      itemType: { $in: [ItemTypes.bug, ItemTypes.feature] },
+      identifier: issueKey
+    })
+  },
+  fixVersionList() {
+    return this.document.fields.fixVersions.map((version) => { return version.name }).join(', ')
+  },
+  newTicketsCount() {
+    let dateRange = Template.instance().dateRange.get() || {};
+    return ImportedItems.find({
+      itemType: ItemTypes.supportTicket,
+      dateCreated: {
+        $gte: dateRange.start,
+        $lt: dateRange.end
+      }
+    }).count()
+  },
+  resolvedTicketsCount() {
+    let dateRange = Template.instance().dateRange.get() || {};
+    return ImportedItems.find({
+      itemType: ItemTypes.supportTicket,
+      statusHistory: {
+        $elemMatch: {
+          date: { $gte: dateRange.start, $lte: dateRange.end },
+          'to.label': { $regex: 'resolved', $options: 'i' }
+        }
+      }
+    }).count()
+  },
+  openTicketsCount() {
+    return Template.instance().openSupportTickets.get().length
+  },
   installationsAffected() {
     let project = this,
-      dateRange = Template.instance().dateRange.get(),
-      supportTickets = Template.instance().supportTickets.get(),
+      dateRange = Template.instance().dateRange.get() || {},
+      supportTickets = Template.instance().supportTickets.get() || [],
       data = _.flatten(supportTickets.map((item) => { return item.document.fields.installationsaffected }));
 
     return {
@@ -55,8 +96,8 @@ Template.WeeklySupportReport.helpers({
   },
   supportAreas() {
     let project = this,
-      dateRange = Template.instance().dateRange.get(),
-      supportTickets = Template.instance().supportTickets.get(),
+      dateRange = Template.instance().dateRange.get() || {},
+      supportTickets = Template.instance().supportTickets.get() || [],
       data = _.flatten(supportTickets.map((item) => { return item.document.fields.supportarea }));
 
     return {
@@ -90,10 +131,13 @@ Template.WeeklySupportReport.helpers({
   supportTicketAge() {
     let project = this,
       segments = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
-      dateRange = Template.instance().dateRange.get(),
-      supportTickets = Template.instance().supportTickets.get(),
-      linkedItems = Template.instance().linkedItems.get(),
-      fixIdentifiers = ImportedItems.find({ identifier: { $in: linkedItems }, itemType: { $in: [ItemTypes.bug, ItemTypes.feature] } }).map((item) => {
+      dateRange = Template.instance().dateRange.get() || {},
+      supportTickets = Template.instance().openSupportTickets.get() || [],
+      linkedItems = Template.instance().linkedItems.get() || [],
+      fixIdentifiers = ImportedItems.find({
+        identifier: { $in: linkedItems },
+        itemType: { $in: [ItemTypes.bug, ItemTypes.feature] }
+      }).map((item) => {
         return item.identifier
       }),
       withFixesAges = supportTickets.filter((item) => {
@@ -105,13 +149,6 @@ Template.WeeklySupportReport.helpers({
         return false
       })
         .map((item) => { return moment().diff(moment(item.dateCreated), 'days') }),
-      withFixesData = segments.map((floor, i) => {
-        let ceiling = i < segments.length - 1 ? segments[i + 1] : 10000;
-        return {
-          title: i < segments.length - 1 ? floor.toString() + ' - ' + ceiling.toString() : floor.toString() + '+',
-          value: withFixesAges.filter((dataPoint) => { return dataPoint >= floor && dataPoint < ceiling })
-        }
-      }),
       withoutFixesAges = supportTickets.filter((item) => {
         if (item.document.fields.issuelinks.length) {
           return !item.document.fields.issuelinks.reduce((acc, value) => {
@@ -121,6 +158,13 @@ Template.WeeklySupportReport.helpers({
         return true
       })
         .map((item) => { return moment().diff(moment(item.dateCreated), 'days') }),
+      withFixesData = segments.map((floor, i) => {
+        let ceiling = i < segments.length - 1 ? segments[i + 1] : 10000;
+        return {
+          title: i < segments.length - 1 ? floor.toString() + ' - ' + ceiling.toString() : floor.toString() + '+',
+          value: withFixesAges.filter((dataPoint) => { return dataPoint >= floor && dataPoint < ceiling })
+        }
+      }),
       withoutFixesData = segments.map((floor, i) => {
         let ceiling = i < segments.length - 1 ? segments[i + 1] : 10000;
         return {
@@ -130,8 +174,8 @@ Template.WeeklySupportReport.helpers({
       });
 
     return {
-      title: 'Ticket Age',
-      cssClass: 'bar-flex',
+      title: 'Open Ticket Age',
+      cssClass: 'chart-flex',
       config: {
         keyAttribute: 'title',
         valueAttribute: 'value',
@@ -156,11 +200,61 @@ Template.WeeklySupportReport.helpers({
       ]
     }
   },
+  openTicketsDonut() {
+    let project = this,
+      dateRange = Template.instance().dateRange.get() || {},
+      supportTickets = Template.instance().openSupportTickets.get() || [],
+      linkedItems = Template.instance().linkedItems.get() || [],
+      fixIdentifiers = ImportedItems.find({
+        identifier: { $in: linkedItems },
+        itemType: { $in: [ItemTypes.bug, ItemTypes.feature] }
+      }).map((item) => {
+        return item.identifier
+      }),
+      data = supportTickets.map((item) => {
+        let hasFix = false;
+        if (item.document.fields.issuelinks.length) {
+          hasFix = item.document.fields.issuelinks.reduce((acc, value) => {
+            return acc || _.contains(fixIdentifiers, (value.outwardIssue || value.inwardIssue).key)
+          }, false);
+        }
+
+        return hasFix ? 'With Fix' : 'Without Fix'
+      });
+
+    return {
+      title: 'Open Tickets',
+      cssClass: 'chart-flex',
+      config: {
+        callouts: {
+          show: true,
+          align: false
+        },
+        chart: {
+          donut: {
+            title: { text: ['Open Tickets'], showTotal: true },
+            label: {
+              format(value, ratio, id) {
+                return value
+              }
+            }
+          },
+          legend: {
+            show: false
+          }
+        },
+        renderLabel(value) {
+          return value
+        },
+      },
+      data: data
+    }
+  },
   fixVersions() {
     let project = this,
-      dateRange = Template.instance().dateRange.get(),
-      supportTickets = Template.instance().supportTickets.get(),
-      linkedItems = Template.instance().linkedItems.get(),
+      dateRange = Template.instance().dateRange.get() || {},
+      supportTickets = Template.instance().supportTickets.get() || [],
+      linkedItems = Template.instance().linkedItems.get() || [],
       fixVersions = _.flatten(linkedItems.map((itemKey) => {
         let item = ImportedItems.findOne({ 'identifier': itemKey });
         if (item && item.document.fields.fixVersions) {
@@ -196,6 +290,16 @@ Template.WeeklySupportReport.helpers({
       },
       data: fixVersions
     }
+  },
+  openTicketsTable() {
+    return Template.instance().openSupportTickets.get();
+  },
+  fixVersionsTable() {
+    let linkedItems = Template.instance().linkedItems.get() || [];
+    return ImportedItems.find({
+      identifier: { $in: linkedItems },
+      itemType: { $in: [ItemTypes.bug, ItemTypes.feature] }
+    }, { sort: { dateCreated: 1 } })
   }
 });
 
@@ -219,6 +323,7 @@ Template.WeeklySupportReport.onCreated(() => {
   console.log('WeeklySupportReport created date range:', dateRange);
 
   instance.supportTickets = new ReactiveVar([]);
+  instance.openSupportTickets = new ReactiveVar([]);
   instance.supportTicketQuery = new ReactiveVar();
   instance.linkedItems = new ReactiveVar([]);
 
@@ -243,7 +348,7 @@ Template.WeeklySupportReport.onCreated(() => {
       };
 
 
-    //instance.subscribe('imported_item_crumb_query', { projectId: projectId });
+    instance.subscribe('imported_item_crumb_query', { projectId: projectId });
     instance.subscribe('imported_item_query', supportTicketQuery);
     instance.supportTicketQuery.set(supportTicketQuery);
   });
@@ -268,6 +373,11 @@ Template.WeeklySupportReport.onCreated(() => {
 
     instance.supportTickets.set(supportTickets);
     instance.linkedItems.set(linkedItems);
+    instance.openSupportTickets.set(ImportedItems.find({
+      projectId: projectId,
+      itemType: ItemTypes.supportTicket,
+      statusLabel: { $not: /resolved/i }
+    }, { sort: { dateCreated: 1 } }).fetch());
 
     // console.log('supportTickets autorun:', supportTickets.length);
   });

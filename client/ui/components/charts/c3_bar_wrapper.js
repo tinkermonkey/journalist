@@ -4,10 +4,7 @@ import { Util } from '../../../../imports/api/util';
 let c3 = require('c3'),
   d3 = require('d3'),
   debug = false,
-  trace = false,
-  totalDy = -0.4,
-  nextDy = 2.8,
-  standardDy = 1.2;
+  trace = false;
 
 export class C3BarWrapper {
   constructor(containerId, config) {
@@ -59,10 +56,6 @@ export class C3BarWrapper {
 
     debug && console.log(Util.timestamp(), 'C3BarWrapper.generate chartConfig:', self.chartConfig);
     self.chart = c3.generate(self.chartConfig);
-
-    if (self.chartConfig.customTitle) {
-      self.updateCustomTitle();
-    }
   }
 
   /**
@@ -80,10 +73,6 @@ export class C3BarWrapper {
       self.chart.load({
         columns: self.columns
       });
-
-      if (self.chartConfig.customTitle) {
-        self.updateCustomTitle();
-      }
     } else {
       console.error('C3BarWrapper.update failed because no chart was found');
     }
@@ -98,54 +87,6 @@ export class C3BarWrapper {
     let self = this,
       map = {};
 
-    //console.log(Util.timestamp(), 'C3BarWrapper.parseData:', data);
     self.columns = data;
-    return
-
-    // Aggregate the data
-    data.forEach((row) => {
-      let columnKey;
-
-      // If an attribute to pick the data key from is defined, use it
-      if (_.isObject(row)) {
-        if (self.config.keyAttribute) {
-          columnKey = row[self.config.keyAttribute]
-        } else {
-          columnKey = row[self.config.valueAttribute]
-        }
-      } else {
-        columnKey = row;
-      }
-
-      if (columnKey === undefined && self.config.countNull === true || _.isString(columnKey) && columnKey.length === 0) {
-        columnKey = 'null';
-      }
-
-      if (columnKey !== undefined) {
-        if (!map[columnKey]) {
-          let title = self.config.renderLabel && _.isFunction(self.config.renderLabel) ? self.config.renderLabel(columnKey) : Util.camelToTitle(columnKey);
-
-          map[columnKey] = {
-            title: title,
-            value: 0
-          }
-        }
-
-        if (self.config.aggregation === 'count') {
-          map[columnKey].value += 1;
-        } else if (self.config.aggregation === 'sum') {
-          map[columnKey].value += row[self.config.valueAttribute];
-        } else {
-          console.error('C3BarWrapper.parseData unknown aggregation:', self.config.aggregation);
-        }
-      }
-    });
-
-    // Format it into columns
-    self.columns = [];
-    _.keys(map).forEach((columnKey) => {
-      let column = map[columnKey];
-      self.columns.push([column.title, column.value]);
-    });
   }
 }

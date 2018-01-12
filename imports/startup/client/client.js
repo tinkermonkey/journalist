@@ -403,3 +403,9 @@ Template.registerHelper('fromNow', function (date) {
     return moment.duration(date - Date.now(), 'ms').humanize(true);
   }
 });
+
+Template.registerHelper('daysOld', function (date) {
+  if (date) {
+    return moment().diff(moment(date), 'days')
+  }
+});

@@ -1,29 +1,149 @@
 <template name="WeeklySupportReport">
-  {{#if Template.subscriptionsReady}} {{#with project}}
-  <div>
-    <h1>
-      <span>Engineer Support Tickets</span>
-    </h1>
-    <h4>
-      <span>For the week starting {{dateFormat dateRange.start 'dddd, MMM Do'}}</span>
-    </h4>
-  </div>
-  <div class="flex">
-    {{> DonutChart installationsAffected }}
-    {{> DonutChart supportAreas }}
-  </div>
-  <div class="flex">
-    {{> BarChart supportTicketAge }}
-    {{> DonutChart fixVersions }}
-  </div>
-  <div class="flex">
+  {{#if Template.subscriptionsReady}}
+    {{#with reportProject}}
+    <div class="{{#if isForPrint}}container-fluid{{else}}container{{/if}}">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="report-header flex">
+            <div class="report-header-title">
+              <h1>Engineer Support Tickets</h1>
+              <h4>For the week starting {{dateFormat dateRange.start 'dddd, MMM Do'}}</h4>
+            </div>
+            <div class="report-header-splitter">
+              <div class="report-header-right-bullet" style="color: #ffff00;">
+                <div>{{newTicketsCount}}</div>
+              </div>
+              <div class="report-header-right-bullet" style="color: #ffa600;">
+                <div>{{openTicketsCount}}</div>
+              </div>
+              <div class="report-header-right-bullet" style="color: #009700;">
+                <div>{{resolvedTicketsCount}}</div>
+              </div>
+            </div>
+            <div class="report-header-right">
+              <div class="report-header-right-bullet">
+                <div>New Issues</div>
+              </div>
+              <div class="report-header-right-bullet">
+                <div>Open Issues</div>
+              </div>
+              <div class="report-header-right-bullet">
+                <div>Resolved Issues</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex">
+            {{> DonutChart installationsAffected }}
+            {{> DonutChart supportAreas }}
+            {{> DonutChart openTicketsDonut }}
+          </div>
+          <div class="flex">
+            {{> BarChart supportTicketAge }}
+            {{> DonutChart fixVersions }}
+          </div>
+          <div class="full-width">
+            <h2>Open Tickets</h2>
+            <table class="table data-table table-striped">
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Installations Affected</th>
+                  <th>Platforms Affected</th>
+                  <th>Days Old</th>
+                  <th>Salesforce Ticket(s)</th>
+                  <th>Support Area</th>
+                  <th>Summary</th>
+                  <th>Fixes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each openTicketsTable}}
+                <tr>
+                  <td class="no-wrap">{{identifier}}</td>
+                  <td>
+                    {{#each document.fields.installationsaffected}}
+                    <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td>
+                    {{#each document.fields.platformsaffected}}
+                      <div>{{value}}</div>
+                    {{/each}}
+                  </td>
+                  <td>{{daysOld dateCreated}}</td>
+                  <td>
+                    {{#each document.fields.supporttickets}}
+                      <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td class="no-wrap">
+                    {{#each document.fields.supportarea}}
+                      <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td>{{title}}</td>
+                  <td>
+                    {{#each document.fields.issuelinks}}
+                      {{#with linkedFix}}
+                        <div class="no-wrap">
+                          {{identifier}}
+                          {{#if document.fields.fixVersions.length}}
+                            ({{fixVersionList}})
+                          {{/if}}
+                        </div>
+                      {{/with}}
+                    {{/each}}
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div class="full-width">
+            <h2>Planned Fixes</h2>
+            <table class="table data-table table-striped">
+              <thead>
+                <tr>
+                  <th>Fix Version</th>
+                  <th>Issue</th>
+                  <th>Project</th>
+                  <th>Status</th>
+                  <th>Summary</th>
+                  <th>Date Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each fixVersionsTable}}
+                <tr>
+                  <td class="no-wrap">
+                    {{#each document.fields.fixVersions}}
+                      <div>{{name}}</div>
+                    {{/each}}
+                  </td>
+                  <td class="no-wrap">{{identifier}}</td>
+                  <td class="no-wrap">
+                    {{project.title}}
+                  </td>
+                  <td class="no-wrap">{{document.statusLabel}}</td>
+                  <td>
+                    {{title}}
+                  </td>
+                  <td>
+                    {{dateFormat dateCreated 'MMM Do'}}
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div class="full-width">
 
-  </div>
-  <div class="flex">
-
-  </div>
-  <div class="flex">
-
-  </div>
-  {{else}} {{> NotFound }} {{/with}} {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{else}}
+      {{> NotFound }}
+    {{/with}}
+  {{/if}}
 </template>

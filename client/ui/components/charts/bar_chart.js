@@ -26,7 +26,7 @@ Template.BarChart.onRendered(() => {
   let instance = Template.instance();
 
   // Set the elementId
-  instance.$('.bar-chart').attr('id', instance.elementId);
+  instance.$('.chart').attr('id', instance.elementId);
 
   instance.autorun(() => {
     let context = Template.currentData();

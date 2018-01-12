@@ -3,6 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ItemTypes } from './item_types';
 import { ImportedItemWorkPhases } from './imported_item_work_phases';
 import { ImportedItemWorkStates } from './imported_item_work_states';
+import { Projects } from '../projects/projects';
 
 /**
  * ============================================================================
@@ -136,4 +137,11 @@ ImportedItems.deny({
 /**
  * Helpers
  */
-ImportedItems.helpers({});
+ImportedItems.helpers({
+  /**
+   * Grab the project
+   */
+  project(){
+    return Projects.findOne(this.projectId)
+  }
+});

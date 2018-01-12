@@ -181,12 +181,18 @@ export class C3DonutWrapper {
     data = data.filter((d) => { return d.dy > 12 || d.sweep > 20 });
     trace && console.log('C3 Chart data:', data);
 
-    let donutEnter = svg.select('.c3-chart-arcs')
+    let donutSelection = svg.select('.c3-chart-arcs')
       .selectAll('.c3-chart-arc')
-      .select('.label-name')
-      .data(data)
-      .enter()
+      .select('.donut-label-group')
+      .data(data, (d) => { return d.data.id});
+
+    // Remove old slices
+    donutSelection.exit().remove();
+
+    // Add new slices
+    let donutEnter = donutSelection.enter()
       .append('g')
+      .attr('data-id', (d) => {return d.data.id})
       .attr('class', 'donut-label-group');
 
     donutEnter
@@ -197,14 +203,19 @@ export class C3DonutWrapper {
       .attr('dy', '0.35em')
       .text((d) => {
         return d.data && d.data.id
-      })
-      .attr('transform', (d) => {
-        return 'translate(' + _.values(d.labelPos) + ')';
       });
 
     donutEnter
       .append('polyline')
-      .attr('class', 'donut-label-callout')
+      .attr('class', 'donut-label-callout');
+
+    // Update existing datapoints
+    donutSelection.selectAll('.donut-label')
+      .attr('transform', (d) => {
+        return 'translate(' + _.values(d.labelPos) + ')';
+      });
+
+    donutSelection.selectAll('.donut-label-callout')
       .attr('points', (d) => {
         return [
           [
