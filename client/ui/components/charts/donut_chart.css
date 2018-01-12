@@ -23,3 +23,21 @@
 .donut-chart-container .c3-tooltip {
   white-space: nowrap;
 }
+
+.donut-label {
+  font-size: 10pt;
+}
+
+.donut-label-left {
+  text-anchor: start;
+}
+
+.donut-label-right {
+  text-anchor: end;
+}
+
+.donut-label-callout{
+  fill: none;
+  stroke: #999;
+  stroke-width: 1px;
+}

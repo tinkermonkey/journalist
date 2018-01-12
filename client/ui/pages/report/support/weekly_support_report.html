@@ -1,17 +1,29 @@
 <template name="WeeklySupportReport">
-  <div class="flex">
-  
+  {{#if Template.subscriptionsReady}} {{#with project}}
+  <div>
+    <h1>
+      <span>Engineer Support Tickets</span>
+    </h1>
+    <h4>
+      <span>For the week starting {{dateFormat dateRange.start 'dddd, MMM Do'}}</span>
+    </h4>
   </div>
   <div class="flex">
-  
+    {{> DonutChart installationsAffected }}
+    {{> DonutChart supportAreas }}
   </div>
   <div class="flex">
-  
+    {{> BarChart supportTicketAge }}
+    {{> DonutChart fixVersions }}
   </div>
   <div class="flex">
-  
+
   </div>
   <div class="flex">
-  
+
   </div>
+  <div class="flex">
+
+  </div>
+  {{else}} {{> NotFound }} {{/with}} {{/if}}
 </template>
