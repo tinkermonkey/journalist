@@ -53,7 +53,7 @@ export const StatusReportSetting = new SimpleSchema({
   }
 });
 
-export const StatusReportSettings = new Mongo.Collection("status_report_settings");
+export const StatusReportSettings = new Mongo.Collection('status_report_settings');
 StatusReportSettings.attachSchema(StatusReportSetting);
 
 /**

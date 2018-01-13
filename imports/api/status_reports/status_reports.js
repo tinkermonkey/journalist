@@ -58,7 +58,7 @@ export const StatusReport = new SimpleSchema({
   }
 });
 
-export const StatusReports = new Mongo.Collection("status_reports");
+export const StatusReports = new Mongo.Collection('status_reports');
 StatusReports.attachSchema(StatusReport);
 
 // These are server side only

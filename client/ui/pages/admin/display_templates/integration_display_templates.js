@@ -62,7 +62,7 @@ Template.IntegrationDisplayTemplates.events({
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Create the display template
-            Meteor.call('addIntegrationDisplayTemplate', formData.title, (error, response) => {
+            Meteor.call('addIntegrationDisplayTemplate', formData.title, formData.templateName, (error, response) => {
               if (error) {
                 RobaDialog.error('Failed to create display template:' + error.toString())
               } else {

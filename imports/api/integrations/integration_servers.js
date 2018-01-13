@@ -68,7 +68,7 @@ export const IntegrationServer = new SimpleSchema({
   }
 });
 
-export const IntegrationServers = new Mongo.Collection("integration_servers");
+export const IntegrationServers = new Mongo.Collection('integration_servers');
 IntegrationServers.attachSchema(IntegrationServer);
 // Don't track changes because the data changes too frequently (authData, isActive, isAuthenticated)
 //ChangeTracker.trackChanges(IntegrationServers, 'IntegrationServers');

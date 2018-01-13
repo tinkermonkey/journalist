@@ -5,6 +5,7 @@ import { IntegrationDisplayTemplates } from '../integration_display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationServerCaches } from '../integration_server_caches';
+import { PublishedDisplayTemplates } from '../published_display_templates';
 
 Meteor.publish('integrations', function (projectId) {
   console.info('Publish: integrations', projectId);
@@ -109,7 +110,22 @@ Meteor.publish('integration_import_function', function (importFunctionId) {
 Meteor.publish('integration_display_templates', function () {
   console.info('Publish: integration_display_templates');
   if (this.userId) {
-    return IntegrationDisplayTemplates.find({});
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationDisplayTemplates.find({});
+    } else {
+      console.warn('integration_display_templates requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('published_display_templates', function () {
+  console.info('Publish: published_display_templates');
+  if (this.userId) {
+    return PublishedDisplayTemplates.find({});
   } else {
     this.ready();
     return [];

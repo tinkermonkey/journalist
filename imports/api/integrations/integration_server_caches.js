@@ -27,7 +27,7 @@ export const IntegrationServerCache = new SimpleSchema({
   }
 });
 
-export const IntegrationServerCaches = new Mongo.Collection("integration_server_caches");
+export const IntegrationServerCaches = new Mongo.Collection('integration_server_caches');
 IntegrationServerCaches.attachSchema(IntegrationServerCache);
 
 // These are server side only

@@ -38,7 +38,31 @@
                 {{> EditableCode dataKey="templateDestroyed" value=templateDestroyed emptyText="Template Destroyed" language="javascript" mode="inline"}}
               {{/RobaTab}}
               {{#RobaTab name="preview" title="Preview"}}
+                <div class="preview-container-toolbar">
+                  <button class="btn btn-primary btn-preview">
+                    <span class="glyphicon glyphicon-play"></span>
+                    Preview
+                  </button>
+                </div>
 
+                {{#if previewError}}
+                  <div>
+                    <h2>Error in {{previewError.step}}:</h2>
+                    {{previewError.error}}
+                  </div>
+
+                  <pre>{{previewError.error.stack}}</pre>
+                {{/if}}
+
+                {{#if previewMessage}}
+                  <div class="well">
+                    {{previewMessage}}
+                  </div>
+                {{/if}}
+
+                <div class="full-width preview-container">
+
+                </div>
               {{/RobaTab}}
             {{/RobaTabGroup}}
           </div>

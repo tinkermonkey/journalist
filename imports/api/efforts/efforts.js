@@ -40,7 +40,7 @@ export const Effort = new SimpleSchema({
   }
 });
 
-export const Efforts = new Mongo.Collection("efforts");
+export const Efforts = new Mongo.Collection('efforts');
 Efforts.attachSchema(Effort);
 ChangeTracker.trackChanges(Efforts, 'Efforts');
 

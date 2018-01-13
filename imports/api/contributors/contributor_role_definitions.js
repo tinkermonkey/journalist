@@ -48,7 +48,7 @@ export const ContributorRoleDefinition = new SimpleSchema({
   }
 });
 
-export const ContributorRoleDefinitions = new Mongo.Collection("contributor_role_definitions");
+export const ContributorRoleDefinitions = new Mongo.Collection('contributor_role_definitions');
 ContributorRoleDefinitions.attachSchema(ContributorRoleDefinition);
 ChangeTracker.trackChanges(ContributorRoleDefinitions, 'ContributorRoleDefinitions');
 

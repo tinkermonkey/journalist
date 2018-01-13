@@ -7,6 +7,7 @@ import { IntegrationDisplayTemplates } from '../integration_display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationService } from '../../../modules/integration_service/integration_service';
+import { PublishedDisplayTemplates } from '../published_display_templates';
 
 Meteor.methods({
   /**
@@ -402,19 +403,22 @@ Meteor.methods({
   /**
    * Add an integration display template
    * @param title
+   * @param templateName
    */
-  addIntegrationDisplayTemplate (title) {
-    console.log('addIntegrationDisplayTemplate:', title);
+  addIntegrationDisplayTemplate (title, templateName) {
+    console.log('addIntegrationDisplayTemplate:', title, templateName);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
     check(title, String);
+    check(templateName, String);
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       // Insert the project percent
       IntegrationDisplayTemplates.insert({
-        title: title
+        title: title,
+        templateName: templateName
       });
     } else {
       console.error('Non-admin user tried to add an integration display template:', user.username, title);
@@ -473,6 +477,31 @@ Meteor.methods({
       }
     } else {
       console.error('Non-admin user tried to edit an integration display template:', user.username, key, templateId);
+      throw new Meteor.Error(403);
+    }
+  },
+
+  /**
+   * Publish a template ID so that users can use it
+   * @param {*} templateId 
+   */
+  publishIntegrationDisplayTemplate(templateId){
+    console.log('publishIntegrationDisplayTemplate:', templateId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(templateId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      let displayTemplate = IntegrationDisplayTemplates.findOne(templateId);
+      if(displayTemplate){
+        PublishedDisplayTemplates.upsert({_id: displayTemplate._id}, { $set: displayTemplate });
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
       throw new Meteor.Error(403);
     }
   },

@@ -9,7 +9,7 @@ const omitFields = [
 /**
  * Simplified copy of imported items
  */
-export const ImportedItemCrumbs = new Mongo.Collection("imported_item_crumbs");
+export const ImportedItemCrumbs = new Mongo.Collection('imported_item_crumbs');
 
 // These are server side only
 ImportedItemCrumbs.deny({

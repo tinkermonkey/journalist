@@ -39,7 +39,7 @@ export const Priority = new SimpleSchema({
   }
 });
 
-export const Priorities = new Mongo.Collection("priorities");
+export const Priorities = new Mongo.Collection('priorities');
 Priorities.attachSchema(Priority);
 ChangeTracker.trackChanges(Priorities, 'Priorities');
 

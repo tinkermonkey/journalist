@@ -48,7 +48,7 @@ export const ContributorProjectAssignment = new SimpleSchema({
   }
 });
 
-export const ContributorProjectAssignments = new Mongo.Collection("contributor_project_assignments");
+export const ContributorProjectAssignments = new Mongo.Collection('contributor_project_assignments');
 ContributorProjectAssignments.attachSchema(ContributorProjectAssignment);
 ChangeTracker.trackChanges(ContributorProjectAssignments, 'ContributorProjectAssignments');
 

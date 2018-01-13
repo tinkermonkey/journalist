@@ -39,6 +39,10 @@ export const IntegrationDisplayTemplate = new SimpleSchema({
     type    : String,
     optional: true
   },
+  lastPublished: {
+    type: Date,
+    optional: true
+  },
   // Standard tracking fields
   dateCreated      : {
     type     : Date,
@@ -58,7 +62,7 @@ export const IntegrationDisplayTemplate = new SimpleSchema({
   }
 });
 
-export const IntegrationDisplayTemplates = new Mongo.Collection("integration_display_templates");
+export const IntegrationDisplayTemplates = new Mongo.Collection('integration_display_templates');
 IntegrationDisplayTemplates.attachSchema(IntegrationDisplayTemplate);
 ChangeTracker.trackChanges(IntegrationDisplayTemplates, 'IntegrationDisplayTemplates');
 
@@ -78,4 +82,18 @@ IntegrationDisplayTemplates.deny({
 /**
  * Helpers
  */
-IntegrationDisplayTemplates.helpers({});
+IntegrationDisplayTemplates.helpers({
+  /**
+   * Compile the template
+   */
+  compile(){
+    let displayTemplate = this;
+    Template[displayTemplate.templateName] = new Template(displayTemplate.templateName, eval(SpacebarsCompiler.compile(displayTemplate.templateLayout, { isTemplate: true })));
+    Template[displayTemplate.templateName].helpers(eval('new Object(' + displayTemplate.templateHelpers + ')'));
+    Template[displayTemplate.templateName].events(eval('new Object(' + displayTemplate.templateEvents + ')'));
+    Template[displayTemplate.templateName].onCreated(new Function(displayTemplate.templateCreated));
+    Template[displayTemplate.templateName].onRendered(new Function(displayTemplate.templateRendered));
+    Template[displayTemplate.templateName].onDestroyed(new Function(displayTemplate.templateDestroyed));
+    return Template[displayTemplate.templateName]
+  }
+});

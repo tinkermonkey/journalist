@@ -40,7 +40,7 @@ export const IntegrationCalculatedField = new SimpleSchema({
   }
 });
 
-export const IntegrationCalculatedFields = new Mongo.Collection("integration_calculated_fields");
+export const IntegrationCalculatedFields = new Mongo.Collection('integration_calculated_fields');
 IntegrationCalculatedFields.attachSchema(IntegrationCalculatedField);
 ChangeTracker.trackChanges(IntegrationCalculatedFields, 'IntegrationCalculatedFields');
 

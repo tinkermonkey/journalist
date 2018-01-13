@@ -40,7 +40,7 @@ export const TaskState = new SimpleSchema({
   }
 });
 
-export const TaskStates = new Mongo.Collection("task_states");
+export const TaskStates = new Mongo.Collection('task_states');
 TaskStates.attachSchema(TaskState);
 
 // These are server side only

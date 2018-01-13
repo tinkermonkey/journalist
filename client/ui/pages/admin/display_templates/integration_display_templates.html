@@ -8,6 +8,7 @@
         </ol>
         
         <h1>Display Templates</h1>
+        <h4>{{TemplateName}} {{#if lastPublished}}<small>({{ dateFormat lastPublished }})</small>{{/if}}</h4>
       </div>
     </div>
     
@@ -20,6 +21,7 @@
               <th></th>
               <th>Title</th>
               <th>Template Name</th>
+              <th>Published</th>
               <th>Modified By</th>
               <th>Modified</th>
               <th></th>
@@ -36,8 +38,9 @@
                 </td>
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
                 <td>{{> EditableTextField dataKey="templateName" value=templateName emptyText="Template Name" }}</td>
-                <td>{{userName modifiedBy}}</td>
-                <td>{{dateFormat dateModified}}</td>
+                <td>{{ dateFormat lastPublished }}</td>
+                <td>{{ userName modifiedBy }}</td>
+                <td>{{ dateFormat dateModified }}</td>
                 <td>
                   <a class="link-red hidden-control btn-delete-display-template">
                     <span class="glyphicon glyphicon-minus-sign"></span>

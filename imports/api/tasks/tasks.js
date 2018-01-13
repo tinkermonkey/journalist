@@ -51,7 +51,7 @@ export const Task = new SimpleSchema({
   }
 });
 
-export const Tasks = new Mongo.Collection("tasks");
+export const Tasks = new Mongo.Collection('tasks');
 Tasks.attachSchema(Task);
 ChangeTracker.trackChanges(Tasks, 'Tasks');
 

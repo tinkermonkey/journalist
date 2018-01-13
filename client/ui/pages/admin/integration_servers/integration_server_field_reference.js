@@ -73,7 +73,7 @@ Template.IntegrationServerFieldReference.events({
               search    = new RegExp(searchTerm, 'i'),
               results   = cache.value.filter((fieldDef) => {
                 //console.log(fieldDef.name, fieldDef.name.match(search), fieldDef.key, fieldDef.key.match(search));
-                return fieldDef.name.match(search) !== null || fieldDef.key.match(search) !== null
+                return fieldDef.name.match(search) !== null || (fieldDef.id && fieldDef.id.match(search) !== null)
               });
           instance.searchResults.set(results);
           console.log('Searched', cache.value.length, 'fields for', searchTerm, 'in', (Date.now() - startTime), 'ms producing', results.length, 'matches');

@@ -50,7 +50,7 @@ export const IntegrationImportFunction = new SimpleSchema({
   }
 });
 
-export const IntegrationImportFunctions = new Mongo.Collection("integration_import_functions");
+export const IntegrationImportFunctions = new Mongo.Collection('integration_import_functions');
 IntegrationImportFunctions.attachSchema(IntegrationImportFunction);
 ChangeTracker.trackChanges(IntegrationImportFunctions, 'IntegrationImportFunctions');
 
