@@ -377,6 +377,11 @@ Template.registerHelper("getElementId", function () {
 /**
  * Misc helpers
  */
+Template.registerHelper('setDocumentTitle', function (title) {
+  if(_.isString(title)){
+    window.document.title = title;
+  }
+});
 Template.registerHelper('isNewRecord', function () {
   let record = this;
   if (record && record.dateCreated && _.isDate(record.dateCreated)) {

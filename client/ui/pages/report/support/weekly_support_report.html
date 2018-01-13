@@ -1,21 +1,22 @@
 <template name="WeeklySupportReport">
   {{#with reportProject}}
-  <div class="{{#if isForPrint}}container-fluid{{else}}container{{/if}}">
+  <div class="{{#if fullscreen}}container-fluid{{else}}container{{/if}}">
     <div class="row">
       <div class="col-md-12">
         <div class="report-header flex">
           <div class="report-header-title">
+            {{setDocumentTitle reportTitle}}
             <h1>Engineer Support Tickets</h1>
-            <h4>For the week starting {{dateFormat dateRange.start 'dddd, MMM Do'}}</h4>
+            <h4>For the week ending {{dateFormat dateRange.end 'dddd, MMM Do'}}</h4>
           </div>
           <div class="report-header-splitter">
-            <div class="report-header-right-bullet" style="color: #ffff00;">
+            <div class="report-header-right-bullet yellow">
               <div>{{newTicketsCount}}</div>
             </div>
-            <div class="report-header-right-bullet" style="color: #ffa600;">
+            <div class="report-header-right-bullet orange">
               <div>{{openTicketsCount}}</div>
             </div>
-            <div class="report-header-right-bullet" style="color: #009700;">
+            <div class="report-header-right-bullet green">
               <div>{{resolvedTicketsCount}}</div>
             </div>
           </div>
@@ -50,10 +51,19 @@
             {{> DonutChart fixVersions }}
           </div>
           <div class="flex">
-              {{> AreaChart supportTicketHistory }}
+            {{> AreaChart supportTicketHistory }}
           </div>
           <div class="full-width">
-            <h2>Open Tickets</h2>
+            <div class="report-header report-subheader flex">
+              <div class="report-subheader-title">
+                <h2>Open Issues</h2>
+              </div>
+              <div class="report-header-splitter">
+                <div class="report-header-right-bullet orange">
+                  <div>{{openTicketsTable.length}}</div>
+                </div>
+              </div>
+            </div>
             <table class="table data-table table-striped">
               <thead>
                 <tr>
@@ -111,7 +121,84 @@
             </table>
           </div>
           <div class="full-width">
-            <h2>Planned Fixes</h2>
+            <div class="report-header report-subheader flex">
+              <div class="report-subheader-title">
+                <h2>Issues Closed With Released Fixes</h2>
+              </div>
+              <div class="report-header-splitter">
+                <div class="report-header-right-bullet orange">
+                  <div>{{closedTicketsTable.length}}</div>
+                </div>
+              </div>
+            </div>
+            <table class="table data-table table-striped">
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Installations Affected</th>
+                  <th>Platforms Affected</th>
+                  <th>Days Old</th>
+                  <th>Salesforce Ticket(s)</th>
+                  <th>Support Area</th>
+                  <th>Summary</th>
+                  <th>Fixes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each closedTicketsTable}}
+                <tr>
+                  <td class="no-wrap">{{identifier}}</td>
+                  <td>
+                    {{#each document.fields.installationsaffected}}
+                    <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td>
+                    {{#each document.fields.platformsaffected}}
+                      <div>{{value}}</div>
+                    {{/each}}
+                  </td>
+                  <td>{{daysOld dateCreated}}</td>
+                  <td>
+                    {{#each document.fields.supporttickets}}
+                      <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td class="no-wrap">
+                    {{#each document.fields.supportarea}}
+                      <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td>{{title}}</td>
+                  <td>
+                    {{#each document.fields.issuelinks}}
+                      {{#with linkedFix}}
+                        <div class="no-wrap">
+                          {{identifier}}
+                          {{#if document.fields.fixVersions.length}}
+                            ({{fixVersionList}})
+                          {{/if}}
+                        </div>
+                      {{/with}}
+                    {{/each}}
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+  
+          <div class="full-width">
+            <div class="report-header report-subheader flex">
+              <div class="report-subheader-title">
+                <h2>Planned Fixes</h2>
+              </div>
+              <div class="report-header-splitter">
+                <div class="report-header-right-bullet green">
+                  <div>{{fixVersionsTable.count}}</div>
+                </div>
+              </div>
+            </div>
             <table class="table data-table table-striped">
               <thead>
                 <tr>
@@ -120,7 +207,6 @@
                   <th>Project</th>
                   <th>Status</th>
                   <th>Summary</th>
-                  <th>Date Created</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,18 +225,67 @@
                   <td>
                     {{title}}
                   </td>
-                  <td>
-                    {{dateFormat dateCreated 'MMM Do'}}
-                  </td>
                 </tr>
                 {{/each}}
               </tbody>
             </table>
           </div>
           <div class="full-width">
-
+            <div class="report-header report-subheader flex">
+              <div class="report-subheader-title">
+                <h2>Issues Closed Without a Defect Filed</h2>
+              </div>
+              <div class="report-header-splitter">
+                <div class="report-header-right-bullet orange">
+                  <div>{{closedNoDefectTable.length}}</div>
+                </div>
+              </div>
+            </div>
+            <table class="table data-table table-striped">
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Installations Affected</th>
+                  <th>Platforms Affected</th>
+                  <th>Days Old</th>
+                  <th>Salesforce Ticket(s)</th>
+                  <th>Support Area</th>
+                  <th>Summary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each closedNoDefectTable}}
+                <tr>
+                  <td class="no-wrap">{{identifier}}</td>
+                  <td>
+                    {{#each document.fields.installationsaffected}}
+                    <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td>
+                    {{#each document.fields.platformsaffected}}
+                      <div>{{value}}</div>
+                    {{/each}}
+                  </td>
+                  <td>{{daysOld dateCreated}}</td>
+                  <td>
+                    {{#each document.fields.supporttickets}}
+                      <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td class="no-wrap">
+                    {{#each document.fields.supportarea}}
+                      <div>{{this}}</div>
+                    {{/each}}
+                  </td>
+                  <td>{{title}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
           </div>
-        </div>
+          
+        </div><!-- End report body -->
       </div>
     </div>
   </div>

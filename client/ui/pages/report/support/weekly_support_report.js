@@ -19,14 +19,20 @@ Template.WeeklySupportReport.helpers({
     let projectId = FlowRouter.getParam('projectId');
     return Projects.findOne(projectId);
   },
+  reportTitle() {
+    let report = this,
+      dateRange = Template.instance().dateRange.get();
+
+      return 'Engineering Support Weekly - ' + moment(dateRange.end).format('MM-DD-YY')
+  },
   dateRange() {
     return Template.instance().dateRange.get()
   },
   showBody() {
     return Template.instance().showBody.get()
   },
-  isForPrint() {
-    return FlowRouter.getQueryParam('print')
+  fullscreen() {
+    return FlowRouter.getQueryParam('fullscreen')
   },
   linkedFix() {
     let link = this,
@@ -399,7 +405,7 @@ Template.WeeklySupportReport.helpers({
           tooltip: {
             format: {
               value: function (value, ratio, id, index) {
-                 return Math.abs(value)
+                return Math.abs(value)
               }
             }
           }
@@ -411,12 +417,62 @@ Template.WeeklySupportReport.helpers({
   openTicketsTable() {
     return Template.instance().openSupportTickets.get();
   },
+  closedTicketsTable() {
+    let project = this,
+      dateRange = Template.instance().dateRange.get() || {},
+      linkedItems = Template.instance().linkedItems.get() || [],
+      fixIdentifiers = ImportedItems.find({
+        identifier: { $in: linkedItems },
+        itemType: { $in: [ItemTypes.bug, ItemTypes.feature] }
+      }, { sort: { dateCreated: 1 } }).map((item) => { return item.identifier });
+
+    return ImportedItems.find({
+      projectId: project._id,
+      itemType: ItemTypes.supportTicket,
+      statusLabel: { $regex: 'resolved', $options: 'i' },
+      statusHistory: {
+        $elemMatch: {
+          date: { $gte: dateRange.start, $lt: dateRange.end },
+          'to.label': { $regex: 'resolved', $options: 'i' }
+        }
+      }
+    }, { sort: { dateCreated: 1 } }).fetch().filter((ticket) => {
+      return _.find(ticket.document.fields.issuelinks, (link) => {
+        return _.contains(fixIdentifiers, (link.outwardIssue || link.inwardIssue).key)
+      }) !== undefined
+    })
+  },
   fixVersionsTable() {
     let linkedItems = Template.instance().linkedItems.get() || [];
     return ImportedItems.find({
       identifier: { $in: linkedItems },
       itemType: { $in: [ItemTypes.bug, ItemTypes.feature] }
     }, { sort: { dateCreated: 1 } })
+  },
+  closedNoDefectTable() {
+    let project = this,
+      dateRange = Template.instance().dateRange.get() || {},
+      linkedItems = Template.instance().linkedItems.get() || [],
+      fixIdentifiers = ImportedItems.find({
+        identifier: { $in: linkedItems },
+        itemType: { $in: [ItemTypes.bug, ItemTypes.feature] }
+      }, { sort: { dateCreated: 1 } }).map((item) => { return item.identifier });
+
+    return ImportedItems.find({
+      projectId: project._id,
+      itemType: ItemTypes.supportTicket,
+      statusLabel: { $regex: 'resolved', $options: 'i' },
+      statusHistory: {
+        $elemMatch: {
+          date: { $gte: dateRange.start, $lt: dateRange.end },
+          'to.label': { $regex: 'resolved', $options: 'i' }
+        }
+      }
+    }, { sort: { dateCreated: 1 } }).fetch().filter((ticket) => {
+      return _.find(ticket.document.fields.issuelinks, (link) => {
+        return _.contains(fixIdentifiers, (link.outwardIssue || link.inwardIssue).key)
+      }) == undefined
+    })
   }
 });
 

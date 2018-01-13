@@ -4,8 +4,18 @@
     align-items: stretch;
 }
 
+.report-subheader {
+    margin-top: 2em;
+    border-bottom: 1px solid #666;
+}
+
 .report-header-title {
     padding: 20px;
+    flex-basis: 100%;
+}
+
+.report-subheader-title {
+    padding: 0px 20px;
     flex-basis: 100%;
 }
 
@@ -57,13 +67,19 @@
     color: #fff;
 }
 
-.report-header h1 {
+.report-header h1,
+.report-header h2 {
     font-weight: 500;
 }
 
-.report-body h2 {
-    margin-top: 2em;
-    background-color: #666;
-    padding: 10px;
-    color: #fff;
+.yellow {
+    color: #ffff00;
+}
+
+.orange {
+    color: #ffa600;
+}
+
+.green {
+    color: #00af00;
 }
