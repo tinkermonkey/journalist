@@ -1,37 +1,45 @@
 <template name="WeeklySupportReport">
-  {{#if Template.subscriptionsReady}}
-    {{#with reportProject}}
-    <div class="{{#if isForPrint}}container-fluid{{else}}container{{/if}}">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="report-header flex">
-            <div class="report-header-title">
-              <h1>Engineer Support Tickets</h1>
-              <h4>For the week starting {{dateFormat dateRange.start 'dddd, MMM Do'}}</h4>
+  {{#with reportProject}}
+  <div class="{{#if isForPrint}}container-fluid{{else}}container{{/if}}">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="report-header flex">
+          <div class="report-header-title">
+            <h1>Engineer Support Tickets</h1>
+            <h4>For the week starting {{dateFormat dateRange.start 'dddd, MMM Do'}}</h4>
+          </div>
+          <div class="report-header-splitter">
+            <div class="report-header-right-bullet" style="color: #ffff00;">
+              <div>{{newTicketsCount}}</div>
             </div>
-            <div class="report-header-splitter">
-              <div class="report-header-right-bullet" style="color: #ffff00;">
-                <div>{{newTicketsCount}}</div>
-              </div>
-              <div class="report-header-right-bullet" style="color: #ffa600;">
-                <div>{{openTicketsCount}}</div>
-              </div>
-              <div class="report-header-right-bullet" style="color: #009700;">
-                <div>{{resolvedTicketsCount}}</div>
-              </div>
+            <div class="report-header-right-bullet" style="color: #ffa600;">
+              <div>{{openTicketsCount}}</div>
             </div>
-            <div class="report-header-right">
-              <div class="report-header-right-bullet">
-                <div>New Issues</div>
-              </div>
-              <div class="report-header-right-bullet">
-                <div>Open Issues</div>
-              </div>
-              <div class="report-header-right-bullet">
-                <div>Resolved Issues</div>
-              </div>
+            <div class="report-header-right-bullet" style="color: #009700;">
+              <div>{{resolvedTicketsCount}}</div>
             </div>
           </div>
+          <div class="report-header-right">
+            <div class="report-header-right-bullet">
+              <div>New Issues</div>
+            </div>
+            <div class="report-header-right-bullet">
+              <div>Open Issues</div>
+            </div>
+            <div class="report-header-right-bullet">
+              <div>Resolved Issues</div>
+            </div>
+          </div>
+        </div>
+
+        {{#unless Template.subscriptionsReady}}
+          {{> RobaSpinner rainbow=true }}
+        {{/unless}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="report-body {{#unless showBody}}hide{{/unless}}">
           <div class="flex">
             {{> DonutChart installationsAffected }}
             {{> DonutChart supportAreas }}
@@ -40,6 +48,9 @@
           <div class="flex">
             {{> BarChart supportTicketAge }}
             {{> DonutChart fixVersions }}
+          </div>
+          <div class="flex">
+              {{> AreaChart supportTicketHistory }}
           </div>
           <div class="full-width">
             <h2>Open Tickets</h2>
@@ -142,8 +153,8 @@
         </div>
       </div>
     </div>
-    {{else}}
-      {{> NotFound }}
-    {{/with}}
-  {{/if}}
+  </div>
+  {{else}}
+    {{> NotFound }}
+  {{/with}}
 </template>

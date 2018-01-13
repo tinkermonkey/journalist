@@ -9,8 +9,9 @@
   opacity: 0.5;
 }
 
-.donut-label {
+.donut-label-group .donut-label {
   font-size: 10pt;
+  fill: #333;
 }
 
 .donut-label-left {

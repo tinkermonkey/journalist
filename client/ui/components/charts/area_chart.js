@@ -1,7 +1,7 @@
 import './area_chart.html';
 import './area_chart.css';
 import { Template } from 'meteor/templating';
-import { C3BarWrapper } from './c3_bar_wrapper';
+import { C3AreaWrapper } from './c3_area_wrapper';
 
 /**
  * Template Helpers
@@ -37,8 +37,8 @@ Template.AreaChart.onRendered(() => {
     // Throttle the update rate
     instance.updateTimeout = setTimeout(() => {
       if (!instance.chart) {
-        instance.chart = new C3BarWrapper(instance.elementId, context.config);
-        instance.chart.generate(context.data)
+        instance.chart = new C3AreaWrapper(instance.elementId, context.config);
+        instance.chart.generate(context.data);
       } else {
         instance.chart.update(context.data)
       }

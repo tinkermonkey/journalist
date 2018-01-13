@@ -24,6 +24,8 @@ export class C3DonutWrapper {
         align: false
       }
     }, config);
+
+    return this
   }
 
   /**
@@ -52,7 +54,9 @@ export class C3DonutWrapper {
       },
       padding: {
         top: 20,
-        bottom: 20
+        bottom: 20,
+        left: 120,
+        right: 120
       }
     }, self.config.chart);
 
@@ -70,10 +74,10 @@ export class C3DonutWrapper {
       self.updateCustomTitle();
     }
 
-    if(self.config.callouts.show){
+    if (self.config.callouts.show) {
       self.updateCallouts();
     }
-}
+  }
 
   /**
    * Update the chart with new data
@@ -95,7 +99,7 @@ export class C3DonutWrapper {
         self.updateCustomTitle();
       }
 
-      if(self.config.callouts.show){
+      if (self.config.callouts.show) {
         self.updateCallouts();
       }
     } else {
@@ -107,7 +111,7 @@ export class C3DonutWrapper {
    * Update the custom title if one exists
    */
   updateCustomTitle() {
-    debug && console.log(Util.timestamp(), 'C3DonutWrapper.update:', this.containerId);
+    debug && console.log(Util.timestamp(), 'C3DonutWrapper.updateCustomTitle:', this.containerId);
     let self = this;
 
     self.titleElement = d3.select('#' + self.containerId + ' .c3-chart-arcs-title');
@@ -150,18 +154,25 @@ export class C3DonutWrapper {
    * Update the donut slice callouts
    */
   updateCallouts() {
-    console.log(Util.timestamp(), 'C3DonutWrapper.updateCallouts:', this.containerId);
+    debug && console.log(Util.timestamp(), 'C3DonutWrapper.updateCallouts:', this.containerId);
     let self = this,
       svg = d3.select('#' + self.containerId + ' svg'),
       innerRadius = self.chart.internal.radius,
       outerRadius = self.chart.internal.radiusExpanded + 5;
 
-    svg.select('.c3-chart').attr('clip-path', '')
+    // Remove the clip path to make the callouts visible if the leave the chart body proper
+    svg.select('.c3-chart').attr('clip-path', null);
+
+    // Make the overflow for donut charts visible so callouts can be seen
+    svg.style('overflow', 'visible');
+    svg.selectAll('.c3-event-rect').style('pointer-events', 'none');
 
     // https://bl.ocks.org/mbhall88/b2504f8f3e384de4ff2b9dfa60f325e2
     let data = [];
     svg.selectAll('.c3-chart-arc')
       .each((d) => {
+        d.id = d.data.id;
+
         // Calculate some commonly used values
         d.arcMidAngle = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
         d.labelPos = {
@@ -169,7 +180,7 @@ export class C3DonutWrapper {
           y: outerRadius * Math.sin(d.arcMidAngle)
         };
 
-        if(self.config.callouts.align){
+        if (self.config.callouts.align) {
           d.labelPos.x = (outerRadius + 20) * (d.arcMidAngle < Math.PI / 2 ? 1 : -1);
         }
 
@@ -179,24 +190,21 @@ export class C3DonutWrapper {
       });
 
     data = data.filter((d) => { return d.dy > 12 || d.sweep > 20 });
-    trace && console.log('C3 Chart data:', data);
 
-    let donutSelection = svg.select('.c3-chart-arcs')
-      .selectAll('.c3-chart-arc')
-      .select('.donut-label-group')
-      .data(data, (d) => { return d.data.id});
+    let donutSelection = svg.select('.c3-chart-arc')
+      .selectAll('.donut-label-group')
+      .data(data, (d) => { return d.id });
 
-    // Remove old slices
+    // Remove unneeded slices
     donutSelection.exit().remove();
 
     // Add new slices
     let donutEnter = donutSelection.enter()
       .append('g')
-      .attr('data-id', (d) => {return d.data.id})
+      .attr('data-id', (d) => { return d.id })
       .attr('class', 'donut-label-group');
 
-    donutEnter
-      .append('text')
+    donutEnter.append('text')
       .attr('class', (d) => {
         return 'donut-label ' + (d.arcMidAngle < Math.PI / 2 ? 'donut-label-left' : 'donut-label-right')
       })
@@ -205,17 +213,19 @@ export class C3DonutWrapper {
         return d.data && d.data.id
       });
 
-    donutEnter
-      .append('polyline')
+    donutEnter.append('polyline')
       .attr('class', 'donut-label-callout');
 
     // Update existing datapoints
-    donutSelection.selectAll('.donut-label')
+    donutSelection.select('.donut-label')
+      .attr('class', (d) => {
+        return 'donut-label ' + (d.arcMidAngle < Math.PI / 2 ? 'donut-label-left' : 'donut-label-right')
+      })
       .attr('transform', (d) => {
         return 'translate(' + _.values(d.labelPos) + ')';
       });
 
-    donutSelection.selectAll('.donut-label-callout')
+    donutSelection.select('.donut-label-callout')
       .attr('points', (d) => {
         return [
           [

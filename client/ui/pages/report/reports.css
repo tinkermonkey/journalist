@@ -60,3 +60,10 @@
 .report-header h1 {
     font-weight: 500;
 }
+
+.report-body h2 {
+    margin-top: 2em;
+    background-color: #666;
+    padding: 10px;
+    color: #fff;
+}

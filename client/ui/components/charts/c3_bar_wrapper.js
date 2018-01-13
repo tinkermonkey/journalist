@@ -28,15 +28,12 @@ export class C3BarWrapper {
     debug && console.log(Util.timestamp(), 'C3BarWrapper.generate:', this.containerId, data && data.length);
     let self = this;
 
-    // Parse the data
-    self.parseData(data);
-
     // Generate the chart
     self.chartConfig = _.extend({
       bindto: '#' + this.containerId,
       data: {
         type: 'bar',
-        columns: self.columns
+        columns: data
       },
       bar: {
         width: {
@@ -49,8 +46,8 @@ export class C3BarWrapper {
       padding: {
         top: 20,
         bottom: 20,
-        left: 60,
-        right: 60
+        left: 40,
+        right: 20
       }
     }, self.config.chart);
 
@@ -66,27 +63,12 @@ export class C3BarWrapper {
     debug && console.log(Util.timestamp(), 'C3BarWrapper.update:', this.containerId, data && data.length);
     let self = this;
 
-    // Parse the data
-    self.parseData(data);
-
     if (self.chart) {
       self.chart.load({
-        columns: self.columns
+        columns: data
       });
     } else {
       console.error('C3BarWrapper.update failed because no chart was found');
     }
-  }
-
-  /**
-   * Parse the data
-   * @param data
-   */
-  parseData(data) {
-    debug && console.log(Util.timestamp(), 'C3BarWrapper.parseData:', this.containerId, data && data.length);
-    let self = this,
-      map = {};
-
-    self.columns = data;
   }
 }

@@ -1,5 +1,6 @@
 import './weekly_support_report.html';
 import { Template } from 'meteor/templating';
+import { Session } from 'meteor/session';
 import { moment } from 'meteor/momentjs:moment';
 import { ImportedItems } from '../../../../../imports/api/imported_items/imported_items';
 import { ImportedItemCrumbs } from '../../../../../imports/api/imported_items/imported_item_crumbs';
@@ -7,6 +8,7 @@ import { ItemTypes } from '../../../../../imports/api/imported_items/item_types'
 import { Projects } from '../../../../../imports/api/projects/projects';
 import '../../../components/charts/donut_chart';
 import '../../../components/charts/bar_chart';
+import '../../../components/charts/area_chart';
 import '../reports.css';
 
 /**
@@ -19,6 +21,9 @@ Template.WeeklySupportReport.helpers({
   },
   dateRange() {
     return Template.instance().dateRange.get()
+  },
+  showBody() {
+    return Template.instance().showBody.get()
   },
   isForPrint() {
     return FlowRouter.getQueryParam('print')
@@ -51,7 +56,7 @@ Template.WeeklySupportReport.helpers({
       itemType: ItemTypes.supportTicket,
       statusHistory: {
         $elemMatch: {
-          date: { $gte: dateRange.start, $lte: dateRange.end },
+          date: { $gte: dateRange.start, $lt: dateRange.end },
           'to.label': { $regex: 'resolved', $options: 'i' }
         }
       }
@@ -291,6 +296,118 @@ Template.WeeklySupportReport.helpers({
       data: fixVersions
     }
   },
+  supportTicketHistory() {
+    let project = this,
+      weekCount = 51,
+      firstTicket = ImportedItemCrumbs.findOne({
+        projectId: project._id,
+        itemType: ItemTypes.supportTicket
+      }, { sort: { dateCreated: 1 } }) || {},
+      startDate = moment().startOf('week').subtract(weekCount, 'weeks').toDate(),
+      data = [
+        ['x'],
+        ['New Tickets'],
+        ['Open Tickets'],
+        ['Resolved']
+      ], i, weekStart, weekEnd;
+
+    // Gather stats for each week
+    for (i = 0; i <= weekCount; i++) {
+      weekStart = moment(startDate).add(i, 'weeks').toDate();
+      weekEnd = moment(startDate).add(i + 1, 'weeks').toDate();
+
+      data[0].push(weekStart);
+
+      // Get the number filed in this week
+      data[1].push(ImportedItemCrumbs.find({
+        projectId: project._id,
+        itemType: ItemTypes.supportTicket,
+        dateCreated: { $gte: weekStart, $lt: weekEnd }
+      }).count());
+
+      // Get the number of tickets open during this week
+      data[2].push(ImportedItemCrumbs.find({
+        projectId: project._id,
+        itemType: ItemTypes.supportTicket,
+        // Created before the week ended
+        dateCreated: {
+          $gte: startDate,
+          $lt: weekEnd
+        },
+        // And
+        $or: [
+          // Resolved after the week ended
+          {
+            statusHistory: {
+              $elemMatch: {
+                date: { $gt: weekEnd },
+                'to.label': { $regex: 'resolved', $options: 'i' }
+              }
+            }
+          },
+          // Or it's still unresolved
+          { statusLabel: { $not: /resolved/i } },
+        ]
+      }).count());
+
+      // Get the number resolved in this week
+      data[3].push(ImportedItemCrumbs.find({
+        projectId: project._id,
+        itemType: ItemTypes.supportTicket,
+        statusHistory: {
+          $elemMatch: {
+            date: { $gte: weekStart, $lt: weekEnd },
+            'to.label': { $regex: 'resolved', $options: 'i' }
+          }
+        }
+      }).count() * -1);
+    }
+
+    // Find the first non-zero datapoint, search created only for simplicity
+    let firstIndex = _.find(_.range(0, data[1].length), (d) => {
+      return _.isNumber(data[1][d]) && data[1][d] > 0
+    }) || 1;
+    if (firstIndex !== 1) {
+      data.forEach((column, i) => {
+        data[i] = [column[0]].concat(column.slice(firstIndex));
+      })
+    }
+
+    console.log('supportTicketHistory data:', firstIndex, data);
+
+    return {
+      title: 'Weekly Support Ticket History',
+      cssClass: 'chart-flex',
+      config: {
+        chart: {
+          data: {
+            type: 'area-spline',
+            x: 'x',
+            columns: data
+          },
+          axis: {
+            x: {
+              type: 'timeseries',
+              tick: {
+                format: '%m/%d/%y'
+              }
+            }
+          },
+          point: {
+            show: false
+          },
+          tooltip: {
+            format: {
+              value: function (value, ratio, id, index) {
+                 return Math.abs(value)
+              }
+            }
+          }
+        }
+      },
+      data: data
+    }
+  },
   openTicketsTable() {
     return Template.instance().openSupportTickets.get();
   },
@@ -326,6 +443,7 @@ Template.WeeklySupportReport.onCreated(() => {
   instance.openSupportTickets = new ReactiveVar([]);
   instance.supportTicketQuery = new ReactiveVar();
   instance.linkedItems = new ReactiveVar([]);
+  instance.showBody = new ReactiveVar(false);
 
   instance.autorun(() => {
     let projectId = FlowRouter.getParam('projectId'),
@@ -334,12 +452,12 @@ Template.WeeklySupportReport.onCreated(() => {
         projectId: projectId,
         itemType: ItemTypes.supportTicket,
         $or: [
-          { dateCreated: { $gte: dateRange.start, $lte: dateRange.end } },
+          { dateCreated: { $gte: dateRange.start, $lt: dateRange.end } },
           { statusLabel: { $not: /resolved/i } },
           {
             statusHistory: {
               $elemMatch: {
-                date: { $gte: dateRange.start, $lte: dateRange.end },
+                date: { $gte: dateRange.start, $lt: dateRange.end },
                 'to.label': { $regex: 'resolved', $options: 'i' }
               }
             }
@@ -379,7 +497,10 @@ Template.WeeklySupportReport.onCreated(() => {
       statusLabel: { $not: /resolved/i }
     }, { sort: { dateCreated: 1 } }).fetch());
 
-    // console.log('supportTickets autorun:', supportTickets.length);
+    if (instance.subscriptionsReady()) {
+      console.log('supportTickets autorun ready:', supportTickets.length);
+      instance.showBody.set(true);
+    }
   });
 
   instance.autorun(() => {

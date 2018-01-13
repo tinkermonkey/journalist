@@ -39,9 +39,9 @@ Template.BarChart.onRendered(() => {
       if (!instance.chart) {
         instance.chart = new C3BarWrapper(instance.elementId, context.config);
         instance.chart.generate(context.data)
-      } else {
-        instance.chart.update(context.data)
       }
+
+      instance.chart.update(context.data)
     }, 125);
   });
 });
