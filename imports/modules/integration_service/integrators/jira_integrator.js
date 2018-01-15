@@ -521,10 +521,10 @@ export class JiraIntegrator extends Integrator {
             let fromStatus = statusMap[ item.from ],
                 toStatus   = statusMap[ item.to ];
             
-            statusEntry.from.workPhase = ImportedItemWorkPhases[ fromStatus.workPhase ];
-            statusEntry.from.workState = ImportedItemWorkPhases[ fromStatus.workState ];
-            statusEntry.to.workPhase   = ImportedItemWorkPhases[ toStatus.workPhase ];
-            statusEntry.to.workState   = ImportedItemWorkPhases[ toStatus.workState ];
+            statusEntry.from.workPhase = fromStatus && ImportedItemWorkPhases[ fromStatus.workPhase ];
+            statusEntry.from.workState = fromStatus && ImportedItemWorkPhases[ fromStatus.workState ];
+            statusEntry.to.workPhase   = toStatus && ImportedItemWorkPhases[ toStatus.workPhase ];
+            statusEntry.to.workState   = toStatus && ImportedItemWorkPhases[ toStatus.workState ];
           }
           
           processedItem.statusHistory.push(statusEntry);
