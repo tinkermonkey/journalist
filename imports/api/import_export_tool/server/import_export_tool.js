@@ -7,6 +7,8 @@ import { ContributorRoleDefinitions } from '../../contributors/contributor_role_
 import { ContributorTeamRoles } from '../../contributors/contributor_team_roles';
 import { IntegrationCalculatedFields } from '../../integrations/integration_calculated_fields';
 import { DisplayTemplates } from '../../display_templates/display_templates';
+import { DisplayTemplateGroups } from '../../display_templates/display_template_groups';
+import { PublishedDisplayTemplates } from '../../display_templates/published_display_templates';
 import { IntegrationImportFunctions } from '../../integrations/integration_import_functions';
 import { IntegrationServerCaches } from '../../integrations/integration_server_caches';
 import { IntegrationServers } from '../../integrations/integration_servers';
@@ -15,16 +17,18 @@ import { Projects } from '../../projects/projects';
 import { Teams } from '../../teams/teams';
 import { Users } from '../../users/users';
 
-let AdmZip         = require('adm-zip'),
-    fs             = require('fs'),
-    path           = require('path'),
-    collectionList = {
+let AdmZip        = require('adm-zip'),
+    fs            = require('fs'),
+    path          = require('path'),
+    collectionMap = {
       Contributors                 : Contributors,
       ContributorProjectAssignments: ContributorProjectAssignments,
       ContributorRoleDefinitions   : ContributorRoleDefinitions,
       ContributorTeamRoles         : ContributorTeamRoles,
+      DisplayTemplates             : DisplayTemplates,
+      DisplayTemplateGroups        : DisplayTemplateGroups,
+      PublishedDisplayTemplates    : PublishedDisplayTemplates,
       IntegrationCalculatedFields  : IntegrationCalculatedFields,
-      IntegrationDisplayTemplates  : DisplayTemplates,
       IntegrationImportFunctions   : IntegrationImportFunctions,
       IntegrationServerCaches      : IntegrationServerCaches,
       IntegrationServers           : IntegrationServers,
@@ -32,6 +36,10 @@ let AdmZip         = require('adm-zip'),
       Projects                     : Projects,
       Teams                        : Teams,
       Users                        : Users
+    },
+    importKeys    = {
+      DisplayTemplates         : 'templateName',
+      PublishedDisplayTemplates: 'templateName'
     };
 
 /**
@@ -117,13 +125,15 @@ export const ImportExportTool = {
    * @param collectionName The name of the collection we will insert
    */
   insertDataIntoCollection (data, collectionName) {
-    if (data && collectionName && collectionList[ collectionName ]) {
+    if (data && collectionName && collectionMap[ collectionName ]) {
       // if you have a partial duplicate, you should still be able to import the rest of the file.
       try {
+        let key   = importKeys[ collectionName ] || '_id',
+            query = {};
         data.forEach((record) => {
           console.info("ImportExportTool.insertDataIntoCollection inserting " + collectionName);
-          
-          collectionList[ collectionName ].upsert({ _id: record._id }, { $set: record }, { validate: false });
+          query[ key ] = record[ key ];
+          collectionMap[ collectionName ].upsert(query, { $set: record }, { validate: false });
         });
       } catch (e) {
         console.error(e);
@@ -133,11 +143,15 @@ export const ImportExportTool = {
     }
   },
   /**
-   * Export all of the Collections
+   * Export a set of the Collections
+   * @param collectionNames (optional) A list of collection names
    */
-  exportData () {
+  exportData (collectionNames) {
+    console.info("ImportExportTool.exportData:", collectionNames);
     let handler = this,
         dataDir = path.join(handler.dataPath, moment().format('YYYY_MM_DD_HH_mm_ss'));
+    
+    collectionNames = _.isArray(collectionNames) ? collectionNames : _.keys(collectionMap);
     
     if (fs.existsSync(dataDir)) {
       console.info("ImportExportTool.exportData removing existing files");
@@ -151,9 +165,10 @@ export const ImportExportTool = {
     }
     
     let zipFile = new AdmZip();
-    
-    _.keys(collectionList).forEach((collectionName) => {
-      let cursor = collectionList[ collectionName ].find({});
+  
+    console.info("ImportExportTool.exportData exporting collections:", collectionNames);
+    collectionNames.forEach((collectionName) => {
+      let cursor = collectionMap[ collectionName ].find({});
       
       zipFile.addFile(collectionName + ".json", new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
     });

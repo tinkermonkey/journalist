@@ -25,14 +25,13 @@ Template.ImportExport.helpers({
  */
 Template.ImportExport.events({
   "click .btn-export" (e, template) {
-    Meteor.call('exportData', (error, result) => {
+    Meteor.call('exportData', (error, response) => {
       if (error) {
         RobaDialog.error(error);
-      }
-      else {
+      } else {
         let a = window.document.createElement('a');
         
-        a.setAttribute('href', '/export/' + result);
+        a.setAttribute('href', '/export/' + response);
         a.setAttribute('target', '_blank');
         a.click();
       }

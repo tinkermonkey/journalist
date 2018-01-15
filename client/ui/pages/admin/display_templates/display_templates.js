@@ -206,7 +206,21 @@ Template.DisplayTemplates.events({
         }
       });
     });
-  }
+  },
+  'click .btn-export-templates' (e, instance) {
+    Meteor.call('exportData', [ 'DisplayTemplates', 'DisplayTemplateGroups', 'PublishedDisplayTemplates' ], function (error, response) {
+      if (error) {
+        RobaDialog.error('Export failed: ' + error.toString());
+      } else {
+        let a = window.document.createElement('a');
+        
+        a.setAttribute('href', '/export/' + response);
+        a.setAttribute('target', '_blank');
+        a.click();
+      }
+    });
+  },
+  
 });
 
 /**
