@@ -48,4 +48,12 @@ export const SchemaHelpers = {
     }
   },
   
+  /**
+   * Provide a file which increments for each write
+   */
+  autoValueIncrementalCounter(){
+    if(this.userId && this.operator !== '$pull'){
+      return {$inc: 1}
+    }
+  }
 };

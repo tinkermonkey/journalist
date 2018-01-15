@@ -6,7 +6,7 @@ import { ContributorProjectAssignments } from '../../contributors/contributor_pr
 import { ContributorRoleDefinitions } from '../../contributors/contributor_role_definitions';
 import { ContributorTeamRoles } from '../../contributors/contributor_team_roles';
 import { IntegrationCalculatedFields } from '../../integrations/integration_calculated_fields';
-import { IntegrationDisplayTemplates } from '../../integrations/integration_display_templates';
+import { DisplayTemplates } from '../../display_templates/display_templates';
 import { IntegrationImportFunctions } from '../../integrations/integration_import_functions';
 import { IntegrationServerCaches } from '../../integrations/integration_server_caches';
 import { IntegrationServers } from '../../integrations/integration_servers';
@@ -24,7 +24,7 @@ let AdmZip         = require('adm-zip'),
       ContributorRoleDefinitions   : ContributorRoleDefinitions,
       ContributorTeamRoles         : ContributorTeamRoles,
       IntegrationCalculatedFields  : IntegrationCalculatedFields,
-      IntegrationDisplayTemplates  : IntegrationDisplayTemplates,
+      IntegrationDisplayTemplates  : DisplayTemplates,
       IntegrationImportFunctions   : IntegrationImportFunctions,
       IntegrationServerCaches      : IntegrationServerCaches,
       IntegrationServers           : IntegrationServers,

@@ -1,7 +1,12 @@
 <template name="AppLoading">
   <div class="full-page">
     <div class="flex-vertical full-height" style="justify-content: center;">
-      {{> RobaSpinner rainbow=true scale=2.0 }}
+      <div>
+        {{> RobaSpinner rainbow=true scale=2.0 }}
+      </div>
+      <div style="margin-top: 20px;">
+        {{message}}
+      </div>
     </div>
   </div>
 </template>

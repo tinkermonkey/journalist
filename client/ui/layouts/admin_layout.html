@@ -1,13 +1,26 @@
 <template name="AdminLayout">
   {{#if Template.subscriptionsReady}}
-    {{#if userIsAdmin}}
-      {{> AuthenticatedLayout main=main }}
-    {{else}}
-      {{> AuthenticatedLayout main='NotFound' }}
+    {{#if currentUser}}
+      {{> TopNav }}
     {{/if}}
-  {{else}}
-    <div class="app-container">
-      {{> AppLoading}}
-    </div>
   {{/if}}
+  <div class="app-container">
+    {{#DisplayTemplateLayer}}
+      {{#if Template.subscriptionsReady}}
+        {{#if currentUser}}
+          <div class="app-content">
+            {{#if userIsAdmin}}
+              {{> Template.dynamic template=main }}
+            {{else}}
+              {{> Template.dynamic main='NotFound' }}
+            {{/if}}
+          </div>
+        {{else}}
+          {{> Login }}
+        {{/if}}
+      {{else}}
+        {{> AppLoading message="Loading Data" }}
+      {{/if}}
+    {{/DisplayTemplateLayer}}
+  </div>
 </template>

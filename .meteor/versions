@@ -1,4 +1,4 @@
-accounts-base@1.4.1
+accounts-base@1.4.2
 accounts-oauth@1.1.15
 accounts-password@1.5.0
 alanning:roles@1.2.16
@@ -85,7 +85,7 @@ mobile-experience@1.0.5
 mobile-status-bar@1.0.14
 modules@0.11.2
 modules-runtime@0.9.1
-momentjs:moment@2.19.4
+momentjs:moment@2.20.1
 mongo@1.3.1
 mongo-dev-server@1.1.0
 mongo-id@1.0.6
@@ -103,7 +103,7 @@ optilude:jira-auth@0.0.5
 ordered-dict@1.0.9
 perak:markdown@1.0.5
 percolate:synced-cron@1.3.2
-promise@0.10.0
+promise@0.10.1
 raix:eventemitter@0.1.3
 random@1.0.10
 rate-limit@1.0.8

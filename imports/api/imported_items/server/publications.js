@@ -29,10 +29,10 @@ Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
   }
 });
 
-Meteor.publish('imported_item_query', function (query) {
+Meteor.publish('imported_item_query', function (query, options) {
   console.log('Publish: imported_item_query');
   if (this.userId && query && _.isObject(query)) {
-    return ImportedItems.find(query);
+    return ImportedItems.find(query, options);
   } else {
     this.ready();
     return [];

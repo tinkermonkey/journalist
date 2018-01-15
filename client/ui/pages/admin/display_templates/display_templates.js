@@ -1,0 +1,234 @@
+import './display_templates.html';
+import { Template } from 'meteor/templating';
+import { DisplayTemplates } from '../../../../../imports/api/display_templates/display_templates';
+import { DisplayTemplateGroups } from '../../../../../imports/api/display_templates/display_template_groups';
+import '../integration_servers/integration_server_field_reference';
+
+/**
+ * Template Helpers
+ */
+Template.DisplayTemplates.helpers({
+  displayTemplates () {
+    let groupId = FlowRouter.getParam('groupId');
+    return DisplayTemplates.find({ parentGroup: groupId }, { sort: { templateName: 1 } })
+  },
+  currentGroup () {
+    let groupId = FlowRouter.getParam('groupId');
+    if (groupId) {
+      return DisplayTemplateGroups.findOne(groupId)
+    }
+  },
+  parentlessGroups () {
+    return DisplayTemplateGroups.find({ parentGroup: null }, { sort: { title: 1 } })
+  }
+});
+
+/**
+ * Template Event Handlers
+ */
+Template.DisplayTemplates.events({
+  'edited .editable' (e, instance, newValue) {
+    e.stopImmediatePropagation();
+    
+    let displayTemplateId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey           = $(e.target).attr('data-key');
+    
+    console.log('edited:', displayTemplateId, dataKey, newValue);
+    if (displayTemplateId && dataKey) {
+      Meteor.call('editDisplayTemplate', displayTemplateId, dataKey, newValue, (error, response) => {
+        if (error) {
+          RobaDialog.error('Update failed:' + error.toString());
+        }
+      });
+    }
+  },
+  'click .btn-add-display-template' (e, instance) {
+    let parentGroup = FlowRouter.getParam('groupId');
+    
+    RobaDialog.show({
+      contentTemplate: 'AddRecordForm',
+      contentData    : {
+        schema: new SimpleSchema({
+          templateName: {
+            type : String,
+            label: 'Template Name',
+            regEx: /^[\w\d]+$/i
+          }
+        })
+      },
+      title          : 'Add Display Template',
+      width          : 500,
+      buttons        : [
+        { text: 'Cancel' },
+        { text: 'Add' }
+      ],
+      callback       : function (btn) {
+        if (btn.match(/add/i)) {
+          let formId = 'addRecordForm';
+          if (AutoForm.validateForm(formId)) {
+            let formData = AutoForm.getFormValues(formId).insertDoc;
+            
+            // Create the display template
+            Meteor.call('addDisplayTemplate', formData.templateName, parentGroup, (error, response) => {
+              if (error) {
+                RobaDialog.error('Failed to create display template:' + error.toString())
+              } else {
+                RobaDialog.hide();
+              }
+            });
+            
+            AutoForm.resetForm(formId)
+          }
+          return;
+        }
+        RobaDialog.hide();
+      }.bind(this)
+    });
+  },
+  'click .btn-add-group' (e, instance) {
+    let parentGroup = FlowRouter.getParam('groupId');
+    
+    RobaDialog.show({
+      contentTemplate: 'AddRecordForm',
+      contentData    : {
+        schema: new SimpleSchema({
+          title: {
+            type : String,
+            label: 'Group Name'
+          }
+        })
+      },
+      title          : 'Add Display Template Group',
+      width          : 500,
+      buttons        : [
+        { text: 'Cancel' },
+        { text: 'Add' }
+      ],
+      callback       : function (btn) {
+        if (btn.match(/add/i)) {
+          let formId = 'addRecordForm';
+          if (AutoForm.validateForm(formId)) {
+            let formData = AutoForm.getFormValues(formId).insertDoc;
+            
+            // Create the display template
+            Meteor.call('addDisplayTemplateGroup', formData.title, parentGroup, (error, response) => {
+              if (error) {
+                RobaDialog.error('Failed to create display template group:' + error.toString())
+              } else {
+                RobaDialog.hide();
+              }
+            });
+            
+            AutoForm.resetForm(formId)
+          }
+          return;
+        }
+        RobaDialog.hide();
+      }.bind(this)
+    });
+  },
+  'click .btn-move-template' (e, instance) {
+    let displayTemplate = this;
+    
+    RobaDialog.show({
+      contentTemplate: 'AddRecordForm',
+      contentData    : {
+        schema: new SimpleSchema({
+          parentGroup: {
+            type    : String,
+            label   : 'New Group',
+            autoform: {
+              options: DisplayTemplateGroups.find({}).map((g) => {
+                return { label: g.path(), value: g._id }
+              }).sort((a, b) => {
+                return a.label > b.label
+              })
+            }
+          }
+        })
+      },
+      title          : 'Move Display Template',
+      width          : 500,
+      buttons        : [
+        { text: 'Cancel' },
+        { text: 'Move' }
+      ],
+      callback       : function (btn) {
+        if (btn.match(/move/i)) {
+          let formId = 'addRecordForm';
+          if (AutoForm.validateForm(formId)) {
+            let formData = AutoForm.getFormValues(formId).insertDoc;
+            
+            // Create the display template
+            Meteor.call('editDisplayTemplate', displayTemplate._id, 'parentGroup', formData.parentGroup, (error, response) => {
+              if (error) {
+                RobaDialog.error('Failed to create display template group:' + error.toString())
+              } else {
+                RobaDialog.hide();
+              }
+            });
+            
+            AutoForm.resetForm(formId)
+          }
+          return;
+        }
+        RobaDialog.hide();
+      }.bind(this)
+    });
+  },
+  'click .btn-delete-display-template' (e, instance) {
+    let displayTemplate = this;
+    
+    RobaDialog.ask('Delete Template?', 'Are you sure that you want to delete the display template <span class="label label-primary"> ' + displayTemplate.templateName + '</span> ?', () => {
+      RobaDialog.hide();
+      Meteor.call('deleteDisplayTemplate', displayTemplate._id, function (error, response) {
+        if (error) {
+          RobaDialog.error('Delete failed: ' + error.message);
+        }
+      });
+    });
+  },
+  'click .btn-delete-group' (e, instance) {
+    let group  = this,
+        parent = group.parent();
+    
+    RobaDialog.ask('Delete Template?', 'Are you sure that you want to delete the template group<span class="label label-primary"> ' + group.title + '</span> ?', () => {
+      RobaDialog.hide();
+      Meteor.call('deleteDisplayTemplateGroup', group._id, function (error, response) {
+        if (error) {
+          RobaDialog.error('Delete failed: ' + error.message);
+        } else {
+          if (parent) {
+            FlowRouter.go(FlowRouter.path('DisplayTemplateGroup', { groupId: parent._id }))
+          } else {
+            FlowRouter.go(FlowRouter.path('DisplayTemplates'))
+          }
+        }
+      });
+    });
+  }
+});
+
+/**
+ * Template Created
+ */
+Template.DisplayTemplates.onCreated(() => {
+  let instance = Template.instance();
+  
+  instance.subscribe('display_templates');
+  instance.subscribe('display_template_groups');
+});
+
+/**
+ * Template Rendered
+ */
+Template.DisplayTemplates.onRendered(() => {
+  
+});
+
+/**
+ * Template Destroyed
+ */
+Template.DisplayTemplates.onDestroyed(() => {
+  
+});

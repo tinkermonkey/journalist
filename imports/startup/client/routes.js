@@ -12,8 +12,8 @@ import '../../../client/ui/pages/admin/admin_home/admin_home';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields';
 import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions';
-import '../../../client/ui/pages/admin/display_templates/integration_display_template';
-import '../../../client/ui/pages/admin/display_templates/integration_display_templates';
+import '../../../client/ui/pages/admin/display_templates/display_template';
+import '../../../client/ui/pages/admin/display_templates/display_templates';
 import '../../../client/ui/pages/admin/import_export/import_export';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_functions';
@@ -160,17 +160,24 @@ FlowRouter.route('/admin/import_export', {
   }
 });
 
-FlowRouter.route('/admin/integration_display_templates', {
-  name: 'IntegrationDisplayTemplates',
+FlowRouter.route('/admin/display_templates', {
+  name: 'DisplayTemplates',
   action () {
-    BlazeLayout.render('AdminLayout', { main: 'IntegrationDisplayTemplates' });
+    BlazeLayout.render('AdminLayout', { main: 'DisplayTemplates' });
+  }
+});
+
+FlowRouter.route('/admin/display_templates/:groupId', {
+  name: 'DisplayTemplateGroup',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'DisplayTemplates' });
   }
 });
 
 FlowRouter.route('/admin/integration_display_template/:templateId', {
-  name: 'IntegrationDisplayTemplate',
+  name: 'DisplayTemplate',
   action () {
-    BlazeLayout.render('AdminLayout', { main: 'IntegrationDisplayTemplate' });
+    BlazeLayout.render('AdminLayout', { main: 'DisplayTemplate' });
   }
 });
 

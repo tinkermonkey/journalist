@@ -2,20 +2,31 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers';
+import { DisplayTemplateGroups } from './display_template_groups';
 
 /**
  * ============================================================================
- * IntegrationDisplayTemplates
+ * DisplayTemplates
  * ============================================================================
  */
-export const IntegrationDisplayTemplate = new SimpleSchema({
-  title            : {
-    type: String
-  },
+export const DisplayTemplate = new SimpleSchema({
   templateName     : {
-    type: String
+    type : String,
+    regEx: /^[\w\d]+$/i
+  },
+  parentGroup      : {
+    type    : String,
+    optional: true
   },
   templateLayout   : {
+    type    : String,
+    optional: true
+  },
+  templateCSS   : {
+    type    : String,
+    optional: true
+  },
+  templatePreamble  : {
     type    : String,
     optional: true
   },
@@ -39,9 +50,27 @@ export const IntegrationDisplayTemplate = new SimpleSchema({
     type    : String,
     optional: true
   },
-  lastPublished: {
-    type: Date,
+  previewContext   : {
+    type    : String,
     optional: true
+  },
+  lastPublished    : {
+    type    : Date,
+    optional: true
+  },
+  publishedVersion : {
+    type    : Number,
+    optional: true
+  },
+  currentVersion   : {
+    type: Number,
+    autoValue () {
+      if (this.userId && this.operator !== '$pull') {
+        if (!this.isSet) {
+          return { $inc: 1 }
+        }
+      }
+    }
   },
   // Standard tracking fields
   dateCreated      : {
@@ -62,12 +91,12 @@ export const IntegrationDisplayTemplate = new SimpleSchema({
   }
 });
 
-export const IntegrationDisplayTemplates = new Mongo.Collection('integration_display_templates');
-IntegrationDisplayTemplates.attachSchema(IntegrationDisplayTemplate);
-ChangeTracker.trackChanges(IntegrationDisplayTemplates, 'IntegrationDisplayTemplates');
+export const DisplayTemplates = new Mongo.Collection('display_templates');
+DisplayTemplates.attachSchema(DisplayTemplate);
+ChangeTracker.trackChanges(DisplayTemplates, 'DisplayTemplates');
 
 // These are server side only
-IntegrationDisplayTemplates.deny({
+DisplayTemplates.deny({
   remove () {
     return true;
   },
@@ -82,18 +111,14 @@ IntegrationDisplayTemplates.deny({
 /**
  * Helpers
  */
-IntegrationDisplayTemplates.helpers({
-  /**
-   * Compile the template
-   */
-  compile(){
-    let displayTemplate = this;
-    Template[displayTemplate.templateName] = new Template(displayTemplate.templateName, eval(SpacebarsCompiler.compile(displayTemplate.templateLayout, { isTemplate: true })));
-    Template[displayTemplate.templateName].helpers(eval('new Object(' + displayTemplate.templateHelpers + ')'));
-    Template[displayTemplate.templateName].events(eval('new Object(' + displayTemplate.templateEvents + ')'));
-    Template[displayTemplate.templateName].onCreated(new Function(displayTemplate.templateCreated));
-    Template[displayTemplate.templateName].onRendered(new Function(displayTemplate.templateRendered));
-    Template[displayTemplate.templateName].onDestroyed(new Function(displayTemplate.templateDestroyed));
-    return Template[displayTemplate.templateName]
+DisplayTemplates.helpers({
+  group () {
+    return DisplayTemplateGroups.findOne(this.parentGroup)
+  },
+  groupPath () {
+    let group = this.group();
+    if (group) {
+      return [ group ].concat(group.parentList())
+    }
   }
 });

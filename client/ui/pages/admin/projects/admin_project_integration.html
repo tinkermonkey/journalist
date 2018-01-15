@@ -1,6 +1,7 @@
 <template name="AdminProjectIntegration">
   {{#if Template.subscriptionsReady }}
     {{#with integration}}
+      {{setPageTitle 'Journalist - Admin Integration - ' project.title }}
       <div class="container">
         <div class="row">
           <div class="col-md-12">
@@ -46,7 +47,7 @@
               <tr class="show-controls-on-hover">
                 <td>Preview Template</td>
                 <td>
-                  <a class="hidden-control" href="{{pathFor 'IntegrationDisplayTemplate' templateId=previewDisplayTemplateId }}">
+                  <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=previewDisplayTemplateId }}">
                     <span class="glyphicon glyphicon-folder-open"></span>
                   </a>
                 </td>
@@ -55,7 +56,7 @@
               <tr class="show-controls-on-hover">
                 <td>Detail Template</td>
                 <td>
-                  <a class="hidden-control" href="{{pathFor 'IntegrationDisplayTemplate' templateId=detailDisplayTemplateId }}">
+                  <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=detailDisplayTemplateId }}">
                     <span class="glyphicon glyphicon-folder-open"></span>
                   </a>
                 </td>

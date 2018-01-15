@@ -1,9 +1,11 @@
 import './authenticated_layout.html';
 import { Template } from 'meteor/templating';
-import '../pages/not_found/not_found.js';
-import '../components/login/login.js';
-import '../components/misc/app_loading.js';
-import '../components/top_nav/top_nav.js';
+import '../pages/not_found/not_found';
+import '../components/login/login';
+import '../components/misc/app_loading';
+import '../components/top_nav/top_nav';
+import './display_template_layer';
+import {Util} from '../../../imports/api/util';
 
 /**
  * Template Helpers
@@ -21,19 +23,14 @@ Template.AuthenticatedLayout.events({});
 Template.AuthenticatedLayout.onCreated(() => {
   let instance = Template.instance();
   
-  instance.subscribe('contributors');
-  instance.subscribe('contributor_role_definitions');
-  instance.subscribe('contributor_team_roles');
-  instance.subscribe('contributor_project_assignments');
-  instance.subscribe('efforts');
-  instance.subscribe('integration_display_templates');
-  instance.subscribe('priorities');
-  instance.subscribe('projects');
-  instance.subscribe('status_report_settings');
-  instance.subscribe('system_health_metrics');
-  instance.subscribe('user_level');
-  instance.subscribe('tasks');
-  instance.subscribe('teams');
+  console.log(Util.timestamp(), 'AuthenticatedLayout created');
+  Util.standardSubscriptions(instance);
+  
+  instance.autorun(() => {
+    if(instance.subscriptionsReady()){
+      console.log(Util.timestamp(), 'AuthenticatedLayout data loaded');
+    }
+  })
 });
 
 /**

@@ -1,0 +1,11 @@
+<head>
+  <style id="display-template-layer-css"></style>
+</head>
+
+<template name="DisplayTemplateLayer">
+  {{#if ready }}
+    {{> Template.contentBlock }}
+  {{else}}
+    {{> AppLoading message="Loading Templates" }}
+  {{/if}}
+</template>

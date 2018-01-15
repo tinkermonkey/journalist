@@ -103,7 +103,7 @@ Template.AdminProjectIntegrations.onCreated(() => {
   let instance = Template.instance();
   
   instance.subscribe('integration_calculated_fields');
-  instance.subscribe('integration_display_templates');
+  instance.subscribe('display_templates');
   instance.subscribe('integration_import_functions');
   instance.subscribe('integration_servers');
   

@@ -1,4 +1,5 @@
 <template name="AdminHome">
+  {{setPageTitle 'Journalist - Admin Home' }}
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -24,7 +25,7 @@
           </li>
           <li class="list-group-item">
             <span class="badge">{{displayTemplateCount}}</span>
-            <a href="{{pathFor 'IntegrationDisplayTemplates'}}">Display Templates</a>
+            <a href="{{pathFor 'DisplayTemplates'}}">Display Templates</a>
           </li>
           <li class="list-group-item">
             <span class="badge">{{importFunctionCount}}</span>

@@ -1,6 +1,7 @@
 <template name="UserProfile">
   <div class="container">
     {{#with currentUser}}
+      {{setPageTitle 'Journalist - User Profile' }}
       <h1>{{profile.name}}</h1>
       {{#each emails}}
         {{address}}

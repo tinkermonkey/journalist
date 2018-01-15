@@ -7,7 +7,8 @@ import { Util } from '../../api/util.js';
 import { Contributors } from '../../api/contributors/contributors.js';
 import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions';
 import { IntegrationCalculatedFields } from '../../api/integrations/integration_calculated_fields.js';
-import { IntegrationDisplayTemplates } from '../../api/integrations/integration_display_templates.js';
+import { DisplayTemplates } from '../../api/display_templates/display_templates.js';
+import { DisplayTemplateGroups } from '../../api/display_templates/display_template_groups.js';
 import { IntegrationImportFunctions } from '../../api/integrations/integration_import_functions.js';
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { IntegrationTypes } from '../../api/integrations/integration_types.js';
@@ -328,26 +329,46 @@ Template.registerHelper('calculatedFieldsChecklistContext', function (params) {
   
   return context
 });
-Template.registerHelper('displayTemplateSelectorContext', function (fieldName) {
-  let record = this;
+Template.registerHelper('displayTemplateSelectorContext', function (params) {
+  let record  = this,
+      context = {
+        valueField  : '_id',
+        displayField: 'title',
+        value       : record.displayTemplate,
+        dataKey     : 'displayTemplate',
+        collection  : DisplayTemplates,
+        emptyText   : 'Select display template',
+        cssClass    : 'inline-block',
+        mode        : 'popup',
+        query       : {}
+      };
   
-  if (!_.isString(fieldName) || _.isString(fieldName) && !fieldName.length) {
-    fieldName = 'displayTemplate'
+  if (params && params.hash) {
+    _.extend(context, params.hash);
   }
   
-  return {
-    valueField  : '_id',
-    displayField: 'title',
-    value       : record[ fieldName ],
-    dataKey     : fieldName,
-    collection  : IntegrationDisplayTemplates,
-    emptyText   : 'Select display template',
-    cssClass    : 'inline-block',
-    mode        : 'popup',
-    query       : {}
-  }
+  return context
 });
-
+Template.registerHelper('displayTemplateGroupSelectorContext', function (params) {
+  let record  = this,
+      context = {
+        valueField  : '_id',
+        displayField: 'title',
+        value       : record.parentGroup,
+        dataKey     : 'parentGroup',
+        collection  : DisplayTemplateGroups,
+        emptyText   : 'Select a template group',
+        cssClass    : 'inline-block',
+        mode        : 'popup',
+        query       : {}
+      };
+  
+  if (params && params.hash) {
+    _.extend(context, params.hash);
+  }
+  
+  return context
+});
 
 /**
  * Simple pathFor helper
@@ -365,9 +386,9 @@ Template.registerHelper('pathFor', function (routeName, routeParams) {
  */
 Template.registerHelper("getElementId", function () {
   let instance = Template.instance();
-  if(!instance.elementId){
+  if (!instance.elementId) {
     instance.elementId = "Element_" + Meteor.uuid();
-    if(instance.elementIdReactor){
+    if (instance.elementIdReactor) {
       instance.elementIdReactor.set(instance.elementId);
     }
   }
@@ -377,8 +398,11 @@ Template.registerHelper("getElementId", function () {
 /**
  * Misc helpers
  */
-Template.registerHelper('setDocumentTitle', function (title) {
-  if(_.isString(title)){
+Template.registerHelper('setPageTitle', function () {
+  let title = [...arguments].filter((s) => {
+    return _.isString(s)
+  }).join(' ');
+  if (_.isString(title) && title.length) {
     window.document.title = title;
   }
 });

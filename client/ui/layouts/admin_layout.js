@@ -1,6 +1,11 @@
 import './admin_layout.html';
 import { Template } from 'meteor/templating';
-import './authenticated_layout.js';
+import '../pages/not_found/not_found';
+import '../components/login/login';
+import '../components/misc/app_loading';
+import '../components/top_nav/top_nav';
+import './display_template_layer';
+import { Util } from '../../../imports/api/util';
 
 /**
  * Template Helpers
@@ -18,11 +23,7 @@ Template.AdminLayout.events({});
 Template.AdminLayout.onCreated(() => {
   let instance = Template.instance();
   
-  instance.subscribe('contributors');
-  instance.subscribe('user_level');
-  instance.subscribe('integration_calculated_fields');
-  instance.subscribe('integration_import_functions');
-  instance.subscribe('integration_servers');
+  Util.standardSubscriptions(instance);
 });
 
 /**

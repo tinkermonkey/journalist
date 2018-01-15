@@ -305,10 +305,6 @@ Template.WeeklySupportReport.helpers({
   supportTicketHistory() {
     let project = this,
       weekCount = 51,
-      firstTicket = ImportedItemCrumbs.findOne({
-        projectId: project._id,
-        itemType: ItemTypes.supportTicket
-      }, { sort: { dateCreated: 1 } }) || {},
       startDate = moment().startOf('week').subtract(weekCount, 'weeks').toDate(),
       data = [
         ['x'],
@@ -471,7 +467,7 @@ Template.WeeklySupportReport.helpers({
     }, { sort: { dateCreated: 1 } }).fetch().filter((ticket) => {
       return _.find(ticket.document.fields.issuelinks, (link) => {
         return _.contains(fixIdentifiers, (link.outwardIssue || link.inwardIssue).key)
-      }) == undefined
+      }) === undefined
     })
   }
 });

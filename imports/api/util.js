@@ -1,20 +1,20 @@
 /**
  * Determine the greatest common divisor of two numbers
- * @param {*} a 
- * @param {*} b 
+ * @param {*} a
+ * @param {*} b
  */
-function gcd(a, b) {
+function gcd (a, b) {
   if (!b) {
     return a
   }
   return gcd(b, a % b)
 };
-  
+
 export const Util = {
   /**
    * Return a timestamp string
    */
-  timestamp(){
+  timestamp () {
     return moment().format('hh:mm:ss.SSS')
   },
   
@@ -23,15 +23,17 @@ export const Util = {
    * @param words
    * @return {*}
    */
-  titleCase(words){
-    return words.replace(/([A-Z])/g, ' $1').split(/[^a-z0-9]/i).map((word) => { return word.substr(0, 1).toUpperCase() + word.substr(1) }).join(' ').trim()
+  titleCase (words) {
+    return words.replace(/([A-Z])/g, ' $1').split(/[^a-z0-9]/i).map((word) => {
+      return word.substr(0, 1).toUpperCase() + word.substr(1)
+    }).join(' ').trim()
   },
   
   /**
    * Capitalize a string
    * @param word The string to capitalize
    */
-  capitalize(word) {
+  capitalize (word) {
     if (word) {
       return word.substr(0, 1).toUpperCase() + word.substr(1);
     }
@@ -42,7 +44,7 @@ export const Util = {
    * Convert camel case to title case
    * @param word
    */
-  camelToTitle(word) {
+  camelToTitle (word) {
     if (word) {
       return (word.substr(0, 1).toUpperCase() + word.substr(1)).replace(/([A-Z])/g, " $1").trim();
     }
@@ -52,7 +54,7 @@ export const Util = {
    * Convert camel case to dashed words
    * @param word
    */
-  camelToDash(word) {
+  camelToDash (word) {
     if (word) {
       return word.replace(/([A-Z])/g, "-$1").trim().toLowerCase();
     }
@@ -62,7 +64,7 @@ export const Util = {
    * Convert words to a CamelCase string
    * @param words
    */
-  wordsToCamel(words) {
+  wordsToCamel (words) {
     if (words) {
       return words.replace(/[\W]/g, " ")
           .replace(/(^[a-z]|\s+[a-z])/g, (letter) => {
@@ -71,13 +73,56 @@ export const Util = {
           .replace(/\s/g, "");
     }
   },
-
+  
   /**
    * Determine the greatest common divisor of two numbers
-   * @param {*} a 
-   * @param {*} b 
+   * @param {*} a
+   * @param {*} b
    */
-  greatestCommonDivisor(a, b) {
-    return [a, b].reduce(gcd)
+  greatestCommonDivisor (a, b) {
+    return [ a, b ].reduce(gcd)
+  },
+  
+  /**
+   * Subscribe to the standard set of data
+   * @param instance
+   */
+  standardSubscriptions (instance) {
+    instance.subscribe('contributors');
+    instance.subscribe('contributor_role_definitions');
+    instance.subscribe('contributor_team_roles');
+    instance.subscribe('contributor_project_assignments');
+    instance.subscribe('efforts');
+    instance.subscribe('priorities');
+    instance.subscribe('projects');
+    instance.subscribe('status_report_settings');
+    instance.subscribe('system_health_metrics');
+    instance.subscribe('user_level');
+    instance.subscribe('tasks');
+    instance.subscribe('teams');
+  },
+  
+  /**
+   * Compile a template definition
+   * @param displayTemplate {DisplayTemplate}
+   */
+  compileTemplate (displayTemplate) {
+    let code = '(function(){' + "\n"  + (displayTemplate.templatePreamble || '') + "\n" +
+        'Template.' + displayTemplate.templateName + '.helpers(' + (displayTemplate.templateHelpers || '{}') + ');' + "\n" +
+        'Template.' + displayTemplate.templateName + '.events(' + (displayTemplate.templateEvents || '{}') + ');' + "\n" +
+        'Template.' + displayTemplate.templateName + '.onCreated(() => { ' + (displayTemplate.templateCreated || '') + '});' + "\n" +
+        'Template.' + displayTemplate.templateName + '.onRendered(() => { ' + (displayTemplate.templateRendered || '') + '});' + "\n" +
+        'Template.' + displayTemplate.templateName + '.onDestroyed(() => { ' + (displayTemplate.templateDestroyed || '') + '});' + "\n" +
+        '})()';
+    
+    //console.log('compileTemplate:', displayTemplate.templateName, code);
+    Template[ displayTemplate.templateName ] = new Template(displayTemplate.templateName, eval(SpacebarsCompiler.compile(displayTemplate.templateLayout, { isTemplate: true })));
+    try {
+      eval(code);
+    } catch (e) {
+      console.error('compileTemplate failed:', displayTemplate.templateName, code, e);
+      throw e
+    }
+    return code
   }
 };

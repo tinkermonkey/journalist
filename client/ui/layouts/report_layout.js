@@ -23,7 +23,7 @@ Template.ReportLayout.onCreated(() => {
   instance.subscribe('contributor_team_roles');
   instance.subscribe('contributor_project_assignments');
   instance.subscribe('efforts');
-  instance.subscribe('integration_display_templates');
+  instance.subscribe('display_templates');
   instance.subscribe('priorities');
   instance.subscribe('projects');
   instance.subscribe('status_report_settings');

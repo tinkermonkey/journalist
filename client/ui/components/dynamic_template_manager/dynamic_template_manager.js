@@ -1,4 +1,4 @@
-import {IntegrationDisplayTemplates} from '../../../../imports/api/integrations/integration_display_templates';
+import {DisplayTemplates} from '../../../../imports/api/display_templates/display_templates';
 
 export const DynamicTemplateManager = {
 

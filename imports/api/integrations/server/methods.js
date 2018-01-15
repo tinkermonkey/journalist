@@ -3,11 +3,11 @@ import { check, Match } from 'meteor/check';
 import { Auth } from '../../auth';
 import { Integrations } from '../integrations';
 import { IntegrationCalculatedFields } from '../integration_calculated_fields';
-import { IntegrationDisplayTemplates } from '../integration_display_templates';
+import { DisplayTemplates } from '../../display_templates/display_templates';
 import { IntegrationImportFunctions } from '../integration_import_functions';
 import { IntegrationServers } from '../integration_servers';
 import { IntegrationService } from '../../../modules/integration_service/integration_service';
-import { PublishedDisplayTemplates } from '../published_display_templates';
+import { PublishedDisplayTemplates } from '../../display_templates/published_display_templates';
 
 Meteor.methods({
   /**
@@ -401,112 +401,6 @@ Meteor.methods({
   },
   
   /**
-   * Add an integration display template
-   * @param title
-   * @param templateName
-   */
-  addIntegrationDisplayTemplate (title, templateName) {
-    console.log('addIntegrationDisplayTemplate:', title, templateName);
-    let user = Auth.requireAuthentication();
-    
-    // Validate the data is complete
-    check(title, String);
-    check(templateName, String);
-    
-    // Validate that the current user is an administrator
-    if (user.isAdmin()) {
-      // Insert the project percent
-      IntegrationDisplayTemplates.insert({
-        title: title,
-        templateName: templateName
-      });
-    } else {
-      console.error('Non-admin user tried to add an integration display template:', user.username, title);
-      throw new Meteor.Error(403);
-    }
-  },
-  
-  /**
-   * Remove an integration display template
-   * @param templateId
-   */
-  deleteIntegrationDisplayTemplate (templateId) {
-    console.log('deleteIntegrationDisplayTemplate:', templateId);
-    let user = Auth.requireAuthentication();
-    
-    // Validate the data is complete
-    check(templateId, String);
-    
-    // Validate that the current user is an administrator
-    if (user.isAdmin()) {
-      IntegrationDisplayTemplates.remove(templateId);
-    } else {
-      console.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
-      throw new Meteor.Error(403);
-    }
-  },
-  
-  /**
-   * Edit an integration display template record
-   * @param templateId
-   * @param key
-   * @param value
-   */
-  editIntegrationDisplayTemplate (templateId, key, value) {
-    console.log('editIntegrationDisplayTemplate:', templateId, key);
-    let user = Auth.requireAuthentication();
-    
-    // Validate the data is complete
-    check(templateId, String);
-    check(key, String);
-    check(value, Match.Any);
-    
-    // Get the display template record to make sure this is authorized
-    let displayTemplate = IntegrationDisplayTemplates.findOne(templateId);
-    
-    // Validate that the current user is an administrator
-    if (user.isAdmin()) {
-      if (displayTemplate) {
-        let update    = {};
-        update[ key ] = value;
-        
-        // Update the contributor
-        IntegrationDisplayTemplates.update(templateId, { $set: update });
-      } else {
-        throw new Meteor.Error(404);
-      }
-    } else {
-      console.error('Non-admin user tried to edit an integration display template:', user.username, key, templateId);
-      throw new Meteor.Error(403);
-    }
-  },
-
-  /**
-   * Publish a template ID so that users can use it
-   * @param {*} templateId 
-   */
-  publishIntegrationDisplayTemplate(templateId){
-    console.log('publishIntegrationDisplayTemplate:', templateId);
-    let user = Auth.requireAuthentication();
-    
-    // Validate the data is complete
-    check(templateId, String);
-    
-    // Validate that the current user is an administrator
-    if (user.isAdmin()) {
-      let displayTemplate = IntegrationDisplayTemplates.findOne(templateId);
-      if(displayTemplate){
-        PublishedDisplayTemplates.upsert({_id: displayTemplate._id}, { $set: displayTemplate });
-      } else {
-        throw new Meteor.Error(404);
-      }
-    } else {
-      console.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
-      throw new Meteor.Error(403);
-    }
-  },
-  
-  /**
    * Add an integration calculated field
    * @param title
    */
@@ -732,7 +626,7 @@ Meteor.methods({
    * Run imported items through the processing pipeline again
    * @param integrationId
    */
-  reprocessIntegrationItems(integrationId){
+  reprocessIntegrationItems (integrationId) {
     console.log('reprocessIntegrationItems:', integrationId);
     let user = Auth.requireAuthentication();
     

@@ -1,0 +1,122 @@
+<template name="DisplayTemplate">
+  {{#if Template.subscriptionsReady }}
+    {{#with displayTemplate}}
+      {{setPageTitle 'Journalist -' templateName }}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'DisplayTemplates' }}">Display Templates</a></li>
+              
+              {{#if parentGroup}}
+                {{#each groupPath.reverse}}
+                  <li>
+                    <a href="{{pathFor 'DisplayTemplateGroup' groupId=_id}}">{{title}}</a>
+                  </li>
+                {{/each}}
+              {{/if}}
+              <li>{{templateName}}</li>
+            </ol>
+            
+            <h1>{{templateName}}</h1>
+            <div>
+              Current version is {{currentVersion}},
+              {{#if lastPublished}}
+                last published {{ dateFormat lastPublished 'MM/DD hh:mm:ss a'}}, version {{publishedVersion}}
+              {{else }}
+                this template has never been published
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-12">
+            {{#RobaTabGroup name="template-tabs" navClass="nav-tabs"}}
+              {{#RobaTab name="layout" title="Layout"}}
+                <h2>Template HTML</h2>
+                {{> EditableCode dataKey="templateLayout" value=templateLayout emptyText="Template HTML" language="html" mode="inline" autoHeight=true}}
+              {{/RobaTab}}
+              {{#RobaTab name="css" title="CSS"}}
+                <h2>Template CSS</h2>
+                {{> EditableCode dataKey="templateCSS" value=templateCSS emptyText="Template CSS" language="css" mode="inline" autoHeight=true}}
+              {{/RobaTab}}
+              {{#RobaTab name="code" title="Code"}}
+                <h2>Preamble</h2>
+                {{> EditableCode dataKey="templatePreamble" value=templatePreamble emptyText="Template Preamble Code" language="javascript" mode="inline" autoHeight=true}}
+                
+                <h2>Helpers</h2>
+                {{> EditableCode dataKey="templateHelpers" value=templateHelpers emptyText="Template Helpers" language="javascript" mode="inline" autoHeight=true}}
+                
+                <h2>Events</h2>
+                {{> EditableCode dataKey="templateEvents" value=templateEvents emptyText="Template Events" language="javascript" mode="inline" autoHeight=true}}
+                
+                <h2>Created</h2>
+                {{> EditableCode dataKey="templateCreated" value=templateCreated emptyText="Template Created" language="javascript" mode="inline" autoHeight=true}}
+                
+                <h2>Rendered</h2>
+                {{> EditableCode dataKey="templateRendered" value=templateRendered emptyText="Template Rendered" language="javascript" mode="inline" autoHeight=true}}
+                
+                <h2>Destroyed</h2>
+                {{> EditableCode dataKey="templateDestroyed" value=templateDestroyed emptyText="Template Destroyed" language="javascript" mode="inline" autoHeight=true}}
+              {{/RobaTab}}
+              {{#RobaTab name="preview" title="Preview"}}
+                <nav class="navbar navbar-default">
+                  <div class="container-fluid">
+                    <form class="navbar-form navbar-left">
+                      <button class="btn btn-default btn-preview">
+                        <span class="glyphicon glyphicon-play"></span>
+                        Preview
+                      </button>
+                      <button class="btn btn-default btn-publish" disabled="{{#unless allowPublish}}disabled{{/unless}}">
+                        <span class="glyphicon glyphicon-upload"></span>
+                        Publish
+                      </button>
+                    </form>
+                  </div>
+                </nav>
+                
+                <div class="preview-context-editor">
+                  <h3>Render Context Data</h3>
+                  <div class="alert alert-info">
+                    The code below will be executed as a function and the return value will be passed to the template for previewing.
+                  </div>
+                  {{> EditableCode dataKey="previewContext" value=previewContext emptyText="Enter context data for previewing the template" mode="inline" }}
+                </div>
+                
+                {{#if previewError}}
+                  <div>
+                    <h2>Error in {{previewError.step}}:</h2>
+                    {{previewError.error}}
+                  </div>
+                  
+                  <pre>{{previewError.error.stack}}</pre>
+                  <pre>{{previewError.templateCode}}</pre>
+                {{/if}}
+                
+                {{#if previewMessage}}
+                  <h3>Render History</h3>
+                  <div class="well">
+                    {{previewMessage}}
+                  </div>
+                {{/if}}
+                
+                <div class="full-width preview-container">
+                
+                </div>
+              {{/RobaTab}}
+              {{#RobaTab name="field-reference" title="Field Reference"}}
+                <h2>Field Reference</h2>
+                
+                {{> IntegrationServerFieldReference }}
+              {{/RobaTab}}
+            {{/RobaTabGroup}}
+          </div>
+        </div>
+      </div>
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>
