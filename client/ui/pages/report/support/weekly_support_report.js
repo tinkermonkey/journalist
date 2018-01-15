@@ -482,7 +482,7 @@ Template.WeeklySupportReport.events({});
  */
 Template.WeeklySupportReport.onCreated(() => {
   let instance = Template.instance(),
-    firstDay = moment().weekday() > 4 ? moment().startOf('week') : moment().subtract(7).startOf('week'),
+    firstDay = moment().weekday() > 4 ? moment().startOf('week') : moment().subtract(7, 'days').startOf('week'),
     dateRange = {
       start: firstDay.toDate(),
       end: firstDay.add(7, 'days').toDate()
