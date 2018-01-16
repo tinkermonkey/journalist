@@ -6,7 +6,6 @@ import { Contributors } from '../contributors/contributors';
 import { ContributorProjectAssignments } from '../contributors/contributor_project_assignments';
 import { ContributorTeamRoles } from '../contributors/contributor_team_roles';
 import { Integrations } from '../integrations/integrations';
-import { ProjectTypes } from './project_types';
 import { Teams } from '../teams/teams';
 
 /**
@@ -16,44 +15,42 @@ import { Teams } from '../teams/teams';
  */
 export const Project = new SimpleSchema({
   // Project Title
-  title       : {
+  title         : {
     type: String
   },
   // Project Description
-  description : {
+  description   : {
     type    : String,
-    optional: true
-  },
-  // Project Type
-  projectType: {
-    type: Number,
-    allowedValues: _.values(ProjectTypes),
     optional: true
   },
   // Banner Template
   bannerTemplate: {
-    type: String,
+    type    : String,
+    optional: true
+  },
+  reports       : {
+    type    : [ String ],
     optional: true
   },
   // Contributor that is the primary owner of this project
-  owner       : {
+  owner         : {
     type    : String,
     optional: true
   },
   // Standard tracking fields
-  dateCreated : {
+  dateCreated   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
+  createdBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
+  dateModified  : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
+  modifiedBy    : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -109,7 +106,7 @@ Projects.helpers({
   teams (sortBy) {
     let project = this,
         teamIds = [];
-  
+    
     // Default sort, check for sortBy.hash because that is what is passed in by Spacebars if sortBy is not passed
     sortBy = _.isObject(sortBy) && sortBy.hash === null ? sortBy : { title: 1 };
     
@@ -150,7 +147,7 @@ Projects.helpers({
   /**
    * Get all of the integrations for this project
    */
-  integrations(){
-    return Integrations.find({projectId: this._id}, {sort: {itemType: 1, integrationType: 1}})
+  integrations () {
+    return Integrations.find({ projectId: this._id }, { sort: { itemType: 1, integrationType: 1 } })
   }
 });

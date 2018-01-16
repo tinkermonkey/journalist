@@ -52,5 +52,30 @@ DisplayTemplateGroups.helpers({
     return [ this.title ].concat(this.parentList().map((g) => {
       return g.title
     })).reverse().join(joinString || ' - ')
+  },
+  treeNodes () {
+    let self = this;
+    return {
+      text        : self.title,
+      href        : FlowRouter.path('DisplayTemplateGroup', { groupId: self._id }),
+      customId    : self._id,
+      icon        : 'glyphicon glyphicon-folder-close',
+      selectedIcon: 'glyphicon glyphicon-folder-open',
+      state       : {
+        expanded: false
+      },
+      tags        : [
+        self.childCount()
+      ],
+      nodes       : self.childGroups().map((group) => {
+        return group.treeNodes()
+      }).concat(self.childTemplates().map((template) => {
+        return {
+          text    : template.templateName,
+          href    : FlowRouter.path('DisplayTemplate', { templateId: template._id }),
+          customId: template._id
+        }
+      }))
+    }
   }
 });

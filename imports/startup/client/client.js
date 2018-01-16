@@ -9,12 +9,12 @@ import { ContributorRoleDefinitions } from '../../api/contributors/contributor_r
 import { IntegrationCalculatedFields } from '../../api/integrations/integration_calculated_fields.js';
 import { DisplayTemplates } from '../../api/display_templates/display_templates.js';
 import { DisplayTemplateGroups } from '../../api/display_templates/display_template_groups.js';
+import { DisplayTemplateTypes } from '../../api/display_templates/display_template_types';
 import { IntegrationImportFunctions } from '../../api/integrations/integration_import_functions.js';
 import { IntegrationServers } from '../../api/integrations/integration_servers';
 import { IntegrationTypes } from '../../api/integrations/integration_types.js';
 import { ItemTypes } from '../../api/imported_items/item_types.js';
 import { Projects } from '../../api/projects/projects.js';
-import { ProjectTypes } from '../../api/projects/project_types.js';
 import { Teams } from '../../api/teams/teams';
 import { Users } from '../../api/users/users';
 import { UserTypes } from '../../api/users/user_types.js';
@@ -48,14 +48,14 @@ AutoForm.hooks({
  * Enums
  */
 
+Template.registerHelper('DisplayTemplateTypes', function () {
+  return DisplayTemplateTypes
+});
 Template.registerHelper('ItemTypes', function () {
   return ItemTypes
 });
 Template.registerHelper('IntegrationTypes', function () {
   return IntegrationTypes
-});
-Template.registerHelper('ProjectTypes', function () {
-  return ProjectTypes
 });
 Template.registerHelper('UserTypes', function () {
   return UserTypes
@@ -399,7 +399,7 @@ Template.registerHelper("getElementId", function () {
  * Misc helpers
  */
 Template.registerHelper('setPageTitle', function () {
-  let title = [...arguments].filter((s) => {
+  let title = [ ...arguments ].filter((s) => {
     return _.isString(s)
   }).join(' ');
   if (_.isString(title) && title.length) {

@@ -15,34 +15,13 @@
     <div class="row">
       <div class="col-md-3">
         <h2>Template Groups</h2>
+        {{constant}}
+        <div class="treeview-container"></div>
+        {{constant}}
+        
         {{#with currentGroup}}
           {{setPageTitle 'Journalist - Admin Display Templates - ' title }}
-          <h3>Path</h3>
           <ul class="list-group">
-            <li class="list-group-item">
-              <span class="badge">{{parentlessGroups.count}}</span>
-              <a href="{{pathFor 'DisplayTemplates'}}">Root</a>
-            </li>
-            {{#each parentList.reverse}}
-              <li class="list-group-item">
-                <span class="badge">{{childCount}}</span>
-                <a href="{{pathFor 'DisplayTemplateGroup' groupId=_id}}">{{title}}</a>
-              </li>
-            {{/each}}
-            <li class="list-group-item">
-              <span class="badge">{{childCount}}</span>
-              {{title}}
-            </li>
-          </ul>
-          
-          <h3>Sub-Groups</h3>
-          <ul class="list-group">
-            {{#each childGroups}}
-              <li class="list-group-item">
-                <span class="badge">{{childCount}}</span>
-                <a href="{{pathFor 'DisplayTemplateGroup' groupId=_id}}">{{title}}</a>
-              </li>
-            {{/each}}
             <li class="list-group-item">
               <a class="btn-add-group">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -58,12 +37,6 @@
           </ul>
         {{else}}
           <ul class="list-group">
-            {{#each parentlessGroups}}
-              <li class="list-group-item">
-                <span class="badge">{{childCount}}</span>
-                <a href="{{pathFor 'DisplayTemplateGroup' groupId=_id}}">{{title}}</a>
-              </li>
-            {{/each}}
             <li class="list-group-item">
               <a class="btn-add-group">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -91,8 +64,8 @@
             <tr>
               <th></th>
               <th>Template Name</th>
+              <th>Type</th>
               <th>Current Version</th>
-              <th>Published Version</th>
               <th>Published</th>
               <th>Modified By</th>
               <th>Modified</th>
@@ -110,8 +83,19 @@
                   </a>
                 </td>
                 <td>{{> EditableTextField dataKey="templateName" value=templateName emptyText="Template Name" }}</td>
-                <td>{{ currentVersion }}</td>
-                <td>{{ publishedVersion }}</td>
+                <td>{{> EditableEnumSelector enum=DisplayTemplateTypes dataKey="templateType" value=templateType emptyText="Template Type" }}</td>
+                <td>
+                  {{ currentVersion }}
+                  {{#if unpublishedChanges }}
+                    <span class="label label-warning">
+                      Unpublished Changes
+                    </span>
+                  {{else}}
+                    <span class="label label-success">
+                      Up to date
+                    </span>
+                  {{/if}}
+                </td>
                 <td>{{ dateFormat lastPublished }}</td>
                 <td>{{ userName modifiedBy }}</td>
                 <td>{{ dateFormat dateModified }}</td>

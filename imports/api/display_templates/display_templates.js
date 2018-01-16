@@ -3,6 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers';
 import { DisplayTemplateGroups } from './display_template_groups';
+import { DisplayTemplateTypes } from './display_template_types';
 
 /**
  * ============================================================================
@@ -18,15 +19,20 @@ export const DisplayTemplate = new SimpleSchema({
     type    : String,
     optional: true
   },
+  // General category of template
+  templateType     : {
+    type         : Number,
+    allowedValues: _.values(DisplayTemplateTypes)
+  },
   templateLayout   : {
     type    : String,
     optional: true
   },
-  templateCSS   : {
+  templateCSS      : {
     type    : String,
     optional: true
   },
-  templatePreamble  : {
+  templatePreamble : {
     type    : String,
     optional: true
   },
@@ -120,5 +126,8 @@ DisplayTemplates.helpers({
     if (group) {
       return [ group ].concat(group.parentList())
     }
+  },
+  unpublishedChanges () {
+    return this.currentVersion !== this.publishedVersion
   }
 });

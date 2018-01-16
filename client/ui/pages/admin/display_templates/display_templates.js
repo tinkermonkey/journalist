@@ -3,6 +3,7 @@ import { Template } from 'meteor/templating';
 import { DisplayTemplates } from '../../../../../imports/api/display_templates/display_templates';
 import { DisplayTemplateGroups } from '../../../../../imports/api/display_templates/display_template_groups';
 import '../integration_servers/integration_server_field_reference';
+import '../../../components/bootstrap-treeview/bootstrap-treeview';
 
 /**
  * Template Helpers
@@ -219,8 +220,7 @@ Template.DisplayTemplates.events({
         a.click();
       }
     });
-  },
-  
+  }
 });
 
 /**
@@ -231,13 +231,61 @@ Template.DisplayTemplates.onCreated(() => {
   
   instance.subscribe('display_templates');
   instance.subscribe('display_template_groups');
+  
 });
 
 /**
  * Template Rendered
  */
 Template.DisplayTemplates.onRendered(() => {
+  let instance = Template.instance();
   
+  instance.autorun(() => {
+    // Build up the tree data
+    let baseGroups    = DisplayTemplateGroups.find({ parentGroup: null }, { sort: { title: 1 } }).fetch(),
+        baseTemplates = DisplayTemplates.find({ parentGroup: null }, { sort: { templateName: 1 } }).fetch(),
+        treeData      = baseGroups.map((group) => {
+          return group.treeNodes()
+        }).concat(baseTemplates.map((template) => {
+          return {
+            text    : template.templateName,
+            href    : FlowRouter.path('DisplayTemplate', { templateId: template._id }),
+            customId: template._id
+          }
+        })),
+        groupId       = FlowRouter.getParam('groupId');
+    
+    console.log('DisplayTemplates treeData:', treeData);
+    
+    instance.$('.treeview-container').treeview({
+      showTags    : true,
+      collapseIcon: 'glyphicon glyphicon-folder-open',
+      expandIcon  : 'glyphicon glyphicon-folder-close',
+      nodeIcon    : 'glyphicon glyphicon-file',
+      color       : '#007AC9',
+      enableLinks : true,
+      data        : treeData
+    });
+    
+    if (groupId) {
+      let currentNodeId = instance.$('.list-group-item[data-custom-id="' + groupId + '"]').attr('data-nodeid');
+      console.log('Treeview revealing current node:', groupId, currentNodeId);
+      if (currentNodeId !== undefined) {
+        let node = instance.$('.treeview-container').treeview('getNode', currentNodeId);
+        try {
+          instance.$('.treeview-container').treeview('revealNode', [ node ]);
+        } catch (e) {
+          // ignore it, it fails for all top-level items
+          console.log('Reveal failed:', e);
+        }
+        try {
+          instance.$('.treeview-container').treeview('expandNode', [ node ]);
+        } catch (e) {
+          console.log('Expand failed:', e);
+        }
+      }
+    }
+  })
 });
 
 /**
