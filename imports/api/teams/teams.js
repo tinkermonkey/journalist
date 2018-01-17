@@ -31,6 +31,10 @@ export const Team = new SimpleSchema({
     type: String,
     optional: true
   },
+  reports       : {
+    type    : [ String ],
+    optional: true
+  },
   // Standard tracking fields
   dateCreated : {
     type     : Date,

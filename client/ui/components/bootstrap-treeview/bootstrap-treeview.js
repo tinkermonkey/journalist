@@ -40,64 +40,64 @@ import './bootstrap-treeview.css';
     
     levels: 2,
     
-    expandIcon: 'glyphicon glyphicon-plus',
-    collapseIcon: 'glyphicon glyphicon-minus',
-    emptyIcon: 'glyphicon',
-    nodeIcon: '',
-    selectedIcon: '',
-    checkedIcon: 'glyphicon glyphicon-check',
+    expandIcon   : 'glyphicon glyphicon-plus',
+    collapseIcon : 'glyphicon glyphicon-minus',
+    emptyIcon    : 'glyphicon',
+    nodeIcon     : '',
+    selectedIcon : '',
+    checkedIcon  : 'glyphicon glyphicon-check',
     uncheckedIcon: 'glyphicon glyphicon-unchecked',
     
-    color: undefined, // '#000000',
-    backColor: undefined, // '#FFFFFF',
-    borderColor: undefined, // '#dddddd',
-    onhoverColor: '#F5F5F5',
-    selectedColor: '#FFFFFF',
-    selectedBackColor: '#428bca',
-    searchResultColor: '#D9534F',
+    color                : undefined, // '#000000',
+    backColor            : undefined, // '#FFFFFF',
+    borderColor          : undefined, // '#dddddd',
+    onhoverColor         : '#F5F5F5',
+    selectedColor        : '#FFFFFF',
+    selectedBackColor    : '#428bca',
+    searchResultColor    : '#D9534F',
     searchResultBackColor: undefined, //'#FFFFFF',
     
-    enableLinks: false,
-    highlightSelected: true,
+    enableLinks           : false,
+    highlightSelected     : true,
     highlightSearchResults: true,
-    showBorder: true,
-    showIcon: true,
-    showLeafIconOnly: true,
-    showCheckbox: false,
-    showTags: false,
-    multiSelect: false,
+    showBorder            : true,
+    showIcon              : true,
+    showLeafIconOnly      : true,
+    showCheckbox          : false,
+    showTags              : false,
+    multiSelect           : false,
     
     // Event handlers
-    onNodeChecked: undefined,
-    onNodeCollapsed: undefined,
-    onNodeDisabled: undefined,
-    onNodeEnabled: undefined,
-    onNodeExpanded: undefined,
-    onNodeSelected: undefined,
-    onNodeUnchecked: undefined,
-    onNodeUnselected: undefined,
-    onSearchComplete: undefined,
-    onSearchCleared: undefined,
+    onNodeChecked                 : undefined,
+    onNodeCollapsed               : undefined,
+    onNodeDisabled                : undefined,
+    onNodeEnabled                 : undefined,
+    onNodeExpanded                : undefined,
+    onNodeSelected                : undefined,
+    onNodeUnchecked               : undefined,
+    onNodeUnselected              : undefined,
+    onSearchComplete              : undefined,
+    onSearchCleared               : undefined,
     onFindNodeIdByCustomIdComplete: undefined,
     onFindNodesByCustomIdsComplete: undefined
   };
   
   _default.options = {
-    silent: false,
+    silent        : false,
     ignoreChildren: false
   };
   
   _default.searchOptions = {
-    ignoreCase: true,
-    exactMatch: false,
+    ignoreCase   : true,
+    exactMatch   : false,
     revealResults: true
   };
   
   var Tree = function (element, options) {
     
-    this.$element = $(element);
+    this.$element  = $(element);
     this.elementId = element.id;
-    this.styleId = this.elementId + '-style';
+    this.styleId   = this.elementId + '-style';
     
     this.init(options);
     
@@ -107,51 +107,51 @@ import './bootstrap-treeview.css';
       options: this.options,
       
       // Initialize / destroy methods
-      init: $.proxy(this.init, this),
+      init  : $.proxy(this.init, this),
       remove: $.proxy(this.remove, this),
       
       // Get methods
-      getNode: $.proxy(this.getNode, this),
-      getParent: $.proxy(this.getParent, this),
-      getSiblings: $.proxy(this.getSiblings, this),
-      getSelected: $.proxy(this.getSelected, this),
+      getNode      : $.proxy(this.getNode, this),
+      getParent    : $.proxy(this.getParent, this),
+      getSiblings  : $.proxy(this.getSiblings, this),
+      getSelected  : $.proxy(this.getSelected, this),
       getUnselected: $.proxy(this.getUnselected, this),
-      getExpanded: $.proxy(this.getExpanded, this),
-      getCollapsed: $.proxy(this.getCollapsed, this),
-      getChecked: $.proxy(this.getChecked, this),
-      getUnchecked: $.proxy(this.getUnchecked, this),
-      getDisabled: $.proxy(this.getDisabled, this),
-      getEnabled: $.proxy(this.getEnabled, this),
+      getExpanded  : $.proxy(this.getExpanded, this),
+      getCollapsed : $.proxy(this.getCollapsed, this),
+      getChecked   : $.proxy(this.getChecked, this),
+      getUnchecked : $.proxy(this.getUnchecked, this),
+      getDisabled  : $.proxy(this.getDisabled, this),
+      getEnabled   : $.proxy(this.getEnabled, this),
       
       // Select methods
-      selectNode: $.proxy(this.selectNode, this),
-      unselectNode: $.proxy(this.unselectNode, this),
+      selectNode        : $.proxy(this.selectNode, this),
+      unselectNode      : $.proxy(this.unselectNode, this),
       toggleNodeSelected: $.proxy(this.toggleNodeSelected, this),
       
       // Expand / collapse methods
-      collapseAll: $.proxy(this.collapseAll, this),
-      collapseNode: $.proxy(this.collapseNode, this),
-      expandAll: $.proxy(this.expandAll, this),
-      expandNode: $.proxy(this.expandNode, this),
+      collapseAll       : $.proxy(this.collapseAll, this),
+      collapseNode      : $.proxy(this.collapseNode, this),
+      expandAll         : $.proxy(this.expandAll, this),
+      expandNode        : $.proxy(this.expandNode, this),
       toggleNodeExpanded: $.proxy(this.toggleNodeExpanded, this),
-      revealNode: $.proxy(this.revealNode, this),
+      revealNode        : $.proxy(this.revealNode, this),
       
       // Expand / collapse methods
-      checkAll: $.proxy(this.checkAll, this),
-      checkNode: $.proxy(this.checkNode, this),
-      uncheckAll: $.proxy(this.uncheckAll, this),
-      uncheckNode: $.proxy(this.uncheckNode, this),
+      checkAll         : $.proxy(this.checkAll, this),
+      checkNode        : $.proxy(this.checkNode, this),
+      uncheckAll       : $.proxy(this.uncheckAll, this),
+      uncheckNode      : $.proxy(this.uncheckNode, this),
       toggleNodeChecked: $.proxy(this.toggleNodeChecked, this),
       
       // Disable / enable methods
-      disableAll: $.proxy(this.disableAll, this),
-      disableNode: $.proxy(this.disableNode, this),
-      enableAll: $.proxy(this.enableAll, this),
-      enableNode: $.proxy(this.enableNode, this),
+      disableAll        : $.proxy(this.disableAll, this),
+      disableNode       : $.proxy(this.disableNode, this),
+      enableAll         : $.proxy(this.enableAll, this),
+      enableNode        : $.proxy(this.enableNode, this),
       toggleNodeDisabled: $.proxy(this.toggleNodeDisabled, this),
       
       // Search methods
-      search: $.proxy(this.search, this),
+      search     : $.proxy(this.search, this),
       clearSearch: $.proxy(this.clearSearch, this),
       
       findNodeIdByCustomId: $.proxy(this.findNodeIdByCustomId, this),
@@ -161,7 +161,7 @@ import './bootstrap-treeview.css';
   
   Tree.prototype.init = function (options) {
     
-    this.tree = [];
+    this.tree  = [];
     this.nodes = [];
     
     if (options.data) {
@@ -187,7 +187,9 @@ import './bootstrap-treeview.css';
   
   Tree.prototype.destroy = function () {
     
-    if (!this.initialized) return;
+    if (!this.initialized) {
+      return;
+    }
     
     this.$wrapper.remove();
     this.$wrapper = null;
@@ -277,12 +279,14 @@ import './bootstrap-treeview.css';
   */
   Tree.prototype.setInitialStates = function (node, level) {
     
-    if (!node.nodes) return;
+    if (!node.nodes) {
+      return;
+    }
     level += 1;
     
     var parent = node;
-    var _this = this;
-    $.each(node.nodes, function checkStates(index, node) {
+    var _this  = this;
+    $.each(node.nodes, function checkStates (index, node) {
       
       // nodeId : unique, incremental identifier
       node.nodeId = _this.nodes.length;
@@ -337,11 +341,15 @@ import './bootstrap-treeview.css';
   
   Tree.prototype.clickHandler = function (event) {
     
-    if (!this.options.enableLinks) event.preventDefault();
+    if (!this.options.enableLinks) {
+      event.preventDefault();
+    }
     
     var target = $(event.target);
-    var node = this.findNode(target);
-    if (!node || node.state.disabled) return;
+    var node   = this.findNode(target);
+    if (!node || node.state.disabled) {
+      return;
+    }
     
     var classList = target.attr('class') ? target.attr('class').split(' ') : [];
     if ((classList.indexOf('expand-icon') !== -1)) {
@@ -377,7 +385,7 @@ import './bootstrap-treeview.css';
   Tree.prototype.findNode = function (target) {
     
     var nodeId = target.closest('li.list-group-item').attr('data-nodeid');
-    var node = this.nodes[nodeId];
+    var node   = this.nodes[ nodeId ];
     
     if (!node) {
       console.log('Error: node does not exist');
@@ -386,13 +394,17 @@ import './bootstrap-treeview.css';
   };
   
   Tree.prototype.toggleExpandedState = function (node, options) {
-    if (!node) return;
+    if (!node) {
+      return;
+    }
     this.setExpandedState(node, !node.state.expanded, options);
   };
   
   Tree.prototype.setExpandedState = function (node, state, options) {
     
-    if (state === node.state.expanded) return;
+    if (state === node.state.expanded) {
+      return;
+    }
     
     if (state && node.nodes) {
       
@@ -420,13 +432,17 @@ import './bootstrap-treeview.css';
   };
   
   Tree.prototype.toggleSelectedState = function (node, options) {
-    if (!node) return;
+    if (!node) {
+      return;
+    }
     this.setSelectedState(node, !node.state.selected, options);
   };
   
   Tree.prototype.setSelectedState = function (node, state, options) {
     
-    if (state === node.state.selected) return;
+    if (state === node.state.selected) {
+      return;
+    }
     
     if (state) {
       
@@ -454,13 +470,17 @@ import './bootstrap-treeview.css';
   };
   
   Tree.prototype.toggleCheckedState = function (node, options) {
-    if (!node) return;
+    if (!node) {
+      return;
+    }
     this.setCheckedState(node, !node.state.checked, options);
   };
   
   Tree.prototype.setCheckedState = function (node, state, options) {
     
-    if (state === node.state.checked) return;
+    if (state === node.state.checked) {
+      return;
+    }
     
     if (state) {
       
@@ -483,7 +503,9 @@ import './bootstrap-treeview.css';
   
   Tree.prototype.setDisabledState = function (node, state, options) {
     
-    if (state === node.state.disabled) return;
+    if (state === node.state.disabled) {
+      return;
+    }
     
     if (state) {
       
@@ -517,8 +539,6 @@ import './bootstrap-treeview.css';
       this.$element.addClass(pluginName);
       this.$wrapper = $(this.template.list);
       
-      this.injectStyle();
-      
       this.initialized = true;
     }
     
@@ -532,16 +552,18 @@ import './bootstrap-treeview.css';
   // structure we build the tree one node at a time
   Tree.prototype.buildTree = function (nodes, level) {
     
-    if (!nodes) return;
+    if (!nodes) {
+      return;
+    }
     level += 1;
     
     var _this = this;
-    $.each(nodes, function addNodes(id, node) {
+    $.each(nodes, function addNodes (id, node) {
       
       var treeItem = $(_this.template.item)
           .addClass('node-' + _this.elementId)
           .addClass(node.state.checked ? 'node-checked' : '')
-          .addClass(node.state.disabled ? 'node-disabled': '')
+          .addClass(node.state.disabled ? 'node-disabled' : '')
           .addClass(node.state.selected ? 'node-selected' : '')
           .addClass(node.searchResult ? 'search-result' : '')
           .attr('data-nodeid', node.nodeId)
@@ -586,7 +608,7 @@ import './bootstrap-treeview.css';
         displayIcon = true;
       }
       if (displayIcon) {
-        var classList = ['node-icon'];
+        var classList = [ 'node-icon' ];
         
         classList.push(node.icon || _this.options.nodeIcon);
         if (node.state.selected) {
@@ -604,7 +626,7 @@ import './bootstrap-treeview.css';
       // Add check / unchecked icon
       if (_this.options.showCheckbox) {
         
-        var classList = ['check-icon'];
+        var classList = [ 'check-icon' ];
         if (node.state.checked) {
           classList.push(_this.options.checkedIcon);
         }
@@ -635,7 +657,7 @@ import './bootstrap-treeview.css';
       
       // Add tags as badges
       if (_this.options.showTags && node.tags) {
-        $.each(node.tags, function addTag(id, tag) {
+        $.each(node.tags, function addTag (id, tag) {
           treeItem
               .append($(_this.template.badge)
                   .append(tag)
@@ -657,10 +679,13 @@ import './bootstrap-treeview.css';
   // 1. selectedNode
   // 2. node|data assigned color overrides
   Tree.prototype.buildStyleOverride = function (node) {
+    var style = '';
     
-    if (node.state.disabled) return '';
+    if (node.state.disabled) {
+      return '';
+    }
     
-    var color = node.color;
+    var color     = node.color;
     var backColor = node.backColor;
     
     if (this.options.highlightSelected && node.state.selected) {
@@ -681,8 +706,15 @@ import './bootstrap-treeview.css';
       }
     }
     
-    return 'color:' + color +
-        ';background-color:' + backColor + ';';
+    if(color){
+      style += 'color:' + color + ';';
+    }
+    
+    if(backColor){
+      style += 'background-color:' + backColor + ';';
+    }
+    
+    return style;
   };
   
   // Add inline style into head
@@ -724,16 +756,15 @@ import './bootstrap-treeview.css';
   };
   
   Tree.prototype.template = {
-    list: '<ul class="list-group"></ul>',
-    item: '<li class="list-group-item"></li>',
+    list  : '<ul class="list-group"></ul>',
+    item  : '<li class="list-group-item"></li>',
     indent: '<span class="indent"></span>',
-    icon: '<span class="icon"></span>',
-    link: '<a href="#" style="color:inherit;"></a>',
-    badge: '<span class="badge"></span>'
+    icon  : '<span class="icon"></span>',
+    link  : '<a href="#" style="color:inherit;"></a>',
+    badge : '<span class="badge"></span>'
   };
   
   Tree.prototype.css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'
-  
   
   /**
    Returns a single node object that matches the given node id.
@@ -741,7 +772,7 @@ import './bootstrap-treeview.css';
    @return {Object} node - Matching node
    */
   Tree.prototype.getNode = function (nodeId) {
-    return this.nodes[nodeId];
+    return this.nodes[ nodeId ];
   };
   
   /**
@@ -751,7 +782,7 @@ import './bootstrap-treeview.css';
    */
   Tree.prototype.getParent = function (identifier) {
     var node = this.identifyNode(identifier);
-    return this.nodes[node.parentId];
+    return this.nodes[ node.parentId ];
   };
   
   /**
@@ -760,9 +791,9 @@ import './bootstrap-treeview.css';
    @returns {Array} nodes - Sibling nodes
    */
   Tree.prototype.getSiblings = function (identifier) {
-    var node = this.identifyNode(identifier);
+    var node   = this.identifyNode(identifier);
     var parent = this.getParent(node);
-    var nodes = parent ? parent.nodes : this.tree;
+    var nodes  = parent ? parent.nodes : this.tree;
     return nodes.filter(function (obj) {
       return obj.nodeId !== node.nodeId;
     });
@@ -832,7 +863,6 @@ import './bootstrap-treeview.css';
     return this.findNodes('false', 'g', 'state.disabled');
   };
   
-  
   /**
    Set a node state to selected
    @param {Object|Number} identifiers - A valid node, node id or array of node identifiers
@@ -871,7 +901,6 @@ import './bootstrap-treeview.css';
     
     this.render();
   };
-  
   
   /**
    Collapse all tree nodes
@@ -928,7 +957,7 @@ import './bootstrap-treeview.css';
     this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
       this.setExpandedState(node, true, options);
       if (node.nodes && (options && options.levels)) {
-        this.expandLevels(node.nodes, options.levels-1, options);
+        this.expandLevels(node.nodes, options.levels - 1, options);
       }
     }, this));
     
@@ -941,7 +970,7 @@ import './bootstrap-treeview.css';
     $.each(nodes, $.proxy(function (index, node) {
       this.setExpandedState(node, (level > 0) ? true : false, options);
       if (node.nodes) {
-        this.expandLevels(node.nodes, level-1, options);
+        this.expandLevels(node.nodes, level - 1, options);
       }
     }, this));
   };
@@ -957,7 +986,8 @@ import './bootstrap-treeview.css';
       while (parentNode) {
         this.setExpandedState(parentNode, true, options);
         parentNode = this.getParent(parentNode);
-      };
+      }
+      ;
     }, this));
     
     this.render();
@@ -975,7 +1005,6 @@ import './bootstrap-treeview.css';
     
     this.render();
   };
-  
   
   /**
    Check all tree nodes
@@ -1042,7 +1071,6 @@ import './bootstrap-treeview.css';
     this.render();
   };
   
-  
   /**
    Disable all tree nodes
    @param {optional Object} options
@@ -1108,7 +1136,6 @@ import './bootstrap-treeview.css';
     this.render();
   };
   
-  
   /**
    Common code for processing multiple identifiers
    */
@@ -1117,7 +1144,7 @@ import './bootstrap-treeview.css';
     options = $.extend({}, _default.options, options);
     
     if (!(identifiers instanceof Array)) {
-      identifiers = [identifiers];
+      identifiers = [ identifiers ];
     }
     
     $.each(identifiers, $.proxy(function (index, identifier) {
@@ -1130,7 +1157,7 @@ import './bootstrap-treeview.css';
   */
   Tree.prototype.identifyNode = function (identifier) {
     return ((typeof identifier) === 'number') ?
-        this.nodes[identifier] :
+        this.nodes[ identifier ] :
         identifier;
   };
   
@@ -1204,16 +1231,16 @@ import './bootstrap-treeview.css';
    * @param {Number} customId - the customId property to find
    * @return {Number} the node id
    */
-  Tree.prototype.findNodeIdByCustomId = function(customId) {
+  Tree.prototype.findNodeIdByCustomId = function (customId) {
     var nodeId = undefined;
     for (var i = 0; i < this.nodes.length; i++) {
-      if (this.nodes[i].customId == customId) {
-        nodeId = this.nodes[i].nodeId;
+      if (this.nodes[ i ].customId == customId) {
+        nodeId = this.nodes[ i ].nodeId;
         break;
       }
     }
     
-    this.$element.trigger('findNodeIdByCustomIdComplete', {nodeId: nodeId, customId: customId});
+    this.$element.trigger('findNodeIdByCustomIdComplete', { nodeId: nodeId, customId: customId });
     
     return nodeId;
   };
@@ -1230,10 +1257,10 @@ import './bootstrap-treeview.css';
    * @param {Number[]} customIds - the custom ids to search for
    * @return {Object} - containing three parameters, 'customIds', 'nodeIds' and 'nodesMap'.
    */
-  Tree.prototype.findNodesByCustomIds = function(customIds) {
-    var nodesMap = {};
+  Tree.prototype.findNodesByCustomIds = function (customIds) {
+    var nodesMap        = {};
     var matchingNodeIds = [];
-    var result = {customIds: customIds, nodeIds: matchingNodeIds, nodesMap: nodesMap};
+    var result          = { customIds: customIds, nodeIds: matchingNodeIds, nodesMap: nodesMap };
     
     if (customIds == undefined || customIds.length == 0) {
       this.$element.trigger('findNodesByCustomIdsComplete', result);
@@ -1241,16 +1268,16 @@ import './bootstrap-treeview.css';
     }
     
     var customId = undefined;
-    var node = undefined;
-    for (var i = 0; i < customIds.length; i++ ) {
-      customId = customIds[i];
+    var node     = undefined;
+    for (var i = 0; i < customIds.length; i++) {
+      customId = customIds[ i ];
       for (var j = 0; j < this.nodes.length; j++) {
-        node = this.nodes[j];
+        node = this.nodes[ j ];
         
         if (node.customId == customId) {
-          var matchingNodes = nodesMap[customId] || [];
+          var matchingNodes = nodesMap[ customId ] || [];
           matchingNodes.push(node);
-          nodesMap[customId] = matchingNodes;
+          nodesMap[ customId ] = matchingNodes;
           matchingNodeIds.push(node.nodeId);
           break;
         }
@@ -1270,7 +1297,7 @@ import './bootstrap-treeview.css';
    */
   Tree.prototype.findNodes = function (pattern, modifier, attribute) {
     
-    modifier = modifier || 'g';
+    modifier  = modifier || 'g';
     attribute = attribute || 'text';
     
     var _this = this;
@@ -1292,13 +1319,13 @@ import './bootstrap-treeview.css';
   Tree.prototype.getNodeValue = function (obj, attr) {
     var index = attr.indexOf('.');
     if (index > 0) {
-      var _obj = obj[attr.substring(0, index)];
+      var _obj  = obj[ attr.substring(0, index) ];
       var _attr = attr.substring(index + 1, attr.length);
       return this.getNodeValue(_obj, _attr);
     }
     else {
       if (obj.hasOwnProperty(attr)) {
-        return obj[attr].toString();
+        return obj[ attr ].toString();
       }
       else {
         return undefined;
@@ -1314,7 +1341,7 @@ import './bootstrap-treeview.css';
   
   // Prevent against multiple instantiations,
   // handle updates and method calls
-  $.fn[pluginName] = function (options, args) {
+  $.fn[ pluginName ] = function (options, args) {
     
     var result;
     
@@ -1324,14 +1351,14 @@ import './bootstrap-treeview.css';
         if (!_this) {
           logError('Not initialized, can not call method : ' + options);
         }
-        else if (!$.isFunction(_this[options]) || options.charAt(0) === '_') {
+        else if (!$.isFunction(_this[ options ]) || options.charAt(0) === '_') {
           logError('No such method : ' + options);
         }
         else {
           if (!(args instanceof Array)) {
             args = [ args ];
           }
-          result = _this[options].apply(_this, args);
+          result = _this[ options ].apply(_this, args);
         }
       }
       else if (typeof options === 'boolean') {

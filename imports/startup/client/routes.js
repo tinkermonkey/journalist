@@ -5,6 +5,7 @@ import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 // Import the base templates
 import '../../../client/ui/layouts/unauthenticated_layout';
 import '../../../client/ui/layouts/authenticated_layout';
+import '../../../client/ui/layouts/report_layout';
 
 // Import the pages
 import '../../../client/ui/pages/admin/contributors/admin_contributors';
@@ -12,7 +13,6 @@ import '../../../client/ui/pages/admin/admin_home/admin_home';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields';
 import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions';
-import '../../../client/ui/pages/admin/display_templates/display_template';
 import '../../../client/ui/pages/admin/display_templates/display_templates';
 import '../../../client/ui/pages/admin/import_export/import_export';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function';
@@ -26,6 +26,7 @@ import '../../../client/ui/pages/admin/users/admin_users';
 import '../../../client/ui/pages/contributor/contributor_home';
 import '../../../client/ui/pages/effort/effort';
 import '../../../client/ui/pages/project/project_home';
+import '../../../client/ui/pages/report/report_container';
 import '../../../client/ui/pages/report/support/weekly_support_report';
 import '../../../client/ui/pages/task/task';
 import '../../../client/ui/pages/team/team_home';
@@ -79,6 +80,12 @@ FlowRouter.route('/project/:projectId', {
   name: 'ProjectHome',
   action () {
     BlazeLayout.render('AuthenticatedLayout', { main: 'ProjectHome' });
+  }
+});
+FlowRouter.route('/report/:templateName/:contextId', {
+  name: 'Report',
+  action () {
+    BlazeLayout.render('ReportLayout', { main: 'ReportContainer' });
   }
 });
 FlowRouter.route('/task/:taskId', {
@@ -174,10 +181,10 @@ FlowRouter.route('/admin/display_templates/:groupId', {
   }
 });
 
-FlowRouter.route('/admin/integration_display_template/:templateId', {
+FlowRouter.route('/admin/display_template/:groupId/:templateId', {
   name: 'DisplayTemplate',
   action () {
-    BlazeLayout.render('AdminLayout', { main: 'DisplayTemplate' });
+    BlazeLayout.render('AdminLayout', { main: 'DisplayTemplates' });
   }
 });
 

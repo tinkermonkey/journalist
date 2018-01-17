@@ -24,6 +24,7 @@ Template.AdminLayout.onCreated(() => {
   let instance = Template.instance();
   
   Util.standardSubscriptions(instance);
+  instance.subscribe('display_templates');
 });
 
 /**

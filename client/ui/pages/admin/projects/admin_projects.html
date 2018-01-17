@@ -18,9 +18,9 @@
               <th>Title</th>
               <th>Description</th>
               <th>Banner Template</th>
+              <th>Reports</th>
               <th>Owner</th>
               <th>Modified</th>
-              <th>Created</th>
               <th></th>
             </tr>
             </thead>
@@ -40,10 +40,10 @@
                 </td>
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" mode="popup" }}</td>
                 <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" mode="popup" }}</td>
-                <td>{{> EditableEnumSelector dataKey="bannerTemplate" value=bannerTemplate emptyText="Select Template" enum=ProjectHeaderTemplates }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner }}</td>
+                <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports"}}</td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
                 <td>{{dateFormat dateModified}}</td>
-                <td>{{dateFormat dateCreated}}</td>
                 <td>
                   <a class="link-red hidden-control btn-delete-project">
                     <span class="glyphicon glyphicon-minus-sign"></span>

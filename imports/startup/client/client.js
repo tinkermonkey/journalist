@@ -332,8 +332,8 @@ Template.registerHelper('calculatedFieldsChecklistContext', function (params) {
 Template.registerHelper('displayTemplateSelectorContext', function (params) {
   let record  = this,
       context = {
-        valueField  : '_id',
-        displayField: 'title',
+        valueField  : 'templateName',
+        displayField: 'templateName',
         value       : record.displayTemplate,
         dataKey     : 'displayTemplate',
         collection  : DisplayTemplates,
@@ -345,6 +345,10 @@ Template.registerHelper('displayTemplateSelectorContext', function (params) {
   
   if (params && params.hash) {
     _.extend(context, params.hash);
+  
+    if (params.hash.templateType && !params.hash.query) {
+      context.query = { templateType: params.hash.templateType }
+    }
   }
   
   return context
@@ -373,9 +377,9 @@ Template.registerHelper('displayTemplateGroupSelectorContext', function (params)
 /**
  * Simple pathFor helper
  */
-Template.registerHelper('pathFor', function (routeName, routeParams) {
+Template.registerHelper('pathFor', function (routeName, routeParams, queryParams) {
   if (routeName) {
-    return FlowRouter.path(routeName, routeParams.hash);
+    return FlowRouter.path(routeName, (routeParams || {}).hash, (queryParams || {}).hash);
   } else {
     console.error('pathFor given no route name:', arguments);
   }

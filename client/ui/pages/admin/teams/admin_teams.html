@@ -18,8 +18,8 @@
               <th>Owner</th>
               <th>Default Reporter</th>
               <th>Banner Template</th>
+              <th>Reports</th>
               <th>Modified</th>
-              <th>Created</th>
               <th></th>
             </tr>
             </thead>
@@ -34,9 +34,9 @@
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
                 <td>{{> EditableRecordSelector reporterSelectorContext }}</td>
-                <td>{{> EditableEnumSelector dataKey="bannerTemplate" value=bannerTemplate emptyText="Select Template" enum=TeamHeaderTemplates }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner }}</td>
+                <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" }}</td>
                 <td>{{dateFormat dateModified}}</td>
-                <td>{{dateFormat dateCreated}}</td>
                 <td>
                   <a class="link-red hidden-control btn-delete-team">
                     <span class="glyphicon glyphicon-minus-sign"></span>

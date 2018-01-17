@@ -1,3 +1,16 @@
 <template name="ProjectSidebar">
-  <div class="page-sidebar project-sidebar"></div>
+  <div class="page-sidebar project-sidebar">
+    Project Sidebar
+    {{#if reports}}
+      <h3>Live Reports</h3>
+      
+      <ul class="list-group">
+        {{#each projectReports}}
+        <li class="list-group-item">
+          <a href="{{pathFor 'Report' templateName=templateName contextId=../_id }}">{{templateName}}</a>
+        </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+  </div>
 </template>

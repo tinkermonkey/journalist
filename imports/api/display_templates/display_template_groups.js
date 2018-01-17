@@ -61,9 +61,6 @@ DisplayTemplateGroups.helpers({
       customId    : self._id,
       icon        : 'glyphicon glyphicon-folder-close',
       selectedIcon: 'glyphicon glyphicon-folder-open',
-      state       : {
-        expanded: false
-      },
       tags        : [
         self.childCount()
       ],
@@ -72,7 +69,7 @@ DisplayTemplateGroups.helpers({
       }).concat(self.childTemplates().map((template) => {
         return {
           text    : template.templateName,
-          href    : FlowRouter.path('DisplayTemplate', { templateId: template._id }),
+          href    : FlowRouter.path('DisplayTemplate', { templateId: template._id, groupId: template.parentGroup }),
           customId: template._id
         }
       }))

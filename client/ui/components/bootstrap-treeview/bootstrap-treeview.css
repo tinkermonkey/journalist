@@ -18,20 +18,24 @@
  * ========================================================= */
 
 .treeview .list-group-item {
-  cursor: pointer;
+  cursor        : pointer;
+  text-overflow : ellipsis;
+  overflow      : hidden;
+  white-space   : nowrap;
+  color         : #007AC9;
 }
 
 .treeview span.indent {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left  : 10px;
+  margin-right : 10px;
 }
 
 .treeview span.icon {
-  width: 12px;
-  margin-right: 5px;
+  width        : 12px;
+  margin-right : 10px;
 }
 
 .treeview .node-disabled {
-  color: silver;
-  cursor: not-allowed;
+  color  : silver;
+  cursor : not-allowed;
 }

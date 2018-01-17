@@ -5,7 +5,20 @@
       <div class="col-md-12">
         <ol class="breadcrumb">
           <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
-          <li class="active">Display Templates</li>
+          {{#with currentGroup}}
+            <li><a href="{{pathFor 'DisplayTemplates' }}">Display Templates</a></li>
+            {{#if parentGroup}}
+              {{#each parentList.reverse}}
+                <li>
+                  <a href="{{pathFor 'DisplayTemplateGroup' groupId=_id}}">{{title}}</a>
+                </li>
+              {{/each}}
+            {{/if}}
+            <li class="active">{{title}}</li>
+          {{else}}
+            <li class="active">Display Templates</li>
+          {{/with}}
+        
         </ol>
         
         <h1>Display Templates</h1>
@@ -56,67 +69,73 @@
         </ul>
       </div>
       <div class="col-md-9">
-        <h2>{{#with currentGroup}}{{title}}{{else}}Un-grouped Templates{{/with}}</h2>
-        
         {{#if Template.subscriptionsReady }}
-          <table class="table data-table full-width border-bottom">
-            <thead>
-            <tr>
-              <th></th>
-              <th>Template Name</th>
-              <th>Type</th>
-              <th>Current Version</th>
-              <th>Published</th>
-              <th>Modified By</th>
-              <th>Modified</th>
-              <th></th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            {{#each displayTemplates}}
-              <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
-                  data-pk="{{_id}}">
-                <td class="open-link">
-                  <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=_id}}">
-                    <span class="glyphicon glyphicon-folder-open"></span>
-                  </a>
-                </td>
-                <td>{{> EditableTextField dataKey="templateName" value=templateName emptyText="Template Name" }}</td>
-                <td>{{> EditableEnumSelector enum=DisplayTemplateTypes dataKey="templateType" value=templateType emptyText="Template Type" }}</td>
-                <td>
-                  {{ currentVersion }}
-                  {{#if unpublishedChanges }}
-                    <span class="label label-warning">
+          {{#if currentTemplate }}
+            {{> DisplayTemplate currentTemplate }}
+          {{else}}
+            {{#with currentGroup}}
+              <h2>{{title}}</h2>
+              <table class="table data-table full-width border-bottom">
+                <thead>
+                <tr>
+                  <th></th>
+                  <th>Template Name</th>
+                  <th>Type</th>
+                  <th>Current Version</th>
+                  <th>Published</th>
+                  <th>Modified By</th>
+                  <th>Modified</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each displayTemplates}}
+                  <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+                      data-pk="{{_id}}">
+                    <td class="open-link">
+                      <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=_id groupId=../_id}}">
+                        <span class="glyphicon glyphicon-folder-open"></span>
+                      </a>
+                    </td>
+                    <td>{{> EditableTextField dataKey="templateName" value=templateName emptyText="Template Name" }}</td>
+                    <td>{{> EditableEnumSelector enum=DisplayTemplateTypes dataKey="templateType" value=templateType emptyText="Template Type" }}</td>
+                    <td>
+                      {{ currentVersion }}
+                      {{#if unpublishedChanges }}
+                        <span class="label label-warning">
                       Unpublished Changes
                     </span>
-                  {{else}}
-                    <span class="label label-success">
+                      {{else}}
+                        <span class="label label-success">
                       Up to date
                     </span>
-                  {{/if}}
-                </td>
-                <td>{{ dateFormat lastPublished }}</td>
-                <td>{{ userName modifiedBy }}</td>
-                <td>{{ dateFormat dateModified }}</td>
-                <td>
-                  <a class="hidden-control btn-move-template">
-                    <span class="glyphicon glyphicon-move"></span>
-                  </a>
-                </td>
-                <td>
-                  <a class="link-red hidden-control btn-delete-display-template">
-                    <span class="glyphicon glyphicon-minus-sign"></span>
-                  </a>
-                </td>
-              </tr>
-            {{/each}}
-            </tbody>
-          </table>
-          <button class="btn btn-xs btn-primary btn-add-display-template">
-            <span class="glyphicon glyphicon-plus"></span>
-            Add Display Template
-          </button>
+                      {{/if}}
+                    </td>
+                    <td>{{ dateFormat lastPublished }}</td>
+                    <td>{{ userName modifiedBy }}</td>
+                    <td>{{ dateFormat dateModified }}</td>
+                    <td>
+                      <a class="hidden-control btn-move-template">
+                        <span class="glyphicon glyphicon-move"></span>
+                      </a>
+                    </td>
+                    <td>
+                      <a class="link-red hidden-control btn-delete-display-template">
+                        <span class="glyphicon glyphicon-minus-sign"></span>
+                      </a>
+                    </td>
+                  </tr>
+                {{/each}}
+                </tbody>
+              </table>
+              <button class="btn btn-xs btn-primary btn-add-display-template">
+                <span class="glyphicon glyphicon-plus"></span>
+                Add Display Template
+              </button>
+            {{else}}
+            {{/with}}
+          {{/if}}
         {{else}}
           {{> RobaSpinner rainbow=true }}
         {{/if}}

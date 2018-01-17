@@ -1,16 +1,11 @@
 import './display_template.html';
 import { Template } from 'meteor/templating';
-import { DisplayTemplates } from '../../../../../imports/api/display_templates/display_templates';
 import { Util } from '../../../../../imports/api/util';
 
 /**
  * Template Helpers
  */
 Template.DisplayTemplate.helpers({
-  displayTemplate () {
-    let templateId = FlowRouter.getParam('templateId');
-    return DisplayTemplates.findOne(templateId);
-  },
   previewError () {
     return Template.instance().previewError.get()
   },
@@ -29,13 +24,13 @@ Template.DisplayTemplate.events({
   'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let displayTemplateId = FlowRouter.getParam('templateId'),
-        dataKey           = $(e.target).attr("data-key");
+    let displayTemplate = Template.currentData(),
+        dataKey         = $(e.target).attr("data-key");
     
     //console.log('edited:', displayTemplateId, dataKey, newValue);
-    if (displayTemplateId && dataKey && dataKey) {
+    if (displayTemplate._id && dataKey && dataKey) {
       instance.allowPublish.set(false);
-      Meteor.call('editDisplayTemplate', displayTemplateId, dataKey, newValue, (error, response) => {
+      Meteor.call('editDisplayTemplate', displayTemplate._id, dataKey, newValue, (error, response) => {
         if (error) {
           RobaDialog.error('Update failed:' + error.toString());
         }
@@ -80,11 +75,11 @@ Template.DisplayTemplate.events({
     }
   },
   'click .btn-publish' (e, instance) {
-    let displayTemplateId = FlowRouter.getParam('templateId');
+    let displayTemplate = this;
     
-    if (displayTemplateId) {
+    if (displayTemplate._id) {
       instance.allowPublish.set(false);
-      Meteor.call('publishIntegrationDisplayTemplate', displayTemplateId, (error, response) => {
+      Meteor.call('publishIntegrationDisplayTemplate', displayTemplate._id, (error, response) => {
         if (error) {
           RobaDialog.error('Publish failed:' + error.toString());
         }
@@ -105,9 +100,6 @@ Template.DisplayTemplate.onCreated(() => {
   instance.previewError   = new ReactiveVar();
   instance.previewMessage = new ReactiveVar();
   instance.allowPublish   = new ReactiveVar(false);
-  
-  instance.subscribe('display_templates');
-  instance.subscribe('display_template_groups');
 });
 
 /**

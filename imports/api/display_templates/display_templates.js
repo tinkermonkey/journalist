@@ -22,7 +22,8 @@ export const DisplayTemplate = new SimpleSchema({
   // General category of template
   templateType     : {
     type         : Number,
-    allowedValues: _.values(DisplayTemplateTypes)
+    allowedValues: _.values(DisplayTemplateTypes),
+    defaultValue: DisplayTemplateTypes.component
   },
   templateLayout   : {
     type    : String,

@@ -1,7 +1,5 @@
 import './project_banner.html';
 import { Template } from 'meteor/templating';
-import './project_banners/support_project_banner';
-import './project_banners/dev_project_banner';
 
 /**
  * Template Helpers
