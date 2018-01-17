@@ -1,6 +1,7 @@
 import './report_layout.html';
 import './report_layout.css';
 import { Template } from 'meteor/templating';
+import './display_template_layer';
 import {Util} from '../../../imports/api/util';
 
 /**

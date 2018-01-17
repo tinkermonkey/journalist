@@ -7,7 +7,7 @@ import { Template } from 'meteor/templating';
 Template.ProjectBanner.helpers({
   projectBannerTemplate(){
     let project = this;
-    return project.bannerTemplate || 'DevProjectBanner'
+    return project.bannerTemplate || 'DefaultProjectBanner'
   }
 });
 

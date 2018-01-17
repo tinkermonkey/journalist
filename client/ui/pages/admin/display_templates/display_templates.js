@@ -249,7 +249,7 @@ Template.DisplayTemplates.onRendered(() => {
     let baseGroups    = DisplayTemplateGroups.find({ parentGroup: null }, { sort: { title: 1 } }).fetch(),
         baseTemplates = DisplayTemplates.find({ parentGroup: null }, { sort: { templateName: 1 } }).fetch(),
         treeData      = baseGroups.map((group) => {
-          return group.treeNodes(FlowRouter.getParam('groupId'))
+          return group.treeNodes()
         }).concat(baseTemplates.map((template) => {
           return {
             text    : template.templateName,
