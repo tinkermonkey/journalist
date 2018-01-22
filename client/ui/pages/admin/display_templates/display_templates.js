@@ -224,7 +224,8 @@ Template.DisplayTemplates.events({
         a.click();
       }
     });
-  }
+  },
+  'click '(e, instance){}
 });
 
 /**

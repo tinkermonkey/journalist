@@ -10,6 +10,8 @@
     "babel-runtime": "^6.26.0",
     "bcrypt": "^1.0.3",
     "c3": "git+https://github.com/c3js/c3.git",
+    "d3": "^4.12.2",
+    "d3-sankey": "^0.7.1",
     "fibers": "^2.0.0",
     "jira-connector": "^2.7.0",
     "meteor-node-stubs": "~0.2.4",

@@ -16,30 +16,30 @@
     {{#RobaTabGroup name="template-tabs" navClass="nav-tabs"}}
       {{#RobaTab name="layout" title="Layout"}}
         <h2>Template HTML</h2>
-        {{> EditableCode dataKey="templateLayout" value=templateLayout emptyText="Template HTML" language="html" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templateLayout" value=templateLayout emptyText="Template HTML" language="html" }}
       {{/RobaTab}}
       {{#RobaTab name="css" title="CSS"}}
         <h2>Template CSS</h2>
-        {{> EditableCode dataKey="templateCSS" value=templateCSS emptyText="Template CSS" language="css" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templateCSS" value=templateCSS emptyText="Template CSS" language="css" }}
       {{/RobaTab}}
       {{#RobaTab name="code" title="Code"}}
         <h2>Preamble</h2>
-        {{> EditableCode dataKey="templatePreamble" value=templatePreamble emptyText="Template Preamble Code" language="javascript" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templatePreamble" value=templatePreamble emptyText="Template Preamble Code" }}
         
         <h2>Helpers</h2>
-        {{> EditableCode dataKey="templateHelpers" value=templateHelpers emptyText="Template Helpers" language="javascript" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templateHelpers" value=templateHelpers emptyText="Template Helpers" }}
         
         <h2>Events</h2>
-        {{> EditableCode dataKey="templateEvents" value=templateEvents emptyText="Template Events" language="javascript" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templateEvents" value=templateEvents emptyText="Template Events" }}
         
         <h2>Created</h2>
-        {{> EditableCode dataKey="templateCreated" value=templateCreated emptyText="Template Created" language="javascript" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templateCreated" value=templateCreated emptyText="Template Created" }}
         
         <h2>Rendered</h2>
-        {{> EditableCode dataKey="templateRendered" value=templateRendered emptyText="Template Rendered" language="javascript" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templateRendered" value=templateRendered emptyText="Template Rendered" }}
         
         <h2>Destroyed</h2>
-        {{> EditableCode dataKey="templateDestroyed" value=templateDestroyed emptyText="Template Destroyed" language="javascript" mode="inline" autoHeight=true}}
+        {{> EditableCode dataKey="templateDestroyed" value=templateDestroyed emptyText="Template Destroyed" }}
       {{/RobaTab}}
       {{#RobaTab name="preview" title="Preview"}}
         <nav class="navbar navbar-default">

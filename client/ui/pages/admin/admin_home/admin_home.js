@@ -3,6 +3,7 @@ import { Template } from 'meteor/templating';
 import { Contributors } from '../../../../../imports/api/contributors/contributors';
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
 import { IntegrationCalculatedFields } from '../../../../../imports/api/integrations/integration_calculated_fields';
+import { CapacityPlans } from '../../../../../imports/api/capacity_plan/capacity_plans';
 import { DisplayTemplates } from '../../../../../imports/api/display_templates/display_templates';
 import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
 import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
@@ -21,6 +22,9 @@ Template.AdminHome.helpers({
   },
   contributorCount () {
     return Contributors.find().count()
+  },
+  capacityPlanCount () {
+    return CapacityPlans.find().count()
   },
   displayTemplateCount () {
     return DisplayTemplates.find().count()

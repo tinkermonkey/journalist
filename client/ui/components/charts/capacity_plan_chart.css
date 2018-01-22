@@ -1,0 +1,45 @@
+.capacity-plan-chart {
+  margin-top : 10px;
+}
+
+.contributor-group {
+  cursor : pointer;
+}
+
+.contributor-name {
+  text-anchor        : end;
+  alignment-baseline : hanging;
+}
+
+.contributor-background {
+  fill : rgba(255, 255, 255, 0.50);
+}
+
+.contributor-drag-handle {
+  fill : rgba(225, 225, 225, 0.50);
+  -webkit-transition : fill 0.25s;
+  -moz-transition    : fill 0.25s;
+  -ms-transition     : fill 0.25s;
+  -o-transition      : fill 0.25s;
+  transition         : fill 0.25s;
+}
+
+.contributor-group:hover .contributor-drag-handle,
+.contributor-drag-handle.in-drag {
+  fill : #f00;
+}
+
+.y-axis-separator {
+  stroke-width    : 3px;
+  stroke          : #999;
+  shape-rendering : crispEdges;
+}
+
+.sprint-link-section {
+  /*fill : rgba(0, 140, 255, 0.5);*/
+  fill : none;
+}
+
+.sprint-body-section {
+  fill : rgba(225, 225, 225, 0.50);
+}

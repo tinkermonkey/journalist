@@ -1,0 +1,9 @@
+<template name="EditableDateRange">
+  <a class="editable editable-date-range" data-key="{{dataKey}}">
+    {{#if value}}
+      {{dateFormat value 'MM/DD/YY'}}
+    {{else}}
+      <i>{{#if emptyText}}{{emptyText}}{{else}}Select a start date{{/if}}</i>
+    {{/if}}
+  </a>
+</template>

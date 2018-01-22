@@ -43,7 +43,6 @@ austinsand:roba-change-tracker
 mizzao:jquery-ui
 mrt:later
 mrt:moment-timezone
-dangrossman:bootstrap-daterangepicker
 twbs:bootstrap
 austinsand:editable-checkbox
 aldeed:autoform
@@ -55,3 +54,5 @@ tomi:upload-server
 tomi:upload-jquery
 meteorhacks:picker
 momentjs:moment
+u2622:persistent-session
+gilbertwat:bootstrap3-daterangepicker

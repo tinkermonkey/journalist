@@ -1,0 +1,82 @@
+<template name="CapacityPlan">
+  {{#if Template.subscriptionsReady }}
+    {{#with capacityPlan}}
+      {{setPageTitle 'Journalist - Capacity Plan - ' title }}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'CapacityPlans' }}">Capacity Plans</a></li>
+              <li class="active">Capacity Plan</li>
+            </ol>
+            
+            <h1>{{title}}</h1>
+            
+            <div class="option-container show-controls-on-hover">
+              <ul class="nav nav-pills">
+                {{#each options}}
+                  <li role="presentation" class="{{#if isCurrentOption}}active{{/if}} capacity-plan-option-nav"><a>{{title}}</a></li>
+                {{/each}}
+                <li role="presentation">
+                  <a class="btn-add-option hidden-control">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Add Option
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            {{#with currentOption}}
+              {{> CapacityPlanChart chartContext }}
+            {{else }}
+              {{> RobaSpinner scale=2.0 rainbow=true }}
+            {{/with}}
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <h2>Context</h2>
+            <table class="table data-table table-striped">
+              <tbody>
+              <tr class="show-controls-on-hover">
+                <td>Teams</td>
+                <td>{{> EditableRecordChecklist teamSelectorContext dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams'}}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>First Sprint Date</td>
+                <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Sprint Count</td>
+                <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"}}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Sprint Length</td>
+                <td>{{> EditableEnumSelector enum=sprintLengthOptions dataKey='sprintLength' value=sprintLength emptyText='Sprint Length' mode='popup'}}</td>
+              </tr>
+              </tbody>
+            </table>
+          
+          </div>
+          <div class="col-md-9">
+            <h2>Contents</h2>
+          
+          
+          </div>
+        </div>
+      </div>
+    {{else}}
+      {{> NotFound}}
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

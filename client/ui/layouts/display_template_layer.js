@@ -3,6 +3,8 @@ import { Template } from 'meteor/templating';
 import { PublishedDisplayTemplates } from '../../../imports/api/display_templates/published_display_templates';
 import { Util } from '../../../imports/api/util';
 
+let debug = false;
+
 /**
  * Template Helpers
  */
@@ -10,7 +12,7 @@ Template.DisplayTemplateLayer.helpers({
   ready () {
     let dataReady      = Template.instance().subscriptionsReady(),
         templatesReady = Template.instance().templatesRendered.get();
-    console.log(Util.timestamp(), 'DisplayTemplateLayer ready:', dataReady, templatesReady, dataReady && templatesReady);
+    debug && console.log(Util.timestamp(), 'DisplayTemplateLayer ready:', dataReady, templatesReady, dataReady && templatesReady);
     return dataReady && templatesReady
   }
 });
@@ -25,19 +27,19 @@ Template.DisplayTemplateLayer.events({});
  */
 Template.DisplayTemplateLayer.onCreated(() => {
   let instance = Template.instance();
-
+  
   instance.templatesRendered = new ReactiveVar(false);
   instance.subscribe('published_display_templates');
   
   instance.autorun(() => {
-    console.log(Util.timestamp(), 'DisplayTemplateLayer autorun fired');
+    debug && console.log(Util.timestamp(), 'DisplayTemplateLayer autorun fired');
     let publishedTemplates = PublishedDisplayTemplates.find({});
     instance.templatesRendered.set(false);
     $('#display-template-layer-css').empty();
     if (instance.subscriptionsReady()) {
-      console.log(Util.timestamp(), 'DisplayTemplateLayer compilation starting:', publishedTemplates.count());
+      debug && console.log(Util.timestamp(), 'DisplayTemplateLayer compilation starting:', publishedTemplates.count());
       publishedTemplates.forEach((displayTemplate) => {
-        console.log(Util.timestamp(), 'DisplayTemplateLayer:', displayTemplate.templateName, displayTemplate.dateModified);
+        debug && console.log(Util.timestamp(), 'DisplayTemplateLayer:', displayTemplate.templateName, displayTemplate.dateModified);
       });
       setTimeout(() => {
         publishedTemplates.forEach((displayTemplate) => {
@@ -45,7 +47,7 @@ Template.DisplayTemplateLayer.onCreated(() => {
           $('#display-template-layer-css').append(displayTemplate.templateCSS);
         });
         instance.templatesRendered.set(true);
-        console.log(Util.timestamp(), 'DisplayTemplateLayer compilation complete');
+        debug && console.log(Util.timestamp(), 'DisplayTemplateLayer compilation complete');
       }, 1000);
     }
   });

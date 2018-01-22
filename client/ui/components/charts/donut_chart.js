@@ -37,7 +37,7 @@ Template.DonutChart.onRendered(() => {
 
     // Throttle the update rate
     instance.updateTimeout = setTimeout(() => {
-      if (instance.chart == undefined) {
+      if (instance.chart === undefined) {
         instance.chart = new C3DonutWrapper(instance.elementId, context.config);
         instance.chart.generate(context.data)
       } else {

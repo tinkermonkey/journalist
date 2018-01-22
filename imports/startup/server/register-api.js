@@ -2,6 +2,10 @@
 //import '../../api/bugs/server/methods';
 //import '../../api/bugs/server/publications';
 
+// Capacity Plans
+import '../../api/capacity_plan/server/methods';
+import '../../api/capacity_plan/server/publications';
+
 // Contributors
 import '../../api/contributors/server/methods';
 import '../../api/contributors/server/publications';

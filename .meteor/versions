@@ -9,8 +9,9 @@ aldeed:schema-deny@1.1.0
 aldeed:schema-index@1.1.1
 aldeed:simple-schema@1.5.3
 allow-deny@1.1.0
+amplify@1.0.0
 austinsand:editable-checkbox@1.0.2
-austinsand:editable-code@1.0.2
+austinsand:editable-code@2.1.0
 austinsand:editable-enum-checklist@1.0.2
 austinsand:editable-enum-selector@1.0.1
 austinsand:editable-record-checklist@1.0.2
@@ -22,7 +23,7 @@ austinsand:roba-change-tracker@1.0.2
 austinsand:roba-dialog@1.0.3
 austinsand:roba-popover@1.0.1
 austinsand:roba-spinner@1.0.1
-austinsand:roba-tabs@1.2.0
+austinsand:roba-tabs@1.2.1
 autoupdate@1.3.12
 babel-compiler@6.24.7
 babel-runtime@1.1.1
@@ -36,7 +37,6 @@ caching-compiler@1.1.9
 caching-html-compiler@1.1.2
 callback-hook@1.0.10
 check@1.2.5
-dangrossman:bootstrap-daterangepicker@2.1.13
 dburles:collection-helpers@1.1.0
 ddp@1.4.0
 ddp-client@2.2.0
@@ -56,6 +56,7 @@ erasaur:meteor-lodash@3.10.1_1
 es5-shim@4.6.15
 frpz:ping@1.0.4
 geojson-utils@1.0.10
+gilbertwat:bootstrap3-daterangepicker@1.3.21_1
 hot-code-push@1.0.4
 html-tools@1.0.11
 htmljs@1.0.11
@@ -129,6 +130,7 @@ tomi:upload-jquery@2.4.0
 tomi:upload-server@1.3.4_3
 tracker@1.1.3
 twbs:bootstrap@3.3.6
+u2622:persistent-session@0.4.4
 ui@1.0.13
 underscore@1.0.10
 url@1.1.0

@@ -25,6 +25,8 @@ Template.AdminLayout.onCreated(() => {
   
   Util.standardSubscriptions(instance);
   instance.subscribe('display_templates');
+  instance.subscribe('capacity_plans');
+  instance.subscribe('capacity_plan_options');
 });
 
 /**
