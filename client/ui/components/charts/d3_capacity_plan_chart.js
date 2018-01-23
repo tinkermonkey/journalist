@@ -152,7 +152,7 @@ export class D3CapacityPlanChart {
         .attr('class', 'sprint-header-title')
         .attr('y', 45)
         .text((sprint) => {
-          return sprint.start.format('ddd, MMM Do')
+          return moment(sprint.start).format('ddd, MMM Do')
         });
     
     // Place the title groups
@@ -408,7 +408,7 @@ export class D3CapacityPlanChart {
     });
     
     // Parse the timeline
-    self.sprintData = data.option.sprints().fetch();
+    self.sprintData = data.sprints().fetch();
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);
   }

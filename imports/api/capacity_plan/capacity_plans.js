@@ -109,7 +109,7 @@ CapacityPlans.helpers({
     let plan = this;
     
     plan.options().forEach((option) => {
-      
+    
     })
   }
 });
