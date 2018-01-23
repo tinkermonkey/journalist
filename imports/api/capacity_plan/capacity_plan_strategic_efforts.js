@@ -15,6 +15,9 @@ export const CapacityPlanStrategicEffort = new SimpleSchema({
   title       : {
     type: String
   },
+  color: {
+    type: String
+  },
   // Standard tracking fields
   dateCreated : {
     type     : Date,

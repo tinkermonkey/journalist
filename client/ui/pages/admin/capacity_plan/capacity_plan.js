@@ -125,6 +125,7 @@ Template.CapacityPlan.onCreated(() => {
   instance.autorun(() => {
     let planId = FlowRouter.getParam('planId');
     
+    instance.subscribe('capacity_plan_option_sprints', planId);
     instance.subscribe('capacity_plan_strategic_efforts', planId);
     instance.subscribe('capacity_plan_strategic_effort_items', planId);
   });

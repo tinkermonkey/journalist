@@ -27,21 +27,12 @@ export const CapacityPlan = new SimpleSchema({
     optional: true
   },
   sprintLength: {
-    type    : Number,
+    type        : Number,
     defaultValue: 2 * 7 * 24 * 60 * 60 * 1000
   },
   sprintCount : {
-    type    : Number,
+    type        : Number,
     defaultValue: 4
-  },
-  endDate     : {
-    type    : Date,
-    optional: true,
-    autoValue () {
-      if (this.userId && this.operator !== '$pull') {
-        console.log('CapacityPlan autoValue:', this, arguments);
-      }
-    }
   },
   // Standard tracking fields
   dateCreated : {
@@ -79,6 +70,19 @@ CapacityPlans.deny({
   }
 });
 
+// Auto-manage the sprint records for all options
+if (Meteor.isServer) {
+  CapacityPlans.after.update((userId, doc, rawChangedFields) => {
+    console.log('After Plan Update:', rawChangedFields);
+    if (_.contains(rawChangedFields, 'startDate') || _.contains(rawChangedFields, 'sprintLength') || _.contains(rawChangedFields, 'sprintCount')) {
+      let plan = CapacityPlans.findOne(doc.id);
+      if(plan){
+        plan.groomSprints();
+      }
+    }
+  });
+}
+
 /**
  * Helpers
  */
@@ -90,11 +94,22 @@ CapacityPlans.helpers({
     return CapacityPlanStrategicEfforts.find({ planId: this._id }, { sort: { title: 1 } })
   },
   teams () {
-    return Teams.find({ _id: { $in: this.teamIds } }, { sort: { title: 1 } })
+    if (this.teamIds) {
+      return Teams.find({ _id: { $in: this.teamIds } }, { sort: { title: 1 } })
+    } else {
+      return []
+    }
   },
   teamIdsSorted () {
     return this.teams().map((team) => {
       return team._id
+    })
+  },
+  groomSprints () {
+    let plan = this;
+    
+    plan.options().forEach((option) => {
+      
     })
   }
 });

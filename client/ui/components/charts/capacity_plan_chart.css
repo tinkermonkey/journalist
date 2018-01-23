@@ -28,6 +28,9 @@
 .contributor-drag-handle.in-drag {
   fill : #f00;
 }
+.contributor-drag-handle.in-drag {
+  pointer-events: none;
+}
 
 .y-axis-separator {
   stroke-width    : 3px;
@@ -42,4 +45,9 @@
 
 .sprint-body-section {
   fill : rgba(225, 225, 225, 0.50);
+}
+
+.sprint-body-section.hover {
+  stroke : #298cff;
+  /*fill : rgb(126, 255, 0);*/
 }

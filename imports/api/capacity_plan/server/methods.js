@@ -180,21 +180,24 @@ Meteor.methods({
    * Add a capacity plan strategic effort
    * @param planId
    * @param title
+   * @param color
    */
-  addCapacityPlanStrategicEffort (planId, title) {
-    console.log('addCapacityPlanStrategicEffort:', planId, title);
+  addCapacityPlanStrategicEffort (planId, title, color) {
+    console.log('addCapacityPlanStrategicEffort:', planId, title, color);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
     check(planId, String);
     check(title, String);
+    check(color, String);
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       // Insert the project percent
       CapacityPlanStrategicEfforts.insert({
         planId: planId,
-        title : title
+        title : title,
+        color : color
       });
     } else {
       console.error('Non-admin user tried to add a capacity plan strategic effort:', user.username, title);
@@ -215,6 +218,10 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
+      // Remove all of the items mapped to this effort
+      CapacityPlanStrategicEffortItems.remove({ effortId: effortId });
+      
+      // Remove the effort itself
       CapacityPlanStrategicEfforts.remove(effortId);
     } else {
       console.error('Non-admin user tried to delete a capacity plan strategic effort:', user.username, effortId);

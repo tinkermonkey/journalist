@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { CapacityPlans } from '../capacity_plans';
 import { CapacityPlanOptions } from '../capacity_plan_options';
+import {CapacityPlanOptionSprints} from '../capacity_plan_option_sprints';
 import { CapacityPlanStrategicEfforts } from '../capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from '../capacity_plan_strategic_effort_items';
 
@@ -27,6 +28,21 @@ Meteor.publish('capacity_plan_options', function () {
       return CapacityPlanOptions.find({});
     } else {
       console.warn('capacity_plan_options requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('capacity_plan_option_sprints', function (planId) {
+  console.info('Publish: capacity_plan_option_sprints');
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return CapacityPlanOptionSprints.find({planId: planId});
+    } else {
+      console.warn('capacity_plan_option_sprints requested by non-admin:', this.userId, user && user.username)
     }
   } else {
     this.ready();

@@ -1,3 +1,4 @@
+import { Session } from 'meteor/session';
 import { Util } from '../../../../imports/api/util';
 
 let d3    = require('d3'),
@@ -178,16 +179,38 @@ export class D3CapacityPlanChart {
     sprintGroupEnter.append('rect')
         .attr('class', 'sprint-section sprint-link-section')
         .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', sprintWidth / 2)
-        .attr('height', self.bodyHeight);
+        .attr('y', 0);
     
     sprintGroupEnter.append('rect')
         .attr('class', 'sprint-section sprint-body-section')
         .attr('x', sprintWidth / 2)
         .attr('y', 0)
         .attr('width', sprintWidth / 2)
-        .attr('height', self.bodyHeight);
+        .attr('height', self.bodyHeight)
+        .on('mouseenter', (d) => {
+          let element = self.timelineLayer.select('.sprint-group[data-sprint-id="' + d.id + '"] .sprint-body-section');
+          element.classed('hover', true);
+          
+          if (self.inContributorDrag) {
+            self.drag.hover = {
+              type: 'sprint',
+              data: d
+            };
+          } else if (Session.get('in-effort-drag')) {
+            console.log('Mouseover in effort drag:', d);
+            Session.set('sprint-hover-id', d.id);
+          }
+        })
+        .on('mouseleave', (d) => {
+          let element = self.timelineLayer.select('.sprint-group[data-sprint-id="' + d.id + '"] .sprint-body-section');
+          element.classed('hover', false);
+          if (self.inContributorDrag) {
+            delete self.drag.hover;
+          } else if (Session.get('in-effort-drag')) {
+            console.log('Mouseover in effort drag:', d);
+            Session.set('sprint-hover-id', null);
+          }
+        });
     
     // Place the groups
     self.timelineLayer.selectAll('.sprint-group')
@@ -198,7 +221,8 @@ export class D3CapacityPlanChart {
     // Size the timelines
     self.timelineLayer.selectAll('.sprint-group')
         .selectAll('.sprint-section')
-        .attr('width', sprintWidth / 2);
+        .attr('width', sprintWidth / 2)
+        .attr('height', self.bodyHeight);
     
     self.timelineLayer.selectAll('.sprint-group')
         .selectAll('.sprint-body-section')
@@ -259,7 +283,7 @@ export class D3CapacityPlanChart {
       
       dy = team.envelope.y2;
     });
-    self.bodyHeight = dy;
+    self.bodyHeight = Math.max(dy, 20);
     
     // Add some padding to the names
     namesWidth += self.config.teams.padding * 2;
@@ -384,14 +408,7 @@ export class D3CapacityPlanChart {
     });
     
     // Parse the timeline
-    self.sprintData = [];
-    for (let i = 0; i < plan.sprintCount; i++) {
-      self.sprintData.push({
-        id   : i,
-        start: moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days'),
-        end  : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days')
-      })
-    }
+    self.sprintData = data.option.sprints().fetch();
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);
   }
@@ -412,6 +429,7 @@ export class D3CapacityPlanChart {
     };
     
     self.drag.element.classed('in-drag', true);
+    self.inContributorDrag = true;
     
     console.log('Drag Start:', self.drag)
   }
@@ -439,12 +457,18 @@ export class D3CapacityPlanChart {
     let self = this;
     
     self.drag.element.classed('in-drag', false);
-  
+    self.inContributorDrag = false;
+    
     self.drag.element
         .transition()
         .duration(250)
         .attr('cx', self.drag.startX)
         .attr('cy', self.drag.startY);
+    
+    // Check for a drop
+    if (self.drag.hover) {
+      console.log('Potential drop:', self.drag.hover);
+    }
     
     delete self.drag
   }
