@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { CapacityPlans } from '../capacity_plans';
 import { CapacityPlanOptions } from '../capacity_plan_options';
-import {CapacityPlanOptionSprints} from '../capacity_plan_option_sprints';
+import { CapacityPlanSprints } from '../capacity_plan_sprints';
+import { CapacityPlanSprintBlocks } from '../capacity_plan_sprint_blocks';
 import { CapacityPlanStrategicEfforts } from '../capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from '../capacity_plan_strategic_effort_items';
 
@@ -35,14 +36,29 @@ Meteor.publish('capacity_plan_options', function () {
   }
 });
 
-Meteor.publish('capacity_plan_option_sprints', function (planId) {
-  console.info('Publish: capacity_plan_option_sprints');
+Meteor.publish('capacity_plan_sprints', function (planId) {
+  console.info('Publish: capacity_plan_sprints');
   if (this.userId) {
     let user = Meteor.users.findOne(this.userId);
     if (user && user.isAdmin()) {
-      return CapacityPlanOptionSprints.find({planId: planId});
+      return CapacityPlanSprints.find({ planId: planId });
     } else {
-      console.warn('capacity_plan_option_sprints requested by non-admin:', this.userId, user && user.username)
+      console.warn('capacity_plan_sprints requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('capacity_plan_sprint_blocks', function (planId) {
+  console.info('Publish: capacity_plan_sprint_blocks');
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return CapacityPlanSprintBlocks.find({ planId: planId });
+    } else {
+      console.warn('capacity_plan_sprint_blocks requested by non-admin:', this.userId, user && user.username)
     }
   } else {
     this.ready();

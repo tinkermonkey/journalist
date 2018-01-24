@@ -14,5 +14,19 @@ export const Auth = {
       return user
     }
     throw new Meteor.Error('403');
+  },
+  
+  /**
+   * Deny any user without admin privileges
+   * @param userId
+   * @param doc
+   * @returns {*|boolean}
+   */
+  denyIfNotAdmin(userId, doc) {
+    let user = Users.findOne(userId);
+    if(userId && user){
+      return !user.isAdmin();
+    }
+    return true;
   }
 };

@@ -1,5 +1,6 @@
 import { Session } from 'meteor/session';
 import { Util } from '../../../../imports/api/util';
+import { CapacityPlanBlockTypes } from '../../../../imports/api/capacity_plan/capacity_plan_block_types';
 
 let d3    = require('d3'),
     debug = true,
@@ -26,6 +27,11 @@ export class D3CapacityPlanChart {
       },
       sprints     : {
         width: 400
+      },
+      efforts     : {
+        minHeight: 20,
+        padding  : 5,
+        margin   : 5
       },
       margin      : {
         top   : 5,
@@ -56,20 +62,28 @@ export class D3CapacityPlanChart {
         .attr('class', 'base-layer')
         .attr('transform', 'translate(' + self.config.margin.left + ',' + self.config.margin.top + ')');
     
+    // Create a layer for the timeline
+    self.timelineLayer = self.baseLayer.append('g')
+        .attr('class', 'timeline-layer');
+    
     self.chartBody = self.baseLayer.append('g')
         .attr('class', 'chart-body');
     
     // Create a layer for the timeline
-    self.timelineLayer = self.chartBody.append('g')
-        .attr('class', 'timeline-layer');
+    self.sprintLayer = self.chartBody.append('g')
+        .attr('class', 'sprint-layer');
     
     // Create a layer for the links
     self.linkLayer = self.chartBody.append('g')
         .attr('class', 'link-layer');
     
     // Create a layer for the time blocks
-    self.blockLayer = self.chartBody.append('g')
-        .attr('class', 'block-layer');
+    self.effortLayer = self.chartBody.append('g')
+        .attr('class', 'effort-layer');
+    
+    // Create a layer for the time blocks
+    self.itemLayer = self.chartBody.append('g')
+        .attr('class', 'item-layer');
     
     // Create a layer for the
     self.contributorLayer = self.baseLayer.append('g')
@@ -113,6 +127,10 @@ export class D3CapacityPlanChart {
     
     self.updateContributors();
     
+    self.updateSprints();
+    
+    self.updateSprintBlocks();
+    
     self.updateTimeline();
     
     // Resize to fit the content
@@ -124,15 +142,16 @@ export class D3CapacityPlanChart {
    */
   updateTimeline () {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateTimeline:', this.containerId);
-    let self        = this,
-        startTime   = Date.now(),
-        bodyWidth   = self.svg.node().getBoundingClientRect().width - self.config.margin.left - self.config.margin.right - self.bodyLeft,
-        sprintWidth = Math.min(bodyWidth / self.sprintData.length, self.config.sprints.width);
+    let self      = this,
+        startTime = Date.now();
+    
+    // Position the timeline
+    self.timelineLayer.attr('transform', 'translate(' + self.bodyLeft + ', 0)');
     
     // Update the sprint titles
     let sprintTitleSelection = self.timelineLayer.selectAll('.sprint-header-group')
-        .data(self.sprintData, (d) => {
-          return d.id
+        .data(self.data.sprints, (d) => {
+          return d._id
         });
     
     sprintTitleSelection.exit().remove();
@@ -145,7 +164,7 @@ export class D3CapacityPlanChart {
         .attr('class', 'sprint-header-title')
         .attr('y', 25)
         .text((sprint) => {
-          return 'Sprint ' + (sprint.id + 1)
+          return sprint.title && sprint.title.length ? sprint.title : 'Sprint ' + (sprint.sprintNumber + 1)
         });
     
     sprintTitleEnter.append('text')
@@ -158,13 +177,27 @@ export class D3CapacityPlanChart {
     // Place the title groups
     self.timelineLayer.selectAll('.sprint-header-group')
         .attr('transform', (sprint) => {
-          return 'translate(' + (sprint.id * sprintWidth + sprintWidth / 2) + ',0)'
+          return 'translate(' + (sprint.sprintNumber * self.sprintWidth + self.sprintWidth / 2) + ',0)'
         });
     
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateTimeline completed:', Date.now() - startTime);
+  }
+  
+  /**
+   * Update the sprint layout
+   */
+  updateSprints () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateSprints:', this.containerId);
+    let self      = this,
+        startTime = Date.now();
+    
+    self.bodyWidth   = self.svg.node().getBoundingClientRect().width - self.config.margin.left - self.config.margin.right - self.bodyLeft;
+    self.sprintWidth = Math.min(self.bodyWidth / self.data.sprints.length, self.config.sprints.width);
+    
     // Update the sprint body content
-    let sprintSelection = self.timelineLayer.selectAll('.sprint-group')
-        .data(self.sprintData, (d) => {
-          return d.id
+    let sprintSelection = self.sprintLayer.selectAll('.sprint-group')
+        .data(self.data.sprints, (d) => {
+          return d._id
         });
     
     sprintSelection.exit().remove();
@@ -173,7 +206,7 @@ export class D3CapacityPlanChart {
         .append('g')
         .attr('class', 'sprint-group')
         .attr('data-sprint-id', (d) => {
-          return d.id
+          return d._id
         });
     
     sprintGroupEnter.append('rect')
@@ -183,13 +216,10 @@ export class D3CapacityPlanChart {
     
     sprintGroupEnter.append('rect')
         .attr('class', 'sprint-section sprint-body-section')
-        .attr('x', sprintWidth / 2)
+        .attr('x', self.sprintWidth / 2)
         .attr('y', 0)
-        .attr('width', sprintWidth / 2)
-        .attr('height', self.bodyHeight)
         .on('mouseenter', (d) => {
-          let element = self.timelineLayer.select('.sprint-group[data-sprint-id="' + d.id + '"] .sprint-body-section');
-          element.classed('hover', true);
+          let element = self.sprintLayer.select('.sprint-group[data-sprint-id="' + d._id + '"] .sprint-body-section');
           
           if (self.inContributorDrag) {
             self.drag.hover = {
@@ -197,38 +227,87 @@ export class D3CapacityPlanChart {
               data: d
             };
           } else if (Session.get('in-effort-drag')) {
-            console.log('Mouseover in effort drag:', d);
-            Session.set('sprint-hover-id', d.id);
+            element.classed('hover', true);
+            Session.set('hover-sprint-number', d.sprintNumber);
           }
         })
         .on('mouseleave', (d) => {
-          let element = self.timelineLayer.select('.sprint-group[data-sprint-id="' + d.id + '"] .sprint-body-section');
+          let element = self.sprintLayer.select('.sprint-group[data-sprint-id="' + d._id + '"] .sprint-body-section');
           element.classed('hover', false);
           if (self.inContributorDrag) {
             delete self.drag.hover;
           } else if (Session.get('in-effort-drag')) {
-            console.log('Mouseover in effort drag:', d);
-            Session.set('sprint-hover-id', null);
+            //console.log('Mouseover in effort drag:', d);
+            Session.set('hover-sprint-number', null);
           }
         });
     
+    sprintGroupEnter.append('g')
+        .attr('class', 'sprint-block-group');
+    
     // Place the groups
-    self.timelineLayer.selectAll('.sprint-group')
+    self.sprintLayer.selectAll('.sprint-group')
         .attr('transform', (sprint) => {
-          return 'translate(' + (sprint.id * sprintWidth) + ',' + self.config.timeline.height + ')'
+          return 'translate(' + (sprint.sprintNumber * self.sprintWidth) + ',0)'
         });
     
     // Size the timelines
-    self.timelineLayer.selectAll('.sprint-group')
+    self.sprintLayer.selectAll('.sprint-group')
         .selectAll('.sprint-section')
-        .attr('width', sprintWidth / 2)
+        .attr('width', self.sprintWidth / 2)
         .attr('height', self.bodyHeight);
     
-    self.timelineLayer.selectAll('.sprint-group')
+    self.sprintLayer.selectAll('.sprint-group')
         .selectAll('.sprint-body-section')
-        .attr('x', sprintWidth / 2);
+        .attr('x', self.sprintWidth / 2);
     
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateTimeline completed:', Date.now() - startTime);
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateSprints completed:', Date.now() - startTime);
+  }
+  
+  /**
+   * Draw all of the blocks for the sprints
+   */
+  updateSprintBlocks () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateSprints:', this.containerId);
+    let self      = this,
+        startTime = Date.now();
+    
+    // Start with the effort blocks
+    console.log('BLOCKS:', self.data.option.sprintBlocks(CapacityPlanBlockTypes.effort).fetch());
+    let effortBlockSelection = self.effortLayer.selectAll('.effort-block-group')
+        .data(self.data.option.sprintBlocks(CapacityPlanBlockTypes.effort).fetch(), (d) => {
+          return d._id
+        });
+    
+    effortBlockSelection.exit().remove();
+    
+    let effortBlockEnter = effortBlockSelection.enter().append('g')
+        .attr('class', 'effort-block-group')
+        .attr('data-effort-id', (d) => {
+          return d._id
+        })
+        .append('rect')
+        .attr('class', 'effort-block')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', self.sprintWidth / 2);
+    
+    // Reposition the blocks groups
+    self.effortLayer.selectAll('.effort-block-group')
+        .attr('transform', (d) => {
+          return 'translate(' + (d.sprintNumber * self.sprintWidth + self.sprintWidth / 2) + ', ' + (self.config.efforts.margin) + ')'
+        });
+    
+    // Resize the blocks
+    self.effortLayer.selectAll('.effort-block-group').select('.effort-block')
+        .attr('height', (d) => {
+          return (d.childCount() || 1) * self.config.contributors.height
+        })
+        .style('fill', (d) => {
+          return d.dataRecord().color
+        });
+    
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateSprints completed:', Date.now() - startTime);
   }
   
   /**
@@ -244,7 +323,7 @@ export class D3CapacityPlanChart {
         namesWidth = 0,
         height,
         width;
-    self.teamData.forEach((team) => {
+    self.data.teams.forEach((team) => {
       // Measure the width of the title
       self.offscreenLayer.append('text')
           .attr('id', '_' + team._id)
@@ -286,11 +365,12 @@ export class D3CapacityPlanChart {
     self.bodyHeight = Math.max(dy, 20);
     
     // Add some padding to the names
+    namesWidth = Math.max(namesWidth, self.config.contributors.width);
     namesWidth += self.config.teams.padding * 2;
     
     // Groom the team groups
     let teamSelection = self.contributorLayer.selectAll('.team-group')
-        .data(self.teamData, (team) => {
+        .data(self.data.teams, (team) => {
           return team._id
         });
     
@@ -373,7 +453,7 @@ export class D3CapacityPlanChart {
     
     // Position the body
     self.bodyLeft = namesWidth + self.config.teams.padding;
-    self.chartBody.attr('transform', 'translate(' + self.bodyLeft + ',0)');
+    self.chartBody.attr('transform', 'translate(' + self.bodyLeft + ',' + self.config.timeline.height + ')');
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.updateContributors completed:', Date.now() - startTime);
   }
@@ -385,15 +465,20 @@ export class D3CapacityPlanChart {
   parseData (data) {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData:', this.containerId);
     let self      = this,
-        startTime = Date.now(),
-        plan      = data.plan();
+        startTime = Date.now();
     
     trace && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData data:', data);
     trace && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData plan:', data.plan && data.plan());
     trace && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData teams:', data.plan && data.plan().teams());
     
-    // Parse the teams
-    self.teamData = data.plan().teams().map((team) => {
+    // Store the option and plan records
+    self.data = {
+      option: data,
+      plan  : data.plan()
+    };
+    
+    // Capture the teams
+    self.data.teams = data.plan().teams().map((team) => {
       return {
         _id         : team._id,
         title       : team.title,
@@ -407,8 +492,8 @@ export class D3CapacityPlanChart {
       return team.contributors.length > 0
     });
     
-    // Parse the timeline
-    self.sprintData = data.sprints().fetch();
+    // Capture the sprints
+    self.data.sprints = data.sprints().fetch();
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);
   }

@@ -3,32 +3,33 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 /**
  * ============================================================================
- * CapacityPlanOptionSprints
+ * CapacityPlanSprints
  * ============================================================================
  */
-export const CapacityPlanOptionSprint = new SimpleSchema({
-  planId  : {
+export const CapacityPlanSprint = new SimpleSchema({
+  planId      : {
     type: String
   },
-  optionId: {
-    type: String
+  sprintNumber: {
+    type: Number
   },
-  sprintId: {
-    type: String
+  title       : {
+    type    : String,
+    optional: true
   },
-  start   : {
+  start       : {
     type: Date
   },
-  end     : {
+  end         : {
     type: Date
   }
 });
 
-export const CapacityPlanOptionSprints = new Mongo.Collection("capacity_plan_option_sprints");
-CapacityPlanOptionSprints.attachSchema(CapacityPlanOptionSprint);
+export const CapacityPlanSprints = new Mongo.Collection("capacity_plan_sprints");
+CapacityPlanSprints.attachSchema(CapacityPlanSprint);
 
 // These are server side only
-CapacityPlanOptionSprints.deny({
+CapacityPlanSprints.deny({
   remove () {
     return true;
   },
@@ -43,4 +44,4 @@ CapacityPlanOptionSprints.deny({
 /**
  * Helpers
  */
-CapacityPlanOptionSprints.helpers({});
+CapacityPlanSprints.helpers({});

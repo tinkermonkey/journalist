@@ -7,6 +7,10 @@
   margin-right: 20px;
 }
 
+.effort-list-container .list-group-item {
+  cursor: pointer;
+}
+
 .effort-panel-container {
   flex-basis : 70%;
 }

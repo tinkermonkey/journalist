@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { CapacityPlanOptions } from './capacity_plan_options';
+import { CapacityPlanSprints } from './capacity_plan_sprints';
 import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
 import { Teams } from '../teams/teams';
 
@@ -72,15 +73,37 @@ CapacityPlans.deny({
 
 // Auto-manage the sprint records for all options
 if (Meteor.isServer) {
+  CapacityPlans.after.insert((userId, doc) => {
+    //console.log('After Option Insert:', doc);
+    let plan = CapacityPlans.findOne(doc._id);
+    if (plan) {
+      for (let i = 0; i < plan.sprintCount; i++) {
+        CapacityPlanSprints.insert({
+          planId      : plan._id,
+          sprintNumber: i,
+          start       : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
+          end         : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
+        });
+      }
+    }
+  });
   CapacityPlans.after.update((userId, doc, rawChangedFields) => {
-    console.log('After Plan Update:', rawChangedFields);
-    if (_.contains(rawChangedFields, 'startDate') || _.contains(rawChangedFields, 'sprintLength') || _.contains(rawChangedFields, 'sprintCount')) {
-      let plan = CapacityPlans.findOne(doc.id);
-      if(plan){
+    let sprintFieldsChanged = _.intersection(rawChangedFields, [ 'startDate', 'sprintLength', 'sprintCount' ]);
+    //console.log('After Plan Update grooming sprints:', sprintFieldsChanged);
+    if (sprintFieldsChanged.length) {
+      let plan = CapacityPlans.findOne(doc._id);
+      if (plan) {
         plan.groomSprints();
       }
     }
   });
+  CapacityPlans.after.remove((userId, doc) => {
+    //console.log('After Option Remove:', doc);
+    CapacityPlanSprints.remove({
+      planId: doc._id
+    });
+  });
+  
 }
 
 /**
@@ -107,9 +130,24 @@ CapacityPlans.helpers({
   },
   groomSprints () {
     let plan = this;
+
+    CapacityPlanSprints.remove({
+      planId      : plan._id,
+      sprintNumber: { $gte: plan.sprintCount }
+    });
     
-    plan.options().forEach((option) => {
-    
-    })
+    for (let i = 0; i < plan.sprintCount; i++) {
+      CapacityPlanSprints.upsert({
+        planId      : plan._id,
+        sprintNumber: i,
+      }, {
+        $set: {
+          planId      : plan._id,
+          sprintNumber: i,
+          start       : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
+          end         : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
+        }
+      });
+    }
   }
 });

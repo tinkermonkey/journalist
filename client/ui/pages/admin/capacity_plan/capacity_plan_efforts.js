@@ -2,6 +2,8 @@ import './capacity_plan_efforts.html';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plan/capacity_plan_options';
+import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plan/capacity_plan_block_types';
 import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plan/capacity_plan_strategic_efforts';
 
 let d3 = require('d3');
@@ -103,6 +105,7 @@ Template.CapacityPlanEfforts.onCreated(() => {
   instance.selectedEffort = new ReactiveVar();
   instance.colorScheme    = d3.schemeCategory10;
   Session.set('in-effort-drag', false);
+  Session.set('hover-sprint-number', null);
   
   instance.autorun(() => {
     let selectedEffort = instance.selectedEffort.get(),
@@ -140,9 +143,13 @@ Template.CapacityPlanEfforts.onCreated(() => {
           y: 20
         };
         
+        instance.dragClone.classed('hide', true);
+        
       })
       .on('drag', (d) => {
         let position = d3.event.sourceEvent;
+        
+        instance.dragClone.classed('hide', false);
         
         // Position the drag clone
         instance.dragClone.style('top', (position.clientY - instance.dragCursor.y) + 'px')
@@ -150,7 +157,7 @@ Template.CapacityPlanEfforts.onCreated(() => {
       })
       .on('end', (d) => {
         //console.log('Drag End:', d, d3.event);
-        let hoverSprint    = Session.get('sprint-hover-id'),
+        let sprintNumber   = Session.get('hover-sprint-number'),
             activeOptionId = FlowRouter.getParam('optionId');
         
         Session.set('in-effort-drag', false);
@@ -158,10 +165,26 @@ Template.CapacityPlanEfforts.onCreated(() => {
         // Destroy the drag clone
         instance.dragClone.remove();
         
-        if (hoverSprint !== undefined) {
-          let option = CapacityPlanOptions.findOne(activeOptionId);
-          console.log('Add effort to sprint:', hoverSprint, option);
-          option.addEffortToSprint(d._id, hoverSprint);
+        if (_.isNumber(sprintNumber) && activeOptionId) {
+          let option           = CapacityPlanOptions.findOne(activeOptionId),
+              sprintBlockCount = option.sprintBlocks(sprintNumber, CapacityPlanBlockTypes.effort).count(),
+              existingBlock    = option.sprintBlock(sprintNumber, d._id);
+          
+          // Make sure that this doesn't already exist in this sprint
+          if (!existingBlock) {
+            CapacityPlanSprintBlocks.insert({
+              planId      : option.planId,
+              optionId    : option._id,
+              sprintNumber: sprintNumber,
+              order       : sprintBlockCount,
+              blockType   : CapacityPlanBlockTypes.effort,
+              dataId      : d._id
+            });
+          } else {
+            console.error('Sprint', sprintNumber, 'already has a block for the effort', d.title, d._id);
+          }
+          
+          Session.set('hover-sprint-number', null);
         }
       })
 });
