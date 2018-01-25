@@ -6,6 +6,7 @@ import { CapacityPlanSprintBlocks } from '../capacity_plan_sprint_blocks';
 import { CapacityPlanStrategicEfforts } from '../capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from '../capacity_plan_strategic_effort_items';
 import { Auth } from '../../auth';
+import { CapacityPlanSprintLinks } from '../capacity_plan_sprint_links';
 
 Meteor.methods({
   /**
@@ -222,6 +223,9 @@ Meteor.methods({
       // Remove all of the items mapped to this effort
       CapacityPlanStrategicEffortItems.remove({ effortId: effortId });
       
+      // Remove all of the blocks and links associated with this
+      CapacityPlanSprintBlocks.remove({dataId: effortId});
+
       // Remove the effort itself
       CapacityPlanStrategicEfforts.remove(effortId);
     } else {

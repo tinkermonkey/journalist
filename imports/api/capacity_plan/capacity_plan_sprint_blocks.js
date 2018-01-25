@@ -46,6 +46,25 @@ export const CapacityPlanSprintBlocks = new Mongo.Collection("capacity_plan_spri
 CapacityPlanSprintBlocks.attachSchema(CapacityPlanSprintBlock);
 ChangeTracker.trackChanges(CapacityPlanSprintBlocks, 'CapacityPlanSprintBlocks');
 
+
+// Auto-manage the sprint records for all options
+if (Meteor.isServer) {
+  CapacityPlanSprintBlocks.after.remove((userId, doc) => {
+    // Remove any links pointing to this block
+    CapacityPlanSprintLinks.remove({
+      $or: [
+        { sourceId: doc._id },
+        { targetId: doc._id }
+      ]
+    });
+
+    // Remove any child blocks
+    CapacityPlanSprintBlocks.remove({
+      parentId: doc._id
+    });
+  });
+}
+
 // Server side only for now
 CapacityPlanSprintBlocks.deny({
   remove: Auth.denyIfNotAdmin,

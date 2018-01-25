@@ -150,10 +150,10 @@ Template.CapacityPlanEfforts.onCreated(() => {
         let position = d3.event.sourceEvent;
         
         instance.dragClone.classed('hide', false);
-        
+        console.log('DRAG:', d3.event);
         // Position the drag clone
-        instance.dragClone.style('top', (position.clientY - instance.dragCursor.y) + 'px')
-            .style('left', (position.clientX - instance.dragCursor.y) + 'px');
+        instance.dragClone.style('top', (position.pageY - instance.dragCursor.y) + 'px')
+            .style('left', (position.pageX - instance.dragCursor.x) + 'px');
       })
       .on('end', (d) => {
         //console.log('Drag End:', d, d3.event);
