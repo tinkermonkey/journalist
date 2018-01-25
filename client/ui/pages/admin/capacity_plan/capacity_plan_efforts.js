@@ -178,7 +178,8 @@ Template.CapacityPlanEfforts.onCreated(() => {
               sprintNumber: sprintNumber,
               order       : sprintBlockCount,
               blockType   : CapacityPlanBlockTypes.effort,
-              dataId      : d._id
+              dataId      : d._id,
+              chartData   : {}
             });
           } else {
             console.error('Sprint', sprintNumber, 'already has a block for the effort', d.title, d._id);

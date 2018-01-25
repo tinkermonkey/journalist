@@ -16,7 +16,7 @@
 }
 
 .contributor-drag-handle {
-  fill : rgba(225, 225, 225, 0.50);
+  fill               : rgba(225, 225, 225, 0.50);
   -webkit-transition : fill 0.25s;
   -moz-transition    : fill 0.25s;
   -ms-transition     : fill 0.25s;
@@ -26,10 +26,18 @@
 
 .contributor-group:hover .contributor-drag-handle,
 .contributor-drag-handle.in-drag {
-  fill : #f00;
+  fill : #298cff;
 }
+
 .contributor-drag-handle.in-drag {
-  pointer-events: none;
+  pointer-events : none;
+}
+
+.contributor-drag-link {
+  fill           : none;
+  stroke         : rgba(126, 255, 0, 0.5);
+  stroke-width   : 10;
+  pointer-events : none;
 }
 
 .y-axis-separator {
@@ -39,7 +47,6 @@
 }
 
 .sprint-link-section {
-  /*fill : rgba(0, 140, 255, 0.5);*/
   fill : none;
 }
 
@@ -49,5 +56,39 @@
 
 .sprint-body-section.hover {
   stroke : #298cff;
-  /*fill : rgb(126, 255, 0);*/
+}
+
+.effort-block.hover {
+  stroke       : #9b9b9b;
+  stroke-width : 3px;
+}
+
+.effort-block-group .effort-title {
+  fill: #fff
+}
+
+.contributor-block {
+  fill : rgba(255, 255, 255, 0.3)
+}
+
+.contributor-block-group .contributor-name {
+  text-anchor : start;
+}
+
+rect.contributor-highlight.highlight {
+  fill: #7eff00 !important;
+}
+
+path.contributor-highlight.highlight {
+  stroke: #7eff00 !important;
+}
+
+.contributor-link {
+  fill           : none;
+  stroke         : rgba(199, 199, 199, 0.5);
+  stroke-width   : 10;
+}
+
+.no-mouse {
+  pointer-events: none;
 }

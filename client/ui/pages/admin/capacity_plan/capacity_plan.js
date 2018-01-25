@@ -3,7 +3,9 @@ import { Template } from 'meteor/templating';
 import { moment } from 'meteor/momentjs:moment';
 import { CapacityPlans } from '../../../../../imports/api/capacity_plan/capacity_plans';
 import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plan/capacity_plan_options';
-import '../../../components/charts/capacity_plan_chart';
+import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_blocks';
+import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_links';
+import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
 import '../../../components/editable_date_range/editable_date_range';
 
 /**
@@ -25,10 +27,16 @@ Template.CapacityPlan.helpers({
   chartContext () {
     let option = this;
     return {
-      config: {
-      
-      },
-      data: option
+      config: {},
+      data  : {
+        option : option,
+        plan   : option.plan(),
+        sprints: option.sprints().fetch(),
+        links  : CapacityPlanSprintLinks.find({ optionId: option._id }).fetch(),
+        
+        // This data is not directly used, but including this for reactivity is important
+        blocks : CapacityPlanSprintBlocks.find({ optionId: option._id }).fetch()
+      }
     }
   },
   startDatePickerConfig () {
@@ -127,6 +135,7 @@ Template.CapacityPlan.onCreated(() => {
     
     instance.subscribe('capacity_plan_sprints', planId);
     instance.subscribe('capacity_plan_sprint_blocks', planId);
+    instance.subscribe('capacity_plan_sprint_links', planId);
     instance.subscribe('capacity_plan_strategic_efforts', planId);
     instance.subscribe('capacity_plan_strategic_effort_items', planId);
   });

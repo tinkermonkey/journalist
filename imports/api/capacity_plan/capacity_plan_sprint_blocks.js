@@ -5,6 +5,7 @@ import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
 import { Contributors } from '../contributors/contributors';
 import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effort_items';
+import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
 
 /**
  * ============================================================================
@@ -34,6 +35,10 @@ export const CapacityPlanSprintBlock = new SimpleSchema({
   parentId    : {
     type    : String,
     optional: true
+  },
+  chartData   : {
+    type    : Object,
+    blackbox: true
   }
 });
 
@@ -74,5 +79,40 @@ CapacityPlanSprintBlocks.helpers({
     return CapacityPlanSprintBlocks.find({
       parentId: this._id
     }).count()
+  },
+  
+  /**
+   * Create a child block
+   * @param blockType
+   * @param dataId
+   * @param chartData
+   */
+  addChild (blockType, dataId, chartData) {
+    let blockId = CapacityPlanSprintBlocks.insert({
+      planId      : this.planId,
+      optionId    : this.optionId,
+      sprintNumber: this.sprintNumber,
+      order       : this.childCount(),
+      dataId      : dataId,
+      blockType   : blockType,
+      parentId    : this._id,
+      chartData   : chartData || {}
+    });
+    
+    return CapacityPlanSprintBlocks.findOne(blockId)
+  },
+  
+  /**
+   * Add a link to this block
+   */
+  addLink (sourceId) {
+    let linkId = CapacityPlanSprintLinks.insert({
+      planId  : this.planId,
+      optionId: this.optionId,
+      sourceId: sourceId,
+      targetId: this._id
+    });
+    
+    return CapacityPlanSprintLinks.findOne(linkId)
   }
 });

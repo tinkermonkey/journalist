@@ -65,14 +65,16 @@ CapacityPlanOptions.helpers({
   },
   /**
    * Get all of the blocks for a sprint of a specific type
+   * @param sprintNumber
    * @param blockType
    * @param parentId
    */
-  sprintBlocks (blockType, parentId) {
+  sprintBlocks (sprintNumber, blockType, parentId) {
     return CapacityPlanSprintBlocks.find({
-      optionId : this._id,
-      blockType: blockType,
-      parentId : parentId
+      optionId    : this._id,
+      sprintNumber: sprintNumber,
+      blockType   : blockType,
+      parentId    : parentId
     }, { sort: { order: 1 } })
   },
   
