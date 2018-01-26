@@ -115,6 +115,23 @@ export class D3CapacityPlanChart {
         .attr('y', 0)
         .attr('width', self.config.contributors.width)
         .attr('height', self.config.contributors.height);
+
+    // Create a drop-shadow filter
+    self.hoverFilterId = 'hover-filter-' + self.containerId;
+    self.hoverFilter   = self.svgDefs.append('filter')
+        .attr('id', 'controls-drop-shadow')
+        .attr('color-interpolation-filters', 'sRGB')
+        .attr('x', '-100%')
+        .attr('y', '-100%')
+        .attr('width', '300%')
+        .attr('height', '300%');
+    self.hoverFilter.append('feGaussianBlur')
+        .attr('stdDeviation', '5 5')
+        .attr('result', 'outerGlowOut1');
+    self.hoverFilter.append('feComposite')
+        .attr('in', 'SourceGraphic')
+        .attr('in2', 'outerGlowOut1')
+        .attr('operator', 'over');
     
     // Create an offscreen layer for measuring text width
     self.offscreenLayer = self.svg.append('g')
@@ -1068,7 +1085,7 @@ export class D3CapacityPlanChart {
       if (self.drag.hover.type === CapacityPlanBlockTypes.effort) {
         // Check for an existing block
         let blockCheck = self.data.option.sprintBlock(self.drag.hover.record.sprintNumber, contributor._id, self.drag.hover.record._id);
-        if (!blockCheck) {
+        if (!blockCheck && ( self.drag.hover.record.sprintNumber > d.sprintNumber || d.sprintNumber === undefined )) {
           // Create a block within the effort for this contributor
           let block = self.drag.hover.record.addChild(CapacityPlanBlockTypes.contributor, contributor._id, {});
           

@@ -40,12 +40,12 @@
   opacity            : 0;
   fill               : #298cff;
   stroke             : #fff;
-  box-shadow         : 5px 10px;
   -webkit-transition : fill 0.5s, opacity 0.5s;
   -moz-transition    : fill 0.5s, opacity 0.5s;
   -ms-transition     : fill 0.5s, opacity 0.5s;
   -o-transition      : fill 0.5s, opacity 0.5s;
   transition         : fill 0.5s, opacity 0.5s;
+  filter: url(#controls-drop-shadow);
 }
 
 .contributor-group:hover .contributor-drag-handle,
@@ -127,7 +127,7 @@
   fill         : #298cff;
   stroke       : #fff;
   stroke-width : 1px;
-  box-shadow: 5px 10px;
+  filter       : url(#controls-drop-shadow);
 }
 
 .effort-control text,
