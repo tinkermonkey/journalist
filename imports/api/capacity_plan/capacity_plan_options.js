@@ -12,27 +12,27 @@ import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
  * ============================================================================
  */
 export const CapacityPlanOption = new SimpleSchema({
-  planId      : {
+  planId: {
     type: String
   },
-  title       : {
+  title: {
     type: String
   },
   // Standard tracking fields
-  dateCreated : {
-    type     : Date,
+  dateCreated: {
+    type: Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
-    type     : String,
+  createdBy: {
+    type: String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
   dateModified: {
-    type     : Date,
+    type: Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
-    type     : String,
+  modifiedBy: {
+    type: String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
 });
@@ -43,13 +43,13 @@ ChangeTracker.trackChanges(CapacityPlanOptions, 'CapacityPlanOptions');
 
 // These are server side only
 CapacityPlanOptions.deny({
-  remove () {
+  remove() {
     return true;
   },
-  insert () {
+  insert() {
     return true;
   },
-  update () {
+  update() {
     return true;
   }
 });
@@ -58,10 +58,10 @@ CapacityPlanOptions.deny({
  * Helpers
  */
 CapacityPlanOptions.helpers({
-  plan () {
+  plan() {
     return CapacityPlans.findOne(this.planId)
   },
-  sprints () {
+  sprints() {
     return CapacityPlanSprints.find({ planId: this.planId }, { sort: { sprintNumber: 1 } })
   },
   /**
@@ -70,88 +70,136 @@ CapacityPlanOptions.helpers({
    * @param blockType
    * @param parentId
    */
-  sprintBlocks (sprintNumber, blockType, parentId) {
+  sprintBlocks(sprintNumber, blockType, parentId) {
     return CapacityPlanSprintBlocks.find({
-      optionId    : this._id,
+      optionId: this._id,
       sprintNumber: sprintNumber,
-      blockType   : blockType,
-      parentId    : parentId
+      blockType: blockType,
+      parentId: parentId
     }, { sort: { order: 1 } })
   },
-  
+
   /**
    * Find a specific sprint block
    */
-  sprintBlock (sprintNumber, dataId, parentId) {
+  sprintBlock(sprintNumber, dataId, parentId) {
     let option = this;
     return CapacityPlanSprintBlocks.findOne({
-      optionId    : option._id,
+      optionId: option._id,
       sprintNumber: sprintNumber,
-      dataId      : dataId,
-      parentId    : parentId
+      dataId: dataId,
+      parentId: parentId
     })
   },
-  
+
   /**
    * Make sure that the links for a contributor make sense
    * @param contributorId
    */
-  healContributorLinks (contributorId) {
-    let option        = this,
-        sprints       = option.sprints().fetch(),
-        blockCriteria = { optionId: option._id, dataId: contributorId },
-        firstSprint   = CapacityPlanSprintBlocks.findOne(blockCriteria, { sort: { sprintNumber: 1 } }),
-        lastSprint    = CapacityPlanSprintBlocks.findOne(blockCriteria, { sort: { sprintNumber: -1 } }),
-        thisSprint;
-    
-    console.log('healContributorLinks:', contributorId, firstSprint, lastSprint);
-    
-    if (firstSprint && lastSprint && firstSprint.sprintNumber !== lastSprint.sprintNumber) {
+  healContributorLinks(contributorId) {
+    let option = this,
+      blockCriteria = { optionId: option._id, dataId: contributorId },
+      sprints = _.uniq(CapacityPlanSprintBlocks.find(blockCriteria, { sort: { sprintNumber: 1 } }).map((d) => {
+        return d.sprintNumber
+      }));
+
+    console.log('healContributorLinks:', contributorId, sprints);
+
+    if (sprints.length > 1) {
+      // Remove any links from this contributor to a different sprint than the first one
+      CapacityPlanSprintLinks.find({ sourceId: contributorId, targetSprint: { $gt: firstSprint.sprintNumber } }).forEach((link) => {
+        CapacityPlanSprintLinks.remove(link._id);
+      });
+
       // Iterate through the sprints looking forward (so don't consider the last one)
-      for (thisSprint = firstSprint.sprintNumber; thisSprint < lastSprint.sprintNumber - 1; thisSprint++) {
+
+      sprints.slice(0, -1).forEach((thisSprint, i) => {
         // Get all of the blocks for this sprint
         blockCriteria.sprintNumber = thisSprint;
-        let sprintBlocks           = CapacityPlanSprintBlocks.find(blockCriteria).fetch();
-        
+        let sprintBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch();
+
         // Get the blocks in the next sprint
         blockCriteria.sprintNumber = { $gt: thisSprint };
-        let nextSprint             = CapacityPlanSprintBlocks.findOne(blockCriteria, { sort: { sprintNumber: 1 } }).sprintNumber;
+        let nextSprint = CapacityPlanSprintBlocks.findOne(blockCriteria, { sort: { sprintNumber: 1 } }).sprintNumber;
         blockCriteria.sprintNumber = nextSprint;
-        let nextSprintBlocks       = CapacityPlanSprintBlocks.find(blockCriteria).fetch();
-        
+        let nextSprintBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch();
+
         console.log('healContributorLinks analyzing sprint:', thisSprint, nextSprint, sprintBlocks, nextSprintBlocks);
-        
-        // Multiple blocks for this sprint?
-        //if (sprintBlocks.length > 1) {
-        //if (nextSprintBlocks.length === 1) {
+
+        // Analyze each block in this sprint
         sprintBlocks.forEach((block) => {
           // Remove any links from this sprint to a different sprint than the next
           CapacityPlanSprintLinks.find({ sourceId: block._id, targetSprint: { $gt: nextSprint } }).forEach((link) => {
             CapacityPlanSprintLinks.remove(link._id);
           });
-          
+
+          // Remove any links that are stale
+          CapacityPlanSprintLinks.find({ sourceId: block._id, targetSprint: nextSprint }).forEach((link) => {
+            if (!link.target()) {
+              CapacityPlanSprintLinks.remove(link._id);
+            }
+          });
+
+          // If there are multiple links eminating from a node, delete any that are autogenrated
+          if(CapacityPlanSprintLinks.find({ sourceId: block._id, targetSprint: nextSprint }).count() > 1){
+            CapacityPlanSprintLinks.find({ sourceId: block._id, targetSprint: nextSprint, autoGenerated: true }).forEach((link) => {
+              CapacityPlanSprintLinks.remove(link._id);
+            });
+          }
+
           // Make sure there is a link from this sprint to the next
           if (!CapacityPlanSprintLinks.find({ sourceId: block._id, targetSprint: nextSprint }).count()) {
             // Create one!
-            console.log('Inserting a link because a block has no link forward');
-            CapacityPlanSprintLinks.insert({
-              planId      : block.planId,
-              optionId    : block.optionId,
-              sourceId    : block._id,
-              sourceSprint: block.sprintNumber,
-              targetId    : nextSprintBlocks[ 0 ]._id,
-              targetSprint: nextSprint
+
+            // Check for an unlinked target
+            let unlinkedTarget = nextSprintBlocks.find((block) => {
+              return CapacityPlanSprintLinks.find({ targetId: block._id, targetSprint: nextSprint }).count() === 0
             });
-          } else {
-            console.log('Block has links forward:', CapacityPlanSprintLinks.find({ sourceId: block._id, targetSprint: nextSprint })
-                .fetch());
-            
+
+            // Link to this 
+            if(unlinkedTarget){
+              CapacityPlanSprintLinks.insert({
+                planId: block.planId,
+                optionId: block.optionId,
+                sourceId: block._id,
+                sourceSprint: block.sprintNumber,
+                targetId: unlinkedTarget._id,
+                targetSprint: unlinkedTarget.sprintNumber,
+                autoGenerated: true
+              });
+            } else {
+              CapacityPlanSprintLinks.insert({
+                planId: block.planId,
+                optionId: block.optionId,
+                sourceId: block._id,
+                sourceSprint: block.sprintNumber,
+                targetId: nextSprintBlocks[0]._id,
+                targetSprint: nextSprint,
+                autoGenerated: true
+              });
+            }
           }
-        })
-        
-        //}
-        //}
-      }
+        });
+
+        // Check the next sprint for any orphaned blocks
+        nextSprintBlocks.forEach((block) => {
+          if(!CapacityPlanSprintLinks.find({ targetId: block._id }).count()){
+            // Pick a source link
+            let sourceBlock = sprintBlocks[0];
+
+            // Create a link so it's not orphaned
+            CapacityPlanSprintLinks.insert({
+              planId: block.planId,
+              optionId: block.optionId,
+              sourceId: sourceBlock._id,
+              sourceSprint: sourceBlock.sprintNumber,
+              targetId: block._id,
+              targetSprint: block.sprintNumber,
+              autoGenerated: true
+            });
+        }
+        });
+      })
     }
   }
 });

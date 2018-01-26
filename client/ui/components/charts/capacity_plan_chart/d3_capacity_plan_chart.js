@@ -460,7 +460,7 @@ export class D3CapacityPlanChart {
     removeButtonEnter.append('text')
         .attr('x', controlTextX)
         .attr('y', controlTextY)
-        .text('x');
+        .text('\u00D7');
     
     let upButtonEnter = effortControlsEnter.append('g')
         .attr('class', 'effort-control effort-control-up')
@@ -475,7 +475,7 @@ export class D3CapacityPlanChart {
     upButtonEnter.append('text')
         .attr('x', controlTextX)
         .attr('y', controlTextY)
-        .text('+');
+        .text('\u2191');
     
     let downButtonEnter = effortControlsEnter.append('g')
         .attr('class', 'effort-control effort-control-down')
@@ -491,7 +491,7 @@ export class D3CapacityPlanChart {
     downButtonEnter.append('text')
         .attr('x', controlTextX)
         .attr('y', controlTextY)
-        .text('-');
+        .text('\u2193');
     
     // Position the controls
     self.sprintBodyLayer.selectAll('.effort-block-group')
@@ -640,7 +640,7 @@ export class D3CapacityPlanChart {
     contributorRemoveButtonEnter.append('text')
         .attr('x', controlTextX)
         .attr('y', controlTextY)
-        .text('x');
+        .text('\u00D7');
     
     // Create the drag handle
     let dragContainerEnter = contributorBlockEnter.append('g')

@@ -39,6 +39,8 @@
 .contributor-drag-handle {
   opacity            : 0;
   fill               : #298cff;
+  stroke             : #fff;
+  box-shadow         : 5px 10px;
   -webkit-transition : fill 0.5s, opacity 0.5s;
   -moz-transition    : fill 0.5s, opacity 0.5s;
   -ms-transition     : fill 0.5s, opacity 0.5s;
@@ -53,15 +55,15 @@
 }
 
 .contributor-drag-handle:hover {
-  stroke       : rgba(126, 255, 0, 1.0);
-  stroke-width : 1px;
+  stroke       : #ff009d;
+  stroke-width : 2px;
   cursor       : pointer;
 }
 
 .contributor-drag-handle.in-drag {
   pointer-events : none;
-  stroke         : rgba(126, 255, 0, 1.0);
-  stroke-width   : 1px;
+  stroke       : #ff009d;
+  stroke-width : 2px;
   cursor         : pointer;
 }
 
@@ -125,6 +127,7 @@
   fill         : #298cff;
   stroke       : #fff;
   stroke-width : 1px;
+  box-shadow: 5px 10px;
 }
 
 .effort-control text,
@@ -139,9 +142,15 @@
   cursor : pointer;
 }
 
+.effort-control:hover .effort-control-background,
+.contributor-control:hover .contributor-control-background {
+  stroke       : #ff009d;
+  stroke-width : 2px;
+}
+
 .effort-control:hover text,
 .contributor-control:hover text {
-  fill : #ff00e1;
+  fill : #ff009d;
 }
 
 /**
