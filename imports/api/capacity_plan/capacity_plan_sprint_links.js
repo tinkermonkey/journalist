@@ -9,17 +9,24 @@ import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
  * ============================================================================
  */
 export const CapacityPlanSprintLink = new SimpleSchema({
-  planId  : {
+  planId      : {
     type: String
   },
-  optionId: {
+  optionId    : {
     type: String
   },
-  sourceId: {
+  sourceId    : {
     type: String
   },
-  targetId: {
+  targetId    : {
     type: String
+  },
+  sourceSprint: {
+    type    : Number,
+    optional: true
+  },
+  targetSprint: {
+    type: Number
   }
 });
 

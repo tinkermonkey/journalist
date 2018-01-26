@@ -1,13 +1,23 @@
+/**
+ * Chart
+ */
 .capacity-plan-chart {
   margin-top : 10px;
 }
 
 .capacity-plan-chart text,
 .capacity-plan-chart tspan {
-  user-select: none;
-  pointer-events: none;
+  user-select    : none;
+  pointer-events : none;
 }
 
+.no-mouse {
+  pointer-events : none;
+}
+
+/**
+ * Contributors & teams list
+ */
 .contributor-group {
   cursor : pointer;
 }
@@ -18,34 +28,41 @@
 }
 
 .contributor-background {
-  fill : rgba(255, 255, 255, 0.50);
+  fill               : rgba(255, 255, 255, 0.50);
+  -webkit-transition : fill 0.5s;
+  -moz-transition    : fill 0.5s;
+  -ms-transition     : fill 0.5s;
+  -o-transition      : fill 0.5s;
+  transition         : fill 0.5s;
 }
 
 .contributor-drag-handle {
   opacity            : 0;
   fill               : #298cff;
-  -webkit-transition : fill 0.25s, opacity 0.5s;
-  -moz-transition    : fill 0.25s, opacity 0.5s;
-  -ms-transition     : fill 0.25s, opacity 0.5s;
-  -o-transition      : fill 0.25s, opacity 0.5s;
-  transition         : fill 0.25s, opacity 0.5s;
+  -webkit-transition : fill 0.5s, opacity 0.5s;
+  -moz-transition    : fill 0.5s, opacity 0.5s;
+  -ms-transition     : fill 0.5s, opacity 0.5s;
+  -o-transition      : fill 0.5s, opacity 0.5s;
+  transition         : fill 0.5s, opacity 0.5s;
 }
 
 .contributor-group:hover .contributor-drag-handle,
 .contributor-block-group:hover .contributor-drag-handle,
 .contributor-drag-handle.in-drag {
-  opacity: 1;
+  opacity : 1;
 }
 
 .contributor-drag-handle:hover {
-  stroke         : rgba(126, 255, 0, 1.0);
-  stroke-width   : 1px;
+  stroke       : rgba(126, 255, 0, 1.0);
+  stroke-width : 1px;
+  cursor       : pointer;
 }
 
 .contributor-drag-handle.in-drag {
   pointer-events : none;
   stroke         : rgba(126, 255, 0, 1.0);
   stroke-width   : 1px;
+  cursor         : pointer;
 }
 
 .contributor-drag-link {
@@ -61,6 +78,9 @@
   shape-rendering : crispEdges;
 }
 
+/**
+ * Sprints
+ */
 .sprint-link-section {
   fill : none;
 }
@@ -73,17 +93,68 @@
   stroke : #298cff;
 }
 
+/**
+ * Effort blocks
+ */
 .effort-block.hover {
   stroke       : #9b9b9b;
   stroke-width : 3px;
 }
 
-.effort-block-group .effort-title {
-  fill: #fff
+.effort-title {
+  fill : #fff;
 }
 
+.effort-controls,
+.contributor-controls {
+  opacity            : 0;
+  -webkit-transition : opacity 0.5s;
+  -moz-transition    : opacity 0.5s;
+  -ms-transition     : opacity 0.5s;
+  -o-transition      : opacity 0.5s;
+  transition         : opacity 0.5s;
+}
+
+.effort-block-group:hover .effort-controls,
+.contributor-block-group:hover .contributor-controls {
+  opacity : 1;
+}
+
+.effort-control-background,
+.contributor-control-background {
+  fill         : #298cff;
+  stroke       : #fff;
+  stroke-width : 1px;
+}
+
+.effort-control text,
+.contributor-control text {
+  fill               : #fff;
+  text-anchor        : middle;
+  alignment-baseline : middle;
+}
+
+.effort-control:hover,
+.contributor-control:hover {
+  cursor : pointer;
+}
+
+.effort-control:hover text,
+.contributor-control:hover text {
+  fill : #ff00e1;
+}
+
+/**
+ * Contributor blocks and links
+ */
 .contributor-block {
-  fill : rgba(255, 255, 255, 0.3)
+  fill               : rgba(255, 255, 255, 0.3);
+  shape-rendering    : crispEdges;
+  -webkit-transition : fill 0.5s;
+  -moz-transition    : fill 0.5s;
+  -ms-transition     : fill 0.5s;
+  -o-transition      : fill 0.5s;
+  transition         : fill 0.5s;
 }
 
 .contributor-block-group .contributor-name {
@@ -91,19 +162,22 @@
 }
 
 rect.contributor-highlight.highlight {
-  fill: #7eff00 !important;
+  fill            : #7eff00 !important;
+  shape-rendering : crispEdges;
 }
 
 path.contributor-highlight.highlight {
-  stroke: #7eff00 !important;
+  stroke       : #7eff00 !important;
+  stroke-width : 25px;
 }
 
 .contributor-link {
-  fill           : none;
-  stroke         : rgba(199, 199, 199, 0.5);
-  stroke-width   : 10;
-}
-
-.no-mouse {
-  pointer-events: none;
+  fill               : none;
+  stroke             : rgba(199, 199, 199, 0.5);
+  stroke-width       : 1px;
+  -webkit-transition : stroke 0.25s, stroke-width 0.5s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.5s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.5s;
+  -o-transition      : stroke 0.25s, stroke-width 0.5s;
+  transition         : stroke 0.25s, stroke-width 0.5s;
 }

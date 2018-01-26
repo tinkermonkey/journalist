@@ -46,7 +46,6 @@ export const CapacityPlanSprintBlocks = new Mongo.Collection("capacity_plan_spri
 CapacityPlanSprintBlocks.attachSchema(CapacityPlanSprintBlock);
 ChangeTracker.trackChanges(CapacityPlanSprintBlocks, 'CapacityPlanSprintBlocks');
 
-
 // Auto-manage the sprint records for all options
 if (Meteor.isServer) {
   CapacityPlanSprintBlocks.after.remove((userId, doc) => {
@@ -57,7 +56,7 @@ if (Meteor.isServer) {
         { targetId: doc._id }
       ]
     });
-
+    
     // Remove any child blocks
     CapacityPlanSprintBlocks.remove({
       parentId: doc._id
@@ -92,12 +91,19 @@ CapacityPlanSprintBlocks.helpers({
   },
   
   /**
+   * Get the child blocks for this block
+   */
+  children () {
+    return CapacityPlanSprintBlocks.find({
+      parentId: this._id
+    })
+  },
+  
+  /**
    * Get the number of child blocks for this block
    */
   childCount () {
-    return CapacityPlanSprintBlocks.find({
-      parentId: this._id
-    }).count()
+    return this.children().count()
   },
   
   /**
@@ -124,14 +130,102 @@ CapacityPlanSprintBlocks.helpers({
   /**
    * Add a link to this block
    */
-  addLink (sourceId) {
+  addLink (sourceId, sourceSprint) {
     let linkId = CapacityPlanSprintLinks.insert({
-      planId  : this.planId,
-      optionId: this.optionId,
-      sourceId: sourceId,
-      targetId: this._id
+      planId      : this.planId,
+      optionId    : this.optionId,
+      sourceId    : sourceId,
+      sourceSprint: sourceSprint,
+      targetId    : this._id,
+      targetSprint: this.sprintNumber
     });
     
     return CapacityPlanSprintLinks.findOne(linkId)
+  },
+  
+  /**
+   * Move this block down in order
+   */
+  moveUp () {
+    let block    = this,
+        previous = CapacityPlanSprintBlocks.findOne({
+          optionId    : block.optionId,
+          sprintNumber: block.sprintNumber,
+          parentId    : block.parentId,
+          order       : { $lt: block.order }
+        }, { sort: { order: -1 } });
+    
+    if (previous) {
+      CapacityPlanSprintBlocks.update(previous._id, { $set: { order: block.order } });
+      CapacityPlanSprintBlocks.update(block._id, { $set: { order: previous.order } });
+      this.reIndexSiblingOrder();
+    } else {
+      console.error('CapacityPlanSprintLinks.moveUp failed, no previous block found:', CapacityPlanSprintBlocks.find({
+        optionId    : block.optionId,
+        sprintNumber: block.sprintNumber,
+        parentId    : block.parentId,
+        order       : { $lt: block.order }
+      }, { sort: { order: -1 } }).fetch())
+    }
+  },
+  
+  /**
+   * Move this block up in order
+   */
+  moveDown () {
+    let block = this,
+        next  = CapacityPlanSprintBlocks.findOne({
+          optionId    : block.optionId,
+          sprintNumber: block.sprintNumber,
+          parentId    : block.parentId,
+          order       : { $gt: block.order }
+        }, { sort: { order: 1 } });
+    
+    if (next) {
+      CapacityPlanSprintBlocks.update(next._id, { $set: { order: block.order } });
+      CapacityPlanSprintBlocks.update(block._id, { $set: { order: next.order } });
+      this.reIndexSiblingOrder();
+    } else {
+      console.error('CapacityPlanSprintLinks.moveDown failed, no next block found:', CapacityPlanSprintBlocks.find({
+        optionId    : block.optionId,
+        sprintNumber: block.sprintNumber,
+        parentId    : block.parentId,
+        order       : { $gt: block.order }
+      }, { sort: { order: -1 } }).fetch())
+    }
+  },
+  
+  /**
+   * Remove this block
+   */
+  remove () {
+    CapacityPlanSprintBlocks.remove(this._id);
+  },
+  
+  /**
+   * Get all of the sibling blocks
+   */
+  siblings () {
+    return CapacityPlanSprintBlocks.find({
+      optionId    : this.optionId,
+      sprintNumber: this.sprintNumber,
+      parentId    : this.parentId
+    }, { sort: { order: 1 } })
+  },
+  
+  /**
+   * Get the number of sibling blocks
+   */
+  siblingCount () {
+    return this.siblings().count()
+  },
+  
+  /**
+   * Re-index the order of the siblings to be zero-based and sequential
+   */
+  reIndexSiblingOrder () {
+    this.siblings().fetch().forEach((block, i) => {
+      CapacityPlanSprintBlocks.update(block._id, { $set: { order: i } })
+    })
   }
 });
