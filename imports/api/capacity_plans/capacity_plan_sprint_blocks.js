@@ -202,6 +202,12 @@ CapacityPlanSprintBlocks.helpers({
     CapacityPlanSprintBlocks.remove(this._id);
   },
   
+  parent () {
+    if (this.parentId) {
+      return CapacityPlanSprintBlocks.findOne(this.parentId)
+    }
+  },
+  
   /**
    * Get all of the sibling blocks
    */
@@ -225,7 +231,9 @@ CapacityPlanSprintBlocks.helpers({
    */
   reIndexSiblingOrder () {
     this.siblings().fetch().forEach((block, i) => {
-      CapacityPlanSprintBlocks.update(block._id, { $set: { order: i } })
+      if(block.order !== i){
+        CapacityPlanSprintBlocks.update(block._id, { $set: { order: i } })
+      }
     })
   }
 });

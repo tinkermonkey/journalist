@@ -45,12 +45,14 @@
   -ms-transition     : fill 0.5s, opacity 0.5s;
   -o-transition      : fill 0.5s, opacity 0.5s;
   transition         : fill 0.5s, opacity 0.5s;
-  filter: url(#controls-drop-shadow);
+  filter             : url(#controls-drop-shadow);
 }
 
 .contributor-group:hover .contributor-drag-handle,
 .contributor-block-group:hover .contributor-drag-handle,
-.contributor-drag-handle.in-drag {
+.contributor-block-group:hover .contributor-drag-handle-dot,
+.contributor-drag-handle-container.in-drag .contributor-drag-handle,
+.contributor-drag-handle-container.in-drag .contributor-drag-handle-dot {
   opacity : 1;
 }
 
@@ -60,11 +62,28 @@
   cursor       : pointer;
 }
 
-.contributor-drag-handle.in-drag {
+.contributor-drag-handle-container.in-drag .contributor-drag-handle {
   pointer-events : none;
-  stroke       : #ff009d;
-  stroke-width : 2px;
+  stroke         : #ff009d;
+  stroke-width   : 2px;
   cursor         : pointer;
+}
+
+.contributor-drag-handle-dot {
+  pointer-events     : none;
+  fill               : #fff;
+  opacity            : 0;
+  -webkit-transition : fill 0.5s, opacity 0.5s;
+  -moz-transition    : fill 0.5s, opacity 0.5s;
+  -ms-transition     : fill 0.5s, opacity 0.5s;
+  -o-transition      : fill 0.5s, opacity 0.5s;
+  transition         : fill 0.5s, opacity 0.5s;
+}
+
+.contributor-drag-handle-container:hover .contributor-drag-handle-dot,
+.contributor-drag-handle-container.in-drag .contributor-drag-handle-dot {
+  opacity : 1;
+  fill    : #ff009d;
 }
 
 .contributor-drag-link {
@@ -178,6 +197,16 @@ rect.contributor-highlight.highlight {
 path.contributor-highlight.highlight {
   stroke       : #7eff00 !important;
   stroke-width : 25px;
+}
+
+.contributor-background-path {
+  stroke             : rgba(199, 199, 199, 0);
+  stroke-width       : 1px;
+  -webkit-transition : stroke 0.25s, stroke-width 0.5s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.5s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.5s;
+  -o-transition      : stroke 0.25s, stroke-width 0.5s;
+  transition         : stroke 0.25s, stroke-width 0.5s;
 }
 
 .contributor-link {

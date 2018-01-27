@@ -1,10 +1,10 @@
 import './capacity_plan_efforts.html';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plan/capacity_plan_options';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_blocks';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plan/capacity_plan_block_types';
-import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plan/capacity_plan_strategic_efforts';
+import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plans/capacity_plan_strategic_efforts';
 
 let d3 = require('d3');
 

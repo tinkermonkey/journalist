@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Auth } from '../auth';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
+import { Contributors} from '../contributors/contributors';
 
 /**
  * ============================================================================
@@ -50,7 +51,7 @@ CapacityPlanSprintLinks.deny({
  */
 CapacityPlanSprintLinks.helpers({
   source () {
-    return CapacityPlanSprintBlocks.findOne(this.sourceId)
+    return CapacityPlanSprintBlocks.findOne(this.sourceId) || Contributors.findOne(this.sourceId)
   },
   target () {
     return CapacityPlanSprintBlocks.findOne(this.targetId)

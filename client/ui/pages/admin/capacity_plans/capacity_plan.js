@@ -1,10 +1,10 @@
 import './capacity_plan.html';
 import { Template } from 'meteor/templating';
 import { moment } from 'meteor/momentjs:moment';
-import { CapacityPlans } from '../../../../../imports/api/capacity_plan/capacity_plans';
-import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plan/capacity_plan_options';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_blocks';
-import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_links';
+import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
+import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
 import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
 import '../../../components/editable_date_range/editable_date_range';
 

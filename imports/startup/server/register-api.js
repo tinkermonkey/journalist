@@ -3,8 +3,8 @@
 //import '../../api/bugs/server/publications';
 
 // Capacity Plans
-import '../../api/capacity_plan/server/methods';
-import '../../api/capacity_plan/server/publications';
+import '../../api/capacity_plans/server/methods';
+import '../../api/capacity_plans/server/publications';
 
 // Contributors
 import '../../api/contributors/server/methods';
