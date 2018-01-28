@@ -42,7 +42,19 @@ Template.EditableColorPicker.onRendered(() => {
         color      : context.value || '#fff',
         format     : 'hex',
         useAlpha   : false,
-        customClass: 'colorpicker-2x'
+        customClass: 'colorpicker-2x',
+        sliders: {
+          saturation: {
+            maxLeft: 200,
+            maxTop: 200
+          },
+          hue: {
+            maxTop: 200
+          },
+          alpha: {
+            maxTop: 200
+          }
+        }
       }).on('changeColor', (e) => {
         if (Date.now() - instance.lastFireTime > minFireTime) {
           instance.lastFireTime = Date.now();

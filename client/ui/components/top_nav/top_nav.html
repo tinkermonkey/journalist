@@ -123,12 +123,12 @@
                 {{/each}}
                 <li class="divider" role="separator"></li>
                 <li class="disabled"><a>Servers</a></li>
-                {{#each statusMetrics 'server'}}
+                {{#each statusMetrics 'server' }}
                   {{> StatusMenuItem }}
                 {{/each}}
                 <li class="divider" role="separator"></li>
                 <li class="disabled"><a>Integration Agents</a></li>
-                {{#each statusMetrics 'integrationAgent'}}
+                {{#each statusMetrics 'integrationAgent' true}}
                   {{> StatusMenuItem }}
                 {{/each}}
               </ul>
