@@ -39,6 +39,8 @@ Template.IntegrationServerStatusReference.onCreated(() => {
           instance.statusList.set(response);
         }
       });
+    } else {
+      console.error('IntegrationServerStatusReference passed no serverId');
     }
   })
 });

@@ -44,6 +44,11 @@
                       {{/each}}
                     </tr>
                     </tbody>
+
+                    <button class="btn btn-primary btn-add-status">
+                      <span class="glyphicon glyphicon-plus"></span>
+                      Manual Entry
+                    </button>
                   </table>
                 {{/RobaTab}}
               {{/each}}
@@ -72,7 +77,7 @@
               {{/RobaTab}}
               {{#RobaTab name="reference" title="Reference"}}
                 <h4>Status Reference</h4>
-                {{> IntegrationServerStatusReference}}
+                {{> IntegrationServerStatusReference serverId=../_id}}
               {{/RobaTab}}
             {{/RobaTabGroup}}
           </div>

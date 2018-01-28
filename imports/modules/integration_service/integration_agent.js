@@ -64,7 +64,7 @@ export class IntegrationAgent {
         SyncedCron.add({
           name: queryJobKey,
           schedule (parser) {
-            let parserText = 'every 1 minutes';
+            let parserText = 'every 10 minutes';
             debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', queryJobKey, "'", parserText, "'");
             return parser.text(parserText);
           },
