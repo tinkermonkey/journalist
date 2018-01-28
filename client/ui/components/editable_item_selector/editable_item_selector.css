@@ -1,0 +1,33 @@
+.editable-item-search-container {
+  width: 400px;
+}
+
+.editable-item-search-container .search-results {
+  margin-top: 2em;
+}
+
+.editable-item-search-container .search-result {
+  margin: 1em 0;
+  padding: 0.5em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.editable-item-search-container .search-result:hover {
+  background-color: #efefef;
+}
+
+.editable-item-search-container .item-identifier {
+  color: #298cff;
+}
+
+.editable-item-search-container .search-result-body {
+  margin-top: 1em;
+  max-height: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editable-item-search-container .search-result-info {
+
+}

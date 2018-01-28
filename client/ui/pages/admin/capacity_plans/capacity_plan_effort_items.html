@@ -1,0 +1,62 @@
+<template name="CapacityPlanEffortItems">
+  <h3>Stories</h3>
+  <table class="table data-table table-striped">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Item</th>
+      <th>Title</th>
+      <th>Estimate</th>
+      <th>Dependencies</th>
+      <th>Contributor</th>
+      <th>Timing</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each items}}
+      <tr class="data-table-row show-controls-on-hover" data-pk="{{_id}}">
+        <td class="open-link">
+          {{#if itemIdentifier}}
+            <a href="">
+              <span class="glyphicon glyphicon-folder-open"></span>
+            </a>
+          {{/if}}
+        </td>
+        <td>{{> EditableItemSelector dataKey='itemIdentifier' value=itemIdentifier valueField='identifier' emptyText="Select an item to link" }}</td>
+        <td>
+          {{#if itemIdentifier}}
+            {{itemTitle}}
+          {{else}}
+            {{> EditableTextField dataKey='title' value=title mode='popup' }}
+          {{/if}}
+        </td>
+        <td>
+          {{> EditableTextField dataKey='estimate' value=estimate dataType='number' mode='popup' emptyText="points" }}
+          {{#if estimate}}
+            points
+          {{/if}}
+        </td>
+        <td>
+        
+        </td>
+        <td></td>
+        <td></td>
+        <td>
+          <a class="link-red hidden-control btn-delete-item">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+          </a>
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+  <button class="btn btn-xs btn-primary btn-link-item">
+    <span class="glyphicon glyphicon-link"></span>
+    Link Item
+  </button>
+  <button class="btn btn-xs btn-primary btn-add-item">
+    <span class="glyphicon glyphicon-plus"></span>
+    Add Item
+  </button>
+</template>

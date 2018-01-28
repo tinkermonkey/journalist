@@ -8,8 +8,12 @@ import './status_menu_item'
  * Template Helpers
  */
 Template.TopNav.helpers({
-  statusMetrics (type) {
-    return SystemHealthMetrics.find({ type: type }, { sort: { isHealthy: 1, title: 1 } })
+  statusMetrics (type, unhealthyOnly) {
+    let filter = { type: type };
+    if(unhealthyOnly){
+      filter.isHealthy = false;
+    }
+    return SystemHealthMetrics.find(filter, { sort: { isHealthy: 1, title: 1 } })
   },
   statusSummary () {
     let status = SystemHealthMetrics.find({}).map((metric) => {

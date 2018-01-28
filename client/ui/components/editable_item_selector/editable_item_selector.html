@@ -1,0 +1,7 @@
+<template name="EditableItemSelector">
+  {{#if Template.subscriptionsReady}}
+    {{> EditablePopover popoverContext }}
+  {{else}}
+    {{> RobaSpinner scale=0.5 rainbow=true }}
+  {{/if}}
+</template>

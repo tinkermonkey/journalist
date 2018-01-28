@@ -1,6 +1,6 @@
 import './capacity_plans.html';
 import { Template } from 'meteor/templating';
-import { CapacityPlans } from '../../../../../imports/api/capacity_plan/capacity_plans';
+import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
 
 /**
  * Template Helpers

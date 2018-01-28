@@ -1,4 +1,5 @@
-import { Meteor } from "meteor/meteor";
+import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { AutoForm } from 'meteor/aldeed:autoform';
@@ -345,7 +346,7 @@ Template.registerHelper('displayTemplateSelectorContext', function (params) {
   
   if (params && params.hash) {
     _.extend(context, params.hash);
-  
+    
     if (params.hash.templateType && !params.hash.query) {
       context.query = { templateType: params.hash.templateType }
     }
@@ -388,10 +389,10 @@ Template.registerHelper('pathFor', function (routeName, routeParams, queryParams
 /**
  * Return or generate a unique ID for an element tied to a Template Instance
  */
-Template.registerHelper("getElementId", function () {
+Template.registerHelper('getElementId', function () {
   let instance = Template.instance();
   if (!instance.elementId) {
-    instance.elementId = "Element_" + Meteor.uuid();
+    instance.elementId = 'Element_' + Random.id();
     if (instance.elementIdReactor) {
       instance.elementIdReactor.set(instance.elementId);
     }

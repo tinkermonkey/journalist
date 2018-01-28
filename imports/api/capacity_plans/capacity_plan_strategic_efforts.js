@@ -2,6 +2,8 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effort_items';
+import { ImportedItemCrumbs } from '../imported_items/imported_item_crumbs';
+import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
 
 /**
  * ============================================================================
@@ -9,29 +11,33 @@ import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effo
  * ============================================================================
  */
 export const CapacityPlanStrategicEffort = new SimpleSchema({
-  planId      : {
+  planId        : {
     type: String
   },
-  title       : {
+  itemIdentifier: {
+    type    : String,
+    optional: true
+  },
+  title         : {
     type: String
   },
-  color: {
+  color         : {
     type: String
   },
   // Standard tracking fields
-  dateCreated : {
+  dateCreated   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
+  createdBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
+  dateModified  : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
+  modifiedBy    : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -60,5 +66,34 @@ CapacityPlanStrategicEfforts.deny({
 CapacityPlanStrategicEfforts.helpers({
   items () {
     return CapacityPlanStrategicEffortItems.find({ effortId: this._id }, { sort: { title: 1 } })
+  },
+  totalEstimate () {
+    return this.items().fetch().reduce((total, item) => {
+      return parseFloat(item.estimate || 0) + total
+    }, 0)
+  },
+  itemsWithEstimates () {
+    return CapacityPlanStrategicEffortItems.find({ effortId: this._id, estimate: { $gt: 0 } }, { sort: { title: 1 } })
+  },
+  itemTitle () {
+    if (this.itemIdentifier) {
+      let item = ImportedItemCrumbs.findOne({ identifier: this.itemIdentifier });
+      return item && item.title || this.title
+    } else {
+      return this.title
+    }
+  },
+  linkedItemCrumb(){
+    if (this.itemIdentifier) {
+      return ImportedItemCrumbs.findOne({ identifier: this.itemIdentifier })
+    }
+  },
+  /**
+   * If this is linked to an item, service the linked items and make sure they're in sync
+   */
+  crossReferenceLinkedItems(){
+    if (this.itemIdentifier) {
+      this.linkedItemCrumb();
+    }
   }
 });

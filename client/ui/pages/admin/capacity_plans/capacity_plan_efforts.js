@@ -1,10 +1,14 @@
 import './capacity_plan_efforts.html';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plan/capacity_plan_options';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_blocks';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plan/capacity_plan_block_types';
-import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plan/capacity_plan_strategic_efforts';
+import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plans/capacity_plan_strategic_efforts';
+import './capacity_plan_effort_items';
+import '../../../components/editable_color_picker/editable_color_picker';
+import '../../../components/editable_item_selector/editable_item_selector';
+import '../../../components/editable_item_selector/editable_item_search';
 
 let d3 = require('d3');
 
@@ -31,6 +35,22 @@ Template.CapacityPlanEfforts.helpers({
  * Template Event Handlers
  */
 Template.CapacityPlanEfforts.events({
+  'edited .editable' (e, instance, newValue) {
+    e.stopImmediatePropagation();
+    
+    let effortId = $(e.target).closest('.data-table').attr('data-pk'),
+        dataKey  = $(e.target).attr('data-key');
+  
+    console.log('CapacityPlanEffortItems.edited:', effortId, dataKey, newValue);
+  
+    if (effortId && dataKey) {
+      Meteor.call('editCapacityPlanStrategicEffort', effortId, dataKey, newValue, (error, response) => {
+        if (error) {
+          RobaDialog.error('Update failed:' + error.toString());
+        }
+      });
+    }
+  },
   'click .btn-select-effort' (e, instance) {
     let effort = this;
     instance.selectedEffort.set(effort._id)
@@ -93,7 +113,7 @@ Template.CapacityPlanEfforts.events({
         }
       });
     });
-  }
+  },
 });
 
 /**
@@ -123,6 +143,7 @@ Template.CapacityPlanEfforts.onCreated(() => {
   instance.dragHandler = d3.drag()
       .on('start', (d) => {
         //console.log('Drag Start:', d, d3.event);
+        let event = d3.event.sourceEvent;
         
         Session.set('in-effort-drag', true);
         
@@ -139,21 +160,27 @@ Template.CapacityPlanEfforts.onCreated(() => {
             .text(d.title);
         
         instance.dragCursor = {
-          x: 25,
-          y: 20
+          x     : 25,
+          y     : 20,
+          startX: event.pageX,
+          startY: event.pageY
         };
         
         instance.dragClone.classed('hide', true);
         
       })
       .on('drag', (d) => {
-        let position = d3.event.sourceEvent;
+        let event = d3.event.sourceEvent,
+            dx    = Math.abs(event.pageX - instance.dragCursor.startX),
+            dy    = Math.abs(event.pageY - instance.dragCursor.startY);
         
-        instance.dragClone.classed('hide', false);
-
-        // Position the drag clone
-        instance.dragClone.style('top', (position.pageY - instance.dragCursor.y) + 'px')
-            .style('left', (position.pageX - instance.dragCursor.x) + 'px');
+        if (dx > 5 || dy > 5) {
+          instance.dragClone.classed('hide', false);
+          
+          // Position the drag clone
+          instance.dragClone.style('top', (event.pageY - instance.dragCursor.y) + 'px')
+              .style('left', (event.pageX - instance.dragCursor.x) + 'px');
+        }
       })
       .on('end', (d) => {
         //console.log('Drag End:', d, d3.event);

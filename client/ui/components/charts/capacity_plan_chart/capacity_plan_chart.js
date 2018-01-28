@@ -43,20 +43,13 @@ Template.CapacityPlanChart.onRendered(() => {
     let context = Template.currentData(),
         resize  = instance.resize.get();
     
-    //console.log('CapacityPlanChart.rendered autorun context:', context);
-    
     if (!instance.chart) {
       instance.chart = new D3CapacityPlanChart(instance.elementId, context.config);
       instance.chart.generate(context.data);
     }
     
-    // Clear any previous timeouts in flight
-    clearTimeout(instance.updateTimeout);
-    
-    // Throttle the update rate in case the data is changing quickly
-    instance.updateTimeout = setTimeout(() => {
-      instance.chart.update(context.data);
-    }, 125);
+    instance.chart.update(context.data);
+    return resize;
   });
   
 });

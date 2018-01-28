@@ -1,0 +1,25 @@
+<template name="EditableItemSearch">
+  <div class="editable-item-search-container">
+    
+    <div class="input-group">
+      <input type="text" class="form-control search-input" placeholder="Search...">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </span>
+    </div>
+    
+    <div class="search-results">
+      {{#each searchResults}}
+        <div class="search-result" data-pk="{{_id}}">
+          <h4><span class="item-identifier">{{identifier}}</span> {{title}}</h4>
+          <div class="search-result-info"></div>
+          <div class="search-result-body">
+            {{description}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</template>

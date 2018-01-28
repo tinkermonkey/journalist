@@ -130,16 +130,19 @@ export const Util = {
    * SVG Text wrapping
    * https://bl.ocks.org/mbostock/7555321
    * @param text
+   * @param d3
    * @param width
    */
   wrapSvgText (text, d3, width) {
+    // getComputedTextLength seems to fairly reliably under-estimate, can't find a better option that's not slow (getBoundingClientRect)
+    width = width * 0.9;
     text.each(function () {
       let text       = d3.select(this),
           words      = text.text().split(/\s+/).reverse(),
           word,
           line       = [],
           lineNumber = 0,
-          lineHeight = 1.1, // ems
+          lineHeight = 1.2, // ems
           y          = text.attr("y"),
           dy         = parseFloat(text.attr("dy") || 0),
           tspan      = text.text(null).append("tspan").attr("x", text.attr("x")).attr("y", y).attr("dy", dy + "em");

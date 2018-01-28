@@ -29,16 +29,12 @@
           </div>
         </div>
       </div>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-12">
-            {{#with currentOption}}
-              {{> CapacityPlanChart chartContext }}
-            {{else }}
-              {{> RobaSpinner scale=2.0 rainbow=true }}
-            {{/with}}
-          </div>
-        </div>
+      <div class="capacity-plan-chart-container">
+        {{#with currentOption}}
+          {{> CapacityPlanChart chartContext }}
+        {{else }}
+          {{> RobaSpinner scale=2.0 rainbow=true }}
+        {{/with}}
       </div>
       <div class="container">
         <div class="row">

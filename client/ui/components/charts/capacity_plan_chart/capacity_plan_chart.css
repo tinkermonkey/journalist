@@ -2,17 +2,36 @@
  * Chart
  */
 .capacity-plan-chart {
-  margin-top : 10px;
+  background-color : #298cff;
 }
 
 .capacity-plan-chart text,
 .capacity-plan-chart tspan {
   user-select    : none;
   pointer-events : none;
+  fill           : #fff;
 }
 
 .no-mouse {
   pointer-events : none;
+}
+
+/**
+ * Gradients
+ */
+.shadow-gradient-stop-1 {
+  stop-color: #333;
+  stop-opacity: 0.7;
+}
+
+.shadow-gradient-stop-2 {
+  stop-color: #333;
+  stop-opacity: 0.3;
+}
+
+.shadow-gradient-stop-3 {
+  stop-color: #333;
+  stop-opacity: 0;
 }
 
 /**
@@ -28,12 +47,7 @@
 }
 
 .contributor-background {
-  fill               : rgba(255, 255, 255, 0.50);
-  -webkit-transition : fill 0.5s;
-  -moz-transition    : fill 0.5s;
-  -ms-transition     : fill 0.5s;
-  -o-transition      : fill 0.5s;
-  transition         : fill 0.5s;
+  fill : #298cff;
 }
 
 .contributor-drag-handle {
@@ -45,12 +59,15 @@
   -ms-transition     : fill 0.5s, opacity 0.5s;
   -o-transition      : fill 0.5s, opacity 0.5s;
   transition         : fill 0.5s, opacity 0.5s;
-  filter: url(#controls-drop-shadow);
+  filter             : url(#controls-drop-shadow);
+  transition-delay   : 0.125s;
 }
 
 .contributor-group:hover .contributor-drag-handle,
 .contributor-block-group:hover .contributor-drag-handle,
-.contributor-drag-handle.in-drag {
+.contributor-block-group:hover .contributor-drag-handle-dot,
+.contributor-drag-handle-container.in-drag .contributor-drag-handle,
+.contributor-drag-handle-container.in-drag .contributor-drag-handle-dot {
   opacity : 1;
 }
 
@@ -60,11 +77,29 @@
   cursor       : pointer;
 }
 
-.contributor-drag-handle.in-drag {
+.contributor-drag-handle-container.in-drag .contributor-drag-handle {
   pointer-events : none;
-  stroke       : #ff009d;
-  stroke-width : 2px;
+  stroke         : #ff009d;
+  stroke-width   : 2px;
   cursor         : pointer;
+}
+
+.contributor-drag-handle-dot {
+  pointer-events     : none;
+  fill               : #fff;
+  opacity            : 0;
+  -webkit-transition : fill 0.5s, opacity 0.5s;
+  -moz-transition    : fill 0.5s, opacity 0.5s;
+  -ms-transition     : fill 0.5s, opacity 0.5s;
+  -o-transition      : fill 0.5s, opacity 0.5s;
+  transition         : fill 0.5s, opacity 0.5s;
+  transition-delay   : 0.125s;
+}
+
+.contributor-drag-handle-container:hover .contributor-drag-handle-dot,
+.contributor-drag-handle-container.in-drag .contributor-drag-handle-dot {
+  opacity : 1;
+  fill    : #ff009d;
 }
 
 .contributor-drag-link {
@@ -76,31 +111,72 @@
 
 .y-axis-separator {
   stroke-width    : 3px;
-  stroke          : #999;
+  stroke          : #fff;
   shape-rendering : crispEdges;
 }
 
 /**
  * Sprints
  */
+.sprint-header-title {
+  alignment-baseline : hanging;
+}
+
 .sprint-link-section {
   fill : none;
 }
 
 .sprint-body-section {
-  fill : rgba(225, 225, 225, 0.50);
+  fill : #298cff;
+  -webkit-transition : fill 0.25s;
+  -moz-transition    : fill 0.25s;
+  -ms-transition     : fill 0.25s;
+  -o-transition      : fill 0.25s;
+  transition         : fill 0.25s;
+  transition-delay   : 0.125s;
 }
 
-.sprint-body-section.hover {
-  stroke : #298cff;
+.sprint-background-border {
+  stroke-width : 2px;
+  stroke       : rgba(255, 255, 255, 0);
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s;
+  transition-delay   : 0.125s;
+}
+
+.sprint-background-group.hover .sprint-background-border {
+  stroke : #fff;
+}
+
+.sprint-background-group.hover .sprint-body-section {
+  fill : rgba(255, 255, 255, 0.5);
 }
 
 /**
  * Effort blocks
  */
-.effort-block.hover {
-  stroke       : #9b9b9b;
-  stroke-width : 3px;
+.effort-block {
+  stroke             : rgba(255, 255, 255, 1);
+  stroke-width       : 1px;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s;
+  transition-delay   : 0.125s;
+}
+
+.effort-block.hover,
+.effort-block:hover {
+  stroke       : #fff;
+  stroke-width : 2px;
+}
+
+.effort-block .contributor-background {
+  fill : rgba(255, 255, 255, 0.50);
 }
 
 .effort-title {
@@ -115,6 +191,7 @@
   -ms-transition     : opacity 0.5s;
   -o-transition      : opacity 0.5s;
   transition         : opacity 0.5s;
+  transition-delay   : 0.125s;
 }
 
 .effort-block-group:hover .effort-controls,
@@ -157,22 +234,13 @@
  * Contributor blocks and links
  */
 .contributor-block {
-  fill               : rgba(255, 255, 255, 0.3);
-  shape-rendering    : crispEdges;
-  -webkit-transition : fill 0.5s;
-  -moz-transition    : fill 0.5s;
-  -ms-transition     : fill 0.5s;
-  -o-transition      : fill 0.5s;
-  transition         : fill 0.5s;
+  fill             : rgba(255, 255, 255, 0.3);
+  shape-rendering  : crispEdges;
+  transition-delay : 0.125s;
 }
 
 .contributor-block-group .contributor-name {
   text-anchor : start;
-}
-
-rect.contributor-highlight.highlight {
-  fill            : #7eff00 !important;
-  shape-rendering : crispEdges;
 }
 
 path.contributor-highlight.highlight {
@@ -180,13 +248,87 @@ path.contributor-highlight.highlight {
   stroke-width : 25px;
 }
 
+.contributor-background-path {
+  stroke             : rgba(255, 255, 255, 0);
+  stroke-width       : 1px;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s;
+  transition-delay   : 0.125s;
+}
+
 .contributor-link {
   fill               : none;
-  stroke             : rgba(199, 199, 199, 0.5);
+  stroke             : #fff;
   stroke-width       : 1px;
-  -webkit-transition : stroke 0.25s, stroke-width 0.5s;
-  -moz-transition    : stroke 0.25s, stroke-width 0.5s;
-  -ms-transition     : stroke 0.25s, stroke-width 0.5s;
-  -o-transition      : stroke 0.25s, stroke-width 0.5s;
-  transition         : stroke 0.25s, stroke-width 0.5s;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s;
+  transition-delay   : 0.125s;
+}
+
+/**
+ * Separate styling for printable charts
+ */
+.printable svg.capacity-plan-chart {
+  background-color : #fff;
+}
+
+.printable .sprint-body-section {
+  fill : rgba(225, 225, 225, 0.50);
+}
+
+.printable .capacity-plan-chart text,
+.printable .capacity-plan-chart tspan {
+  fill : #333;
+}
+
+.printable .effort-title,
+.printable .effort-title tspan {
+  fill : #fff !important;
+}
+
+.printable .y-axis-separator {
+  stroke : #999;
+}
+
+.printable .effort-block.hover,
+.printable .effort-block:hover {
+  stroke       : #9b9b9b;
+  stroke-width : 3px;
+}
+
+.printable .contributo-link {
+  stroke : rgba(199, 199, 199, 0.5);
+}
+
+.printable .contributor-background-path {
+  stroke : rgba(199, 199, 199, 0);
+}
+
+.printable .sprint-background-group.hover .sprint-background-border {
+  stroke : #298cff;
+}
+
+.printable .sprint-background-group.hover .sprint-body-section {
+  fill : rgba(41, 140, 255, 0.50);
+}
+
+.printable .shadow-gradient-stop-1 {
+  stop-color: #fff;
+  stop-opacity: 0;
+}
+
+.printable .shadow-gradient-stop-2 {
+  stop-color: #fff;
+  stop-opacity: 0;
+}
+
+.printable .shadow-gradient-stop-3 {
+  stop-color: #fff;
+  stop-opacity: 0;
 }

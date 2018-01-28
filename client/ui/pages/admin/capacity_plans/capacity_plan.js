@@ -1,10 +1,11 @@
 import './capacity_plan.html';
+import './capacity_plan.css';
 import { Template } from 'meteor/templating';
 import { moment } from 'meteor/momentjs:moment';
-import { CapacityPlans } from '../../../../../imports/api/capacity_plan/capacity_plans';
-import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plan/capacity_plan_options';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_blocks';
-import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plan/capacity_plan_sprint_links';
+import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
+import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
 import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
 import '../../../components/editable_date_range/editable_date_range';
 
@@ -33,8 +34,6 @@ Template.CapacityPlan.helpers({
         plan   : option.plan(),
         sprints: option.sprints().fetch(),
         links  : CapacityPlanSprintLinks.find({ optionId: option._id }).fetch(),
-        
-        // This data is not directly used, but including this for reactivity is important
         blocks : CapacityPlanSprintBlocks.find({ optionId: option._id }).fetch()
       }
     }
@@ -129,6 +128,8 @@ Template.CapacityPlan.events({
  */
 Template.CapacityPlan.onCreated(() => {
   let instance = Template.instance();
+
+  instance.subscribe('imported_item_crumbs', {});
   
   instance.autorun(() => {
     let planId = FlowRouter.getParam('planId');
