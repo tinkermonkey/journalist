@@ -7,10 +7,10 @@
           <li class="list-group-item btn-select-effort show-controls-on-hover" data-effort-id="{{_id}}">
             <div class="effort-color-swatch" style="background-color: {{color}};"></div>
             {{#if isSelectedEffort}}
-              {{title}}
+              {{itemTitle}}
             {{else}}
               <a>
-                {{title}}
+                {{itemTitle}}
               </a>
             {{/if}}
             <a class="pull-right hidden-control link-red btn-delete-effort">
@@ -22,6 +22,12 @@
       
       <ul class="list-group">
         <li class="list-group-item">
+          <a class="btn-link-epic">
+            <span class="glyphicon glyphicon-link"></span>
+            Link Item
+          </a>
+        </li>
+        <li class="list-group-item">
           <a class="btn-add-effort">
             <span class="glyphicon glyphicon-plus"></span>
             Add Effort
@@ -31,7 +37,51 @@
     </div>
     <div class="effort-panel-container">
       {{#with selectedEffort}}
-        <h2>{{title}}</h2>
+        <h2>{{itemTitle}}</h2>
+        
+        <table class="table data-table table-striped integration-config-table" data-pk="{{_id}}">
+          <tbody>
+          {{#unless itemIdentifier}}
+            <tr class="show-controls-on-hover">
+              <td>Title</td>
+              <td></td>
+              <td>
+                {{> EditableTextField dataKey='title' value=title mode='popup' }}
+              </td>
+            </tr>
+          {{/unless}}
+          <tr class="show-controls-on-hover">
+            <td>Item Link</td>
+            <td class="open-link">
+              {{#if itemIdentifier}}
+                <a href="">
+                  <span class="glyphicon glyphicon-folder-open"></span>
+                </a>
+              {{/if}}
+            </td>
+            <td>{{> EditableItemSelector dataKey='itemIdentifier' value=itemIdentifier valueField='identifier' emptyText="Select an item to link"}}</td>
+          </tr>
+          <tr class="show-controls-on-hover">
+            <td>Color</td>
+            <td></td>
+            <td>{{> EditableColorPicker dataKey='color' value=color debug=true }}</td>
+          </tr>
+          <tr class="show-controls-on-hover">
+            <td>Estimate</td>
+            <td></td>
+            <td>
+              {{#if totalEstimate}}
+                <div>{{totalEstimate}} points</div>
+              {{/if}}
+              <div>
+                {{itemsWithEstimates.count}} of {{items.count}} items estimated
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        
+        {{> CapacityPlanEffortItems }}
       {{/with}}
     </div>
   </div>

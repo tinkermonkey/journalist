@@ -1,0 +1,14 @@
+
+.editable-popover-value > div {
+  cursor  : pointer;
+  display : inline-block;
+}
+
+.editable-popover-container .popover {
+  max-width: none !important;
+  margin-bottom: 20px;
+}
+
+.editable-popover-contents {
+  width: 400px;
+}

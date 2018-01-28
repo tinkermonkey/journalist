@@ -74,6 +74,7 @@ export class D3CapacityPlanBlockHandler {
     let effortBlockEnter = self.effortBlockSelection.enter()
         .append('g')
         .attr('class', 'effort-block-group')
+        .attr('transform', self.positionEffortBlock.bind(self))
         .attr('data-block-id', (d) => {
           return d._id
         })
@@ -90,9 +91,9 @@ export class D3CapacityPlanBlockHandler {
         .attr('width', chart.sprintBodyWidth)
         .on('mouseenter', (d) => {
           let element = d3.select(d3.event.target);
+          element.classed('hover', true);
           
           if (chart.inContributorDrag) {
-            element.classed('hover', true);
             chart.drag.hover = {
               type   : CapacityPlanBlockTypes.effort,
               record : d,
@@ -221,11 +222,18 @@ export class D3CapacityPlanBlockHandler {
           return d.dataRecord().color
         });
     
+    // Update the effort title
     self.effortBlockSelection.select('.effort-title')
         .text((d) => {
           return d.title
         })
         .call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
+    
+    // Move the body to fit the title
+    self.effortBlockSelection.select('.effort-block-body')
+        .attr('transform', (d) => {
+          return 'translate(0, ' + d.headerHeight + ')'
+        });
     
     // Animate the repositioning
     self.effortBlockSelection.transition()
@@ -233,14 +241,12 @@ export class D3CapacityPlanBlockHandler {
         .on('end', () => {
           chart.linkHandler.update();
         })
-        .attr('transform', (d) => {
-          return 'translate(0, ' + (chart.config.efforts.margin + d.y) + ')'
-        });
+        .attr('transform', self.positionEffortBlock.bind(self));
     
     // Update the links in sync with the transition
-    let startTime = Date.now();
+    let startTime          = Date.now();
     let linkUpdateInterval = setInterval(() => {
-      if(Date.now() - startTime < 500){
+      if (Date.now() - startTime < 500) {
         chart.linkHandler.update();
       } else {
         clearInterval(linkUpdateInterval);
@@ -392,9 +398,7 @@ export class D3CapacityPlanBlockHandler {
     
     self.updateContributorBlockSelection();
     
-    self.contributorBlockSelection.attr('transform', (d) => {
-          return 'translate(0, ' + (chart.config.efforts.padding + d.parentIndex * (chart.config.contributors.height + chart.config.efforts.padding)) + ')'
-        })
+    self.contributorBlockSelection.attr('transform', self.positionContributorBlock.bind(self))
         .select('.contributor-block')
         .attr('width', chart.sprintBodyWidth);
     
@@ -437,11 +441,11 @@ export class D3CapacityPlanBlockHandler {
         let originalBounds = titleTemp.node().getBoundingClientRect();
         titleTemp.call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
         
-        let wrappedBounds = chart.offscreenLayer.select('.effort-title[data-effort-id="' + effortBlock._id + '"]').node()
-            .getBoundingClientRect();
+        let lineCount = chart.offscreenLayer.select('.effort-title[data-effort-id="' + effortBlock._id + '"]').selectAll('tspan')
+            .nodes().length;
         
-        if (wrappedBounds.height > originalBounds.height) {
-          effortBlock.headerHeight = (chart.config.contributors.height - originalBounds.height) + wrappedBounds.height + chart.config.efforts.padding;
+        if (lineCount > 1) {
+          effortBlock.headerHeight = (chart.config.contributors.height * 0.8) * lineCount + chart.config.efforts.padding;
         } else {
           effortBlock.headerHeight = chart.config.efforts.padding * 2 + chart.config.contributors.height;
         }
@@ -465,6 +469,15 @@ export class D3CapacityPlanBlockHandler {
     
     // Cleanup the offscreen layer
     chart.offscreenLayer.selectAll('text').remove();
-    
+  }
+  
+  positionEffortBlock (block) {
+    let chart = this.chart;
+    return 'translate(0, ' + (chart.config.efforts.margin + block.y) + ')'
+  }
+  
+  positionContributorBlock (block) {
+    let chart = this.chart;
+    return 'translate(0, ' + (chart.config.efforts.padding + block.parentIndex * (chart.config.contributors.height + chart.config.efforts.padding)) + ')'
   }
 }

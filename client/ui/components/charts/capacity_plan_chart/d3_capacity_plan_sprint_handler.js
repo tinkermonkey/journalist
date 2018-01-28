@@ -69,12 +69,13 @@ export class D3CapacityPlanSprintHandler {
         .attr('transform', self.sprintBodyTransform.bind(self));
     
     sprintHeaderEnter.append('text')
-        .attr('class', 'sprint-header-date')
-        .attr('y', 25);
-    
-    sprintHeaderEnter.append('text')
         .attr('class', 'sprint-header-title')
-        .attr('y', 45);
+        .style('font-size', parseInt(chart.config.header.height * 0.75) + 'px')
+        .attr('y', 0);
+  
+    sprintHeaderEnter.append('text')
+        .attr('class', 'sprint-header-date')
+        .attr('y', chart.config.header.height - 5);
   }
   
   /**
@@ -151,24 +152,39 @@ export class D3CapacityPlanSprintHandler {
     
     sprintBackgroundEnter.append('rect')
         .attr('class', 'sprint-section sprint-body-section')
-        .attr('x', chart.linkSectionWidth)
+        .attr('x', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('y', 0)
         .on('mouseenter', (d) => {
           let element = d3.select(d3.event.target);
-          
+  
+          element.closest('.sprint-background-group').classed('hover', true);
           if (Session.get('in-effort-drag')) {
-            element.classed('hover', true);
             Session.set('hover-sprint-number', d.sprintNumber);
           }
         })
         .on('mouseleave', (d) => {
           let element = d3.select(d3.event.target);
-          element.classed('hover', false);
+          element.closest('.sprint-background-group').classed('hover', false);
           
           if (Session.get('in-effort-drag')) {
             Session.set('hover-sprint-number', null);
           }
         });
+    
+    sprintBackgroundEnter.append('line')
+        .attr('class', 'sprint-background-border sprint-background-border-left')
+        .attr('x1', chart.linkSectionWidth - chart.config.sprints.padding)
+        .attr('y1', 0)
+        .attr('x2', chart.linkSectionWidth - chart.config.sprints.padding)
+        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+    
+    sprintBackgroundEnter.append('line')
+        .attr('class', 'sprint-background-border sprint-background-border-right')
+        .attr('x1', chart.sprintWidth + chart.config.sprints.padding)
+        .attr('y1', 0)
+        .attr('x2', chart.sprintWidth + chart.config.sprints.padding)
+        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+  
   }
   
   /**
@@ -186,13 +202,25 @@ export class D3CapacityPlanSprintHandler {
     
     // Size the timelines
     self.sprintBackgroundSelection.selectAll('.sprint-link-section')
-        .attr('width', chart.linkSectionWidth)
+        .attr('width', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('height', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
     
     self.sprintBackgroundSelection.selectAll('.sprint-body-section')
-        .attr('width', chart.sprintBodyWidth)
-        .attr('height', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0))
-        .attr('x', chart.linkSectionWidth);
+        .attr('x', chart.linkSectionWidth - chart.config.sprints.padding)
+        .attr('width', chart.sprintBodyWidth + chart.config.sprints.padding * 2)
+        .attr('height', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+  
+  
+    self.sprintBackgroundSelection.selectAll('.sprint-background-border-left')
+        .attr('x1', chart.linkSectionWidth - chart.config.sprints.padding)
+        .attr('x2', chart.linkSectionWidth - chart.config.sprints.padding)
+        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+  
+    self.sprintBackgroundSelection.selectAll('.sprint-background-border-right')
+        .attr('x1', chart.sprintWidth + chart.config.sprints.padding)
+        .attr('x2', chart.sprintWidth + chart.config.sprints.padding)
+        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+  
   }
   
   /**
@@ -269,9 +297,9 @@ export class D3CapacityPlanSprintHandler {
         chart = this.chart;
     
     chart.bodyWidth        = chart.svg.node()
-        .getBoundingClientRect().width - chart.config.margin.left - chart.config.margin.right - chart.bodyLeft;
+        .getBoundingClientRect().width - chart.config.margin.left - chart.config.margin.right - chart.config.sprints.padding - chart.bodyLeft;
     chart.sprintWidth      = parseInt(Math.min(chart.bodyWidth / chart.data.sprints.length, chart.config.sprints.width));
-    chart.sprintBodyWidth  = chart.namesWidth;
+    chart.sprintBodyWidth  = parseInt(Math.max(chart.namesWidth, chart.sprintWidth * 0.66));
     chart.linkSectionWidth = chart.sprintWidth - chart.sprintBodyWidth;
   }
   

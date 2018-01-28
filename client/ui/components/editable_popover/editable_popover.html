@@ -1,0 +1,18 @@
+<template name="EditablePopover">
+  <div class="editable editable-popover-value {{editableClass}} {{cssClass}}" data-key="{{dataKey}}">
+    <div class="{{#unless value}}hide{{/unless}}">{{value}}</div>
+    <div class="{{#if value}}hide{{/if}}"><i>{{emptyText}}</i></div>
+    {{#unless preventClear}}
+      {{#if value}}
+        <div class="hidden-control">
+          <a class="btn-clear-value">
+            <span class="glyphicon glyphicon-remove-circle"></span>
+          </a>
+        </div>
+      {{/if}}
+    {{/unless}}
+  </div>
+  <div class="editable-popover-container">
+    <div class="editable-popover-placement"></div>
+  </div>
+</template>

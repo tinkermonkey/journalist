@@ -29,10 +29,11 @@ export class D3CapacityPlanChart {
         padding: 8
       },
       header      : {
-        height: 50
+        height: 75
       },
       sprints     : {
-        width: 400
+        width  : 400,
+        padding: 5
       },
       efforts     : {
         minHeight: 20,
@@ -40,10 +41,13 @@ export class D3CapacityPlanChart {
         margin   : 10
       },
       margin      : {
-        top   : 5,
+        top   : 15,
         right : 5,
-        bottom: 5,
+        bottom: 25,
         left  : 5
+      },
+      shadow      : {
+        height: 20
       }
     }, config);
     
@@ -53,7 +57,7 @@ export class D3CapacityPlanChart {
     this.linkDragHandler = new D3CapacityPlanLinkDragHandler(this);
     this.sprintHandler   = new D3CapacityPlanSprintHandler(this);
     this.teamHandler     = new D3CapacityPlanTeamHandler(this);
-  
+    
     // Throttle the updates
     this.lastUpdateTime = 0;
   }
@@ -78,6 +82,27 @@ export class D3CapacityPlanChart {
     // Create a section for defining clip paths
     self.svgDefs = self.svg.append('defs');
     
+    // Draw an inner shadow along the top and bottom in absolute coordinates
+    self.innerShadowTop = self.svg.append('rect')
+        .attr('class', 'drop-shadow-top')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 10000)
+        .attr('height', self.config.shadow.height);
+    
+    self.innerShadowBottom = self.svg.append('rect')
+        .attr('class', 'drop-shadow-bottom')
+        .attr('x', 0)
+        .attr('y', parseInt(containerWidth * 0.3333) - self.config.shadow.height)
+        .attr('width', 10000)
+        .attr('height', self.config.shadow.height);
+    
+    // Create an offscreen layer for measuring text width
+    self.offscreenLayer = self.svg.append('g')
+        .attr('class', 'offscreen-layer')
+        .attr('transform', 'translate(-10000, -10000)');
+    
+    // Create a base layer on which to build the chart
     self.baseLayer = self.svg.append('g')
         .attr('class', 'base-layer')
         .attr('transform', 'translate(' + self.config.margin.left + ',' + self.config.margin.top + ')');
@@ -148,15 +173,47 @@ export class D3CapacityPlanChart {
         .attr('in2', 'outerGlowOut1')
         .attr('operator', 'over');
     
-    // Create an offscreen layer for measuring text width
-    self.offscreenLayer = self.svg.append('g')
-        .attr('class', 'offscreen-layer')
-        .attr('transform', 'translate(-10000, -10000)');
+    self.topGradientId = 'hover-top-gradient-' + self.containerId;
+    self.topGradient   = self.svgDefs.append('linearGradient')
+        .attr('id', self.topGradientId)
+        .attr('x1', 0)
+        .attr('y1', 0)
+        .attr('x2', 0)
+        .attr('y2', 1);
+    self.topGradient.append('stop')
+        .attr('class', 'shadow-gradient-stop-1')
+        .attr('offset', '0%');
+    self.topGradient.append('stop')
+        .attr('class', 'shadow-gradient-stop-2')
+        .attr('offset', '40%');
+    self.topGradient.append('stop')
+        .attr('class', 'shadow-gradient-stop-3')
+        .attr('offset', '100%');
     
+    self.bottomGradientId = 'hover-bottom-gradient-' + self.containerId;
+    self.bottomGradientId = 'hover-bottom-gradient-' + self.containerId;
+    self.bottomGradient   = self.svgDefs.append('linearGradient')
+        .attr('id', self.bottomGradientId)
+        .attr('x1', 0)
+        .attr('y1', 0)
+        .attr('x2', 0)
+        .attr('y2', 1);
+    self.bottomGradient.append('stop')
+        .attr('class', 'shadow-gradient-stop-3')
+        .attr('offset', '0%');
+    self.bottomGradient.append('stop')
+        .attr('class', 'shadow-gradient-stop-2')
+        .attr('offset', '60%');
+    self.bottomGradient.append('stop')
+        .attr('class', 'shadow-gradient-stop-1')
+        .attr('offset', '100%');
+    
+    // Attach the gradients
+    self.innerShadowTop.style('fill', 'url(#' + self.topGradientId + ')');
+    self.innerShadowBottom.style('fill', 'url(#' + self.bottomGradientId + ')');
+    
+    // Create a link generator function
     self.linker = d3.linkHorizontal();
-    
-    // Draw the data
-    //self.update(data);
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.generate completed:', Date.now() - startTime);
   }
@@ -169,14 +226,16 @@ export class D3CapacityPlanChart {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.update:', this.containerId);
     let self      = this,
         startTime = Date.now();
-  
-    if(Date.now() - self.lastUpdateTime < 500){
+    
+    // Throttle the updates
+    if (Date.now() - self.lastUpdateTime < 500) {
       clearTimeout(self.updateTimeout);
       self.updateTimeout = setTimeout(() => {
         self.update();
       }, 500);
       return;
     }
+    self.lastUpdateTime = Date.now();
     
     self.parseData(data);
     
@@ -188,6 +247,8 @@ export class D3CapacityPlanChart {
     self.sprintHandler.update();
     
     self.blockHandler.update();
+    
+    self.sprintHandler.updateSprintBackgrounds();
     
     // Center the contributors vertically
     if (self.contributorsHeight < self.maxSprintHeight) {
@@ -212,7 +273,11 @@ export class D3CapacityPlanChart {
     }
     
     // Resize to fit the content
-    self.svg.style('height', (Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height) + 'px');
+    self.height = Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height;
+    self.svg.style('height', self.height + 'px');
+    
+    // Update the background drop shadows
+    self.innerShadowBottom.attr('y', self.height - self.config.shadow.height);
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.update completed:', Date.now() - startTime);
   }
@@ -278,7 +343,7 @@ export class D3CapacityPlanChart {
             
             // Grab the title
             try {
-              effortBlock.title = effortBlock.dataRecord().title;
+              effortBlock.title = effortBlock.dataRecord().itemTitle();
             } catch (e) {
               console.error('Block effort data not found:', effortBlock);
             }
