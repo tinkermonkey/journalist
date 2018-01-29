@@ -42,7 +42,7 @@ export class D3CapacityPlanChart {
       },
       margin      : {
         top   : 15,
-        right : 5,
+        right : 45,
         bottom: 25,
         left  : 5
       },
@@ -237,47 +237,48 @@ export class D3CapacityPlanChart {
     }
     self.lastUpdateTime = Date.now();
     
-    self.parseData(data);
-    
-    self.teamHandler.update();
-    
-    self.bodyLeft = self.namesWidth + self.config.teams.padding;
-    self.chartBody.attr('transform', 'translate(' + self.bodyLeft + ',' + self.config.header.height + ')');
-    
-    self.sprintHandler.update();
-    
-    self.blockHandler.update();
-    
-    self.sprintHandler.updateSprintBackgrounds();
-    
-    // Center the contributors vertically
-    if (self.contributorsHeight < self.maxSprintHeight) {
-      self.contributorLayer.attr('transform', 'translate(0, ' + (self.config.header.height + (self.maxSprintHeight - self.contributorsHeight) / 2) + ')')
-    } else {
-      self.contributorLayer.attr('transform', 'translate(0, ' + self.config.header.height + ')')
+    if (self.parseData(data)) {
+      
+      self.teamHandler.update();
+      
+      self.bodyLeft = self.namesWidth + self.config.teams.padding;
+      self.chartBody.attr('transform', 'translate(' + self.bodyLeft + ',' + self.config.header.height + ')');
+      
+      self.sprintHandler.update();
+      
+      self.blockHandler.update();
+      
+      self.sprintHandler.updateSprintBackgrounds();
+      
+      // Center the contributors vertically
+      if (self.contributorsHeight < self.maxSprintHeight) {
+        self.contributorLayer.attr('transform', 'translate(0, ' + (self.config.header.height + (self.maxSprintHeight - self.contributorsHeight) / 2) + ')')
+      } else {
+        self.contributorLayer.attr('transform', 'translate(0, ' + self.config.header.height + ')')
+      }
+      
+      // Update the yAxis separator
+      self.yAxisSeparator
+          .attr('x1', 0)
+          .attr('y1', 0)
+          .attr('x2', 0)
+          .attr('y2', Math.max(self.contributorsHeight, self.maxSprintHeight));
+      
+      // Update the links
+      self.linkHandler.update();
+      for (let i = 1; i < 3; i++) {
+        setTimeout(() => {
+          //self.linkHandler.update();
+        }, i * 60)
+      }
+      
+      // Resize to fit the content
+      self.height = Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height;
+      self.svg.style('height', self.height + 'px');
+      
+      // Update the background drop shadows
+      self.innerShadowBottom.attr('y', self.height - self.config.shadow.height);
     }
-    
-    // Update the yAxis separator
-    self.yAxisSeparator
-        .attr('x1', 0)
-        .attr('y1', 0)
-        .attr('x2', 0)
-        .attr('y2', Math.max(self.contributorsHeight, self.maxSprintHeight));
-    
-    // Update the links
-    self.linkHandler.update();
-    for (let i = 1; i < 3; i++) {
-      setTimeout(() => {
-        //self.linkHandler.update();
-      }, i * 60)
-    }
-    
-    // Resize to fit the content
-    self.height = Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height;
-    self.svg.style('height', self.height + 'px');
-    
-    // Update the background drop shadows
-    self.innerShadowBottom.attr('y', self.height - self.config.shadow.height);
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.update completed:', Date.now() - startTime);
   }
@@ -291,6 +292,11 @@ export class D3CapacityPlanChart {
     let self      = this,
         startTime = Date.now();
     
+    if (!_.isObject(data)) {
+      console.error(Util.timestamp(), 'D3CapacityPlanChart.parseData passed empty data object:', this.containerId);
+      return false
+    }
+    
     // Store the option and plan records
     self.data = data;
     
@@ -301,14 +307,12 @@ export class D3CapacityPlanChart {
       return {
         _id         : team._id,
         title       : team.title,
-        contributors: team.contributors().fetch().filter((contributor) => {
+        contributors: team.contributorsInCapacityRole(self.data.roleId).fetch().map((contributor) => {
           contributorIndex += 1;
           if (self.data.contributorOrder[ contributor._id ] === undefined) {
             self.data.contributorOrder[ contributor._id ] = contributorIndex;
           }
-          return contributor.teamRoles({ teamId: team._id }).fetch().reduce((acc, role) => {
-            return acc && role.roleDefinition().countForCapacity()
-          }, true)
+          return contributor
         })
       }
     }).filter((team) => {
@@ -324,6 +328,9 @@ export class D3CapacityPlanChart {
             // Get all of the contributors for this effort
             effortBlock.contributorBlocks = self.data.option.sprintBlocks(sprint.sprintNumber, CapacityPlanBlockTypes.contributor, effortBlock._id)
                 .fetch()
+                .filter((contributorBlock) => {
+                  return self.data.contributorOrder[ contributorBlock.dataId ] !== undefined
+                })
                 .sort((a, b) => {
                   return self.data.contributorOrder[ a.dataId ] > self.data.contributorOrder[ b.dataId ] ? 1 : -1
                 })
@@ -355,6 +362,29 @@ export class D3CapacityPlanChart {
       sprint.title = _.isString(sprint.title) && sprint.title.length ? sprint.title : 'Sprint ' + (sprint.sprintNumber + 1);
     });
     
+    // Groom the releases
+    self.data.releases.forEach((releaseBlock) => {
+      try {
+        let release = releaseBlock.dataRecord();
+        releaseBlock.title = release.title;
+        
+        // Determine the correct sprint number
+        let sprintNumber = self.data.sprints.length - 1;
+        if(releaseBlock.targetLinks().count()){
+          releaseBlock.targetLinks().forEach(() => {})
+        }
+        
+        // Update the sprint number if it's not accurate
+        if(sprintNumber !== releaseBlock.sprintNumber){
+          releaseBlock.updateSprintNumber(sprintNumber);
+        }
+        
+        // Check
+      } catch (e) {
+        console.error('Block release data not found:', releaseBlock);
+      }
+    });
+    
     // Groom the links
     self.data.links.forEach((link) => {
       let sourceBlock = link.source();
@@ -366,5 +396,6 @@ export class D3CapacityPlanChart {
     });
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);
+    return true
   }
 }

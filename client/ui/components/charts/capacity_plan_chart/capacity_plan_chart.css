@@ -20,18 +20,18 @@
  * Gradients
  */
 .shadow-gradient-stop-1 {
-  stop-color: #333;
-  stop-opacity: 0.7;
+  stop-color   : #333;
+  stop-opacity : 0.7;
 }
 
 .shadow-gradient-stop-2 {
-  stop-color: #333;
-  stop-opacity: 0.3;
+  stop-color   : #333;
+  stop-opacity : 0.3;
 }
 
 .shadow-gradient-stop-3 {
-  stop-color: #333;
-  stop-opacity: 0;
+  stop-color   : #333;
+  stop-opacity : 0;
 }
 
 /**
@@ -50,7 +50,7 @@
   fill : #298cff;
 }
 
-.contributor-drag-handle {
+.link-drag-handle {
   opacity            : 0;
   fill               : #298cff;
   stroke             : #fff;
@@ -63,28 +63,30 @@
   transition-delay   : 0.125s;
 }
 
-.contributor-group:hover .contributor-drag-handle,
-.contributor-block-group:hover .contributor-drag-handle,
-.contributor-block-group:hover .contributor-drag-handle-dot,
-.contributor-drag-handle-container.in-drag .contributor-drag-handle,
-.contributor-drag-handle-container.in-drag .contributor-drag-handle-dot {
+.contributor-group:hover .link-drag-handle,
+.contributor-block-group:hover .link-drag-handle,
+.contributor-block-group:hover .link-drag-handle-dot,
+.effort-block-group:hover .link-drag-handle,
+.effort-block-group:hover .link-drag-handle-dot,
+.link-drag-handle-container.in-drag .link-drag-handle,
+.link-drag-handle-container.in-drag .link-drag-handle-dot {
   opacity : 1;
 }
 
-.contributor-drag-handle:hover {
+.link-drag-handle:hover {
   stroke       : #ff009d;
   stroke-width : 2px;
   cursor       : pointer;
 }
 
-.contributor-drag-handle-container.in-drag .contributor-drag-handle {
+.link-drag-handle-container.in-drag .link-drag-handle {
   pointer-events : none;
   stroke         : #ff009d;
   stroke-width   : 2px;
   cursor         : pointer;
 }
 
-.contributor-drag-handle-dot {
+.link-drag-handle-dot {
   pointer-events     : none;
   fill               : #fff;
   opacity            : 0;
@@ -96,13 +98,13 @@
   transition-delay   : 0.125s;
 }
 
-.contributor-drag-handle-container:hover .contributor-drag-handle-dot,
-.contributor-drag-handle-container.in-drag .contributor-drag-handle-dot {
+.link-drag-handle-container:hover .link-drag-handle-dot,
+.link-drag-handle-container.in-drag .link-drag-handle-dot {
   opacity : 1;
   fill    : #ff009d;
 }
 
-.contributor-drag-link {
+.link-drag-link {
   fill           : none;
   stroke         : rgba(126, 255, 0, 1.0);
   stroke-width   : 10;
@@ -127,7 +129,7 @@
 }
 
 .sprint-body-section {
-  fill : #298cff;
+  fill               : #298cff;
   -webkit-transition : fill 0.25s;
   -moz-transition    : fill 0.25s;
   -ms-transition     : fill 0.25s;
@@ -137,8 +139,8 @@
 }
 
 .sprint-background-border {
-  stroke-width : 2px;
-  stroke       : rgba(255, 255, 255, 0);
+  stroke-width       : 2px;
+  stroke             : rgba(255, 255, 255, 0);
   -webkit-transition : stroke 0.25s, stroke-width 0.25s;
   -moz-transition    : stroke 0.25s, stroke-width 0.25s;
   -ms-transition     : stroke 0.25s, stroke-width 0.25s;
@@ -272,6 +274,25 @@ path.contributor-highlight.highlight {
 }
 
 /**
+ * Release Blocks
+ */
+.release-block {
+  fill             : rgb(22, 231, 58);
+  shape-rendering  : crispEdges;
+  transition-delay : 0.125s;
+}
+
+.release-block.hover,
+.release-block:hover {
+  stroke       : #fff;
+  stroke-width : 2px;
+}
+
+.release-title {
+  alignment-baseline : baseline;
+}
+
+/**
  * Separate styling for printable charts
  */
 .printable svg.capacity-plan-chart {
@@ -319,16 +340,16 @@ path.contributor-highlight.highlight {
 }
 
 .printable .shadow-gradient-stop-1 {
-  stop-color: #fff;
-  stop-opacity: 0;
+  stop-color   : #fff;
+  stop-opacity : 0;
 }
 
 .printable .shadow-gradient-stop-2 {
-  stop-color: #fff;
-  stop-opacity: 0;
+  stop-color   : #fff;
+  stop-opacity : 0;
 }
 
 .printable .shadow-gradient-stop-3 {
-  stop-color: #fff;
-  stop-opacity: 0;
+  stop-color   : #fff;
+  stop-opacity : 0;
 }

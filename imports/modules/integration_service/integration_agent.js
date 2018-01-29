@@ -64,7 +64,7 @@ export class IntegrationAgent {
         SyncedCron.add({
           name: queryJobKey,
           schedule (parser) {
-            let parserText = 'every 10 minutes';
+            let parserText = self.integration.updateFrequency || 'every 10 minutes';
             debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', queryJobKey, "'", parserText, "'");
             return parser.text(parserText);
           },
@@ -170,7 +170,7 @@ export class IntegrationAgent {
       let reprocessedItem = self.serviceProvider.postProcessItem(item.document),
           reimportResult  = self.serviceProvider.importItem(importFunction, reprocessedItem, self.integration.projectId);
       
-      if(reimportResult.success){
+      if (reimportResult.success) {
         try {
           self.serviceProvider.storeImportedItem(self.integration._id, self.integration.projectId, self.integration.itemType, reimportResult.item);
         } catch (e) {

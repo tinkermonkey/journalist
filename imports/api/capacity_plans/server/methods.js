@@ -2,11 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { CapacityPlans } from '../capacity_plans';
 import { CapacityPlanOptions } from '../capacity_plan_options';
+import { CapacityPlanReleases } from '../capacity_plan_releases';
 import { CapacityPlanSprintBlocks } from '../capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes } from '../capacity_plan_block_types';
 import { CapacityPlanStrategicEfforts } from '../capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from '../capacity_plan_strategic_effort_items';
 import { Auth } from '../../auth';
-import { CapacityPlanSprintLinks } from '../capacity_plan_sprint_links';
 
 Meteor.methods({
   /**
@@ -22,7 +23,6 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Insert the project percent
       let planId = CapacityPlans.insert({
         title: title
       });
@@ -112,10 +112,23 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Insert the project percent
-      CapacityPlanOptions.insert({
+      let optionId = CapacityPlanOptions.insert({
         planId: planId,
         title : title
+      });
+      
+      // Add blocks for all of the releases
+      let plan = CapacityPlans.findOne(planId);
+      plan.releases().forEach((release, i) => {
+        CapacityPlanSprintBlocks.insert({
+          planId      : release.planId,
+          optionId    : optionId,
+          sprintNumber: plan.sprintCount,
+          order       : i,
+          dataId      : release._id,
+          blockType   : CapacityPlanBlockTypes.release,
+          chartData   : {}
+        });
       });
     } else {
       console.error('Non-admin user tried to add a capacity plan option:', user.username, title);
@@ -137,6 +150,9 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       CapacityPlanOptions.remove(optionId);
+      
+      // Remove all blocks for this plan
+      CapacityPlanSprintBlocks.remove({ optionId: optionId });
     } else {
       console.error('Non-admin user tried to delete a capacity plan option:', user.username, optionId);
       throw new Meteor.Error(403);
@@ -195,7 +211,6 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Insert the project percent
       CapacityPlanStrategicEfforts.insert({
         planId: planId,
         title : title,
@@ -224,8 +239,8 @@ Meteor.methods({
       CapacityPlanStrategicEffortItems.remove({ effortId: effortId });
       
       // Remove all of the blocks and links associated with this
-      CapacityPlanSprintBlocks.remove({dataId: effortId});
-
+      CapacityPlanSprintBlocks.remove({ dataId: effortId });
+      
       // Remove the effort itself
       CapacityPlanStrategicEfforts.remove(effortId);
     } else {
@@ -286,7 +301,6 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      // Insert the project percent
       CapacityPlanStrategicEffortItems.insert({
         planId  : planId,
         effortId: effortId,
@@ -349,6 +363,104 @@ Meteor.methods({
       }
     } else {
       console.error('Non-admin user tried to edit a capacity plan strategic effort item:', user.username, key, itemId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Add a capacity plan release
+   * @param planId
+   * @param title
+   */
+  addCapacityPlanRelease (planId, title) {
+    console.log('addCapacityPlanRelease:', planId, title);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(planId, String);
+    check(title, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      let releaseId = CapacityPlanReleases.insert({
+        planId: planId,
+        title : title
+      });
+      
+      // Create a block for each option for the chart
+      let plan         = CapacityPlans.findOne(planId),
+          releaseCount = CapacityPlanReleases.find({ planId: planId }).count();
+      plan.options().forEach((option) => {
+        CapacityPlanSprintBlocks.insert({
+          planId      : option.planId,
+          optionId    : option._id,
+          sprintNumber: plan.sprintCount,
+          order       : releaseCount,
+          dataId      : releaseId,
+          blockType   : CapacityPlanBlockTypes.release,
+          chartData   : {}
+        });
+      });
+    } else {
+      console.error('Non-admin user tried to add a capacity plan release:', user.username, title);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Remove a capacity plan release
+   * @param releaseId
+   */
+  deleteCapacityPlanRelease (releaseId) {
+    console.log('deleteCapacityPlanRelease:', releaseId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(releaseId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // Remove all of the blocks for this release
+      CapacityPlanSprintBlocks.remove({ dataId: releaseId });
+      
+      CapacityPlanReleases.remove(releaseId);
+    } else {
+      console.error('Non-admin user tried to delete a capacity plan release:', user.username, releaseId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Edit a capacity plan release record
+   * @param releaseId
+   * @param key
+   * @param value
+   */
+  editCapacityPlanRelease (releaseId, key, value) {
+    console.log('editCapacityPlanRelease:', releaseId, key);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(releaseId, String);
+    check(key, String);
+    check(value, Match.Any);
+    
+    // Get the capacity plan release record to make sure this is authorized
+    let capacityPlanRelease = CapacityPlanReleases.findOne(releaseId);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (capacityPlanRelease) {
+        let update    = {};
+        update[ key ] = value;
+        
+        // Update the contributor
+        CapacityPlanReleases.update(releaseId, { $set: update });
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to edit a capacity plan release:', user.username, key, releaseId);
       throw new Meteor.Error(403);
     }
   },

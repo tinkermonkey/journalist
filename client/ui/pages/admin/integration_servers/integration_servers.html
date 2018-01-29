@@ -23,6 +23,7 @@
               <th>Type</th>
               <th>Base URL</th>
               <th>Health Check</th>
+              <th>Cache Update</th>
               <th>Active</th>
               <th>Modified By</th>
               <th>Modified</th>
@@ -44,6 +45,7 @@
                 <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Type" }}</td>
                 <td>{{> EditableTextField dataKey="baseUrl" value=baseUrl emptyText="Server base URL" }}</td>
                 <td>{{> EditableTextField dataKey="healthCheckFrequency" value=healthCheckFrequency emptyText="Enter later directive" }}</td>
+                <td>{{> EditableTextField dataKey="cacheUpdateFrequency" value=cacheUpdateFrequency emptyText="Enter later directive" }}</td>
                 <td>{{> EditableCheckbox dataKey="isActive" value=isActive }}</td>
                 <td>{{userName modifiedBy}}</td>
                 <td>{{dateFormat dateModified}}</td>

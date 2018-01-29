@@ -19,26 +19,26 @@ export class D3ContributorDragControlHandler {
     
     // Create the drag handle
     let dragGroupEnter = selection.append('g')
-        .attr('class', 'contributor-drag-group')
+        .attr('class', 'link-drag-group')
         .attr('data-source-id', (d) => {
           return d._id
         });
     
     dragGroupEnter.append('g')
-        .attr('class', 'contributor-drag-link-container');
+        .attr('class', 'link-drag-link-container');
     
     let dragContainerEnter = dragGroupEnter.append('g')
-        .attr('class', 'contributor-drag-handle-container')
+        .attr('class', 'link-drag-handle-container')
         .call(chart.linkDragHandler.drag);
     
     dragContainerEnter.append('circle')
-        .attr('class', 'contributor-drag-handle')
+        .attr('class', 'link-drag-handle')
         .attr('cx', 0)
         .attr('cy', 0)
         .attr('r', 7);
     
     dragContainerEnter.append('circle')
-        .attr('class', 'contributor-drag-handle-dot')
+        .attr('class', 'link-drag-handle-dot')
         .attr('cx', 0)
         .attr('cy', 0)
         .attr('r', 2);

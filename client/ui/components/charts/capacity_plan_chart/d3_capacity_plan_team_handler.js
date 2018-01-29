@@ -180,7 +180,7 @@ export class D3CapacityPlanTeamHandler {
     self.contributorSelection.select('.contributor-background-path')
         .attr('d', 'm' + (-chart.namesWidth + chart.config.teams.padding) + ' ' + (chart.config.contributors.height / 2) + ' l' + (chart.namesWidth + chart.config.teams.padding - 2) + ' 0');
     
-    self.contributorSelection.select('.contributor-drag-group')
+    self.contributorSelection.select('.link-drag-group')
         .attr('transform', 'translate(' + (chart.config.teams.padding * 2) + ',' + (chart.config.contributors.height / 2) + ')');
   }
   

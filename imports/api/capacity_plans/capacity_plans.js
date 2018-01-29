@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { CapacityPlanOptions } from './capacity_plan_options';
+import { CapacityPlanReleases } from './capacity_plan_releases';
 import { CapacityPlanSprints } from './capacity_plan_sprints';
 import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
 import { Teams } from '../teams/teams';
@@ -113,6 +114,9 @@ CapacityPlans.helpers({
   options () {
     return CapacityPlanOptions.find({ planId: this._id }, { sort: { title: 1 } })
   },
+  releases () {
+    return CapacityPlanReleases.find({ planId: this._id }, { sort: { title: 1 } })
+  },
   efforts () {
     return CapacityPlanStrategicEfforts.find({ planId: this._id }, { sort: { title: 1 } })
   },
@@ -130,7 +134,7 @@ CapacityPlans.helpers({
   },
   groomSprints () {
     let plan = this;
-
+    
     CapacityPlanSprints.remove({
       planId      : plan._id,
       sprintNumber: { $gte: plan.sprintCount }

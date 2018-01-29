@@ -7,8 +7,8 @@
         <th>Server</th>
         <th>Item Type</th>
         <th>Import Function</th>
-        <th>Preview Template</th>
-        <th>Detail Template</th>
+        <th>Update Frequency</th>
+        <th>Deep Sync Job</th>
         <th>Calculated Fields</th>
         <th>Items</th>
         <th></th>
@@ -26,8 +26,8 @@
           <td>{{> EditableRecordSelector serverSelectorContext }}</td>
           <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes emptyText="Item Type" }}</td>
           <td>{{> EditableRecordSelector importFunctionSelectorContext }}</td>
-          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplateId' }}</td>
-          <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplateId' }}</td>
+          <td>{{> EditableTextField dataKey="updateFrequency" value=updateFrequency emptyText="Enter later directive" }}</td>
+          <td>{{> EditableTextField dataKey="deepSyncFrequency" value=deepSyncFrequency emptyText="Enter later directive" }}</td>
           <td>{{> EditableRecordChecklist calculatedFieldsChecklistContext }}</td>
           <td>{{importedItemCount.count}}</td>
           <td class="open-link">

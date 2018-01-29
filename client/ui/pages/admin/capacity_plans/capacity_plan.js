@@ -4,8 +4,12 @@ import { Template } from 'meteor/templating';
 import { moment } from 'meteor/momentjs:moment';
 import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
 import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
 import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
+import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
+import './capacity_plan_releases';
+import './capacity_plan_efforts';
 import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
 import '../../../components/editable_date_range/editable_date_range';
 
@@ -30,11 +34,13 @@ Template.CapacityPlan.helpers({
     return {
       config: {},
       data  : {
-        option : option,
-        plan   : option.plan(),
-        sprints: option.sprints().fetch(),
-        links  : CapacityPlanSprintLinks.find({ optionId: option._id }).fetch(),
-        blocks : CapacityPlanSprintBlocks.find({ optionId: option._id }).fetch()
+        option  : option,
+        plan    : option.plan(),
+        sprints : option.sprints().fetch(),
+        links   : CapacityPlanSprintLinks.find({ optionId: option._id }).fetch(),
+        blocks  : CapacityPlanSprintBlocks.find({ optionId: option._id }).fetch(),
+        roleId  : Template.instance().currentPlanningRole.get(),
+        releases: CapacityPlanSprintBlocks.find({ optionId: option._id, blockType: CapacityPlanBlockTypes.release }).fetch()
       }
     }
   },
@@ -51,6 +57,26 @@ Template.CapacityPlan.helpers({
       twoWeeks  : 2 * 7 * 24 * 60 * 60 * 1000,
       threeWeeks: 3 * 7 * 24 * 60 * 60 * 1000
     }
+  },
+  isCurrentPlanningRole (roleId) {
+    let currentRoleId = Template.instance().currentPlanningRole.get();
+    return currentRoleId === roleId;
+  },
+  capacityPlanRoles () {
+    let plan          = CapacityPlans.findOne(FlowRouter.getParam('planId')),
+        currentRoleId = Template.instance().currentPlanningRole.get();
+    
+    let roleIds = _.uniq(_.flatten(plan.teams().map((team) => {
+          return team.capacityPlanRoles()
+        }))),
+        roles   = ContributorRoleDefinitions.find({ _id: { $in: roleIds } }, { sort: { title: 1 } }).fetch();
+    
+    // If there's no current role set, set one
+    if (!currentRoleId && roles.length) {
+      Template.instance().currentPlanningRole.set(roles[ 0 ]._id)
+    }
+    
+    return roles
   }
 });
 
@@ -120,7 +146,14 @@ Template.CapacityPlan.events({
         RobaDialog.hide();
       }.bind(this)
     });
-  }
+  },
+  'click .capacity-plan-role-nav' (e, instance) {
+    let role = this;
+    
+    console.log('Activate reporting role:', role);
+    
+    Template.instance().currentPlanningRole.set(role._id)
+  },
 });
 
 /**
@@ -128,12 +161,15 @@ Template.CapacityPlan.events({
  */
 Template.CapacityPlan.onCreated(() => {
   let instance = Template.instance();
-
+  
+  instance.currentPlanningRole = new ReactiveVar();
+  
   instance.subscribe('imported_item_crumbs', {});
   
   instance.autorun(() => {
     let planId = FlowRouter.getParam('planId');
     
+    instance.subscribe('capacity_plan_releases', planId);
     instance.subscribe('capacity_plan_sprints', planId);
     instance.subscribe('capacity_plan_sprint_blocks', planId);
     instance.subscribe('capacity_plan_sprint_links', planId);

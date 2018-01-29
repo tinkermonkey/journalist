@@ -1,3 +1,7 @@
 .capacity-plan-chart-container {
   margin-top : 10px;
 }
+
+.option-container .nav {
+  display: inline-block;
+}

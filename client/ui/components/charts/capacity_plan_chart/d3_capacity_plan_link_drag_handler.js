@@ -29,12 +29,13 @@ export class D3CapacityPlanLinkDragHandler {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkDragHandler.dragStart:', d);
     let self          = this,
         chart         = this.chart,
-        dragHandle    = d3.select(d3.event.sourceEvent.target).closest('.contributor-drag-handle-container'),
-        linkContainer = dragHandle.closest('.contributor-drag-group').select('.contributor-drag-link-container'),
+        dragHandle    = d3.select(d3.event.sourceEvent.target).closest('.link-drag-handle-container'),
+        linkContainer = dragHandle.closest('.link-drag-group').select('.link-drag-link-container'),
         dragLink      = linkContainer.append('path')
-            .attr('class', 'contributor-drag-link');
+            .attr('class', 'link-drag-link');
     
     // Freeze out all contributor blocks and effort titles from pointer events
+    chart.sprintBackgroundLayer.selectAll('.sprint-background-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.effort-title').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
     
@@ -86,6 +87,7 @@ export class D3CapacityPlanLinkDragHandler {
         .attr('transform', 'translate(0,0)');
     
     // Un-freeze contributor blocks and effort titles from pointer events
+    chart.sprintBackgroundLayer.selectAll('.sprint-background-group').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.effort-title').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
     

@@ -48,6 +48,16 @@ export const Integration = new SimpleSchema({
     type    : [ String ],
     optional: true
   },
+  // The frequency of the basic update task
+  updateFrequency: {
+    type        : String,
+    defaultValue: 'every 5 minutes'
+  },
+  // The frequency of the basic update task
+  deepSyncFrequency: {
+    type        : String,
+    defaultValue: 'at 1:00am every day'
+  },
   // Configuration blob
   details                 : {
     type    : Object,

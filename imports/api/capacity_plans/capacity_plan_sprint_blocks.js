@@ -3,6 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Auth } from '../auth';
 import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
 import { Contributors } from '../contributors/contributors';
+import { CapacityPlanReleases } from './capacity_plan_releases';
 import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effort_items';
 import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
@@ -19,8 +20,9 @@ export const CapacityPlanSprintBlock = new SimpleSchema({
   optionId    : {
     type: String
   },
+  // Zero indexed
   sprintNumber: {
-    type: Number,
+    type: Number
   },
   order       : {
     type: Number,
@@ -87,6 +89,8 @@ CapacityPlanSprintBlocks.helpers({
         return CapacityPlanStrategicEffortItems.findOne(block.dataId);
       case CapacityPlanBlockTypes.contributor:
         return Contributors.findOne(block.dataId);
+      case CapacityPlanBlockTypes.release:
+        return CapacityPlanReleases.findOne(block.dataId);
     }
   },
   
@@ -131,16 +135,34 @@ CapacityPlanSprintBlocks.helpers({
    * Add a link to this block
    */
   addLink (sourceId, sourceSprint) {
-    let linkId = CapacityPlanSprintLinks.insert({
-      planId      : this.planId,
-      optionId    : this.optionId,
-      sourceId    : sourceId,
-      sourceSprint: sourceSprint,
-      targetId    : this._id,
-      targetSprint: this.sprintNumber
+    // check for an existing link
+    let link = CapacityPlanSprintLinks.findOne({
+      planId  : this.planId,
+      optionId: this.optionId,
+      sourceId: sourceId,
+      targetId: this._id,
     });
-    
-    return CapacityPlanSprintLinks.findOne(linkId)
+    if (!link) {
+      let linkId = CapacityPlanSprintLinks.insert({
+        planId      : this.planId,
+        optionId    : this.optionId,
+        sourceId    : sourceId,
+        sourceSprint: sourceSprint,
+        targetId    : this._id,
+        targetSprint: this.sprintNumber
+      });
+      
+      return CapacityPlanSprintLinks.findOne(linkId)
+    } else {
+      return link
+    }
+  },
+  
+  /**
+   * Get the links that point to this block
+   */
+  targetLinks () {
+    return CapacityPlanSprintLinks.find({ targetId: this._id })
   },
   
   /**
@@ -152,6 +174,7 @@ CapacityPlanSprintBlocks.helpers({
           optionId    : block.optionId,
           sprintNumber: block.sprintNumber,
           parentId    : block.parentId,
+          blockType   : block.blockType,
           order       : { $lt: block.order }
         }, { sort: { order: -1 } });
     
@@ -164,6 +187,7 @@ CapacityPlanSprintBlocks.helpers({
         optionId    : block.optionId,
         sprintNumber: block.sprintNumber,
         parentId    : block.parentId,
+        blockType   : block.blockType,
         order       : { $lt: block.order }
       }, { sort: { order: -1 } }).fetch())
     }
@@ -178,6 +202,7 @@ CapacityPlanSprintBlocks.helpers({
           optionId    : block.optionId,
           sprintNumber: block.sprintNumber,
           parentId    : block.parentId,
+          blockType   : block.blockType,
           order       : { $gt: block.order }
         }, { sort: { order: 1 } });
     
@@ -190,9 +215,18 @@ CapacityPlanSprintBlocks.helpers({
         optionId    : block.optionId,
         sprintNumber: block.sprintNumber,
         parentId    : block.parentId,
+        blockType   : block.blockType,
         order       : { $gt: block.order }
       }, { sort: { order: -1 } }).fetch())
     }
+  },
+  
+  /**
+   * Update the sprint number
+   * @param sprintNumber
+   */
+  updateSprintNumber (sprintNumber) {
+    CapacityPlanSprintBlocks.update(this._id, { $set: { sprintNumber: sprintNumber } })
   },
   
   /**
@@ -215,7 +249,8 @@ CapacityPlanSprintBlocks.helpers({
     return CapacityPlanSprintBlocks.find({
       optionId    : this.optionId,
       sprintNumber: this.sprintNumber,
-      parentId    : this.parentId
+      parentId    : this.parentId,
+      blockType   : this.blockType
     }, { sort: { order: 1 } })
   },
   
@@ -231,7 +266,7 @@ CapacityPlanSprintBlocks.helpers({
    */
   reIndexSiblingOrder () {
     this.siblings().fetch().forEach((block, i) => {
-      if(block.order !== i){
+      if (block.order !== i) {
         CapacityPlanSprintBlocks.update(block._id, { $set: { order: i } })
       }
     })

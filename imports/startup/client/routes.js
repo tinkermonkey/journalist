@@ -55,6 +55,7 @@ FlowRouter.route('/logout', {
   }
 });
 
+
 /**
  *
  * Authenticated Routes

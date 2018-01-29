@@ -14,41 +14,41 @@ import { ContributorTeamRoles } from '../contributors/contributor_team_roles.js'
  */
 export const Team = new SimpleSchema({
   // Team title
-  title       : {
+  title                 : {
     type: String
   },
   // Contributor._id of the team owner
-  owner: {
-    type: String,
+  owner                 : {
+    type    : String,
     optional: true
   },
   // Contributor._id of the default team reporter
   reportingContributorId: {
-    type: String,
+    type    : String,
     optional: true
   },
-  bannerTemplate: {
-    type: String,
+  bannerTemplate        : {
+    type    : String,
     optional: true
   },
-  reports       : {
+  reports               : {
     type    : [ String ],
     optional: true
   },
   // Standard tracking fields
-  dateCreated : {
+  dateCreated           : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
+  createdBy             : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
+  dateModified          : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
+  modifiedBy            : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -122,7 +122,7 @@ Teams.helpers({
   rolesInProject (projectId, isManager) {
     let team    = this,
         roleIds = [],
-    query = {};
+        query   = {};
     
     // Get the list of team roles for this team and project
     ContributorTeamRoles.find({ teamId: team._id }).forEach((teamRole) => {
@@ -133,17 +133,43 @@ Teams.helpers({
     });
     
     // filter for uniqueness
-    roleIds = _.uniq(roleIds);
-    query._id= { $in: roleIds };
+    roleIds   = _.uniq(roleIds);
+    query._id = { $in: roleIds };
     
     // Check for a role type filter
-    if(isManager === false || isManager === true){
+    if (isManager === false || isManager === true) {
       query.isManager = isManager;
     }
     
     //console.log('rolesInProject', projectId, isManager, query, ContributorRoleDefinitions.find(query, { sort: { order: 1 } }).count());
-  
+    
     return ContributorRoleDefinitions.find(query, { sort: { order: 1 } })
+  },
+  /**
+   * Return the set of role definition ids that should be capacity planned for this team
+   */
+  capacityPlanRoles () {
+    return _.uniq(this.contributorRoles()
+        .fetch()
+        .filter((teamRole) => {
+          return teamRole.roleDefinition().countForCapacity()
+        })
+        .map((teamRole) => {
+          return teamRole.roleDefinition().capacityRole()._id
+        }))
+  },
+  contributorsInCapacityRole(roleDefinitionId){
+    let team = this,
+        contributorIds = _.uniq(team.contributorRoles()
+            .fetch()
+            .filter((teamRole) => {
+              return teamRole.roleDefinition().capacityRole()._id === roleDefinitionId
+            })
+            .map((teamRole) => {
+              return teamRole.contributorId
+            }));
+    
+    return Contributors.find({_id: {$in: contributorIds}}, {sort: {name: 1}})
   },
   /**
    * Get all of the distinct non-manager role definitions on this team for a given project
@@ -162,12 +188,12 @@ Teams.helpers({
   /**
    * Get the contributor._id of the default reporter for this project
    */
-  defaultReporter(){
+  defaultReporter () {
     let team = this;
     
-    if(team.reportingContributorId){
+    if (team.reportingContributorId) {
       return team.reportingContributorId
-    } else if(team.owner){
+    } else if (team.owner) {
       return team.owner
     }
   }
