@@ -3,7 +3,7 @@ import { Util } from '../../../../imports/api/util';
 
 let c3 = require('c3'),
   d3 = require('d3'),
-  debug = false,
+  debug = true,
   trace = false,
   totalDy = -0.4,
   nextDy = 2.8,
@@ -160,7 +160,7 @@ export class C3DonutWrapper {
       innerRadius = self.chart.internal.radius,
       outerRadius = self.chart.internal.radiusExpanded + 5;
 
-    // Remove the clip path to make the callouts visible if the leave the chart body proper
+      // Remove the clip path to make the callouts visible if the leave the chart body proper
     svg.select('.c3-chart').attr('clip-path', null);
 
     // Make the overflow for donut charts visible so callouts can be seen
@@ -189,12 +189,14 @@ export class C3DonutWrapper {
         data.push(d)
       });
 
-    data = data.filter((d) => { return d.dy > 12 || d.sweep > 20 });
+    data = data.filter((d) => { return d.dy > 12 || d.sweep > 45 });
+
+    console.log('Slice Data:', data);
 
     let donutSelection = svg.select('.c3-chart-arc')
       .selectAll('.donut-label-group')
       .data(data, (d) => { return d.id });
-
+  
     // Remove unneeded slices
     donutSelection.exit().remove();
 
@@ -216,7 +218,10 @@ export class C3DonutWrapper {
     donutEnter.append('polyline')
       .attr('class', 'donut-label-callout');
 
-    // Update existing datapoints
+    // Update the selection
+    donutSelection = svg.select('.c3-chart-arc').selectAll('.donut-label-group');
+
+    // Position and class the labels
     donutSelection.select('.donut-label')
       .attr('class', (d) => {
         return 'donut-label ' + (d.arcMidAngle < Math.PI / 2 ? 'donut-label-left' : 'donut-label-right')
@@ -225,6 +230,7 @@ export class C3DonutWrapper {
         return 'translate(' + _.values(d.labelPos) + ')';
       });
 
+    // Draw the callouts
     donutSelection.select('.donut-label-callout')
       .attr('points', (d) => {
         return [
