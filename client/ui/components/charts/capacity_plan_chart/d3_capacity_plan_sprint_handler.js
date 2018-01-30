@@ -298,7 +298,7 @@ export class D3CapacityPlanSprintHandler {
     
     chart.bodyWidth        = chart.svg.node()
         .getBoundingClientRect().width - chart.config.margin.left - chart.config.margin.right - chart.config.sprints.padding - chart.bodyLeft;
-    chart.sprintWidth      = parseInt(Math.min(chart.bodyWidth / chart.data.sprints.length, chart.config.sprints.width));
+    chart.sprintWidth      = parseInt(Math.min(chart.bodyWidth / (chart.data.sprints.length + 0.2), chart.config.sprints.width));
     chart.sprintBodyWidth  = parseInt(Math.max(chart.namesWidth, chart.sprintWidth * 0.66));
     chart.linkSectionWidth = chart.sprintWidth - chart.sprintBodyWidth;
   }

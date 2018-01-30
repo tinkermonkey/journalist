@@ -4,6 +4,7 @@ import { SchemaHelpers } from '../schema_helpers.js';
 import { CapacityPlans } from './capacity_plans';
 import { CapacityPlanSprints } from './capacity_plan_sprints';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
 import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
 
 /**
@@ -119,7 +120,7 @@ CapacityPlanOptions.helpers({
         
         // Get all of the blocks for this sprint
         blockCriteria.sprintNumber = thisSprint;
-        let sprintBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch().map((block) => {
+        let sprintBlocks           = CapacityPlanSprintBlocks.find(blockCriteria).fetch().map((block) => {
           if (block.parent()) {
             // Make sure the order is up do date
             block.parent().reIndexSiblingOrder();
@@ -134,7 +135,7 @@ CapacityPlanOptions.helpers({
         
         // Get the blocks in the next sprint
         blockCriteria.sprintNumber = nextSprint;
-        let nextSprintBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch().map((block) => {
+        let nextSprintBlocks       = CapacityPlanSprintBlocks.find(blockCriteria).fetch().map((block) => {
           if (block.parent()) {
             // Make sure the order is up do date
             block.parent().reIndexSiblingOrder();
@@ -238,6 +239,86 @@ CapacityPlanOptions.helpers({
           }
         });
       })
+    }
+  },
+  
+  /**
+   * Make sure the release link for an effort always emanates from the last block in the option
+   */
+  healReleaseLinks (effortId, ignoreBlockId) {
+    let option         = this,
+        blockCriteria  = { optionId: option._id, dataId: effortId },
+        strictCriteria = { optionId: option._id, dataId: effortId };
+    
+    // Optionally ignore a block if it's about to be removed
+    if (ignoreBlockId) {
+      strictCriteria._id = { $ne: ignoreBlockId }
+    }
+    
+    let sprints = _.uniq(CapacityPlanSprintBlocks.find(strictCriteria, { sort: { sprintNumber: 1 } }).map((d) => {
+      return d.sprintNumber
+    }));
+    
+    //console.log('healReleaseLinks effortId, sprints:', effortId, sprints);
+    if (sprints.length > 1) {
+      // Get the maximum sprint number for this effort
+      let effortBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch(),
+          strictBlocks = CapacityPlanSprintBlocks.find(strictCriteria).fetch(),
+          finalSprint  = sprints[ sprints.length - 1 ];
+      
+      //console.log('healReleaseLinks finalSprint, effortBlocks', finalSprint, effortBlocks, strictBlocks);
+      
+      // Determine the correct release target
+      let targetReleaseLinks = _.uniq(_.flatten(effortBlocks.map((block) => {
+        return block.sourceLinks().fetch()
+      })), (link) => {
+        return link.targetId
+      });
+      //console.log('healReleaseLinks targetReleaseLinks:', targetReleaseLinks);
+      
+      // If there are no target releases, nothing to heal
+      if (targetReleaseLinks.length) {
+        let chosenReleaseBlockId = targetReleaseLinks[ 0 ].targetId;
+        //console.log('healReleaseLinks chosenReleaseBlockId:', chosenReleaseBlockId);
+        
+        // Go through the non-final blocks and remove any release links
+        blockCriteria.sprintNumber = { $lt: finalSprint };
+        CapacityPlanSprintBlocks.find(blockCriteria).forEach((block) => {
+          block.sourceLinks().forEach((link) => {
+            CapacityPlanSprintLinks.remove(link._id)
+          })
+        });
+        blockCriteria.sprintNumber = { $gt: finalSprint };
+        CapacityPlanSprintBlocks.find(blockCriteria).forEach((block) => {
+          block.sourceLinks().forEach((link) => {
+            CapacityPlanSprintLinks.remove(link._id)
+          })
+        });
+        
+        // Get the block that should link to the release
+        strictCriteria.sprintNumber = finalSprint;
+        let finalBlock             = CapacityPlanSprintBlocks.findOne(strictCriteria);
+        
+        // Validate any remaining links
+        finalBlock.sourceLinks().forEach((link, i) => {
+          if (link.targetId !== chosenReleaseBlockId || i > 0) {
+            CapacityPlanSprintLinks.remove(link._id)
+          }
+        });
+        
+        // Make sure there is a link from the final block
+        if (finalBlock.sourceLinks().count() === 0) {
+          // Insert a release link to replace the ones that were removed
+          //console.log('healReleaseLinks adding a link to the chosen block:', chosenReleaseBlockId);
+          let releaseBlock = CapacityPlanSprintBlocks.findOne(chosenReleaseBlockId);
+          releaseBlock.addLink(finalBlock._id, finalBlock.sprintNumber, CapacityPlanBlockTypes.effort);
+          
+          // Make sure the release is still in the right sprint
+          if (releaseBlock.sprintNumber < finalBlock.sprintNumber) {
+            releaseBlock.updateSprintNumber(finalBlock.sprintNumber)
+          }
+        }
+      }
     }
   }
 });

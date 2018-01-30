@@ -8,7 +8,7 @@ let d3            = require('d3'),
     controlTextY  = 0,
     controlRadius = 10,
     debug         = false,
-    trace         = true;
+    trace         = false;
 
 export class D3CapacityPlanBlockHandler {
   /**
@@ -40,7 +40,7 @@ export class D3CapacityPlanBlockHandler {
     chart.contributorClipPath.select('rect')
         .attr('width', chart.sprintBodyWidth);
     
-    self.calculateBlockHeights();
+    self.calculateBlockSizes();
     
     // Service the effort blocks
     self.insertEffortBlocks();
@@ -129,7 +129,7 @@ export class D3CapacityPlanBlockHandler {
         .attr('x', chart.config.efforts.padding)
         .attr('y', chart.config.contributors.height);
     
-    // Place a drag control to add this to a release
+    // Place a drag control to add this effort to a release
     let dragGroupEnter = effortBlockEnter.append('g')
         .attr('class', 'link-drag-group')
         .attr('data-source-id', (d) => {
@@ -161,11 +161,20 @@ export class D3CapacityPlanBlockHandler {
     let removeButtonEnter = effortControlsEnter.append('g')
         .attr('class', 'effort-control effort-control-remove')
         .attr('transform', 'translate(-' + (2 * controlRadius + 1 * chart.config.efforts.padding) + ', 0)')
-        .on('click', (effort) => {
-          let contributorList = effort.children().map((child) => {
-            return child.dataId
-          });
-          effort.remove();
+        .on('click', (block) => {
+          // Grab some context
+          let contributorList = block.children().map((child) => {
+                return child.dataId
+              }),
+              effortId        = block.dataId;
+          
+          // Heal any release links before this block is removed
+          chart.data.option.healReleaseLinks(effortId, block._id);
+          
+          // Remove the block
+          block.remove();
+          
+          // Heal any contributor links
           contributorList.forEach((contributor) => {
             chart.data.option.healContributorLinks(contributor._id);
           });
@@ -233,8 +242,18 @@ export class D3CapacityPlanBlockHandler {
     // Position the controls
     self.effortBlockSelection.select('.link-drag-group')
         .attr('transform', (effort) => {
-          return 'translate(' + chart.sprintBodyWidth + ', 3)'
+          return 'translate(' + chart.sprintBodyWidth + ', ' + (controlRadius * 2 + chart.config.efforts.padding) + ')'
         });
+    
+    // Don't show the link to add to a release if this is already part of a release
+    self.effortBlockSelection.select('.link-drag-handle-container')
+        .classed('no-mouse', (d) => {
+          return !d.showReleaseControls
+        })
+        .style('opacity', (d) => {
+          return d.showReleaseControls ? 1 : 0
+        });
+    
     self.effortBlockSelection.select('.effort-controls')
         .attr('transform', (effort) => {
           return 'translate(' + chart.sprintBodyWidth + ', 3)'
@@ -246,8 +265,11 @@ export class D3CapacityPlanBlockHandler {
           return effort.order === 0;
         })
         .attr('transform', (effort) => {
-          let buttonNumber = effort.order < effort.siblingCount() - 1 ? 4 : 3;
-          return 'translate(-' + ((buttonNumber * 2 - 1) * controlRadius + (buttonNumber - 1) * chart.config.efforts.padding) + ', 0)';
+          if (effort.order < effort.siblingCount() - 1) {
+            return 'translate(-' + (7 * controlRadius + 3 * chart.config.efforts.padding) + ', 0)'
+          } else {
+            return 'translate(-' + (4 * controlRadius + 3 * chart.config.efforts.padding) + ', 0)'
+          }
         });
     
     self.effortBlockSelection.select('.effort-control-down')
@@ -291,7 +313,8 @@ export class D3CapacityPlanBlockHandler {
     let startTime          = Date.now();
     let linkUpdateInterval = setInterval(() => {
       if (Date.now() - startTime < 500) {
-        chart.linkHandler.update();
+        chart.linkHandler.updateContributorLinks();
+        chart.linkHandler.updateReleaseLinks();
       } else {
         clearInterval(linkUpdateInterval);
       }
@@ -497,15 +520,16 @@ export class D3CapacityPlanBlockHandler {
         })
         .attr('data-release-id', (d) => {
           return d.dataId
+        })
+        .attr('data-target-id', (d) => {
+          return d._id
         });
     
     releaseBlockEnter.append('rect')
         .attr('class', 'release-block')
         .attr('x', 0)
         .attr('y', 0)
-        .attr('rx', 4)
-        .attr('ry', 4)
-        .attr('width', chart.config.contributors.height)
+        .attr('width', chart.config.releases.width)
         .on('mouseenter', (d) => {
           let element = d3.select(d3.event.target);
           element.classed('hover', true);
@@ -529,19 +553,19 @@ export class D3CapacityPlanBlockHandler {
     
     releaseBlockEnter.append('text')
         .attr('class', 'release-title')
-        .attr('x', chart.config.efforts.padding)
-        .attr('y', -chart.config.efforts.padding)
+        .attr('x', chart.config.releases.padding)
+        .attr('y', -chart.config.releases.padding)
         .attr('transform', 'rotate(90)');
     
-    return;
     // Add controls for this effort
     let releaseControlsEnter = releaseBlockEnter.append('g')
-        .attr('class', 'effort-controls');
+        .attr('class', 'release-controls');
     
     let upButtonEnter = releaseControlsEnter.append('g')
         .attr('class', 'effort-control effort-control-up')
-        .on('click', (effort) => {
-          effort.moveUp();
+        .attr('transform', 'translate(' + chart.config.releases.width + ', ' + (chart.config.efforts.padding) + ')')
+        .on('click', (block) => {
+          block.moveUp();
         });
     
     upButtonEnter.append('circle')
@@ -555,9 +579,9 @@ export class D3CapacityPlanBlockHandler {
     
     let downButtonEnter = releaseControlsEnter.append('g')
         .attr('class', 'effort-control effort-control-down')
-        .attr('transform', 'translate(-' + (3 * controlRadius + 2 * chart.config.efforts.padding) + ', 0)')
-        .on('click', (effort) => {
-          effort.moveDown();
+        .attr('transform', 'translate(' + chart.config.releases.width + ', ' + (2 * controlRadius + 2 * chart.config.efforts.padding) + ')')
+        .on('click', (block) => {
+          block.moveDown();
         });
     
     downButtonEnter.append('circle')
@@ -568,13 +592,6 @@ export class D3CapacityPlanBlockHandler {
         .attr('x', controlTextX)
         .attr('y', controlTextY)
         .text('\u2193');
-    
-    // Append the block body group
-    releaseBlockEnter.append('g')
-        .attr('class', 'release-block-body')
-        .attr('transform', (d) => {
-          return 'translate(0, ' + d.headerHeight + ')'
-        });
   }
   
   /**
@@ -588,35 +605,23 @@ export class D3CapacityPlanBlockHandler {
     self.updateReleaseBlockselection();
     
     // Position the controls
-    /*
-    self.releaseBlockselection.select('.effort-controls')
-        .attr('transform', (effort) => {
-          return 'translate(' + chart.sprintBodyWidth + ', 3)'
-        });
-    
     self.releaseBlockselection.select('.effort-control-up')
-        .classed('hide', (effort) => {
+        .classed('hide', (block) => {
           // Hide the up button if this is the first
-          return effort.order === 0;
-        })
-        .attr('transform', (effort) => {
-          let buttonNumber = effort.order < effort.siblingCount() - 1 ? 3 : 2;
-          return 'translate(-' + ((buttonNumber * 2 - 1) * controlRadius + buttonNumber * chart.config.efforts.padding) + ', 0)';
+          return block.order === 0;
         });
     
     self.releaseBlockselection.select('.effort-control-down')
-        .classed('hide', (effort) => {
+        .classed('hide', (block) => {
           // Hide the down button if this is the last in the list
-          return effort.order === effort.siblingCount() - 1;
+          return block.order === block.siblingCount() - 1;
         });
-    */
     
     // Reposition and size the effort block groups
     self.releaseBlockselection.select('.release-block')
         .attr('height', (d) => {
-          return chart.config.contributors.width
-        })
-        .attr('width', chart.config.contributors.height);
+          return Math.max(d.titleLength, chart.config.releases.height) + 2 * chart.config.releases.padding
+        });
     
     // Update the effort title
     self.releaseBlockselection.select('.release-title')
@@ -659,13 +664,14 @@ export class D3CapacityPlanBlockHandler {
   /**
    * Calculate the height of the blocks
    */
-  calculateBlockHeights () {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.calculateBlockHeights');
+  calculateBlockSizes () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.calculateBlockSizes');
     let chart = this.chart;
     
     // Size all of the blocks
     chart.maxSprintHeight = 0;
     chart.data.sprints.forEach((sprint) => {
+      // Groom the effort blocks
       let dy = 0;
       sprint.effortBlocks.forEach((effortBlock) => {
         // Size the title so the height can be accurate
@@ -709,8 +715,34 @@ export class D3CapacityPlanBlockHandler {
           .attr('data-release-id', releaseBlock._id)
           .text(releaseBlock.title);
       
-      // Set the height to the width of the text
-      releaseBlock.height = titleTemp.node().getBoundingClientRect().width;
+      releaseBlock.titleLength = titleTemp.node().getBoundingClientRect().width;
+    });
+    
+    // Position the release blocks
+    chart.data.sprints.forEach((sprint) => {
+      let sprintReleases = chart.data.releases.filter((releaseBlock) => {
+        return releaseBlock.sprintNumber === sprint.sprintNumber
+      });
+      
+      // Make sure the blocks are ordered correctly
+      sprintReleases.sort((releaseBlock) => {
+        return releaseBlock.order
+      }).forEach((releaseBlock, i) => {
+        if (releaseBlock.order !== i) {
+          // Fix the order
+          chart.data.sprints[ releaseBlock.index ].order = releaseBlock.order = i;
+          releaseBlock.updateOrder(i);
+        }
+      });
+      
+      // position the blocks
+      let dy = 0;
+      sprintReleases.sort((releaseBlock) => {
+        return releaseBlock.order
+      }).forEach((releaseBlock, i) => {
+        chart.data.sprints[ releaseBlock.index ].y = releaseBlock.y = dy;
+        dy += Math.max(releaseBlock.titleLength, chart.config.releases.height) + 2 * chart.config.releases.padding + chart.config.efforts.margin;
+      })
     });
     
     // Cleanup the offscreen layer
@@ -728,12 +760,9 @@ export class D3CapacityPlanBlockHandler {
   }
   
   positionReleaseBlock (block) {
-    let chart = this.chart;
-    console.log('positionReleaseBlock:', block);
-    if (block) {
-      return 'translate(' + (Math.max(block.sprintNumber, chart.data.sprints.length) * chart.sprintWidth + chart.config.efforts.margin) + ', 0)'
-    }
-    return ''
+    let chart    = this.chart,
+        baseline = Math.min(block.sprintNumber + 1, chart.data.sprints.length) * chart.sprintWidth;
+    return 'translate(' + (baseline + (chart.linkSectionWidth / 2) - (chart.config.contributors.height / 2)) + ', ' + block.y + ')'
   }
   
   /**
@@ -741,7 +770,7 @@ export class D3CapacityPlanBlockHandler {
    * @param d
    */
   effortDragStart (d) {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkDragHandler.dragStart:', d);
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragStart:', d);
     let self          = this,
         chart         = this.chart,
         dragHandle    = d3.select(d3.event.sourceEvent.target).closest('.link-drag-handle-container'),
@@ -755,13 +784,14 @@ export class D3CapacityPlanBlockHandler {
     
     chart.drag = {
       dragHandle: dragHandle,
-      dragLink  : dragLink
+      dragLink  : dragLink,
+      offsetY   : dragHandle.closest('.effort-block-group').node().getBoundingClientRect().y - chart.bodyBounds.y
     };
     
     chart.drag.dragHandle.classed('in-drag', true);
     chart.inEffortDrag = true;
     
-    trace && console.log('D3CapacityPlanLinkDragHandler.dragStart drag:', chart.drag)
+    trace && console.log('D3CapacityPlanBlockHandler.dragStart drag:', chart.drag)
   }
   
   /**
@@ -769,13 +799,13 @@ export class D3CapacityPlanBlockHandler {
    * @param d
    */
   effortDragged (d) {
-    trace && console.log(Util.timestamp(), 'D3CapacityPlanLinkDragHandler.dragged:', d);
+    //trace && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragged:', d);
     let self  = this,
         chart = this.chart,
         dragX = d3.event.x,
-        dragY = d3.event.y;
+        dragY = d3.event.y - chart.drag.offsetY;
     
-    trace && console.log(Util.timestamp(), 'D3CapacityPlanLinkDragHandler.dragged:', d3.event);
+    trace && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragged:', dragX, dragY);
     chart.drag.dragHandle.attr('transform', 'translate(' + dragX + ', ' + dragY + ')');
     
     chart.drag.dragLink.attr('d', chart.linker({ source: [ 0, 0 ], target: [ dragX, dragY ] }))
@@ -786,7 +816,7 @@ export class D3CapacityPlanBlockHandler {
    * @param d
    */
   effortDragEnd (d) {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkDragHandler.dragEnd:', d);
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragEnd:', d);
     let self  = this,
         chart = this.chart;
     
@@ -807,28 +837,28 @@ export class D3CapacityPlanBlockHandler {
     
     // Check for a drop
     if (chart.drag.hover) {
-      debug && console.log('D3CapacityPlanLinkDragHandler.dragEnd potential drop:', chart.drag.hover);
+      debug && console.log('D3CapacityPlanBlockHandler.dragEnd potential drop:', chart.drag.hover);
       chart.drag.hover.element.classed('hover', false);
       
-      let effort = d.blockType === CapacityPlanBlockTypes.effort ? d.dataRecord() : d;
-      
-      debug && console.log('D3CapacityPlanLinkDragHandler.dragEnd dropping a link for release:', effort);
       if (chart.drag.hover.type === CapacityPlanBlockTypes.release) {
-        let release = chart.drag.hover.record;
+        let releaseBlock = chart.drag.hover.record;
         
-        release.addLink(d._id, d.sprintNumber);
+        releaseBlock.addLink(d._id, d.sprintNumber, CapacityPlanBlockTypes.effort);
         
         // update the sprint number for this release
         let maxSprint = 0;
-        release.targetLinks().forEach((link) => {
+        releaseBlock.targetLinks().forEach((link) => {
           if (link.sourceSprint > maxSprint) {
             maxSprint = link.sourceSprint
           }
         });
         
-        if(maxSprint !== release.sprintNumber){
-          release.updateSprintNumber(maxSprint);
+        if (maxSprint !== releaseBlock.sprintNumber) {
+          releaseBlock.updateSprintNumber(maxSprint);
         }
+        
+        // Heal the release links for this effort
+        chart.data.option.healReleaseLinks(d.dataId);
       }
     }
     

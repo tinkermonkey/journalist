@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Auth } from '../auth';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes} from './capacity_plan_block_types';
 import { Contributors} from '../contributors/contributors';
 
 /**
@@ -19,8 +20,16 @@ export const CapacityPlanSprintLink = new SimpleSchema({
   sourceId    : {
     type: String
   },
+  sourceType: {
+    type: Number,
+    allowedValues: _.values(CapacityPlanBlockTypes)
+  },
   targetId    : {
     type: String
+  },
+  targetType: {
+    type: Number,
+    allowedValues: _.values(CapacityPlanBlockTypes)
   },
   sourceSprint: {
     type    : Number,
@@ -51,7 +60,12 @@ CapacityPlanSprintLinks.deny({
  */
 CapacityPlanSprintLinks.helpers({
   source () {
-    return CapacityPlanSprintBlocks.findOne(this.sourceId) || Contributors.findOne(this.sourceId)
+    switch(this.sourceType){
+      case CapacityPlanBlockTypes.effort:
+      
+      default:
+        return CapacityPlanSprintBlocks.findOne(this.sourceId) || Contributors.findOne(this.sourceId)
+    }
   },
   target () {
     return CapacityPlanSprintBlocks.findOne(this.targetId)

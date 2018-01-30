@@ -134,7 +134,7 @@ CapacityPlanSprintBlocks.helpers({
   /**
    * Add a link to this block
    */
-  addLink (sourceId, sourceSprint) {
+  addLink (sourceId, sourceSprint, sourceType) {
     // check for an existing link
     let link = CapacityPlanSprintLinks.findOne({
       planId  : this.planId,
@@ -148,14 +148,23 @@ CapacityPlanSprintBlocks.helpers({
         optionId    : this.optionId,
         sourceId    : sourceId,
         sourceSprint: sourceSprint,
+        sourceType  : sourceType,
         targetId    : this._id,
-        targetSprint: this.sprintNumber
+        targetSprint: this.sprintNumber,
+        targetType  : this.blockType
       });
       
       return CapacityPlanSprintLinks.findOne(linkId)
     } else {
       return link
     }
+  },
+  
+  /**
+   * Get the links that emanate from this block
+   */
+  sourceLinks () {
+    return CapacityPlanSprintLinks.find({ sourceId: this._id })
   },
   
   /**
@@ -230,16 +239,38 @@ CapacityPlanSprintBlocks.helpers({
   },
   
   /**
+   * Update the block order
+   * @param order
+   */
+  updateOrder (order) {
+    CapacityPlanSprintBlocks.update(this._id, { $set: { order: order } })
+  },
+  
+  /**
    * Remove this block
    */
   remove () {
     CapacityPlanSprintBlocks.remove(this._id);
   },
   
+  /**
+   * Get the parent block
+   * @return {any}
+   */
   parent () {
     if (this.parentId) {
       return CapacityPlanSprintBlocks.findOne(this.parentId)
     }
+  },
+  
+  /**
+   * Get other blocks for the same data id
+   */
+  cousins () {
+    return CapacityPlanSprintBlocks.find({
+      optionId : this.optionId,
+      dataId   : this.dataId
+    }, { sort: { sprintNumber: 1 } })
   },
   
   /**

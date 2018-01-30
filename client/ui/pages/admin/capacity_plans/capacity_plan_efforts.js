@@ -208,6 +208,9 @@ Template.CapacityPlanEfforts.onCreated(() => {
               dataId      : d._id,
               chartData   : {}
             });
+            
+            // heal any release links for this option in case this effort affects the release
+            option.healReleaseLinks(d._id);
           } else {
             console.error('Sprint', sprintNumber, 'already has a block for the effort', d.title, d._id);
           }
