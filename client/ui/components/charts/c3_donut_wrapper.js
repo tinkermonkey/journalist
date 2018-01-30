@@ -191,8 +191,6 @@ export class C3DonutWrapper {
 
     data = data.filter((d) => { return d.dy > 12 || d.sweep > 45 });
 
-    console.log('Slice Data:', data);
-
     let donutSelection = svg.select('.c3-chart-arc')
       .selectAll('.donut-label-group')
       .data(data, (d) => { return d.id });
