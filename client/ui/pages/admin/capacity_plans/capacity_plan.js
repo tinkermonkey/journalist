@@ -34,13 +34,17 @@ Template.CapacityPlan.helpers({
     return {
       config: {},
       data  : {
-        option  : option,
-        plan    : option.plan(),
-        sprints : option.sprints().fetch(),
-        links   : CapacityPlanSprintLinks.find({ optionId: option._id }).fetch(),
-        blocks  : CapacityPlanSprintBlocks.find({ optionId: option._id }).fetch(),
-        roleId  : Template.instance().currentPlanningRole.get(),
-        releases: CapacityPlanSprintBlocks.find({ optionId: option._id, blockType: CapacityPlanBlockTypes.release }).fetch()
+        option          : option,
+        plan            : option.plan(),
+        sprints         : option.sprints().fetch(),
+        contributorLinks: CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.contributor }).fetch(),
+        blocks          : CapacityPlanSprintBlocks.find({
+          optionId : option._id,
+          blockType: { $in: [ CapacityPlanBlockTypes.contributor, CapacityPlanBlockTypes.effort ] }
+        }).fetch(),
+        roleId          : Template.instance().currentPlanningRole.get(),
+        releases        : CapacityPlanSprintBlocks.find({ optionId: option._id, blockType: CapacityPlanBlockTypes.release }).fetch(),
+        releaseLinks    : CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.release }).fetch()
       }
     }
   },

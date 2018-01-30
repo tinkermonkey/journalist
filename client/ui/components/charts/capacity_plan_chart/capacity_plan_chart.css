@@ -186,6 +186,7 @@
 }
 
 .effort-controls,
+.release-controls,
 .contributor-controls {
   opacity            : 0;
   -webkit-transition : opacity 0.5s;
@@ -197,6 +198,7 @@
 }
 
 .effort-block-group:hover .effort-controls,
+.release-block-group:hover .release-controls,
 .contributor-block-group:hover .contributor-controls {
   opacity : 1;
 }
@@ -290,6 +292,19 @@ path.contributor-highlight.highlight {
 
 .release-title {
   alignment-baseline : baseline;
+  font-size          : 18px;
+}
+
+.release-link {
+  fill               : none;
+  stroke             : #fff;
+  stroke-width       : 1px;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s;
+  transition-delay   : 0.125s;
 }
 
 /**

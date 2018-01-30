@@ -36,6 +36,7 @@ export class D3CapacityPlanLinkDragHandler {
     
     // Freeze out all contributor blocks and effort titles from pointer events
     chart.sprintBackgroundLayer.selectAll('.sprint-background-group').classed('no-mouse', true);
+    chart.sprintBodyLayer.selectAll('.release-block-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.effort-title').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
     
@@ -88,6 +89,7 @@ export class D3CapacityPlanLinkDragHandler {
     
     // Un-freeze contributor blocks and effort titles from pointer events
     chart.sprintBackgroundLayer.selectAll('.sprint-background-group').classed('no-mouse', false);
+    chart.sprintBodyLayer.selectAll('.release-block-group').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.effort-title').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
     
@@ -106,7 +108,7 @@ export class D3CapacityPlanLinkDragHandler {
           let block = chart.drag.hover.record.addChild(CapacityPlanBlockTypes.contributor, contributor._id, {});
           
           // Create a link
-          block.addLink(d._id, d.sprintNumber);
+          block.addLink(d._id, d.sprintNumber, CapacityPlanBlockTypes.contributor);
           
           // Heal the links for this contributor
           chart.data.option.healContributorLinks(contributor._id);

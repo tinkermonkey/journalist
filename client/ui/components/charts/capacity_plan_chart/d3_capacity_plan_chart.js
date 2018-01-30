@@ -40,6 +40,11 @@ export class D3CapacityPlanChart {
         padding  : 5,
         margin   : 10
       },
+      releases    : {
+        width  : 35,
+        height : 200,
+        padding: 10
+      },
       margin      : {
         top   : 15,
         right : 45,
@@ -266,11 +271,6 @@ export class D3CapacityPlanChart {
       
       // Update the links
       self.linkHandler.update();
-      for (let i = 1; i < 3; i++) {
-        setTimeout(() => {
-          //self.linkHandler.update();
-        }, i * 60)
-      }
       
       // Resize to fit the content
       self.height = Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height;
@@ -321,7 +321,6 @@ export class D3CapacityPlanChart {
     
     // Capture the sprints
     self.data.sprints.forEach((sprint) => {
-      
       // Pull in the effort blocks and the data within them
       sprint.effortBlocks = self.data.option.sprintBlocks(sprint.sprintNumber, CapacityPlanBlockTypes.effort)
           .map((effortBlock) => {
@@ -355,6 +354,11 @@ export class D3CapacityPlanChart {
               console.error('Block effort data not found:', effortBlock);
             }
             
+            // Only show the release controls on the last sprint of an effort and if the effort is not already targeted for a release
+            effortBlock.showReleaseControls = effortBlock.cousins().fetch().reduce((maxSprint, cousin) => {
+              return Math.max(cousin.sprintNumber, maxSprint)
+            }, 0) === effortBlock.sprintNumber && effortBlock.sourceLinks().count() === 0;
+            
             return effortBlock
           });
       
@@ -363,36 +367,56 @@ export class D3CapacityPlanChart {
     });
     
     // Groom the releases
-    self.data.releases.forEach((releaseBlock) => {
+    self.data.releases.forEach((releaseBlock, i) => {
       try {
-        let release = releaseBlock.dataRecord();
+        let release        = releaseBlock.dataRecord();
         releaseBlock.title = release.title;
+        releaseBlock.index = i;
         
         // Determine the correct sprint number
+        //console.log('Determining correct sprint for release:', releaseBlock);
         let sprintNumber = self.data.sprints.length - 1;
-        if(releaseBlock.targetLinks().count()){
-          releaseBlock.targetLinks().forEach(() => {})
+        if (releaseBlock.targetLinks().count()) {
+          sprintNumber = 0;
+          //console.log('Found links for release:', releaseBlock, releaseBlock.targetLinks().fetch());
+          releaseBlock.targetLinks().forEach((link) => {
+            if (link.sourceSprint > sprintNumber) {
+              //console.log('Found new maximum sprint number:', sprintNumber, link);
+              sprintNumber = link.sourceSprint;
+            }
+          })
         }
         
         // Update the sprint number if it's not accurate
-        if(sprintNumber !== releaseBlock.sprintNumber){
+        if (sprintNumber !== releaseBlock.sprintNumber) {
+          console.log('D3CapacityPlanChart.parseData adjusting sprint for release:', releaseBlock.dataId, sprintNumber, releaseBlock.sprintNumber);
           releaseBlock.updateSprintNumber(sprintNumber);
+          releaseBlock.sprintNumber = sprintNumber;
         }
-        
-        // Check
       } catch (e) {
-        console.error('Block release data not found:', releaseBlock);
+        console.error('D3CapacityPlanChart.parseData failed to groom release data:', e, releaseBlock);
       }
     });
     
-    // Groom the links
-    self.data.links.forEach((link) => {
+    console.log('D3CapacityPlanChart.parseData releaseLinks:', self.data.releaseLinks);
+    
+    // Groom the contributor links
+    self.data.contributorLinks.forEach((link) => {
       let sourceBlock = link.source();
       if (sourceBlock.dataId) {
         link.contributorId = sourceBlock.dataId
       } else {
         link.contributorId = link.sourceId
       }
+    });
+    
+    // Groom the release links
+    self.data.releaseLinks.forEach((link) => {
+      let sourceBlock = link.source(),
+          targetBlock = link.target();
+      
+      link.effortId  = sourceBlock && sourceBlock.dataId;
+      link.releaseId = targetBlock && targetBlock.dataId;
     });
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);
