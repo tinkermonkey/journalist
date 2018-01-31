@@ -10,6 +10,7 @@ import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_pla
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
+import './capacity_plan_option_summary';
 import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
 import '../../../components/editable_date_range/editable_date_range';
 
@@ -28,6 +29,15 @@ Template.CapacityPlan.helpers({
   currentOption () {
     let optionId = FlowRouter.getParam('optionId');
     return CapacityPlanOptions.findOne(optionId)
+  },
+  otherOptions () {
+    let plan         = this,
+        optionId     = FlowRouter.getParam('optionId'),
+        otherOptions = plan.options().fetch().filter((option) => {
+          return option._id !== optionId
+        });
+    
+    return otherOptions.length > 0
   },
   chartContext () {
     let option = this;
@@ -68,12 +78,8 @@ Template.CapacityPlan.helpers({
   },
   capacityPlanRoles () {
     let plan          = CapacityPlans.findOne(FlowRouter.getParam('planId')),
-        currentRoleId = Template.instance().currentPlanningRole.get();
-    
-    let roleIds = _.uniq(_.flatten(plan.teams().map((team) => {
-          return team.capacityPlanRoles()
-        }))),
-        roles   = ContributorRoleDefinitions.find({ _id: { $in: roleIds } }, { sort: { title: 1 } }).fetch();
+        currentRoleId = Template.instance().currentPlanningRole.get(),
+        roles = plan.roles();
     
     // If there's no current role set, set one
     if (!currentRoleId && roles.length) {
@@ -149,6 +155,72 @@ Template.CapacityPlan.events({
         }
         RobaDialog.hide();
       }.bind(this)
+    });
+  },
+  'click .btn-edit-option' () {
+    let planId   = FlowRouter.getParam('planId'),
+        optionId = FlowRouter.getParam('optionId'),
+        option   = CapacityPlanOptions.findOne(optionId);
+    
+    RobaDialog.show({
+      contentTemplate: 'AddRecordForm',
+      contentData    : {
+        schema: new SimpleSchema({
+          title: {
+            type        : String,
+            label       : 'Option Title',
+            defaultValue: option.title
+          }
+        })
+      },
+      title          : 'Edit Option',
+      width          : 500,
+      buttons        : [
+        { text: 'Cancel' },
+        { text: 'Add' }
+      ],
+      callback       : function (btn) {
+        if (btn.match(/add/i)) {
+          let formId = 'addRecordForm';
+          if (AutoForm.validateForm(formId)) {
+            let formData = AutoForm.getFormValues(formId).insertDoc;
+            
+            // Create the display template
+            Meteor.call('editCapacityPlanOption', optionId, 'title', formData.title, (error, response) => {
+              if (error) {
+                RobaDialog.error('Failed to create capacity plan option:' + error.toString())
+              } else {
+                RobaDialog.hide();
+              }
+            });
+            
+            AutoForm.resetForm(formId)
+          }
+          return;
+        }
+        RobaDialog.hide();
+      }.bind(this)
+    });
+  },
+  'click .btn-delete-option' (e, instance) {
+    let plan         = this,
+        optionId     = FlowRouter.getParam('optionId'),
+        option       = CapacityPlanOptions.findOne(optionId),
+        otherOptions = plan.options().fetch().filter((option) => {
+          return option._id !== optionId
+        });
+    
+    RobaDialog.ask('Delete Option?', 'Are you sure that you want to delete the option <span class="label label-primary"> ' + option.title + '</span> ?', () => {
+      RobaDialog.hide();
+      Meteor.call('deleteCapacityPlanOption', optionId, function (error, response) {
+        if (error) {
+          RobaDialog.error('Delete failed: ' + error.message);
+        } else {
+        }
+      });
+      if (otherOptions.length) {
+        FlowRouter.go(FlowRouter.path('CapacityPlanOption', { planId: plan._id, optionId: otherOptions[ 0 ]._id }))
+      }
     });
   },
   'click .capacity-plan-role-nav' (e, instance) {

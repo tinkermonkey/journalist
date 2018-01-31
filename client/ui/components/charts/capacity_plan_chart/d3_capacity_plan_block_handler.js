@@ -540,6 +540,13 @@ export class D3CapacityPlanBlockHandler {
               record : d,
               element: element
             };
+          } else {
+            // Highlight the items in this release
+            d.targetLinks().forEach((link) => {
+              let effortId = link.source().dataId;
+              chart.sprintBodyLayer.selectAll('.effort-block-group[data-effort-id="' + effortId + '"]').classed('effort-highlight', true);
+            });
+            chart.linkLayer.selectAll('.release-highlight[data-release-id="' + d.dataId + '"]').classed('highlight', true);
           }
         })
         .on('mouseleave', (d) => {
@@ -548,6 +555,9 @@ export class D3CapacityPlanBlockHandler {
           element.classed('hover', false);
           if (chart.inEffortDrag) {
             delete chart.drag.hover;
+          } else {
+            chart.sprintBodyLayer.selectAll('.effort-block-group').classed('effort-highlight', false);
+            chart.linkLayer.selectAll('.release-highlight[data-release-id="' + d.dataId + '"]').classed('highlight', false);
           }
         });
     
@@ -781,6 +791,8 @@ export class D3CapacityPlanBlockHandler {
     chart.sprintBackgroundLayer.selectAll('.sprint-background-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
+    
+    chart.bodyBounds = chart.chartBody.node().getBoundingClientRect();
     
     chart.drag = {
       dragHandle: dragHandle,

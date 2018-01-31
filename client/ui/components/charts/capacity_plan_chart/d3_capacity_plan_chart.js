@@ -236,7 +236,7 @@ export class D3CapacityPlanChart {
     if (Date.now() - self.lastUpdateTime < 500) {
       clearTimeout(self.updateTimeout);
       self.updateTimeout = setTimeout(() => {
-        self.update();
+        self.update(data);
       }, 500);
       return;
     }

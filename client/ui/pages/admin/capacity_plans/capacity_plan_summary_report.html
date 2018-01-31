@@ -1,0 +1,26 @@
+<template name="CapacityPlanSummaryReport">
+  {{#if Template.subscriptionsReady }}
+    {{#with capacityPlan}}
+      {{setPageTitle 'Capacity Plan Summary - ' title }}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            
+            <h1>{{title}}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            {{> CapacityPlanOptionSummary }}
+          </div>
+        </div>
+      </div>
+    {{else}}
+      {{> NotFound}}
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

@@ -123,7 +123,7 @@ Template.CapacityPlanEfforts.onCreated(() => {
   let instance = Template.instance();
   
   instance.selectedEffort = new ReactiveVar();
-  instance.colorScheme    = d3.schemeCategory10;
+  instance.colorScheme    = d3.schemeCategory20;
   Session.set('in-effort-drag', false);
   Session.set('hover-sprint-number', null);
   

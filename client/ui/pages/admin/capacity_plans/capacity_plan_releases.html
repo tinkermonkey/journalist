@@ -14,7 +14,7 @@
     </thead>
     <tbody>
     {{#each releases}}
-      <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}"
           data-pk="{{_id}}">
         <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
         <td>

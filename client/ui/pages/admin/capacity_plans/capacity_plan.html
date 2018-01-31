@@ -11,12 +11,20 @@
               <li class="active">Capacity Plan</li>
             </ol>
             
-            <h1>{{title}}</h1>
+            <div>
+              <h1 class="inline-block">{{title}}</h1>
+              <a class="inline-block report-link" target="_blank" href="{{pathFor 'CapacityPlanReport' planId=_id}}">Report</a>
+              <a class="inline-block report-link" target="_blank" href="{{pathFor 'CapacityPlanSummaryReport' planId=_id}}">Summary Report</a>
+            </div>
             
             <div class="option-container show-controls-on-hover">
               <ul class="nav nav-pills">
                 {{#each options}}
-                  <li role="presentation" class="{{#if isCurrentOption}}active{{/if}} capacity-plan-option-nav"><a>{{title}}</a></li>
+                  <li role="presentation" class="{{#if isCurrentOption}}active{{/if}} capacity-plan-option-nav">
+                    <a>
+                      {{title}}
+                    </a>
+                  </li>
                 {{/each}}
                 <li role="presentation">
                   <a class="btn-add-option hidden-control">
@@ -24,10 +32,26 @@
                     Add Option
                   </a>
                 </li>
+                {{#if currentOption}}
+                  <li role="presentation">
+                    <a class="hidden-control btn-edit-option">
+                      <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                  </li>
+                  
+                  {{#if otherOptions}}
+                    <li role="presentation">
+                      <a class="hidden-control btn-delete-option">
+                        <span class="glyphicon glyphicon-remove"></span>
+                      </a>
+                    </li>
+                  {{/if}}
+                {{/if}}
               </ul>
               <ul class="nav nav-pills pull-right">
                 {{#each capacityPlanRoles}}
-                  <li role="presentation" class="{{#if isCurrentPlanningRole this._id}}active{{/if}} capacity-plan-role-nav"><a>{{title}}</a></li>
+                  <li role="presentation" class="{{#if isCurrentPlanningRole this._id}}active{{/if}} capacity-plan-role-nav">
+                    <a>{{title}}</a></li>
                 {{/each}}
               </ul>
             </div>
@@ -38,7 +62,9 @@
         {{#with currentOption}}
           {{> CapacityPlanChart chartContext }}
         {{else }}
-          {{> RobaSpinner scale=2.0 rainbow=true }}
+          <div class="alert alert-danger">
+            Option not found
+          </div>
         {{/with}}
       </div>
       <div class="container">
@@ -70,6 +96,14 @@
           <div class="col-md-9">
             {{> CapacityPlanEfforts }}
             {{> CapacityPlanReleases }}
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Plan Summary</h1>
+            {{> CapacityPlanOptionSummary }}
           </div>
         </div>
       </div>

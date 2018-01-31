@@ -11,7 +11,7 @@ aldeed:simple-schema@1.5.3
 allow-deny@1.1.0
 amplify@1.0.0
 austinsand:editable-checkbox@1.0.2
-austinsand:editable-code@2.1.1
+austinsand:editable-code@2.1.2
 austinsand:editable-enum-checklist@1.0.2
 austinsand:editable-enum-selector@1.0.1
 austinsand:editable-record-checklist@1.0.2

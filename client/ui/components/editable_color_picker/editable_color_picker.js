@@ -26,7 +26,7 @@ Template.EditableColorPicker.onRendered(() => {
   
   instance.autorun(() => {
     let context     = Template.currentData(),
-        minFireTime = context.minFireTime || 30;
+        minFireTime = context.minFireTime || 500;
     
     instance.lastFireTime = 0;
     

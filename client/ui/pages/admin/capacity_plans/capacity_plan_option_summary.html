@@ -1,0 +1,60 @@
+<template name="CapacityPlanOptionSummary">
+  <div class="options-summary">
+    <table class="options-summary-table">
+      {{#each options}}
+        <tr>
+          <td class="option-summary-title">
+            <h2>{{title}}</h2>
+          </td>
+          <td class="option-summary-body">
+            {{#each releases}}
+              <div class="option-summary-release">
+                <div>
+                  <h3>{{title}}</h3>
+                  <span class="option-summary-release-timing">
+                    Released {{optionReleaseDate ../_id}},
+                    {{sprintCount ../_id}} sprint{{#if multipleSprints ../_id}}s{{/if}}
+                  </span>
+                </div>
+              </div>
+              <div class="option-summary-release-contents">
+                <table class="table data-table border-bottom option-release-contents-table">
+                  <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Sprints</th>
+                    {{#each plan.roles}}
+                      <th>{{title}}s</th>
+                    {{/each}}
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {{#each contentEfforts ../_id}}
+                    <tr class="data-table-row {{#if isOdd @index}}odd{{/if}}">
+                      <td class="item-title">{{itemTitle}}</td>
+                      <td>{{#markdown}}{{itemDescription}}{{/markdown}}</td>
+                      <td class="minimal-width">
+                        {{#each sprints ../../_id}}
+                          <div class="no-wrap">{{sprintTitle}}</div>
+                        {{/each}}
+                      </td>
+                      {{#each ../plan.roles}}
+                        <td class="minimal-width">
+                          {{#each ../contributorsInRole ../../../_id this._id }}
+                            <div class="no-wrap">{{name}}</div>
+                          {{/each}}
+                        </td>
+                      {{/each}}
+                    </tr>
+                  {{/each}}
+                  </tbody>
+                </table>
+              </div>
+            {{/each}}
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>

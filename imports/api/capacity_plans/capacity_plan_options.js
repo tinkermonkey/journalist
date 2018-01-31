@@ -94,6 +94,33 @@ CapacityPlanOptions.helpers({
   },
   
   /**
+   * Get the releases in this option
+   */
+  releases () {
+    let option = this;
+    return _.uniq(CapacityPlanSprintLinks.find({
+          optionId  : option._id,
+          targetType: CapacityPlanBlockTypes.release
+        }, { sort: { targetSprint: 1 } })
+        .map((link) => {
+          //console.log('CapacityPlanOptions.releases found a release link to block', link.targetId);
+          return link.targetId
+        }))
+        .map((blockId) => {
+          let releaseBlock = CapacityPlanSprintBlocks.findOne(blockId);
+          if (releaseBlock) {
+            //console.log('CapacityPlanOptions.releases loading release block:', blockId, releaseBlock.dataRecord());
+            return releaseBlock.dataRecord()
+          } else {
+            console.error('CapacityPlanOptions.releases unable to load release block:', blockId);
+          }
+        })
+        .filter((release) => {
+          return release !== undefined
+        });
+  },
+  
+  /**
    * Make sure that the links for a contributor make sense
    * @param contributorId
    */
@@ -297,7 +324,7 @@ CapacityPlanOptions.helpers({
         
         // Get the block that should link to the release
         strictCriteria.sprintNumber = finalSprint;
-        let finalBlock             = CapacityPlanSprintBlocks.findOne(strictCriteria);
+        let finalBlock              = CapacityPlanSprintBlocks.findOne(strictCriteria);
         
         // Validate any remaining links
         finalBlock.sourceLinks().forEach((link, i) => {

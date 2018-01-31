@@ -26,9 +26,6 @@ Template.EditableItemSelector.events({
  * Template Created
  */
 Template.EditableItemSelector.onCreated(() => {
-  let instance = Template.instance();
-  
-  instance.subscribe('imported_item_crumb_query', {});
 });
 
 /**

@@ -5,6 +5,7 @@ import { CapacityPlanOptions } from './capacity_plan_options';
 import { CapacityPlanReleases } from './capacity_plan_releases';
 import { CapacityPlanSprints } from './capacity_plan_sprints';
 import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
+import { ContributorRoleDefinitions } from '../contributors/contributor_role_definitions';
 import { Teams } from '../teams/teams';
 
 /**
@@ -82,8 +83,8 @@ if (Meteor.isServer) {
         CapacityPlanSprints.insert({
           planId      : plan._id,
           sprintNumber: i,
-          start       : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
-          end         : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
+          startDate   : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
+          endDate     : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
         });
       }
     }
@@ -111,21 +112,52 @@ if (Meteor.isServer) {
  * Helpers
  */
 CapacityPlans.helpers({
+  /**
+   * Get all of the options for this plan
+   */
   options () {
     return CapacityPlanOptions.find({ planId: this._id }, { sort: { title: 1 } })
   },
+  /**
+   * Get all of the releases for this plan
+   */
   releases () {
     return CapacityPlanReleases.find({ planId: this._id }, { sort: { title: 1 } })
   },
+  /**
+   * Get all of the efforts in this plan
+   */
   efforts () {
     return CapacityPlanStrategicEfforts.find({ planId: this._id }, { sort: { title: 1 } })
   },
+  /**
+   * Get the list of teams in this plan
+   * @return {Array}
+   */
   teams () {
     if (this.teamIds) {
       return Teams.find({ _id: { $in: this.teamIds } }, { sort: { title: 1 } })
     } else {
       return []
     }
+  },
+  /**
+   * Get the list of reportable roles for this plan
+   */
+  roles () {
+    let plan    = this,
+        roleIds = _.uniq(_.flatten(plan.teams().map((team) => {
+          return team.capacityPlanRoles()
+        })));
+    
+    return ContributorRoleDefinitions.find({ _id: { $in: roleIds } }, { sort: { title: 1 } }).fetch()
+  },
+  /**
+   * Get a sprint for this plan by sprint number
+   * @param sprintNumber
+   */
+  sprint (sprintNumber) {
+    return CapacityPlanSprints.findOne({ planId: this._id, sprintNumber: sprintNumber })
   },
   teamIdsSorted () {
     return this.teams().map((team) => {
@@ -148,8 +180,8 @@ CapacityPlans.helpers({
         $set: {
           planId      : plan._id,
           sprintNumber: i,
-          start       : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
-          end         : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
+          startDate   : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
+          endDate     : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
         }
       });
     }

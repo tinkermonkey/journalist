@@ -161,13 +161,13 @@
  * Effort blocks
  */
 .effort-block {
-  stroke             : rgba(255, 255, 255, 1);
+  stroke             : #fff;
   stroke-width       : 1px;
-  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
-  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
-  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
-  -o-transition      : stroke 0.25s, stroke-width 0.25s;
-  transition         : stroke 0.25s, stroke-width 0.25s;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s, fill 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s, fill 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s, fill 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s, fill 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s, fill 0.25s;
   transition-delay   : 0.125s;
 }
 
@@ -201,6 +201,12 @@
 .release-block-group:hover .release-controls,
 .contributor-block-group:hover .contributor-controls {
   opacity : 1;
+}
+
+.effort-block-group.effort-highlight .effort-block {
+  fill         : rgb(22, 231, 58) !important;
+  stroke-width : 2px;
+  stroke       : #fff;
 }
 
 .effort-control-background,
@@ -306,6 +312,12 @@ path.contributor-highlight.highlight {
   transition         : stroke 0.25s, stroke-width 0.25s;
   transition-delay   : 0.125s;
 }
+
+path.release-highlight.highlight {
+  stroke       : rgb(22, 231, 58) !important;
+  stroke-width : 25px;
+}
+
 
 /**
  * Separate styling for printable charts

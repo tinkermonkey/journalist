@@ -1,21 +1,18 @@
 <template name="CapacityPlanEffortItems">
   <h3>Stories</h3>
-  <table class="table data-table table-striped">
+  <table class="table data-table">
     <thead>
     <tr>
       <th></th>
       <th>Item</th>
       <th>Title</th>
       <th>Estimate</th>
-      <th>Dependencies</th>
-      <th>Contributor</th>
-      <th>Timing</th>
       <th></th>
     </tr>
     </thead>
     <tbody>
     {{#each items}}
-      <tr class="data-table-row show-controls-on-hover" data-pk="{{_id}}">
+      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
         <td class="open-link">
           {{#if itemIdentifier}}
             <a href="">
@@ -37,11 +34,6 @@
             points
           {{/if}}
         </td>
-        <td>
-        
-        </td>
-        <td></td>
-        <td></td>
         <td>
           <a class="link-red hidden-control btn-delete-item">
             <span class="glyphicon glyphicon-minus-sign"></span>

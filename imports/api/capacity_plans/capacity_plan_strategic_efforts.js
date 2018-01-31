@@ -2,8 +2,12 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
 import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effort_items';
+import { Contributors } from '../contributors/contributors';
+import { ContributorTeamRoles } from '../contributors/contributor_team_roles';
 import { ImportedItemCrumbs } from '../imported_items/imported_item_crumbs';
-import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
+import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
+import { CapacityPlanSprints } from './capacity_plan_sprints';
+import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
 
 /**
  * ============================================================================
@@ -11,33 +15,41 @@ import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
  * ============================================================================
  */
 export const CapacityPlanStrategicEffort = new SimpleSchema({
-  planId        : {
+  planId          : {
     type: String
   },
-  itemIdentifier: {
+  itemIdentifier  : {
     type    : String,
     optional: true
   },
-  title         : {
+  title           : {
     type: String
   },
-  color         : {
+  description     : {
+    type    : String,
+    optional: true
+  },
+  color           : {
     type: String
+  },
+  isReleaseContent: {
+    type        : Boolean,
+    defaultValue: true
   },
   // Standard tracking fields
-  dateCreated   : {
+  dateCreated     : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy     : {
+  createdBy       : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified  : {
+  dateModified    : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy    : {
+  modifiedBy      : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -83,7 +95,15 @@ CapacityPlanStrategicEfforts.helpers({
       return this.title
     }
   },
-  linkedItemCrumb(){
+  itemDescription () {
+    if (this.itemIdentifier) {
+      let item = ImportedItemCrumbs.findOne({ identifier: this.itemIdentifier });
+      return item && item.description || this.description
+    } else {
+      return this.description
+    }
+  },
+  linkedItemCrumb () {
     if (this.itemIdentifier) {
       return ImportedItemCrumbs.findOne({ identifier: this.itemIdentifier })
     }
@@ -91,9 +111,77 @@ CapacityPlanStrategicEfforts.helpers({
   /**
    * If this is linked to an item, service the linked items and make sure they're in sync
    */
-  crossReferenceLinkedItems(){
+  crossReferenceLinkedItems () {
     if (this.itemIdentifier) {
       this.linkedItemCrumb();
     }
+  },
+  /**
+   * Determine the sprint numbers that this item is being worked for a planned option
+   * @param optionId
+   */
+  sprintNumbers (optionId) {
+    let effort = this;
+    
+    return _.uniq(CapacityPlanSprintBlocks.find({ optionId: optionId, dataId: effort._id })
+        .map((effortBlock) => {
+          return effortBlock.sprintNumber
+        })).sort()
+  },
+  /**
+   * Determine the sprints this item is being worked for a planned option
+   * @param optionId
+   */
+  sprints (optionId) {
+    let effort = this;
+    
+    return CapacityPlanSprints.find({
+      planId      : effort.planId,
+      sprintNumber: { $in: effort.sprintNumbers(optionId) }
+    }, { sort: { sprintNumber: 1 } })
+  },
+  /**
+   * Get the list of contributors working on this effort
+   * @param optionId
+   */
+  contributors (optionId) {
+    let effort = this;
+    
+    return _.uniq(_.flatten(CapacityPlanSprintBlocks.find({ optionId: optionId, dataId: effort._id })
+        .map((effortBlock) => {
+          //console.log('Found an effort block:', effortBlock);
+          // Return a list of all of the contributorIds for this effort block
+          return effortBlock.children().fetch()
+              .filter((block) => {
+                //console.log('Filtering child blocks:', block.blockType);
+                return block.blockType === CapacityPlanBlockTypes.contributor
+              })
+              .map((contributorBlock) => {
+                //console.log('Found a contributor block:', contributorBlock.dataId);
+                return contributorBlock.dataId
+              })
+        })))
+        .map((contributorId) => {
+          //console.log('Getting contributor:', contributorId);
+          return Contributors.findOne(contributorId)
+        })
+  },
+  
+  /**
+   * Get the list of contributors in a role working on this effort
+   * @param optionId
+   * @param roleDefinitionId
+   */
+  contributorsInRole (optionId, roleDefinitionId) {
+    let effort = this;
+    
+    return effort.contributors(optionId)
+        .filter((contributor) => {
+          return ContributorTeamRoles.find({ contributorId: contributor._id })
+              .fetch()
+              .filter((teamRole) => {
+                return teamRole.roleDefinition().capacityRole()._id === roleDefinitionId
+              }).length > 0
+        })
   }
 });

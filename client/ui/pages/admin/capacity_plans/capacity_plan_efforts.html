@@ -39,7 +39,7 @@
       {{#with selectedEffort}}
         <h2>{{itemTitle}}</h2>
         
-        <table class="table data-table table-striped integration-config-table" data-pk="{{_id}}">
+        <table class="table data-table integration-config-table full-width" data-pk="{{_id}}">
           <tbody>
           {{#unless itemIdentifier}}
             <tr class="show-controls-on-hover">
@@ -76,6 +76,25 @@
               <div>
                 {{itemsWithEstimates.count}} of {{items.count}} items estimated
               </div>
+            </td>
+          </tr>
+          <tr class="show-controls-on-hover">
+            <td>Release Content</td>
+            <td></td>
+            <td>{{> EditableCheckbox dataKey='isReleaseContent' value=isReleaseContent }}</td>
+          </tr>
+          <tr class="show-controls-on-hover">
+            <td>Description</td>
+            <td></td>
+            <td>
+              {{> EditableCode dataKey='description' value=description emptyText="Item Description" language="markdown"}}
+              <!--
+              {{#unless itemIdentifier}}
+                {{> EditableTextArea dataKey='description' value=description emptyText="Item Description" }}
+              {{else}}
+                {{itemDescription}}
+              {{/unless}}
+              -->
             </td>
           </tr>
           </tbody>

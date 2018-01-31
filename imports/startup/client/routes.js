@@ -1,19 +1,19 @@
 import { Meteor } from 'meteor/meteor';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
-
 // Import the base templates
 import '../../../client/ui/layouts/unauthenticated_layout';
 import '../../../client/ui/layouts/authenticated_layout';
 import '../../../client/ui/layouts/report_layout';
-
 // Import the pages
 import '../../../client/ui/pages/admin/contributors/admin_contributors';
 import '../../../client/ui/pages/admin/admin_home/admin_home';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields';
+import '../../../client/ui/pages/admin/capacity_plans/capacity_plan';
 import '../../../client/ui/pages/admin/capacity_plans/capacity_plans';
-import '../../../client/ui/pages/admin/capacity_plans/capacity_plans';
+import '../../../client/ui/pages/admin/capacity_plans/capacity_plan_report';
+import '../../../client/ui/pages/admin/capacity_plans/capacity_plan_summary_report';
 import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions';
 import '../../../client/ui/pages/admin/display_templates/display_templates';
 import '../../../client/ui/pages/admin/import_export/import_export';
@@ -54,7 +54,6 @@ FlowRouter.route('/logout', {
     }, 10);
   }
 });
-
 
 /**
  *
@@ -174,6 +173,20 @@ FlowRouter.route('/admin/capacity_plan/:planId/:optionId', {
   name: 'CapacityPlanOption',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'CapacityPlan' });
+  }
+});
+
+FlowRouter.route('/admin/capacity_plan_report/:planId', {
+  name: 'CapacityPlanReport',
+  action () {
+    BlazeLayout.render('ReportLayout', { main: 'CapacityPlanReport' });
+  }
+});
+
+FlowRouter.route('/admin/capacity_plan_summary_report/:planId', {
+  name: 'CapacityPlanSummaryReport',
+  action () {
+    BlazeLayout.render('ReportLayout', { main: 'CapacityPlanSummaryReport' });
   }
 });
 

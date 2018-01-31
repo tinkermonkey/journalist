@@ -1,7 +1,44 @@
+.report-link {
+ margin-left: 2em;
+}
 .capacity-plan-chart-container {
   margin-top : 10px;
 }
 
 .option-container .nav {
-  display: inline-block;
+  display : inline-block;
+}
+
+.options-summary-table {
+  margin-top    : 2em;
+  margin-bottom : 2em;
+  width         : 100%;
+}
+
+.options-summary-table > tr {
+  border-top    : #999 solid 2px;
+  margin-bottom : 1em;
+}
+
+.option-summary-title {
+  vertical-align : top;
+  white-space    : nowrap;
+  width          : 10%;
+}
+
+.option-summary-body {
+  vertical-align : top;
+  padding-left   : 2em;
+}
+
+.option-summary-release-timing {
+  margin-bottom: 1em;
+}
+
+.option-release-contents-table .item-title {
+  width: 25%;
+}
+
+.option-release-contents-table .minimal-width {
+  width: 10%;
 }

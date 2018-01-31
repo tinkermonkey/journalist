@@ -93,7 +93,7 @@ export class D3CapacityPlanSprintHandler {
     self.sprintHeaderSelection.attr('transform', self.sprintBodyTransform.bind(self))
         .select('.sprint-header-date')
         .text((sprint) => {
-          return moment(sprint.start).format('ddd, MMM Do')
+          return moment(sprint.startDate).format('ddd, MMM Do')
         });
     
     self.sprintHeaderSelection.select('.sprint-header-title')

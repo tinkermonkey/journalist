@@ -17,10 +17,10 @@ export const CapacityPlanSprint = new SimpleSchema({
     type    : String,
     optional: true
   },
-  start       : {
+  startDate   : {
     type: Date
   },
-  end         : {
+  endDate     : {
     type: Date
   }
 });
@@ -44,4 +44,8 @@ CapacityPlanSprints.deny({
 /**
  * Helpers
  */
-CapacityPlanSprints.helpers({});
+CapacityPlanSprints.helpers({
+  sprintTitle(){
+    return this.title || 'Sprint ' + (this.sprintNumber + 1)
+  }
+});
