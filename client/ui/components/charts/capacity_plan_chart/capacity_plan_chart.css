@@ -177,6 +177,11 @@
   stroke-width : 2px;
 }
 
+.effort-block-group.in-drag {
+  pointer-events   : none;
+  cursor           : pointer;
+}
+
 .effort-block .contributor-background {
   fill : rgba(255, 255, 255, 0.50);
 }
@@ -318,6 +323,29 @@ path.release-highlight.highlight {
   stroke-width : 25px;
 }
 
+/**
+ * The effort list
+ */
+.effort-list-hide {
+  display : none;
+}
+
+.effort-list-control {
+  stroke       : #ff009d;
+  stroke-width : 2px;
+  fill         : #fff;
+}
+
+.effort-list-control:hover {
+  filter : url(#controls-drop-shadow);
+}
+
+.effort-list-background {
+  stroke-width : 2px;
+  fill         : #298cff;
+  stroke       : #ff009d;
+  filter       : url(#controls-drop-shadow);
+}
 
 /**
  * Separate styling for printable charts

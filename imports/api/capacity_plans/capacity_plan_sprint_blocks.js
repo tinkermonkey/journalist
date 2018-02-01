@@ -3,6 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Auth } from '../auth';
 import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
 import { Contributors } from '../contributors/contributors';
+import { CapacityPlanOptions } from './capacity_plan_options';
 import { CapacityPlanReleases } from './capacity_plan_releases';
 import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effort_items';
@@ -77,6 +78,12 @@ CapacityPlanSprintBlocks.deny({
  * Helpers
  */
 CapacityPlanSprintBlocks.helpers({
+  /**
+   * Get the plan option for this block
+   */
+  option () {
+    return CapacityPlanOptions.findOne(this.optionId)
+  },
   /**
    * Fetch the data behind a block
    */
@@ -192,7 +199,7 @@ CapacityPlanSprintBlocks.helpers({
       CapacityPlanSprintBlocks.update(block._id, { $set: { order: previous.order } });
       this.reIndexSiblingOrder();
     } else {
-      console.error('CapacityPlanSprintLinks.moveUp failed, no previous block found:', CapacityPlanSprintBlocks.find({
+      console.error('CapacityPlanSprintBlocks.moveUp failed, no previous block found:', CapacityPlanSprintBlocks.find({
         optionId    : block.optionId,
         sprintNumber: block.sprintNumber,
         parentId    : block.parentId,
@@ -220,7 +227,7 @@ CapacityPlanSprintBlocks.helpers({
       CapacityPlanSprintBlocks.update(block._id, { $set: { order: next.order } });
       this.reIndexSiblingOrder();
     } else {
-      console.error('CapacityPlanSprintLinks.moveDown failed, no next block found:', CapacityPlanSprintBlocks.find({
+      console.error('CapacityPlanSprintBlocks.moveDown failed, no next block found:', CapacityPlanSprintBlocks.find({
         optionId    : block.optionId,
         sprintNumber: block.sprintNumber,
         parentId    : block.parentId,
@@ -235,7 +242,28 @@ CapacityPlanSprintBlocks.helpers({
    * @param sprintNumber
    */
   updateSprintNumber (sprintNumber) {
-    CapacityPlanSprintBlocks.update(this._id, { $set: { sprintNumber: sprintNumber } })
+    console.log('CapacityPlanSprintBlocks.updateSprintNumber:', this._id, this.parentId, sprintNumber);
+    let block = this;
+    
+    CapacityPlanSprintBlocks.update(block._id, { $set: { sprintNumber: sprintNumber } });
+    
+    // Update the sprint number for all of the children
+    block.children().forEach((child) => {
+      child.updateSprintNumber(sprintNumber);
+    });
+    
+    // Remove the contributor links as they'll need to be healed
+    if (block.blockType === CapacityPlanBlockTypes.contributor) {
+      block.sourceLinks().forEach((link) => {
+        CapacityPlanSprintLinks.remove(link._id);
+      });
+      block.targetLinks().forEach((link) => {
+        CapacityPlanSprintLinks.remove(link._id);
+      });
+      
+      // Heal the links
+      block.option().healContributorLinks(block.dataId)
+    }
   },
   
   /**
@@ -268,8 +296,8 @@ CapacityPlanSprintBlocks.helpers({
    */
   cousins () {
     return CapacityPlanSprintBlocks.find({
-      optionId : this.optionId,
-      dataId   : this.dataId
+      optionId: this.optionId,
+      dataId  : this.dataId
     }, { sort: { sprintNumber: 1 } })
   },
   

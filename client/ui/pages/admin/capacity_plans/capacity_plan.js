@@ -7,7 +7,6 @@ import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/c
 import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
 import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
-import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
 import './capacity_plan_option_summary';
@@ -39,30 +38,15 @@ Template.CapacityPlan.helpers({
     
     return otherOptions.length > 0
   },
-  chartContext () {
-    let option = this;
-    return {
-      config: {},
-      data  : {
-        option          : option,
-        plan            : option.plan(),
-        sprints         : option.sprints().fetch(),
-        contributorLinks: CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.contributor }).fetch(),
-        blocks          : CapacityPlanSprintBlocks.find({
-          optionId : option._id,
-          blockType: { $in: [ CapacityPlanBlockTypes.contributor, CapacityPlanBlockTypes.effort ] }
-        }).fetch(),
-        roleId          : Template.instance().currentPlanningRole.get(),
-        releases        : CapacityPlanSprintBlocks.find({ optionId: option._id, blockType: CapacityPlanBlockTypes.release }).fetch(),
-        releaseLinks    : CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.release }).fetch()
-      }
-    }
-  },
   startDatePickerConfig () {
     return {
       singleDatePicker: true,
       showDropdowns   : true,
-      startDate       : this.startDate || new Date()
+      startDate       : this.startDate || new Date(),
+      isInvalidDate(testDate){
+        // limit the selection to week starts
+        return true
+      }
     }
   },
   sprintLengthOptions () {
@@ -72,6 +56,9 @@ Template.CapacityPlan.helpers({
       threeWeeks: 3 * 7 * 24 * 60 * 60 * 1000
     }
   },
+  currentPlanningRole (roleId) {
+    return Template.instance().currentPlanningRole.get();
+  },
   isCurrentPlanningRole (roleId) {
     let currentRoleId = Template.instance().currentPlanningRole.get();
     return currentRoleId === roleId;
@@ -79,7 +66,7 @@ Template.CapacityPlan.helpers({
   capacityPlanRoles () {
     let plan          = CapacityPlans.findOne(FlowRouter.getParam('planId')),
         currentRoleId = Template.instance().currentPlanningRole.get(),
-        roles = plan.roles();
+        roles         = plan.roles();
     
     // If there's no current role set, set one
     if (!currentRoleId && roles.length) {

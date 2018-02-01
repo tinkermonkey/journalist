@@ -19,25 +19,6 @@ Template.CapacityPlanSummaryReport.helpers({
     let planId = FlowRouter.getParam('planId');
     return CapacityPlans.findOne(planId)
   },
-  chartContext () {
-    let option = this;
-    return {
-      config: {},
-      data  : {
-        option          : option,
-        plan            : option.plan(),
-        sprints         : option.sprints().fetch(),
-        contributorLinks: CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.contributor }).fetch(),
-        blocks          : CapacityPlanSprintBlocks.find({
-          optionId : option._id,
-          blockType: { $in: [ CapacityPlanBlockTypes.contributor, CapacityPlanBlockTypes.effort ] }
-        }).fetch(),
-        roleId          : Template.instance().currentPlanningRole.get(),
-        releases        : CapacityPlanSprintBlocks.find({ optionId: option._id, blockType: CapacityPlanBlockTypes.release }).fetch(),
-        releaseLinks    : CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.release }).fetch()
-      }
-    }
-  },
   startDatePickerConfig () {
     return {
       singleDatePicker: true,

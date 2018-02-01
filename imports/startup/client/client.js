@@ -20,6 +20,10 @@ import { Teams } from '../../api/teams/teams';
 import { Users } from '../../api/users/users';
 import { UserTypes } from '../../api/users/user_types.js';
 import '../../../node_modules/c3/c3.css';
+import { CapacityPlanSprintBlocks } from '../../api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanSprintLinks } from '../../api/capacity_plans/capacity_plan_sprint_links';
+import { CapacityPlanBlockTypes } from '../../api/capacity_plans/capacity_plan_block_types';
+import { CapacityPlanStrategicEfforts } from '../../api/capacity_plans/capacity_plan_strategic_efforts';
 
 /**
  * Custom autoform hooks to prevent client side inserts

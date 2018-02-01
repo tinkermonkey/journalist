@@ -72,7 +72,7 @@ export class D3CapacityPlanSprintHandler {
         .attr('class', 'sprint-header-title')
         .style('font-size', parseInt(chart.config.header.height * 0.75) + 'px')
         .attr('y', 0);
-  
+    
     sprintHeaderEnter.append('text')
         .attr('class', 'sprint-header-date')
         .attr('y', chart.config.header.height - 5);
@@ -143,6 +143,9 @@ export class D3CapacityPlanSprintHandler {
         .attr('data-sprint-id', (d) => {
           return d._id
         })
+        .attr('data-sprint-number', (d) => {
+          return d.sprintNumber
+        })
         .attr('transform', self.sprintBackgroundTransform.bind(self));
     
     sprintBackgroundEnter.append('rect')
@@ -156,7 +159,7 @@ export class D3CapacityPlanSprintHandler {
         .attr('y', 0)
         .on('mouseenter', (d) => {
           let element = d3.select(d3.event.target);
-  
+          
           element.closest('.sprint-background-group').classed('hover', true);
           if (Session.get('in-effort-drag')) {
             Session.set('hover-sprint-number', d.sprintNumber);
@@ -184,7 +187,7 @@ export class D3CapacityPlanSprintHandler {
         .attr('y1', 0)
         .attr('x2', chart.sprintWidth + chart.config.sprints.padding)
         .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
-  
+    
   }
   
   /**
@@ -209,18 +212,17 @@ export class D3CapacityPlanSprintHandler {
         .attr('x', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('width', chart.sprintBodyWidth + chart.config.sprints.padding * 2)
         .attr('height', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
-  
-  
+    
     self.sprintBackgroundSelection.selectAll('.sprint-background-border-left')
         .attr('x1', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('x2', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
-  
+    
     self.sprintBackgroundSelection.selectAll('.sprint-background-border-right')
         .attr('x1', chart.sprintWidth + chart.config.sprints.padding)
         .attr('x2', chart.sprintWidth + chart.config.sprints.padding)
         .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
-  
+    
   }
   
   /**

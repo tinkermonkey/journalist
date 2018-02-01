@@ -60,7 +60,7 @@
       </div>
       <div class="capacity-plan-chart-container">
         {{#with currentOption}}
-          {{> CapacityPlanChart chartContext }}
+          {{> CapacityPlanChart option=this roleId=currentPlanningRole }}
         {{else }}
           <div class="alert alert-danger">
             Option not found

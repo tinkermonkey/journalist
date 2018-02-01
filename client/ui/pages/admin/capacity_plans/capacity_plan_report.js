@@ -1,9 +1,6 @@
 import './capacity_plan_report.html';
 import { Template } from 'meteor/templating';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
-import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
 import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import './capacity_plan.css';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
@@ -18,25 +15,6 @@ Template.CapacityPlanReport.helpers({
   capacityPlan () {
     let planId = FlowRouter.getParam('planId');
     return CapacityPlans.findOne(planId)
-  },
-  chartContext () {
-    let option = this;
-    return {
-      config: {},
-      data  : {
-        option          : option,
-        plan            : option.plan(),
-        sprints         : option.sprints().fetch(),
-        contributorLinks: CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.contributor }).fetch(),
-        blocks          : CapacityPlanSprintBlocks.find({
-          optionId : option._id,
-          blockType: { $in: [ CapacityPlanBlockTypes.contributor, CapacityPlanBlockTypes.effort ] }
-        }).fetch(),
-        roleId          : Template.instance().currentPlanningRole.get(),
-        releases        : CapacityPlanSprintBlocks.find({ optionId: option._id, blockType: CapacityPlanBlockTypes.release }).fetch(),
-        releaseLinks    : CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.release }).fetch()
-      }
-    }
   },
   startDatePickerConfig () {
     return {
@@ -55,7 +33,7 @@ Template.CapacityPlanReport.helpers({
   capacityPlanRoles () {
     let plan          = CapacityPlans.findOne(FlowRouter.getParam('planId')),
         currentRoleId = Template.instance().currentPlanningRole.get(),
-        roles = plan.roles();
+        roles         = plan.roles();
     
     // If there's no current role set, set one
     if (!currentRoleId && roles.length) {

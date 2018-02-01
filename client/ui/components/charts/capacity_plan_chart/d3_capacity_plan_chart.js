@@ -1,6 +1,7 @@
 import { Util } from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { D3CapacityPlanBlockHandler } from './d3_capacity_plan_block_handler';
+import { D3CapacityPlanEffortListHandler } from './d3_capacity_plan_effort_list_handler';
 import { D3CapacityPlanLinkHandler } from './d3_capacity_plan_link_handler';
 import { D3CapacityPlanLinkDragHandler } from './d3_capacity_plan_link_drag_handler';
 import { D3CapacityPlanSprintHandler } from './d3_capacity_plan_sprint_handler';
@@ -57,11 +58,12 @@ export class D3CapacityPlanChart {
     }, config);
     
     // Create the work handlers
-    this.blockHandler    = new D3CapacityPlanBlockHandler(this);
-    this.linkHandler     = new D3CapacityPlanLinkHandler(this);
-    this.linkDragHandler = new D3CapacityPlanLinkDragHandler(this);
-    this.sprintHandler   = new D3CapacityPlanSprintHandler(this);
-    this.teamHandler     = new D3CapacityPlanTeamHandler(this);
+    this.blockHandler      = new D3CapacityPlanBlockHandler(this);
+    this.linkHandler       = new D3CapacityPlanLinkHandler(this);
+    this.linkDragHandler   = new D3CapacityPlanLinkDragHandler(this);
+    this.sprintHandler     = new D3CapacityPlanSprintHandler(this);
+    this.teamHandler       = new D3CapacityPlanTeamHandler(this);
+    this.effortListHandler = new D3CapacityPlanEffortListHandler(this);
     
     // Throttle the updates
     this.lastUpdateTime = 0;
@@ -149,6 +151,45 @@ export class D3CapacityPlanChart {
     // Create a layer for the timeline
     self.headerLayer = self.baseLayer.append('g')
         .attr('class', 'header-layer');
+    
+    // Create a layer for the effort list
+    self.effortListLayer = self.baseLayer.append('g')
+        .attr('class', 'effort-list-layer')
+        .attr('transform', 'translate(' + self.config.efforts.margin + ',' + (self.config.efforts.margin + self.config.header.height) + ')');
+    
+    self.effortListBackground = self.effortListLayer.append('g')
+        .attr('class', 'effort-list-background-group')
+        .append('rect')
+        .attr('class', 'effort-list-background effort-list-hide')
+        .attr('rx', 8)
+        .attr('ry', 8);
+    
+    // Append a control to show and hide the effort list
+    self.effortListControl = self.effortListLayer.append('g')
+        .attr('class', 'effort-list-control-group')
+        .attr('transform', 'translate(' + self.config.efforts.margin + ', -20)')
+        .append('circle')
+        .attr('class', 'effort-list-control')
+        .attr('cx', 0)
+        .attr('cy', 0)
+        .attr('r', 10)
+        .on('click', self.effortListHandler.toggleEffortList.bind(self.effortListHandler));
+    
+    // Create a clip path for effort list
+    self.effortListClipPathId = 'effortList-' + self.containerId;
+    self.effortListClipPath   = self.svgDefs.append('clipPath')
+        .attr('id', self.effortListClipPathId);
+    
+    self.effortListClipPath.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', self.config.contributors.width)
+        .attr('height', 0);
+    
+    // Create a foreground layer for the effort list
+    self.effortListForeground = self.effortListLayer.append('g')
+        .attr('class', 'effort-list-foreground')
+        .attr('clip-path', 'url(#' + self.effortListClipPathId + ')');
     
     // Create a clip path for contributor names
     self.contributorClipPathId = 'contributorName-' + self.containerId;
@@ -278,6 +319,9 @@ export class D3CapacityPlanChart {
       
       // Update the background drop shadows
       self.innerShadowBottom.attr('y', self.height - self.config.shadow.height);
+      
+      // Update the effort list
+      //self.effortListHandler.update();
     }
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.update completed:', Date.now() - startTime);
@@ -403,7 +447,7 @@ export class D3CapacityPlanChart {
     // Groom the contributor links
     self.data.contributorLinks.forEach((link) => {
       let sourceBlock = link.source();
-      if (sourceBlock.dataId) {
+      if (sourceBlock && sourceBlock.dataId) {
         link.contributorId = sourceBlock.dataId
       } else {
         link.contributorId = link.sourceId
@@ -417,6 +461,12 @@ export class D3CapacityPlanChart {
       
       link.effortId  = sourceBlock && sourceBlock.dataId;
       link.releaseId = targetBlock && targetBlock.dataId;
+    });
+    
+    // Groom the effort list
+    self.data.efforts.forEach((effort) => {
+      // Replace the title with a linked item title if one exists
+      effort.title = effort.itemTitle();
     });
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);

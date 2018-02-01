@@ -1,6 +1,7 @@
 import { Util } from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { D3ContributorDragControlHandler } from './d3_contributor_drag_control_handler';
+import { Session } from "meteor/session";
 
 let d3            = require('d3'),
     d3Drag        = require('d3-drag'),
@@ -8,7 +9,7 @@ let d3            = require('d3'),
     controlTextY  = 0,
     controlRadius = 10,
     debug         = false,
-    trace         = false;
+    trace         = true;
 
 export class D3CapacityPlanBlockHandler {
   /**
@@ -22,6 +23,13 @@ export class D3CapacityPlanBlockHandler {
     self.controlHandler = new D3ContributorDragControlHandler(chart, self);
     self.lastUpdateTime = 0;
     
+    // Create the drag behavior for the effort links
+    self.effortLinkDrag = d3Drag.drag()
+        .on('start', self.effortLinkDragStart.bind(self))
+        .on('drag', self.effortLinkDragged.bind(self))
+        .on('end', self.effortLinkDragEnd.bind(self));
+    
+    // Create the drag behavior for the efforts
     self.effortDrag = d3Drag.drag()
         .on('start', self.effortDragStart.bind(self))
         .on('drag', self.effortDragged.bind(self))
@@ -94,9 +102,13 @@ export class D3CapacityPlanBlockHandler {
         })
         .attr('data-effort-id', (d) => {
           return d.dataId
-        });
+        })
+        .call(self.effortDrag);
     
-    effortBlockEnter.append('rect')
+    let effortDragEnter = effortBlockEnter.append('g')
+        .attr('class', 'effort-drag-group');
+    
+    effortDragEnter.append('rect')
         .attr('class', 'effort-block')
         .attr('x', 0)
         .attr('y', 0)
@@ -124,7 +136,7 @@ export class D3CapacityPlanBlockHandler {
           }
         });
     
-    effortBlockEnter.append('text')
+    effortDragEnter.append('text')
         .attr('class', 'effort-title')
         .attr('x', chart.config.efforts.padding)
         .attr('y', chart.config.contributors.height);
@@ -140,7 +152,7 @@ export class D3CapacityPlanBlockHandler {
     
     let dragContainerEnter = dragGroupEnter.append('g')
         .attr('class', 'link-drag-handle-container')
-        .call(self.effortDrag);
+        .call(self.effortLinkDrag);
     
     dragContainerEnter.append('circle')
         .attr('class', 'link-drag-handle')
@@ -439,6 +451,7 @@ export class D3CapacityPlanBlockHandler {
         .attr('class', 'contributor-control contributor-control-remove')
         .attr('transform', 'translate(-' + (controlRadius) + ', ' + (chart.config.contributors.height / 2) + ')')
         .on('click', (block) => {
+          console.log('Remove contributor block:', block);
           block.remove();
           chart.data.option.healContributorLinks(block.dataId);
           chart.svg.selectAll('.contributor-highlight[data-contributor-id="' + block.dataId + '"]').classed('highlight', false)
@@ -534,7 +547,7 @@ export class D3CapacityPlanBlockHandler {
           let element = d3.select(d3.event.target);
           element.classed('hover', true);
           
-          if (chart.inEffortDrag) {
+          if (chart.inEffortLinkDrag) {
             chart.drag.hover = {
               type   : CapacityPlanBlockTypes.release,
               record : d,
@@ -553,7 +566,7 @@ export class D3CapacityPlanBlockHandler {
           let element = d3.select(d3.event.target);
           
           element.classed('hover', false);
-          if (chart.inEffortDrag) {
+          if (chart.inEffortLinkDrag) {
             delete chart.drag.hover;
           } else {
             chart.sprintBodyLayer.selectAll('.effort-block-group').classed('effort-highlight', false);
@@ -646,18 +659,6 @@ export class D3CapacityPlanBlockHandler {
           chart.linkHandler.update();
         })
         .attr('transform', self.positionReleaseBlock.bind(self));
-    
-    // Update the links in sync with the transition
-    /*
-    let startTime          = Date.now();
-    let linkUpdateInterval = setInterval(() => {
-      if (Date.now() - startTime < 500) {
-        chart.linkHandler.update();
-      } else {
-        clearInterval(linkUpdateInterval);
-      }
-    }, 30);
-    */
   }
   
   /**
@@ -779,7 +780,7 @@ export class D3CapacityPlanBlockHandler {
    * Handle a link drag starting
    * @param d
    */
-  effortDragStart (d) {
+  effortLinkDragStart (d) {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragStart:', d);
     let self          = this,
         chart         = this.chart,
@@ -801,7 +802,7 @@ export class D3CapacityPlanBlockHandler {
     };
     
     chart.drag.dragHandle.classed('in-drag', true);
-    chart.inEffortDrag = true;
+    chart.inEffortLinkDrag = true;
     
     trace && console.log('D3CapacityPlanBlockHandler.dragStart drag:', chart.drag)
   }
@@ -810,7 +811,7 @@ export class D3CapacityPlanBlockHandler {
    * Handle a link drag moving
    * @param d
    */
-  effortDragged (d) {
+  effortLinkDragged (d) {
     //trace && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragged:', d);
     let self  = this,
         chart = this.chart,
@@ -827,13 +828,13 @@ export class D3CapacityPlanBlockHandler {
    * Handle a link drag ending
    * @param d
    */
-  effortDragEnd (d) {
+  effortLinkDragEnd (d) {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragEnd:', d);
     let self  = this,
         chart = this.chart;
     
     chart.drag.dragHandle.classed('in-drag', false);
-    chart.inEffortDrag = false;
+    chart.inEffortLinkDrag = false;
     
     chart.drag.dragLink.remove();
     
@@ -877,4 +878,103 @@ export class D3CapacityPlanBlockHandler {
     delete chart.drag
   }
   
+  /**
+   * Handle a link drag starting
+   * @param effortBlock
+   */
+  effortDragStart (effortBlock) {
+    // If the event was sourced in a control, cancel it
+    if(d3.select(d3.event.sourceEvent.target).closest('.effort-drag-group').empty()){
+      return
+    }
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragStart:', effortBlock);
+    
+    let self        = this,
+        chart       = this.chart,
+        dragElement = d3.select(d3.event.sourceEvent.target).closest('.effort-block-group');
+    
+    Session.set('in-effort-drag', true);
+    
+    // Freeze out all contributor blocks and effort titles from pointer events
+    chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', true);
+    chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
+    chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
+    chart.linkLayer.style('opacity', 0);
+    
+    chart.drag = {
+      dragElement: dragElement,
+      offsetX    : d3.event.x - chart.config.efforts.margin,
+      offsetY    : 0
+    };
+    
+    chart.drag.dragElement.classed('in-drag', true);
+    
+    trace && console.log('D3CapacityPlanEffortListHandler.dragStart drag:', d3.event, chart.drag)
+  }
+  
+  /**
+   * Handle a link drag moving
+   * @param effortBlock
+   */
+  effortDragged (effortBlock) {
+    // If not in a drag ignore the event
+    if(!this.chart.drag){
+      return
+    }
+    
+    //trace && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.dragged:', effortBlock);
+    let self  = this,
+        chart = this.chart,
+        dragX = d3.event.x - chart.drag.offsetX,
+        dragY = d3.event.y - chart.drag.offsetY;
+    
+    trace && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragged:', dragX, dragY);
+    chart.drag.dragElement.attr('transform', 'translate(' + dragX + ', ' + dragY + ')');
+  }
+  
+  /**
+   * Handle a link drag ending
+   * @param effortBlock
+   */
+  effortDragEnd (effortBlock) {
+    // If not in a drag ignore the event
+    if(!this.chart.drag){
+      return
+    }
+    
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', effortBlock);
+    let self         = this,
+        chart        = this.chart,
+        sprintNumber = Session.get('hover-sprint-number');
+    
+    chart.drag.dragElement.classed('in-drag', false);
+    Session.set('in-effort-drag', false);
+    
+    chart.drag.dragElement
+        .transition()
+        .duration(250)
+        .attr('transform', self.positionEffortBlock(effortBlock));
+    
+    // Un-freeze contributor blocks and effort titles from pointer events
+    chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', false);
+    chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', false);
+    chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
+    chart.linkLayer.style('opacity', 1);
+    
+    if (_.isNumber(sprintNumber)) {
+      let existingBlock = chart.data.option.sprintBlock(sprintNumber, effortBlock.dataId);
+      
+      // Make sure that this doesn't already exist in this sprint
+      if (!existingBlock) {
+        effortBlock.updateSprintNumber(sprintNumber);
+        effortBlock.reIndexSiblingOrder();
+      } else {
+        console.error('Sprint', sprintNumber, 'already has a block for the effort', effortBlock.title, effortBlock._id);
+      }
+      
+      Session.set('hover-sprint-number', null);
+    }
+    
+    delete chart.drag
+  }
 }
