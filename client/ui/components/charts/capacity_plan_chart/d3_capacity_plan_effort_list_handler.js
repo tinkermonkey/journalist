@@ -229,6 +229,20 @@ export class D3CapacityPlanEffortListHandler {
           .on('end', () => {
             chart.effortListForeground.attr('clip-path', null);
           });
+
+      // Resize the chart to fit this if needed
+      let neededHeight = 4 * chart.config.efforts.margin + chart.config.header.height + chart.effortListHeight;
+      if(neededHeight > chart.height){
+        chart.restoreHeight = chart.height;
+        chart.svg.transition()
+          .duration(250)
+          .style('height', neededHeight + 'px');
+        
+        chart.innerShadowBottom
+          .transition()
+          .duration(250)
+          .attr('y', neededHeight - chart.config.shadow.height);
+      }
     } else {
       // Attach the clip path to the foreground
       chart.effortListForeground.attr('clip-path', 'url(#' + chart.effortListClipPathId + ')');
@@ -247,6 +261,18 @@ export class D3CapacityPlanEffortListHandler {
           .transition()
           .duration(250)
           .attr('height', 0);
+      
+      // Restore the chart height if it was adjusted
+      if(chart.restoreHeight){
+        chart.svg.transition()
+          .duration(250)
+          .style('height', chart.height + 'px');
+        chart.innerShadowBottom
+          .transition()
+          .duration(250)
+          .attr('y', chart.height - chart.config.shadow.height);
+        delete chart.restoreHeight;
+      }
     }
   }
   
