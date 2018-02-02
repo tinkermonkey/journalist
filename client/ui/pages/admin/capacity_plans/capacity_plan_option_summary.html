@@ -35,7 +35,11 @@
                       <td class="item-title">{{itemTitle}}</td>
                       <td>
                         {{#HeightLimitedContent}}
-                          {{#markdown}}{{itemDescription}}{{/markdown}}
+                          <div>
+                            {{#markdown}}
+                            {{itemDescription}}
+                            {{/markdown}}
+                          </div>
                         {{/HeightLimitedContent}}
                       </td>
                       <td class="minimal-width">

@@ -143,7 +143,7 @@ CapacityPlanReleases.helpers({
           })
           // Sort by title
           .sort((effortA, effortB) => {
-            return effortA.title.toLowerCase() > effortB.title.toLowerCase()
+            return effortA.title.toLowerCase() > effortB.title.toLowerCase() ? 1 : -1
           });
     } else {
       return []
