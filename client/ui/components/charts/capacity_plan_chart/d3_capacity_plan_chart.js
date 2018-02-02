@@ -315,9 +315,9 @@ export class D3CapacityPlanChart {
       
       // Resize to fit the content
       self.height = Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height;
-      if(self.restoreHeight === undefined){
+      if (self.restoreHeight === undefined) {
         self.svg.style('height', self.height + 'px');
-      
+        
         // Update the background drop shadows
         self.innerShadowBottom.attr('y', self.height - self.config.shadow.height);
       }
@@ -400,6 +400,10 @@ export class D3CapacityPlanChart {
               console.error('Block effort data not found:', effortBlock);
             }
             
+            // Initialize a few flags
+            effortBlock.isDisplaced  = false;
+            effortBlock.displacement = 0;
+            
             // Only show the release controls on the last sprint of an effort and if the effort is not already targeted for a release
             effortBlock.showReleaseControls = effortBlock.cousins().fetch().reduce((maxSprint, cousin) => {
               return Math.max(cousin.sprintNumber, maxSprint)
@@ -444,7 +448,7 @@ export class D3CapacityPlanChart {
       }
     });
     
-    console.log('D3CapacityPlanChart.parseData releaseLinks:', self.data.releaseLinks);
+    trace && console.log('D3CapacityPlanChart.parseData releaseLinks:', self.data.releaseLinks);
     
     // Groom the contributor links
     self.data.contributorLinks.forEach((link) => {

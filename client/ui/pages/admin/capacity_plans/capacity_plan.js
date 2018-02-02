@@ -4,9 +4,6 @@ import { Template } from 'meteor/templating';
 import { moment } from 'meteor/momentjs:moment';
 import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
 import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
-import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
 import './capacity_plan_option_summary';
@@ -43,9 +40,9 @@ Template.CapacityPlan.helpers({
       singleDatePicker: true,
       showDropdowns   : true,
       startDate       : this.startDate || new Date(),
-      isInvalidDate(testDate){
+      isInvalidDate (testDate) {
         // limit the selection to week starts
-        return true
+        return moment(testDate).weekday() === 1
       }
     }
   },
@@ -81,14 +78,31 @@ Template.CapacityPlan.helpers({
  * Template Event Handlers
  */
 Template.CapacityPlan.events({
-  'edited .editable' (e, instance, newValue) {
+  'edited .editable.capacity-plan' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
     let planId  = FlowRouter.getParam('planId'),
         dataKey = $(e.target).attr("data-key");
     
+    console.log('Plan Edit:', planId, dataKey, newValue);
+    
     if (planId && dataKey) {
       Meteor.call('editCapacityPlan', planId, dataKey, newValue, (error, response) => {
+        if (error) {
+          RobaDialog.error('Update failed:' + error.toString());
+        }
+      });
+    }
+  },
+  'edited .editable.capacity-plan-option' (e, instance, newValue) {
+    e.stopImmediatePropagation();
+    
+    let optionId = FlowRouter.getParam('optionId'),
+        dataKey  = $(e.target).attr("data-key");
+    
+    console.log('Option Edit:', optionId, dataKey, newValue);
+    if (optionId && dataKey) {
+      Meteor.call('editCapacityPlanOption', optionId, dataKey, newValue, (error, response) => {
         if (error) {
           RobaDialog.error('Update failed:' + error.toString());
         }
@@ -227,7 +241,7 @@ Template.CapacityPlan.onCreated(() => {
   
   instance.currentPlanningRole = new ReactiveVar();
   
-  instance.subscribe('imported_item_crumbs', {});
+  instance.subscribe('imported_item_crumb_query', {});
   
   instance.autorun(() => {
     let planId = FlowRouter.getParam('planId');

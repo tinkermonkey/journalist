@@ -8,8 +8,8 @@ let d3            = require('d3'),
     controlTextX  = 0,
     controlTextY  = 0,
     controlRadius = 10,
-    debug         = false,
-    trace         = true;
+    debug         = true,
+    trace         = false;
 
 export class D3CapacityPlanBlockHandler {
   /**
@@ -762,7 +762,7 @@ export class D3CapacityPlanBlockHandler {
   
   positionEffortBlock (block) {
     let chart = this.chart;
-    return 'translate(0, ' + (chart.config.efforts.margin + block.y) + ')'
+    return 'translate(0, ' + (chart.config.efforts.margin + block.y + (block.displacement || 0)) + ')'
   }
   
   positionContributorBlock (block) {
@@ -773,7 +773,141 @@ export class D3CapacityPlanBlockHandler {
   positionReleaseBlock (block) {
     let chart    = this.chart,
         baseline = Math.min(block.sprintNumber + 1, chart.data.sprints.length) * chart.sprintWidth;
-    return 'translate(' + (baseline + (chart.linkSectionWidth / 2) - (chart.config.contributors.height / 2)) + ', ' + block.y + ')'
+    return 'translate(' + (baseline + (chart.linkSectionWidth / 2) - (chart.config.contributors.height / 2)) + ', ' + (block.y || 0) + ')'
+  }
+  
+  /**
+   * Make room for a dragged effort in a sprint
+   * @param draggedBlock
+   * @param mouseY
+   * @param sprintNumber
+   */
+  makeRoomInSprint (draggedBlock, mouseY, sprintNumber) {
+    trace && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.makeRoomInSprint:', mouseY);
+    let self  = this,
+        chart = self.chart,
+        sprintBlocks;
+    
+    sprintNumber = sprintNumber || draggedBlock.sprintNumber;
+    sprintBlocks = chart.data.sprints[ sprintNumber ] && chart.data.sprints[ sprintNumber ].effortBlocks;
+    mouseY -= chart.config.efforts.margin;
+    
+    // Get the blocks in this sprint
+    //console.log(chart.data.sprints[ sprintNumber ].effortBlocks);
+    if (sprintBlocks) {
+      sprintBlocks.filter((block) => {
+        return block._id !== draggedBlock._id
+      }).forEach((block) => {
+        let blockSelection  = chart.sprintBodyLayer.select('.effort-block-group[data-block-id="' + block._id + '"]'),
+            blockTransition = d3.active(blockSelection.node()),
+            displacement    = 0;
+        
+        // Behave differently for a re-order vs a drag to another sprint
+        if (block.sprintNumber === draggedBlock.sprintNumber) {
+          if (mouseY > (draggedBlock.y + draggedBlock.height)) {
+            // Dragging below the normal position
+            if (block.order > draggedBlock.order && mouseY > block.y) {
+              displacement = -draggedBlock.height - chart.config.efforts.margin;
+            }
+          } else if (mouseY < draggedBlock.y && mouseY < block.y) {
+            // Dragging below the normal position
+            if (block.order < draggedBlock.order) {
+              displacement = draggedBlock.height + chart.config.efforts.margin;
+            }
+          }
+        } else {
+          // Simple drag
+          if (mouseY < block.y) {
+            displacement = draggedBlock.height + chart.config.efforts.margin;
+          }
+        }
+        
+        if (displacement !== 0) {
+          //console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.makeRoomInSprint displacement:', block.title, block.y, displacement);
+          if (!blockTransition && !block.isDisplaced && block.displacement !== displacement) {
+            block.isDisplaced  = true;
+            block.displacement = displacement;
+            
+            debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.makeRoomInSprint positioning block:', displacement, blockSelection.node());
+            blockSelection.transition()
+                .duration(250)
+                .attr('transform', self.positionEffortBlock(block));
+          } else if (blockTransition) {
+            debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.makeRoomInSprint deferred positioning block:', displacement, blockSelection.node());
+            blockTransition.transition()
+                .on('end', () => {
+                  block.isDisplaced  = true;
+                  block.displacement = displacement;
+                  blockSelection.transition()
+                      .duration(250)
+                      .attr('transform', self.positionEffortBlock(block));
+                })
+          }
+        } else {
+          if (!blockTransition && block.isDisplaced) {
+            debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.makeRoomInSprint resetting block:', block);
+            block.displacement = 0;
+            blockSelection.transition()
+                .duration(250)
+                .attr('transform', self.positionEffortBlock(block))
+                .on('end', () => {
+                  block.isDisplaced = false;
+                });
+          } else if (blockTransition) {
+            debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.makeRoomInSprint deferred resetting block:', block);
+            blockTransition.transition()
+                .on('end', () => {
+                  block.displacement = 0;
+                  blockSelection.transition()
+                      .duration(250)
+                      .attr('transform', self.positionEffortBlock(block))
+                      .on('end', () => {
+                        block.isDisplaced = false;
+                      });
+                })
+          }
+        }
+      })
+    }
+  }
+  
+  /**
+   * Reset the position of the blocks after makeRoomInSprint
+   * @param sprintNumber
+   */
+  resetBlocksInSprint (sprintNumber) {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.resetBlocksInSprint:', sprintNumber);
+    let self  = this,
+        chart = self.chart,
+        sprintBlocks;
+    
+    // Get the blocks in this sprint
+    sprintBlocks = chart.data.sprints[ sprintNumber ] && chart.data.sprints[ sprintNumber ].effortBlocks;
+    
+    // Get the blocks in this sprint
+    //console.log(chart.data.sprints[ sprintNumber ].effortBlocks);
+    if (sprintBlocks) {
+      sprintBlocks.forEach((block) => {
+        let blockSelection  = chart.sprintBodyLayer.select('.effort-block-group[data-block-id="' + block._id + '"]'),
+            blockTransition = d3.active(blockSelection.node());
+        
+        if (!blockTransition && block.isDisplaced) {
+          block.isDisplaced = false;
+          blockSelection.transition()
+              .duration(250)
+              .attr('transform', self.positionEffortBlock(block));
+        } else if (blockTransition) {
+          blockTransition.transition()
+              .on('end', () => {
+                block.displacement = 0;
+                block.isDisplaced = false;
+                blockSelection.transition()
+                    .duration(250)
+                    .attr('transform', self.positionEffortBlock(block));
+              })
+        }
+      });
+    }
   }
   
   /**
@@ -884,7 +1018,7 @@ export class D3CapacityPlanBlockHandler {
    */
   effortDragStart (effortBlock) {
     // If the event was sourced in a control, cancel it
-    if(d3.select(d3.event.sourceEvent.target).closest('.effort-drag-group').empty()){
+    if (d3.select(d3.event.sourceEvent.target).closest('.effort-drag-group').empty()) {
       return
     }
     debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragStart:', effortBlock);
@@ -893,18 +1027,19 @@ export class D3CapacityPlanBlockHandler {
         chart       = this.chart,
         dragElement = d3.select(d3.event.sourceEvent.target).closest('.effort-block-group');
     
-    Session.set('in-effort-drag', true);
+    chart.inEffortDrag = true;
     
     // Freeze out all contributor blocks and effort titles from pointer events
-    chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', true);
+    //chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
     chart.linkLayer.style('opacity', 0);
     
     chart.drag = {
+      effortBlock: effortBlock,
       dragElement: dragElement,
-      offsetX    : d3.event.x - chart.config.efforts.margin,
-      offsetY    : 0
+      offsetX    : d3.event.x,
+      offsetY    : -chart.config.efforts.margin
     };
     
     chart.drag.dragElement.classed('in-drag', true);
@@ -918,7 +1053,7 @@ export class D3CapacityPlanBlockHandler {
    */
   effortDragged (effortBlock) {
     // If not in a drag ignore the event
-    if(!this.chart.drag){
+    if (!this.chart.drag) {
       return
     }
     
@@ -930,6 +1065,12 @@ export class D3CapacityPlanBlockHandler {
     
     trace && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragged:', dragX, dragY);
     chart.drag.dragElement.attr('transform', 'translate(' + dragX + ', ' + dragY + ')');
+    
+    // If over a sprint, make room for this block
+    if (chart.drag.hover && chart.drag.hover.type === 'sprint') {
+      // Make room in the sprint for this element
+      self.makeRoomInSprint(chart.drag.effortBlock, d3.event.y, chart.drag.hover.record.sprintNumber);
+    }
   }
   
   /**
@@ -938,7 +1079,7 @@ export class D3CapacityPlanBlockHandler {
    */
   effortDragEnd (effortBlock) {
     // If not in a drag ignore the event
-    if(!this.chart.drag){
+    if (!this.chart.drag) {
       return
     }
     
@@ -948,7 +1089,7 @@ export class D3CapacityPlanBlockHandler {
         sprintNumber = Session.get('hover-sprint-number');
     
     chart.drag.dragElement.classed('in-drag', false);
-    Session.set('in-effort-drag', false);
+    chart.inEffortDrag = false;
     
     chart.drag.dragElement
         .transition()
@@ -956,21 +1097,52 @@ export class D3CapacityPlanBlockHandler {
         .attr('transform', self.positionEffortBlock(effortBlock));
     
     // Un-freeze contributor blocks and effort titles from pointer events
-    chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', false);
+    //chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
     chart.linkLayer.style('opacity', 1);
     
     if (_.isNumber(sprintNumber)) {
-      let existingBlock = chart.data.option.sprintBlock(sprintNumber, effortBlock.dataId);
+      let sprintBlocks = chart.data.sprints[ sprintNumber ] && chart.data.sprints[ sprintNumber ].effortBlocks,
+          mouseY       = d3.event.y - chart.config.efforts.margin;
       
-      // Make sure that this doesn't already exist in this sprint
-      if (!existingBlock) {
-        effortBlock.updateSprintNumber(sprintNumber);
-        effortBlock.reIndexSiblingOrder();
+      // If it's the same sprint, this is a re-ordering
+      if (sprintNumber === chart.drag.effortBlock.sprintNumber) {
+        // Re-order based on the y position
+        debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd re-ordering blocks:', chart.data.sprints[ sprintNumber ].effortBlocks);
+        
+        sprintBlocks.sort((a, b) => {
+          let aY = a._id === effortBlock._id ? mouseY : a.y + a.displacement,
+              bY = b._id === effortBlock._id ? mouseY : b.y + b.displacement;
+          
+          return aY > bY
+        }).forEach((block, i) => {
+          block.updateOrder(i);
+        });
       } else {
-        console.error('Sprint', sprintNumber, 'already has a block for the effort', effortBlock.title, effortBlock._id);
+        // Otherwise, move the block
+        let existingBlock = chart.data.option.sprintBlock(sprintNumber, effortBlock.dataId);
+        
+        // Make sure that this doesn't already exist in this sprint
+        if (!existingBlock) {
+          effortBlock.updateSprintNumber(sprintNumber);
+          sprintBlocks.push(effortBlock);
+          sprintBlocks.sort((a, b) => {
+            let aY = a._id === effortBlock._id ? mouseY : a.y + a.displacement,
+                bY = b._id === effortBlock._id ? mouseY : b.y + b.displacement;
+            
+            return aY > bY
+          }).forEach((block, i) => {
+            block.updateOrder(i);
+          });
+          //effortBlock.reIndexSiblingOrder();
+          // Get a block from the old sprint to and re-index them
+        } else {
+          console.error('Sprint', sprintNumber, 'already has a block for the effort', effortBlock.title, effortBlock._id);
+        }
       }
+      
+      //self.resetBlocksInSprint(sprintNumber);
       
       Session.set('hover-sprint-number', null);
     }

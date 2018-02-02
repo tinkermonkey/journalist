@@ -231,9 +231,12 @@ Template.CapacityPlanEfforts.onRendered(() => {
     let plan    = Template.currentData(),
         efforts = CapacityPlanStrategicEfforts.find({ planId: plan._id }, { sort: { title: 1 } }).fetch();
     
+    // Disable the drag now that the effort list is integrated into the chart where it is more useful
+    /*
     d3.selectAll('.btn-select-effort')
         .data(efforts)
         .call(instance.dragHandler);
+        */
   })
 });
 

@@ -68,28 +68,44 @@ CapacityPlanReleases.helpers({
    * @param optionId
    */
   releaseDate (optionId) {
-    let release    = this,
-        lastSprint = release.efforts(optionId).reduce((sprintNumber, effort) => {
-          return effort.sprintNumber > sprintNumber ? effort.sprintNumber : sprintNumber
-        }, 0);
+    let release      = this,
+        releaseBlock = CapacityPlanSprintBlocks.findOne({ optionId: optionId, dataId: release._id });
     
-    if (lastSprint !== undefined) {
-      return this.plan().sprint(lastSprint).endDate
+    if (releaseBlock) {
+      let lastSprint = releaseBlock.targetLinks()
+          .fetch()
+          .reduce((sprintNumber, releaseLink) => {
+            let effortBlock = releaseLink.source();
+            if (effortBlock) {
+              return effortBlock.sprintNumber > sprintNumber ? effortBlock.sprintNumber : sprintNumber
+            } else {
+              return sprintNumber
+            }
+          }, 0);
+      
+      if (lastSprint !== undefined) {
+        lastSprint = Math.min(this.plan().option(optionId).sprints().count() - 1, lastSprint);
+        return this.plan().option(optionId).sprint(lastSprint).endDate
+      }
     }
   },
   
   /**
-   * Get the number of sprints that have work for this release
+   * Get the sprint records for a given option
    * @param optionId
    */
   sprints (optionId) {
     let release = this;
     
     return _.uniq(_.flatten(release.efforts(optionId).map((effort) => {
-      return CapacityPlanSprintBlocks.find({ optionId: optionId, dataId: effort._id }).map((effortBlock) => {
-        return effortBlock.sprintNumber
-      });
-    })));
+          return CapacityPlanSprintBlocks.find({ optionId: optionId, dataId: effort._id }).map((effortBlock) => {
+            return effortBlock.sprintNumber
+          });
+        })))
+        .sort()
+        .map((sprintNumber) => {
+          return release.plan().option(optionId).sprint(sprintNumber)
+        });
   },
   
   /**
@@ -99,7 +115,6 @@ CapacityPlanReleases.helpers({
   sprintCount (optionId) {
     return this.sprints(optionId).length;
   },
-  
   /**
    * Determine the contents of a release for a given option
    * @param optionId
@@ -116,16 +131,10 @@ CapacityPlanReleases.helpers({
           // The source of the links to this release's block are the contents of this release
           .map((link) => {
             //console.log('CapacityPlanOptions.releases found a release link to block', link.targetId);
-            return link.sourceId
-          })
-          // Get the records from the block _ids
-          .map((blockId) => {
-            let effortBlock = CapacityPlanSprintBlocks.findOne(blockId);
-            if (effortBlock) {
-              //console.log('CapacityPlanOptions.releases loading release block:', blockId, effortBlock.dataRecord());
-              return effortBlock.dataRecord()
-            } else {
-              console.error('CapacityPlanReleases.releaseDate unable to load effort block:', blockId);
+            let source = link.source();
+            if (source) {
+              // The data record for the source links will be the strategic effort record
+              return source.dataRecord()
             }
           })
           // Filter any orphaned blocks to be fault tolerant

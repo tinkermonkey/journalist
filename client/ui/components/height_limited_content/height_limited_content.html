@@ -1,0 +1,20 @@
+<template name="HeightLimitedContent">
+  <div id="{{getElementId}}" class="height-limited-content-container show-controls-on-hover">
+    <div class="height-limited-content-outer collapsed" style="max-height: 150px;">
+      <div class="height-limited-content-inner">
+        {{> Template.contentBlock }}
+      </div>
+      {{resize}}
+    </div>
+    <div class="height-limited-content-controls hidden-control">
+      <a class="btn-expand-content">
+        <span class="glyphicon glyphicon-menu-down"></span>
+        Expand
+      </a>
+      <a class="btn-collapse-content hide">
+        <span class="glyphicon glyphicon-menu-up"></span>
+        Collapse
+      </a>
+    </div>
+  </div>
+</template>

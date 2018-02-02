@@ -5,7 +5,7 @@ import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_pl
 
 let d3     = require('d3'),
     d3Drag = require('d3-drag'),
-    debug  = true,
+    debug  = false,
     trace  = false;
 
 export class D3CapacityPlanEffortListHandler {

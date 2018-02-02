@@ -136,7 +136,7 @@ CapacityPlanStrategicEfforts.helpers({
     let effort = this;
     
     return CapacityPlanSprints.find({
-      planId      : effort.planId,
+      optionId    : optionId,
       sprintNumber: { $in: effort.sprintNumbers(optionId) }
     }, { sort: { sprintNumber: 1 } })
   },

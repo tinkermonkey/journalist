@@ -10,6 +10,9 @@ export const CapacityPlanSprint = new SimpleSchema({
   planId      : {
     type: String
   },
+  optionId    : {
+    type: String
+  },
   sprintNumber: {
     type: Number
   },
@@ -45,7 +48,7 @@ CapacityPlanSprints.deny({
  * Helpers
  */
 CapacityPlanSprints.helpers({
-  sprintTitle(){
+  sprintTitle () {
     return this.title || 'Sprint ' + (this.sprintNumber + 1)
   }
 });

@@ -14,7 +14,8 @@
             <div>
               <h1 class="inline-block">{{title}}</h1>
               <a class="inline-block report-link" target="_blank" href="{{pathFor 'CapacityPlanReport' planId=_id}}">Report</a>
-              <a class="inline-block report-link" target="_blank" href="{{pathFor 'CapacityPlanSummaryReport' planId=_id}}">Summary Report</a>
+              <a class="inline-block report-link" target="_blank" href="{{pathFor 'CapacityPlanSummaryReport' planId=_id}}">Summary
+                Report</a>
             </div>
             
             <div class="option-container show-controls-on-hover">
@@ -75,20 +76,22 @@
               <tbody>
               <tr class="show-controls-on-hover">
                 <td>Teams</td>
-                <td>{{> EditableRecordChecklist teamSelectorContext dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams'}}</td>
+                <td>{{> EditableRecordChecklist teamSelectorContext dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams' cssClass='capacity-plan' }}</td>
               </tr>
-              <tr class="show-controls-on-hover">
-                <td>First Sprint Date</td>
-                <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date' }}</td>
-              </tr>
-              <tr class="show-controls-on-hover">
-                <td>Sprint Count</td>
-                <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"}}</td>
-              </tr>
-              <tr class="show-controls-on-hover">
-                <td>Sprint Length</td>
-                <td>{{> EditableEnumSelector enum=sprintLengthOptions dataKey='sprintLength' value=sprintLength emptyText='Sprint Length' mode='popup'}}</td>
-              </tr>
+              {{#with currentOption }}
+                <tr class="show-controls-on-hover">
+                  <td>First Sprint Date</td>
+                  <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan-option' }}</td>
+                </tr>
+                <tr class="show-controls-on-hover">
+                  <td>Sprint Count</td>
+                  <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"  cssClass='capacity-plan-option' }}</td>
+                </tr>
+                <tr class="show-controls-on-hover">
+                  <td>Sprint Length</td>
+                  <td>{{> EditableEnumSelector enum=sprintLengthOptions dataKey='sprintLength' value=sprintLength emptyText='Sprint Length' mode='popup'  cssClass='capacity-plan-option'}}</td>
+                </tr>
+              {{/with}}
               </tbody>
             </table>
           

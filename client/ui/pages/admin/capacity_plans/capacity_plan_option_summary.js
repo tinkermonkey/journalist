@@ -1,5 +1,6 @@
 import './capacity_plan_option_summary.html';
 import { Template } from 'meteor/templating';
+import '../../../components/height_limited_content/height_limited_content';
 
 /**
  * Template Helpers
@@ -12,6 +13,9 @@ Template.CapacityPlanOptionSummary.helpers({
   multipleSprints (optionId) {
     let release = this;
     return release.sprintCount(optionId) > 1
+  },
+  sprintWeekCount(option){
+    return moment.duration(option.sprintLength).asWeeks()
   }
 });
 

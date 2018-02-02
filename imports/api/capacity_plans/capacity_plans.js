@@ -25,18 +25,6 @@ export const CapacityPlan = new SimpleSchema({
     type    : [ String ],
     optional: true
   },
-  startDate   : {
-    type    : Date,
-    optional: true
-  },
-  sprintLength: {
-    type        : Number,
-    defaultValue: 2 * 7 * 24 * 60 * 60 * 1000
-  },
-  sprintCount : {
-    type        : Number,
-    defaultValue: 4
-  },
   // Standard tracking fields
   dateCreated : {
     type     : Date,
@@ -73,41 +61,6 @@ CapacityPlans.deny({
   }
 });
 
-// Auto-manage the sprint records for all options
-if (Meteor.isServer) {
-  CapacityPlans.after.insert((userId, doc) => {
-    //console.log('After Option Insert:', doc);
-    let plan = CapacityPlans.findOne(doc._id);
-    if (plan) {
-      for (let i = 0; i < plan.sprintCount; i++) {
-        CapacityPlanSprints.insert({
-          planId      : plan._id,
-          sprintNumber: i,
-          startDate   : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
-          endDate     : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
-        });
-      }
-    }
-  });
-  CapacityPlans.after.update((userId, doc, rawChangedFields) => {
-    let sprintFieldsChanged = _.intersection(rawChangedFields, [ 'startDate', 'sprintLength', 'sprintCount' ]);
-    //console.log('After Plan Update grooming sprints:', sprintFieldsChanged);
-    if (sprintFieldsChanged.length) {
-      let plan = CapacityPlans.findOne(doc._id);
-      if (plan) {
-        plan.groomSprints();
-      }
-    }
-  });
-  CapacityPlans.after.remove((userId, doc) => {
-    //console.log('After Option Remove:', doc);
-    CapacityPlanSprints.remove({
-      planId: doc._id
-    });
-  });
-  
-}
-
 /**
  * Helpers
  */
@@ -118,18 +71,28 @@ CapacityPlans.helpers({
   options () {
     return CapacityPlanOptions.find({ planId: this._id }, { sort: { title: 1 } })
   },
+  
+  /**
+   * Get a specific child option
+   */
+  option (optionId) {
+    return CapacityPlanOptions.findOne({ planId: this._id, _id: optionId })
+  },
+  
   /**
    * Get all of the releases for this plan
    */
   releases () {
     return CapacityPlanReleases.find({ planId: this._id }, { sort: { title: 1 } })
   },
+  
   /**
    * Get all of the efforts in this plan
    */
   efforts () {
     return CapacityPlanStrategicEfforts.find({ planId: this._id }, { sort: { title: 1 } })
   },
+  
   /**
    * Get the list of teams in this plan
    * @return {Array}
@@ -141,6 +104,7 @@ CapacityPlans.helpers({
       return []
     }
   },
+  
   /**
    * Get the list of reportable roles for this plan
    */
@@ -152,38 +116,13 @@ CapacityPlans.helpers({
     
     return ContributorRoleDefinitions.find({ _id: { $in: roleIds } }, { sort: { title: 1 } }).fetch()
   },
+  
   /**
-   * Get a sprint for this plan by sprint number
-   * @param sprintNumber
+   * Get the list of teamIds
    */
-  sprint (sprintNumber) {
-    return CapacityPlanSprints.findOne({ planId: this._id, sprintNumber: sprintNumber })
-  },
   teamIdsSorted () {
     return this.teams().map((team) => {
       return team._id
     })
-  },
-  groomSprints () {
-    let plan = this;
-    
-    CapacityPlanSprints.remove({
-      planId      : plan._id,
-      sprintNumber: { $gte: plan.sprintCount }
-    });
-    
-    for (let i = 0; i < plan.sprintCount; i++) {
-      CapacityPlanSprints.upsert({
-        planId      : plan._id,
-        sprintNumber: i,
-      }, {
-        $set: {
-          planId      : plan._id,
-          sprintNumber: i,
-          startDate   : moment(plan.startDate).add(i * plan.sprintLength, 'ms').startOf('week').add(1, 'days').toDate(),
-          endDate     : moment(plan.startDate).add((i + 1) * plan.sprintLength, 'ms').startOf('week').subtract(2, 'days').toDate()
-        }
-      });
-    }
   }
 });

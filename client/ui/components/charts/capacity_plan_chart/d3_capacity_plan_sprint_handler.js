@@ -157,20 +157,29 @@ export class D3CapacityPlanSprintHandler {
         .attr('class', 'sprint-section sprint-body-section')
         .attr('x', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('y', 0)
-        .on('mouseenter', (d) => {
+        .on('mouseenter', (sprint) => {
           let element = d3.select(d3.event.target);
           
           element.closest('.sprint-background-group').classed('hover', true);
-          if (Session.get('in-effort-drag')) {
-            Session.set('hover-sprint-number', d.sprintNumber);
+          if (chart.inEffortDrag) {
+            Session.set('hover-sprint-number', sprint.sprintNumber);
+            chart.drag.hover = {
+              type   : 'sprint',
+              record : sprint,
+              element: element
+            };
           }
         })
         .on('mouseleave', (d) => {
           let element = d3.select(d3.event.target);
           element.closest('.sprint-background-group').classed('hover', false);
           
-          if (Session.get('in-effort-drag')) {
+          if (chart.inEffortDrag) {
             Session.set('hover-sprint-number', null);
+            delete chart.drag.hover;
+            
+            // Reset the sprint block positions
+            chart.blockHandler.resetBlocksInSprint(d.sprintNumber);
           }
         });
     

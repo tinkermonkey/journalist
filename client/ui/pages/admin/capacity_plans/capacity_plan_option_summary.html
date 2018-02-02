@@ -13,7 +13,7 @@
                   <h3>{{title}}</h3>
                   <span class="option-summary-release-timing">
                     Released {{optionReleaseDate ../_id}},
-                    {{sprintCount ../_id}} sprint{{#if multipleSprints ../_id}}s{{/if}}
+                    {{sprintCount ../_id}} x {{sprintWeekCount ..}}-week sprint{{#if multipleSprints ../_id}}s{{/if}}
                   </span>
                 </div>
               </div>
@@ -33,7 +33,11 @@
                   {{#each contentEfforts ../_id}}
                     <tr class="data-table-row {{#if isOdd @index}}odd{{/if}}">
                       <td class="item-title">{{itemTitle}}</td>
-                      <td>{{#markdown}}{{itemDescription}}{{/markdown}}</td>
+                      <td>
+                        {{#HeightLimitedContent}}
+                          {{#markdown}}{{itemDescription}}{{/markdown}}
+                        {{/HeightLimitedContent}}
+                      </td>
                       <td class="minimal-width">
                         {{#each sprints ../../_id}}
                           <div class="no-wrap">{{sprintTitle}}</div>

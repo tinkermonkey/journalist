@@ -1,5 +1,5 @@
 <template name="EditableDateRange">
-  <a class="editable editable-date-range" data-key="{{dataKey}}">
+  <a class="editable editable-date-range {{cssClass}}" data-key="{{dataKey}}">
     {{#if value}}
       {{dateFormat value 'MM/DD/YY'}}
     {{else}}

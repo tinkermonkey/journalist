@@ -308,7 +308,7 @@ path.contributor-highlight.highlight {
 
 .release-link {
   fill               : none;
-  stroke             : #ff009d;
+  stroke             : none;
   stroke-width       : 3px;
   -webkit-transition : stroke 0.25s, stroke-width 0.25s;
   -moz-transition    : stroke 0.25s, stroke-width 0.25s;
@@ -320,7 +320,7 @@ path.contributor-highlight.highlight {
 
 path.release-highlight.highlight {
   stroke       : rgb(22, 231, 58) !important;
-  stroke-width : 25px;
+  stroke-width : 10px;
 }
 
 /**

@@ -41,21 +41,9 @@
             <div class="status-report-header">
             
             </div>
-            <div class="status-report-body collapsed">
-              <div class="status-report-body-inner">
-                {{#markdown}}{{body}}{{/markdown}}
-              </div>
-            </div>
-            <div class="status-report-expand-controls hidden-control">
-              <a class="btn-expand-report-body">
-                <span class="glyphicon glyphicon-menu-down"></span>
-                Show full report
-              </a>
-              <a class="btn-collapse-report-body hide">
-                <span class="glyphicon glyphicon-menu-up"></span>
-                Collapse
-              </a>
-            </div>
+            {{#HeightLimitedContent}}
+              {{#markdown}}{{body}}{{/markdown}}
+            {{/HeightLimitedContent}}
           </div>
         {{/each}}
         {{#if moreReports}}

@@ -2,6 +2,7 @@ import './recent_reports.html';
 import { Template } from 'meteor/templating';
 import { StatusReports } from '../../../../imports/api/status_reports/status_reports';
 import { StatusReportStates } from '../../../../imports/api/status_reports/status_report_states';
+import '../../components/height_limited_content/height_limited_content';
 
 let maxIncrement = 5;
 
@@ -80,20 +81,6 @@ Template.RecentReports.events({
       }
     });
   },
-  'click .btn-expand-report-body' (e, instance) {
-    let reportContainer = $(e.target).closest('.status-report-container');
-    console.log('reportContainer:', reportContainer);
-    console.log('reportContainer btn:', reportContainer.find('.btn-expand-report-body'));
-    reportContainer.find('.status-report-body.collapsed').removeClass('collapsed');
-    reportContainer.find('.btn-expand-report-body').addClass('hide');
-    reportContainer.find('.btn-collapse-report-body').removeClass('hide');
-  },
-  'click .btn-collapse-report-body' (e, instance) {
-    let reportContainer = $(e.target).closest('.status-report-container');
-    reportContainer.find('.status-report-body').addClass('collapsed');
-    reportContainer.find('.btn-collapse-report-body').addClass('hide');
-    reportContainer.find('.btn-expand-report-body').removeClass('hide');
-  }
 });
 
 /**
@@ -122,50 +109,6 @@ Template.RecentReports.onCreated(() => {
  * Template Rendered
  */
 Template.RecentReports.onRendered(() => {
-  let instance = Template.instance();
-  
-  instance.autorun(() => {
-    console.log('RecentReports autorun');
-    let context = Template.currentData(),
-        max     = instance.max.get(),
-        reports = [];
-    
-    if (context.sourceCollection && context.sourceId) {
-      reports = StatusReports.find({
-        sourceCollection: context.sourceCollection,
-        sourceId        : context.sourceId,
-        state           : StatusReportStates.submitted
-      }, { sort: { submitDate: -1 }, limit: max })
-    } else if (context._id) {
-      reports = StatusReports.find({
-        contributorId: context._id,
-        state        : StatusReportStates.submitted
-      }, { sort: { submitDate: -1 }, limit: max })
-    }
-    
-    if (reports.count()) {
-      clearTimeout(instance.heightCheckTimeout);
-      instance.heightCheckTimeout = setTimeout(() => {
-        console.log('RecentReports autorun adjusting heights');
-        
-        instance.$(".status-report-body").each(function () {
-          let bodyEl      = $(this),
-              outerHeight = bodyEl.innerHeight(),
-              innerHeight = bodyEl.find(".status-report-body-inner").innerHeight();
-          
-          if (Math.abs(innerHeight - outerHeight) < 50 && outerHeight > 0 && innerHeight > 0) {
-            console.log('Removing collapsed class:', outerHeight, innerHeight, bodyEl.get(0));
-            bodyEl.removeClass('collapsed');
-            
-            // Show the correct controls
-            let parent = bodyEl.closest('.status-report-container');
-            parent.find('.btn-expand-report-body').hide();
-            parent.find('.btn-collapse-report-body').show();
-          }
-        })
-      }, 500);
-    }
-  });
 });
 
 /**
