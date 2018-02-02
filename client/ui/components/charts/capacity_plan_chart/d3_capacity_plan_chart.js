@@ -315,7 +315,7 @@ export class D3CapacityPlanChart {
       
       // Resize to fit the content
       self.height = Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height;
-      if (self.restoreHeight === undefined) {
+      if (self.restoreHeight === undefined || self.restoreHeight < self.height) {
         self.svg.style('height', self.height + 'px');
         
         // Update the background drop shadows

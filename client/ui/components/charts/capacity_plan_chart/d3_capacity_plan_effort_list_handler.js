@@ -1,4 +1,3 @@
-import { Session } from "meteor/session";
 import { Util } from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
@@ -286,8 +285,9 @@ export class D3CapacityPlanEffortListHandler {
         chart       = this.chart,
         dragElement = d3.select(d3.event.sourceEvent.target).closest('.effort-block-group');
     
-    Session.set('in-effort-drag', true);
-    
+    // Set the flag that we're in a drag
+    chart.inEffortDrag = true;
+
     // Freeze out all contributor blocks and effort titles from pointer events
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
@@ -326,16 +326,19 @@ export class D3CapacityPlanEffortListHandler {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', effort);
     let self         = this,
         chart        = this.chart,
-        sprintNumber = Session.get('hover-sprint-number');
+        sprintNumber = chart.drag.hover && chart.drag.hover.record && chart.drag.hover.record.sprintNumber;
     
     chart.drag.dragElement.classed('no-mouse', false);
-    Session.set('in-effort-drag', false);
+    chart.inEffortDrag = false;
     
     chart.drag.dragElement
         .transition()
         .duration(250)
         .attr('transform', self.positionEffortBlock(effort));
     
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', sprintNumber);
+
+
     // Un-freeze contributor blocks and effort titles from pointer events
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
@@ -361,8 +364,6 @@ export class D3CapacityPlanEffortListHandler {
       } else {
         console.error('Sprint', sprintNumber, 'already has a block for the effort', effort.title, effort._id);
       }
-      
-      Session.set('hover-sprint-number', null);
     }
     
     delete chart.drag

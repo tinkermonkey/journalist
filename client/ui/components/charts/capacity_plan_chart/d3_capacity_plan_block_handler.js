@@ -1,14 +1,13 @@
 import { Util } from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { D3ContributorDragControlHandler } from './d3_contributor_drag_control_handler';
-import { Session } from "meteor/session";
 
 let d3            = require('d3'),
     d3Drag        = require('d3-drag'),
     controlTextX  = 0,
     controlTextY  = 0,
     controlRadius = 10,
-    debug         = true,
+    debug         = false,
     trace         = false;
 
 export class D3CapacityPlanBlockHandler {
@@ -736,8 +735,8 @@ export class D3CapacityPlanBlockHandler {
       });
       
       // Make sure the blocks are ordered correctly
-      sprintReleases.sort((releaseBlock) => {
-        return releaseBlock.order
+      sprintReleases.sort((a, b) => {
+        return a.order > b.order ? 1 : -1
       }).forEach((releaseBlock, i) => {
         if (releaseBlock.order !== i) {
           // Fix the order
@@ -748,8 +747,8 @@ export class D3CapacityPlanBlockHandler {
       
       // position the blocks
       let dy = 0;
-      sprintReleases.sort((releaseBlock) => {
-        return releaseBlock.order
+      sprintReleases.sort((a, b) => {
+        return a.order > b.order ? 1 : -1
       }).forEach((releaseBlock, i) => {
         chart.data.sprints[ releaseBlock.index ].y = releaseBlock.y = dy;
         dy += Math.max(releaseBlock.titleLength, chart.config.releases.height) + 2 * chart.config.releases.padding + chart.config.efforts.margin;
@@ -1029,6 +1028,15 @@ export class D3CapacityPlanBlockHandler {
     
     chart.inEffortDrag = true;
     
+    if(trace){
+      chart.data.sprints[effortBlock.sprintNumber].effortBlocks.sort((a, b) => {
+        //console.log('Efort Block Order:', a.title, a.y, b.title, b.y, a.y > b.y);
+        return parseFloat(a.y) > parseFloat(b.y) ? 1 : -1
+      }).forEach((block, i) => {
+        console.log('Efort Block Order:', i, block.y, block.order, block);
+      });
+    }
+
     // Freeze out all contributor blocks and effort titles from pointer events
     //chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
@@ -1086,15 +1094,10 @@ export class D3CapacityPlanBlockHandler {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', effortBlock);
     let self         = this,
         chart        = this.chart,
-        sprintNumber = Session.get('hover-sprint-number');
+        sprintNumber = chart.drag.hover && chart.drag.hover.record && chart.drag.hover.record.sprintNumber;
     
     chart.drag.dragElement.classed('in-drag', false);
     chart.inEffortDrag = false;
-    
-    chart.drag.dragElement
-        .transition()
-        .duration(250)
-        .attr('transform', self.positionEffortBlock(effortBlock));
     
     // Un-freeze contributor blocks and effort titles from pointer events
     //chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', false);
@@ -1103,7 +1106,7 @@ export class D3CapacityPlanBlockHandler {
     chart.linkLayer.style('opacity', 1);
     
     if (_.isNumber(sprintNumber)) {
-      let sprintBlocks = chart.data.sprints[ sprintNumber ] && chart.data.sprints[ sprintNumber ].effortBlocks,
+      let sprintBlocks = chart.data.sprints[ sprintNumber ] && chart.data.sprints[ sprintNumber ].effortBlocks || [],
           mouseY       = d3.event.y - chart.config.efforts.margin;
       
       // If it's the same sprint, this is a re-ordering
@@ -1112,10 +1115,10 @@ export class D3CapacityPlanBlockHandler {
         debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd re-ordering blocks:', chart.data.sprints[ sprintNumber ].effortBlocks);
         
         sprintBlocks.sort((a, b) => {
-          let aY = a._id === effortBlock._id ? mouseY : a.y + a.displacement,
-              bY = b._id === effortBlock._id ? mouseY : b.y + b.displacement;
-          
-          return aY > bY
+          let aY = a._id === effortBlock._id ? mouseY : a.y + (a.displacement || 0),
+              bY = b._id === effortBlock._id ? mouseY : b.y + (b.displacement || 0);
+
+          return parseFloat(aY) > parseFloat(bY) ? 1 : -1
         }).forEach((block, i) => {
           block.updateOrder(i);
         });
@@ -1131,7 +1134,7 @@ export class D3CapacityPlanBlockHandler {
             let aY = a._id === effortBlock._id ? mouseY : a.y + a.displacement,
                 bY = b._id === effortBlock._id ? mouseY : b.y + b.displacement;
             
-            return aY > bY
+            return parseFloat(aY) > parseFloat(bY) ? 1 : -1
           }).forEach((block, i) => {
             block.updateOrder(i);
           });
@@ -1143,8 +1146,11 @@ export class D3CapacityPlanBlockHandler {
       }
       
       //self.resetBlocksInSprint(sprintNumber);
-      
-      Session.set('hover-sprint-number', null);
+    } else {            
+      chart.drag.dragElement
+        .transition()
+        .duration(250)
+        .attr('transform', self.positionEffortBlock(effortBlock));
     }
     
     delete chart.drag
