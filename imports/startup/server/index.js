@@ -29,6 +29,7 @@ Meteor.startup(() => {
   });
   
   // Initialize the authentication providers
+  /*
   IntegrationServerAuthProviders.find({ isEnabled: true }).observe({
     added (provider) {
       console.log('IntegrationServerAuthProvider initializing new auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
@@ -59,6 +60,20 @@ Meteor.startup(() => {
       ServiceConfiguration.configurations.remove({
         service: provider.authServiceKey
       });
+    }
+  });
+  */
+  
+  IntegrationServerAuthProviders.find({ isEnabled: true }).forEach((provider) => {
+    console.log('IntegrationServerAuthProvider initializing new auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+    try {
+      let update = { $set: provider.compileAuthConfig() };
+      //console.log('IntegrationServerAuthProvider auth config:', provider._id, update);
+      ServiceConfiguration.configurations.upsert({
+        service: provider.authServiceKey
+      }, update);
+    } catch (e) {
+      console.error('IntegrationServerAuthProvider failed to initialize provider:', provider._id, provider.authServiceKey, provider.loginFunctionName, e);
     }
   });
   

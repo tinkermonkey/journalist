@@ -133,5 +133,5 @@ Template.GalaxyChartView.onRendered(() => {
  * Template Destroyed
  */
 Template.GalaxyChartView.onDestroyed(() => {
-
+  
 });
