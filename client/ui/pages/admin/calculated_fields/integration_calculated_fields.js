@@ -1,5 +1,7 @@
 import './integration_calculated_fields.html';
-import { Template } from 'meteor/templating';
+import { Template }                    from 'meteor/templating';
+import SimpleSchema                    from 'simpl-schema';
+import { RobaDialog }                  from 'meteor/austinsand:roba-dialog';
 import { IntegrationCalculatedFields } from '../../../../../imports/api/integrations/integration_calculated_fields';
 
 /**
@@ -16,11 +18,11 @@ Template.IntegrationCalculatedFields.helpers({
  * Template Event Handlers
  */
 Template.IntegrationCalculatedFields.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let calculatedFieldId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey          = $(e.target).attr("data-key");
+    let calculatedFieldId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey           = $(e.target).attr('data-key');
     
     console.log('edited:', calculatedFieldId, dataKey, newValue);
     if (calculatedFieldId && dataKey) {
@@ -31,24 +33,24 @@ Template.IntegrationCalculatedFields.events({
       });
     }
   },
-  "click .btn-add-calculated-field" (e, instance) {
+  'click .btn-add-calculated-field' (e, instance) {
     let context = Template.currentData();
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
-          title    : {
+          title: {
             type : String,
             label: 'Title'
           }
         })
       },
-      title          : "Add Calculated Field",
+      title          : 'Add Calculated Field',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -73,14 +75,14 @@ Template.IntegrationCalculatedFields.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-calculated-field" (e, instance) {
+  'click .btn-delete-calculated-field' (e, instance) {
     let calculatedField = this;
     
     RobaDialog.ask('Delete Function?', 'Are you sure that you want to delete the calculated field <span class="label label-primary"> ' + calculatedField.title + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteIntegrationCalculatedField', calculatedField._id, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

@@ -1,7 +1,7 @@
-import { Util } from '../../../../../imports/api/util';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { Util }                            from '../../../../../imports/api/util';
+import { CapacityPlanBlockTypes }          from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { D3ContributorDragControlHandler } from './d3_contributor_drag_control_handler';
-import { Session } from "meteor/session";
+import { Session }                         from 'meteor/session';
 
 let d3            = require('d3'),
     d3Drag        = require('d3-drag'),
@@ -900,7 +900,7 @@ export class D3CapacityPlanBlockHandler {
           blockTransition.transition()
               .on('end', () => {
                 block.displacement = 0;
-                block.isDisplaced = false;
+                block.isDisplaced  = false;
                 blockSelection.transition()
                     .duration(250)
                     .attr('transform', self.positionEffortBlock(block));
@@ -1030,7 +1030,7 @@ export class D3CapacityPlanBlockHandler {
     chart.inEffortDrag = true;
     
     // Freeze out all contributor blocks and effort titles from pointer events
-    //chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', true);
+    //chart.baseLayer.select('.sprint-background-group[data-sprint-number='' + effortBlock.sprintNumber + '']').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
     chart.linkLayer.style('opacity', 0);
@@ -1097,7 +1097,7 @@ export class D3CapacityPlanBlockHandler {
         .attr('transform', self.positionEffortBlock(effortBlock));
     
     // Un-freeze contributor blocks and effort titles from pointer events
-    //chart.baseLayer.select('.sprint-background-group[data-sprint-number="' + effortBlock.sprintNumber + '"]').classed('no-mouse', false);
+    //chart.baseLayer.select('.sprint-background-group[data-sprint-number='' + effortBlock.sprintNumber + '']').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
     chart.linkLayer.style('opacity', 1);

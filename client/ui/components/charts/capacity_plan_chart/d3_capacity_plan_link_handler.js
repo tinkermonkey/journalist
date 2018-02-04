@@ -188,7 +188,7 @@ export class D3CapacityPlanLinkHandler {
           
           return chart.linker({
             source   : [
-              sourceBounds.x  - chart.bodyBounds.x,
+              sourceBounds.x - chart.bodyBounds.x,
               (sourceBounds.y - chart.bodyBounds.y) + sourceBounds.height / 2
             ], target: [
               targetBounds.x - chart.bodyBounds.x,

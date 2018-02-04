@@ -1,6 +1,6 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }             from 'meteor/mongo';
+import SimpleSchema          from 'simpl-schema';
+import { SchemaHelpers }     from '../schema_helpers.js';
 import { CollectionDetails } from '../collection_details';
 
 /**
@@ -76,9 +76,9 @@ StatusReportSettings.helpers({
    * Return the title or name of the document this setting pertains to
    */
   sourceLabel () {
-    let setting = this,
+    let setting        = this,
         sourceDocument = setting.sourceDocument();
-    if(sourceDocument){
+    if (sourceDocument) {
       return sourceDocument.title || sourceDocument.name
     } else {
       console.error('StatusReportSettings.sourceLabel failed to find source document:', setting.sourceCollection, setting.sourceId)
@@ -109,7 +109,7 @@ StatusReportSettings.helpers({
   /**
    * Provide a method to get the next due date for template simplicity
    */
-  dueDate(){
+  dueDate () {
     return this.nextDue
   }
 });

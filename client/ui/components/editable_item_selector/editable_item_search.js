@@ -1,5 +1,5 @@
 import './editable_item_search.html';
-import { Template } from 'meteor/templating';
+import { Template }           from 'meteor/templating';
 import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
 
 /**
@@ -48,10 +48,10 @@ Template.EditableItemSearch.events({
     
     if (instance.data.valueField) {
       console.log('EditableItemSearch item selected:', result[ instance.data.valueField ]);
-      $(e.target).trigger('edited', [result[instance.data.valueField]])
+      $(e.target).trigger('edited', [ result[ instance.data.valueField ] ])
     } else {
       console.log('EditableItemSearch item selected:', result);
-      $(e.target).trigger('edited', [result])
+      $(e.target).trigger('edited', [ result ])
     }
   }
 });

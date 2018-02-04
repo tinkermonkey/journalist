@@ -1,6 +1,6 @@
-import { Meteor } from 'meteor/meteor';
-import { DisplayTemplates } from '../display_templates';
-import { DisplayTemplateGroups } from '../display_template_groups';
+import { Meteor }                    from 'meteor/meteor';
+import { DisplayTemplates }          from '../display_templates';
+import { DisplayTemplateGroups }     from '../display_template_groups';
 import { PublishedDisplayTemplates } from '../published_display_templates';
 
 Meteor.publish('display_templates', function () {

@@ -1,4 +1,4 @@
-import { Util } from '../../../../../imports/api/util';
+import { Util }                   from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 
 let d3     = require('d3'),

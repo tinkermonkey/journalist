@@ -2,55 +2,54 @@
  * Data Table
  */
 table.data-table {
-  margin-bottom: 15px;
+  margin-bottom : 15px;
 }
 
 table.data-table.border-bottom {
-  border-bottom: 2px solid #ddd;
+  border-bottom : 2px solid #ddd;
 }
 
 .data-table > tr > th,
 .data-table > thead > tr > th {
   /*border-bottom: 1px solid #bbbbbb;*/
-  padding: 2px 5px;
-  font-weight: 500;
-  vertical-align: bottom;
+  padding        : 2px 5px;
+  font-weight    : 500;
+  vertical-align : bottom;
 }
 
 .data-table > tr > td,
 .data-table > tbody > tr > td {
-  padding: 2px 5px;
-  vertical-align: top;
+  padding        : 2px 5px;
+  vertical-align : top;
 }
 
 .data-table > tr > td:first-child,
 .data-table > tbody > tr > td:first-child {
-  border-top-left-radius : 3px;
+  border-top-left-radius    : 3px;
   border-bottom-left-radius : 3px;
 }
 
 .data-table > tr > td:last-child,
 .data-table > tbody > tr > td:last-child {
-  border-top-right-radius : 3px;
+  border-top-right-radius    : 3px;
   border-bottom-right-radius : 3px;
 }
 
 .data-table > tr.odd > td,
 .data-table > tbody > tr.odd > td {
-  background-color: rgba(239, 239, 239, 0.5);
+  background-color : rgba(239, 239, 239, 0.5);
 }
 
 .data-table > tr.new-record > td,
 .data-table > tbody > tr.new-record > td {
-  background-color: rgba(43, 255, 43, 0.28);
+  background-color : rgba(43, 255, 43, 0.28);
 }
-
 
 .data-table > tr > td.icon-link,
 .data-table > tbody > tr > td.icon-link,
 .data-table > tr > td.open-link,
 .data-table > tbody > tr > td.open-link {
-  width: 1.9em;
+  width : 1.9em;
 }
 
 /**
@@ -58,5 +57,18 @@ table.data-table.border-bottom {
  */
 table.data-table > tr.show-controls-on-hover:hover > td,
 table.data-table > tbody > tr.show-controls-on-hover:hover > td {
-  background-color: #efefef;
+  background-color : #efefef;
+}
+
+/**
+ * Config table
+ */
+.config-table.narrow-width {
+  width : auto !important;
+}
+
+.config-table td:first-child {
+  font-weight : bold;
+  white-space : nowrap;
+  width       : 10%;
 }

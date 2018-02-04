@@ -1,6 +1,8 @@
 import './display_templates.html';
-import { Template } from 'meteor/templating';
-import { DisplayTemplates } from '../../../../../imports/api/display_templates/display_templates';
+import { Template }              from 'meteor/templating';
+import SimpleSchema              from 'simpl-schema';
+import { RobaDialog }            from 'meteor/austinsand:roba-dialog';
+import { DisplayTemplates }      from '../../../../../imports/api/display_templates/display_templates';
 import { DisplayTemplateGroups } from '../../../../../imports/api/display_templates/display_template_groups';
 import '../integration_servers/integration_server_field_reference';
 import '../../../components/bootstrap-treeview/bootstrap-treeview';
@@ -225,7 +227,8 @@ Template.DisplayTemplates.events({
       }
     });
   },
-  'click '(e, instance){}
+  'click ' (e, instance) {
+  }
 });
 
 /**

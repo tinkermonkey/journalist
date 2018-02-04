@@ -1,6 +1,7 @@
 import './admin_integration_imported_item_browser.html';
-import { Template } from 'meteor/templating';
-import { ImportedItems } from '../../../../../imports/api/imported_items/imported_items';
+import { Template }           from 'meteor/templating';
+import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
+import { ImportedItems }      from '../../../../../imports/api/imported_items/imported_items';
 import { ImportedItemCounts } from './imported_item_counts';
 
 let pageSize = 50;
@@ -9,7 +10,7 @@ let pageSize = 50;
  * Template Helpers
  */
 Template.AdminIntegrationImportedItemBrowser.helpers({
-  reprocessing(){
+  reprocessing () {
     return Template.instance().reprocessing.get()
   },
   importedItems () {
@@ -80,15 +81,15 @@ Template.AdminIntegrationImportedItemBrowser.events({
       instance.page.set(parseInt(page));
     }
   },
-  'click .btn-reprocess-issues'(e, instance){
+  'click .btn-reprocess-issues' (e, instance) {
     let integration = this;
     
-    if(integration && integration._id){
+    if (integration && integration._id) {
       instance.reprocessing.set(true);
       Meteor.call('reprocessIntegrationItems', integration._id, (error, response) => {
         instance.reprocessing.set(false);
         console.log('reprocessIntegrationItems response:', response);
-        if(error){
+        if (error) {
           RobaDialog.error('Reprocessing failed:' + error.toString())
         }
       });
@@ -102,7 +103,7 @@ Template.AdminIntegrationImportedItemBrowser.events({
 Template.AdminIntegrationImportedItemBrowser.onCreated(() => {
   let instance = Template.instance();
   
-  instance.page = new ReactiveVar(1);
+  instance.page         = new ReactiveVar(1);
   instance.reprocessing = new ReactiveVar(false);
   
   instance.autorun(() => {

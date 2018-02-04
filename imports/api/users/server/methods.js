@@ -1,16 +1,16 @@
-import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
+import { Meteor }       from 'meteor/meteor';
+import { Accounts }     from 'meteor/accounts-base';
 import { check, Match } from 'meteor/check';
-import { Auth } from '../../auth.js';
+import { Auth }         from '../../auth.js';
 import { Contributors } from '../../contributors/contributors.js';
-import { Users } from '../users.js';
+import { Users }        from '../users.js';
 
 Meteor.methods({
   /**
    * Add a user
    * @param userData
    */
-  addUser(userData){
+  addUser (userData) {
     console.log('addUser:', userData && userData.email);
     let user = Auth.requireAuthentication();
     
@@ -53,7 +53,7 @@ Meteor.methods({
    * @param key
    * @param value
    */
-  editUser(userId, key, value){
+  editUser (userId, key, value) {
     console.log('editUser:', userId, key, value);
     let user = Auth.requireAuthentication();
     
@@ -63,24 +63,24 @@ Meteor.methods({
     check(value, Match.Any);
     
     // Validate that the key is one of the few editable fields
-    if(_.contains(['username', 'email', 'name', 'usertype'], key)){
+    if (_.contains([ 'username', 'email', 'name', 'usertype' ], key)) {
       // Authorize the edit
-      if(user.isAdmin() || user._id === userId){
+      if (user.isAdmin() || user._id === userId) {
         let update = {};
         
-        switch(key){
+        switch (key) {
           case 'username':
             update.username = value;
             break;
           case 'email':
-            update['emails.0.address'] = value;
+            update[ 'emails.0.address' ] = value;
             break;
           case 'name':
-            update['profile.name'] = value;
+            update[ 'profile.name' ] = value;
             break;
           case 'usertype':
             // confirm Admin access to prevent user's changing their user type
-            if(user.isAdmin()){
+            if (user.isAdmin()) {
               update.usertype = parseInt(value);
             } else {
               console.error('editUser failed, unauthorized:', key, userId, user.username);
@@ -89,10 +89,10 @@ Meteor.methods({
         }
         
         console.log('editUser update:', userId, key, value, update);
-        Meteor.users.update(userId, {$set: update});
+        Meteor.users.update(userId, { $set: update });
         
         // If the usertype field was edited, sync up the contributor record
-        if(update.usertype !== null){
+        if (update.usertype !== null) {
           let contributor = Contributors.findOne({ userId: userId });
           if (contributor) {
             console.log('editUser syncing contributor usertype:', contributor.email, update.usertype);
@@ -111,15 +111,15 @@ Meteor.methods({
    * Delete a user
    * @param userId
    */
-  deleteUser(userId){
+  deleteUser (userId) {
     console.log('deleteUser:', userId);
     let user = Auth.requireAuthentication();
-  
+    
     // Validate
     check(userId, String);
     
     // Authorize and protect against deleting yourself
-    if(user.isAdmin() && userId !== user._id){
+    if (user.isAdmin() && userId !== user._id) {
       Meteor.users.remove(userId);
     } else {
       console.error('deleteUser failed, unauthorized:', user.username, userId);
@@ -130,10 +130,10 @@ Meteor.methods({
    * Check to see if a user has a contributor record
    * @param userId
    */
-  checkUserContributor(userId){
+  checkUserContributor (userId) {
     console.log('checkUserContributor:', userId);
     let user = Auth.requireAuthentication();
-  
+    
     // Validate
     check(userId, String);
     

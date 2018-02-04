@@ -1,5 +1,7 @@
 import './contributor_priorities.html';
-import { Template } from 'meteor/templating';
+import { Template }   from 'meteor/templating';
+import SimpleSchema   from 'simpl-schema';
+import { RobaDialog } from 'meteor/austinsand:roba-dialog';
 import { Priorities } from '../../../../imports/api/priorities/priorities.js';
 import '../add_record_form/add_record_form.js';
 
@@ -12,11 +14,11 @@ Template.ContributorPriorities.helpers({});
  * Template Event Handlers
  */
 Template.ContributorPriorities.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let priorityId = $(e.target).closest(".sortable-table-row").attr("data-pk"),
-        dataKey    = $(e.target).attr("data-key");
+    let priorityId = $(e.target).closest('.sortable-table-row').attr('data-pk'),
+        dataKey    = $(e.target).attr('data-key');
     
     console.log('ContributorPriorities edited:', priorityId, dataKey, newValue);
     if (priorityId && dataKey) {
@@ -27,11 +29,11 @@ Template.ContributorPriorities.events({
       });
     }
   },
-  "click .btn-add-priority"(e, instance){
-    let contributorId = $(e.target).closest(".contributor-priorities").attr("data-pk");
+  'click .btn-add-priority' (e, instance) {
+    let contributorId = $(e.target).closest('.contributor-priorities').attr('data-pk');
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           title: {
@@ -40,11 +42,11 @@ Template.ContributorPriorities.events({
           }
         })
       },
-      title          : "Add Priority",
+      title          : 'Add Priority',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -70,14 +72,14 @@ Template.ContributorPriorities.events({
       }.bind(this)
     });
   },
-  "click .btn-delete"(e, instance){
-    let priorityId = $(e.target).closest(".sortable-table-row").attr("data-pk"),
+  'click .btn-delete' (e, instance) {
+    let priorityId = $(e.target).closest('.sortable-table-row').attr('data-pk'),
         priority   = Priorities.findOne(priorityId);
     
     RobaDialog.ask('Delete Priority?', 'Are you sure that you want to delete the priority <span class="label label-primary"> ' + priority.title + '</span> ?', () => {
       Meteor.call('deletePriority', priorityId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         } else {
           RobaDialog.hide();
         }
@@ -99,29 +101,29 @@ Template.ContributorPriorities.onCreated(() => {
 Template.ContributorPriorities.onRendered(() => {
   let instance = Template.instance();
   
-  instance.$(".sortable-table")
+  instance.$('.sortable-table')
       .sortable({
-        items               : "> .sortable-table-row",
-        handle              : ".drag-handle",
-        helper(e, ui) {
+        items               : '> .sortable-table-row',
+        handle              : '.drag-handle',
+        helper (e, ui) {
           // fix the width
           ui.children().each(function () {
             $(this).width($(this).width());
           });
           return ui;
         },
-        axis                : "y",
+        axis                : 'y',
         forcePlaceholderSize: true,
-        update(event, ui) {
-          instance.$(".sortable-table-row").each(function (i, el) {
-            let newOrder = i + 1,
-                storedOrder  = $(el).attr("data-sort-order");
+        update (event, ui) {
+          instance.$('.sortable-table-row').each(function (i, el) {
+            let newOrder    = i + 1,
+                storedOrder = $(el).attr('data-sort-order');
             if (newOrder !== storedOrder) {
-              let rowId = $(el).attr("data-pk");
-              console.log("Updating order: ", newOrder, rowId);
+              let rowId = $(el).attr('data-pk');
+              console.log('Updating order: ', newOrder, rowId);
               Meteor.call('editPriority', rowId, 'order', newOrder, function (error, response) {
                 if (error) {
-                  RobaDialog.error("Priority order update failed: " + error.message);
+                  RobaDialog.error('Priority order update failed: ' + error.message);
                 }
               });
             }

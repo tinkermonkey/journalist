@@ -1,8 +1,10 @@
 import './integration_servers.html';
-import { Template } from 'meteor/templating';
+import { Template }           from 'meteor/templating';
+import SimpleSchema           from 'simpl-schema';
+import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
 import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
-import { IntegrationTypes } from '../../../../../imports/api/integrations/integration_types';
-import { Util } from '../../../../../imports/api/util';
+import { IntegrationTypes }   from '../../../../../imports/api/integrations/integration_types';
+import { Util }               from '../../../../../imports/api/util';
 import '../../../components/misc/authenticate_server_link';
 
 /**
@@ -23,11 +25,11 @@ Template.IntegrationServers.helpers({
  * Template Event Handlers
  */
 Template.IntegrationServers.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let serverId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey  = $(e.target).attr("data-key");
+    let serverId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey  = $(e.target).attr('data-key');
     
     console.log('IntegrationServers edited:', serverId, dataKey, newValue);
     if (serverId && dataKey) {
@@ -38,28 +40,28 @@ Template.IntegrationServers.events({
       });
     }
   },
-  "click .btn-add-server" (e, instance) {
+  'click .btn-add-server' (e, instance) {
     let context = Template.currentData();
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           title  : {
             type : String,
-            label: "Title"
+            label: 'Title'
           },
           baseUrl: {
             type : String,
-            label: "Base URL"
+            label: 'Base URL'
           }
         })
       },
-      title          : "Add Server",
+      title          : 'Add Server',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -84,23 +86,23 @@ Template.IntegrationServers.events({
       }.bind(this)
     });
   },
-  "click .btn-update-server-cache" (e, instance) {
+  'click .btn-update-server-cache' (e, instance) {
     let server = this;
     
     Meteor.call('updateIntegrationServerCache', server._id, function (error, response) {
       if (error) {
-        RobaDialog.error("Cache update failed: " + error.message);
+        RobaDialog.error('Cache update failed: ' + error.message);
       }
     });
   },
-  "click .btn-delete-server" (e, instance) {
+  'click .btn-delete-server' (e, instance) {
     let server = this;
     
     RobaDialog.ask('Delete Server?', 'Are you sure that you want to delete the server <span class="label label-primary"> ' + server.title + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteIntegrationServer', server._id, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

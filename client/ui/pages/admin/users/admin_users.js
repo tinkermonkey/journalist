@@ -1,5 +1,5 @@
 import './admin_users.html';
-import { Template } from 'meteor/templating';
+import { Template }  from 'meteor/templating';
 import { UserTypes } from '../../../../../imports/api/users/user_types.js';
 import './admin_user_list.js';
 
@@ -7,7 +7,7 @@ import './admin_user_list.js';
  * Template Helpers
  */
 Template.AdminUsers.helpers({
-  UserTypes(){
+  UserTypes () {
     return UserTypes;
   }
 });

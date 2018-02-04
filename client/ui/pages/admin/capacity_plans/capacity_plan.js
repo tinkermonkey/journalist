@@ -1,8 +1,10 @@
 import './capacity_plan.html';
 import './capacity_plan.css';
-import { Template } from 'meteor/templating';
-import { moment } from 'meteor/momentjs:moment';
-import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
+import { Template }            from 'meteor/templating';
+import SimpleSchema            from 'simpl-schema';
+import { moment }              from 'meteor/momentjs:moment';
+import { RobaDialog }          from 'meteor/austinsand:roba-dialog';
+import { CapacityPlans }       from '../../../../../imports/api/capacity_plans/capacity_plans';
 import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
@@ -82,7 +84,7 @@ Template.CapacityPlan.events({
     e.stopImmediatePropagation();
     
     let planId  = FlowRouter.getParam('planId'),
-        dataKey = $(e.target).attr("data-key");
+        dataKey = $(e.target).attr('data-key');
     
     console.log('Plan Edit:', planId, dataKey, newValue);
     
@@ -98,7 +100,7 @@ Template.CapacityPlan.events({
     e.stopImmediatePropagation();
     
     let optionId = FlowRouter.getParam('optionId'),
-        dataKey  = $(e.target).attr("data-key");
+        dataKey  = $(e.target).attr('data-key');
     
     console.log('Option Edit:', optionId, dataKey, newValue);
     if (optionId && dataKey) {

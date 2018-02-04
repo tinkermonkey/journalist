@@ -8,6 +8,6 @@
     </small>
   </h2>
   
-  {{> JiraBrainDump title="Sever Info" module="serverInfo" method="getServerInfo" payload=serverInfoPayload}}
-  {{> JiraBrainDump title="Myself" module="myself" method="getMyself"}}
+  {{> JiraBrainDump server=this title="Sever Info" module="serverInfo" method="getServerInfo" payload=serverInfoPayload}}
+  {{> JiraBrainDump server=this title="Myself" module="myself" method="getMyself"}}
 </template>

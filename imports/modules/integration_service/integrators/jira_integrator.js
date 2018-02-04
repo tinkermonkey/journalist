@@ -1,8 +1,8 @@
-import { Integrator } from './integrator';
-import { IntegrationTypes } from '../../../api/integrations/integration_types';
-import { Meteor } from "meteor/meteor";
-import { MongoCookieStore } from './mongo_cookie_store';
-import { Util } from '../../../api/util';
+import { Integrator }             from './integrator';
+import { IntegrationTypes }       from '../../../api/integrations/integration_types';
+import { Meteor }                 from 'meteor/meteor';
+import { MongoCookieStore }       from './mongo_cookie_store';
+import { Util }                   from '../../../api/util';
 import { ImportedItemWorkPhases } from '../../../api/imported_items/imported_item_work_phases';
 import { ImportedItemWorkStates } from '../../../api/imported_items/imported_item_work_states';
 
@@ -12,7 +12,7 @@ const JiraConnector    = require('jira-connector'),
       debug            = true,
       trace            = false,
       queryDefinitions = {
-        master: "Master Select Query"
+        master: 'Master Select Query'
       },
       mapIgnoreModules = [
         'promise',
@@ -230,7 +230,7 @@ export class JiraIntegrator extends Integrator {
             return checkField.id === syntheticKey || checkField.syntheticKey === syntheticKey
           });
           if (dupes.length) {
-            syntheticKey = syntheticKey + "_" + field.schema.customId
+            syntheticKey = syntheticKey + '_' + field.schema.customId
           }
           
           field.syntheticKey = syntheticKey.toLowerCase();
@@ -494,7 +494,7 @@ export class JiraIntegrator extends Integrator {
       
       processedItem.changelog.histories.forEach((entry) => {
         let statusChangeList = entry.items.filter((item) => {
-          if(item.fieldId){
+          if (item.fieldId) {
             return item.fieldId && item.fieldId.toLowerCase() === 'status';
           } else {
             return item.field && item.field.toLowerCase() === 'status';
@@ -520,15 +520,15 @@ export class JiraIntegrator extends Integrator {
           if (statusMap) {
             let fromStatus = statusMap[ item.from ],
                 toStatus   = statusMap[ item.to ];
-
-            if(_.isObject(fromStatus)){
+            
+            if (_.isObject(fromStatus)) {
               statusEntry.from.workPhase = ImportedItemWorkPhases[ fromStatus.workPhase ];
               statusEntry.from.workState = ImportedItemWorkStates[ fromStatus.workState ];
             }
-
-            if(_.isObject(toStatus)){
-                statusEntry.to.workPhase = ImportedItemWorkPhases[ toStatus.workPhase ];
-                statusEntry.to.workState = ImportedItemWorkStates[ toStatus.workState ];
+            
+            if (_.isObject(toStatus)) {
+              statusEntry.to.workPhase = ImportedItemWorkPhases[ toStatus.workPhase ];
+              statusEntry.to.workState = ImportedItemWorkStates[ toStatus.workState ];
             }
           }
           

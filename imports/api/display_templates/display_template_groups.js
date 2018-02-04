@@ -1,5 +1,5 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }            from 'meteor/mongo';
+import SimpleSchema         from 'simpl-schema';
 import { DisplayTemplates } from './display_templates';
 
 /**
@@ -17,7 +17,7 @@ export const DisplayTemplateGroup = new SimpleSchema({
   }
 });
 
-export const DisplayTemplateGroups = new Mongo.Collection("display_template_groups");
+export const DisplayTemplateGroups = new Mongo.Collection('display_template_groups');
 DisplayTemplateGroups.attachSchema(DisplayTemplateGroup);
 
 /**

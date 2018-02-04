@@ -1,4 +1,4 @@
-import { Meteor } from 'meteor/meteor';
+import { Meteor }     from 'meteor/meteor';
 import { Priorities } from '../priorities.js';
 
 Meteor.publish('priorities', function () {

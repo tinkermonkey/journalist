@@ -1,13 +1,13 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }                            from 'meteor/mongo';
+import SimpleSchema                         from 'simpl-schema';
+import { SchemaHelpers }                    from '../schema_helpers.js';
 import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effort_items';
-import { Contributors } from '../contributors/contributors';
-import { ContributorTeamRoles } from '../contributors/contributor_team_roles';
-import { ImportedItemCrumbs } from '../imported_items/imported_item_crumbs';
-import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
-import { CapacityPlanSprints } from './capacity_plan_sprints';
-import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
+import { Contributors }                     from '../contributors/contributors';
+import { ContributorTeamRoles }             from '../contributors/contributor_team_roles';
+import { ImportedItemCrumbs }               from '../imported_items/imported_item_crumbs';
+import { CapacityPlanSprintBlocks }         from './capacity_plan_sprint_blocks';
+import { CapacityPlanSprints }              from './capacity_plan_sprints';
+import { CapacityPlanBlockTypes }           from './capacity_plan_block_types';
 
 /**
  * ============================================================================
@@ -55,7 +55,7 @@ export const CapacityPlanStrategicEffort = new SimpleSchema({
   }
 });
 
-export const CapacityPlanStrategicEfforts = new Mongo.Collection("capacity_plan_strategic_efforts");
+export const CapacityPlanStrategicEfforts = new Mongo.Collection('capacity_plan_strategic_efforts');
 CapacityPlanStrategicEfforts.attachSchema(CapacityPlanStrategicEffort);
 ChangeTracker.trackChanges(CapacityPlanStrategicEfforts, 'CapacityPlanStrategicEfforts');
 

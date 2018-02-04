@@ -1,6 +1,6 @@
 import './import_export.html';
-import { Meteor } from 'meteor/meteor';
-import { Template } from 'meteor/templating';
+import { Meteor }     from 'meteor/meteor';
+import { Template }   from 'meteor/templating';
 import { RobaDialog } from 'meteor/austinsand:roba-dialog';
 
 /**
@@ -24,7 +24,7 @@ Template.ImportExport.helpers({
  * Template Event Handlers
  */
 Template.ImportExport.events({
-  "click .btn-export" (e, template) {
+  'click .btn-export' (e, template) {
     Meteor.call('exportData', (error, response) => {
       if (error) {
         RobaDialog.error(error);

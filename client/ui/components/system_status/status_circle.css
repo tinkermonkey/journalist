@@ -2,14 +2,14 @@
  * status circle
  */
 .status-circle {
-  width: 1em;
-  height: 1em;
-  background: transparent;
-  margin: 0 0.3em;
+  width      : 1em;
+  height     : 1em;
+  background : transparent;
+  margin     : 0 0.3em;
 }
 
 .status-circle circle {
-  fill: #bebebe;
+  fill : #bebebe;
   /*
   -webkit-animation: status-pulse 5s infinite;
   -o-animation: status-pulse 5s infinite;
@@ -18,11 +18,11 @@
 }
 
 .status-circle.pass circle {
-  fill: #00d801;
+  fill : #00d801;
 }
 
 .status-circle.fail circle {
-  fill: #ff0000;
+  fill : #ff0000;
   /*
   -webkit-animation: status-fail-pulse 5s infinite;
   -o-animation: status-fail-pulse 5s infinite;
@@ -38,34 +38,49 @@
  *  failed
  *  skipped
  */
-.status-circle.queued   circle { fill: #bebebe; }
-.status-circle.running  circle { fill: #00d801; }
-.status-circle.complete circle { fill: #007AC9; }
-.status-circle.failed   circle { fill: #ff0000; }
-.status-circle.skipped  circle { fill: #ffffff; stroke: #bebebe; }
+.status-circle.queued circle {
+  fill : #bebebe;
+}
+
+.status-circle.running circle {
+  fill : #00d801;
+}
+
+.status-circle.complete circle {
+  fill : #007AC9;
+}
+
+.status-circle.failed circle {
+  fill : #ff0000;
+}
+
+.status-circle.skipped circle {
+  fill   : #ffffff;
+  stroke : #bebebe;
+}
 
 /**
  * Animations
  */
 @keyframes status-pulse {
   0% {
-    fill-opacity: 1.0;
+    fill-opacity : 1.0;
   }
   50% {
-    fill-opacity: 0.4;
+    fill-opacity : 0.4;
   }
   100% {
-    fill-opacity: 1.0;
+    fill-opacity : 1.0;
   }
 }
 
 @keyframes status-fail-pulse {
   0% {
-    fill-opacity: 1.0;
-    fill: #ff0000;
+    fill-opacity : 1.0;
+    fill         : #ff0000;
   }
   50% {
-    fill-opacity: 0.1;
-    fill: #5a0000;
+    fill-opacity : 0.1;
+    fill         : #5a0000;
   }
 }

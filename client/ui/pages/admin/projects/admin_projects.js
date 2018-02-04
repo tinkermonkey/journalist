@@ -1,7 +1,8 @@
 import './admin_projects.html';
-import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Projects } from '../../../../../imports/api/projects/projects.js';
+import { Template }   from 'meteor/templating';
+import SimpleSchema   from 'simpl-schema';
+import { RobaDialog } from 'meteor/austinsand:roba-dialog';
+import { Projects }   from '../../../../../imports/api/projects/projects.js';
 import '../../../components/add_record_form/add_record_form.js';
 import './admin_project_home.js';
 
@@ -9,7 +10,7 @@ import './admin_project_home.js';
  * Template Helpers
  */
 Template.AdminProjects.helpers({
-  projects(){
+  projects () {
     return Projects.find({}, { sort: { title: 1 } })
   }
 });
@@ -18,11 +19,11 @@ Template.AdminProjects.helpers({
  * Template Event Handlers
  */
 Template.AdminProjects.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let projectId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey   = $(e.target).attr("data-key");
+    let projectId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey   = $(e.target).attr('data-key');
     
     console.log('edited:', projectId, dataKey, newValue);
     if (projectId && dataKey) {
@@ -33,24 +34,24 @@ Template.AdminProjects.events({
       });
     }
   },
-  "click .btn-add-project"(e, instance){
+  'click .btn-add-project' (e, instance) {
     let context = Template.currentData();
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           title: {
             type : String,
-            label: "Title"
+            label: 'Title'
           }
         })
       },
-      title          : "Add Project",
+      title          : 'Add Project',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -75,15 +76,15 @@ Template.AdminProjects.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-project"(e, instance){
-    let projectId = $(e.target).closest(".data-table-row").attr("data-pk"),
+  'click .btn-delete-project' (e, instance) {
+    let projectId = $(e.target).closest('.data-table-row').attr('data-pk'),
         project   = Projects.findOne(projectId);
     
     RobaDialog.ask('Delete Project?', 'Are you sure that you want to delete the project <span class="label label-primary"> ' + project.title + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteProject', projectId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

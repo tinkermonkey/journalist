@@ -1,11 +1,11 @@
 .team-staff-roster {
-  padding: 10px;
+  padding : 10px;
 }
 
 .team-staff-roster:first-child {
-  padding-left: 0;
+  padding-left : 0;
 }
 
 .team-staff-roster:last-child {
-  padding-right: 0;
+  padding-right : 0;
 }

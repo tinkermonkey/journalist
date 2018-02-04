@@ -1,13 +1,14 @@
 import './admin_project_home.html';
-import { Template } from 'meteor/templating';
-import { Projects } from '../../../../../imports/api/projects/projects';
+import { Template }   from 'meteor/templating';
+import { RobaDialog } from 'meteor/austinsand:roba-dialog';
+import { Projects }   from '../../../../../imports/api/projects/projects';
 import './admin_project_integrations';
 
 /**
  * Template Helpers
  */
 Template.AdminProjectHome.helpers({
-  project(){
+  project () {
     let projectId = FlowRouter.getParam('projectId');
     return Projects.findOne(projectId)
   }
@@ -17,11 +18,11 @@ Template.AdminProjectHome.helpers({
  * Template Event Handlers
  */
 Template.AdminProjectHome.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let projectId = $(e.target).closest(".project-container").attr("data-pk"),
-        dataKey   = $(e.target).attr("data-key");
+    let projectId = $(e.target).closest('.project-container').attr('data-pk'),
+        dataKey   = $(e.target).attr('data-key');
     
     console.log('edited:', projectId, dataKey, newValue);
     if (projectId && dataKey) {

@@ -1,5 +1,7 @@
 import './authenticate_server_link.html';
-import { Template } from 'meteor/templating';
+import { Template }   from 'meteor/templating';
+import SimpleSchema   from 'simpl-schema';
+import { RobaDialog } from 'meteor/austinsand:roba-dialog';
 
 /**
  * Template Helpers
@@ -10,33 +12,33 @@ Template.AuthenticateServerLink.helpers({});
  * Template Event Handlers
  */
 Template.AuthenticateServerLink.events({
-  "click .btn-log-in-server"(e, instance){
+  'click .btn-log-in-server' (e, instance) {
     let server = this;
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           username: {
             type : String,
-            label: "Username"
+            label: 'Username'
           },
           password: {
-            type : String,
-            label: "Password",
+            type    : String,
+            label   : 'Password',
             autoform: {
               afFieldInput: {
-                type: "password"
+                type: 'password'
               }
             }
           }
         })
       },
-      title          : "Authenticate to " + server.title,
+      title          : 'Authenticate to ' + server.title,
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Log In" }
+        { text: 'Cancel' },
+        { text: 'Log In' }
       ],
       callback       : function (btn) {
         if (btn.match(/log in/i)) {
@@ -61,7 +63,7 @@ Template.AuthenticateServerLink.events({
       }.bind(this)
     });
   },
-  "click .btn-log-out-server"(e, instance){
+  'click .btn-log-out-server' (e, instance) {
     let server = this;
     
     RobaDialog.ask('Log out of server', 'Are you sure you want to log out of the server <span class="label label-primary"> ' + server.title + '</span> ?', () => {

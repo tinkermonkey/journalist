@@ -1,7 +1,6 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }         from 'meteor/mongo';
+import SimpleSchema      from 'simpl-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 
 /**
@@ -10,31 +9,31 @@ import { SchemaHelpers } from '../schema_helpers.js';
  * ============================================================================
  */
 export const IntegrationCalculatedField = new SimpleSchema({
-  title: {
+  title       : {
     type: String
   },
-  description: {
-    type: String,
+  description : {
+    type    : String,
     optional: true
   },
-  code: {
-    type: String,
+  code        : {
+    type    : String,
     optional: true
   },
   // Standard tracking fields
-  dateCreated      : {
+  dateCreated : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy        : {
+  createdBy   : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified     : {
+  dateModified: {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy       : {
+  modifiedBy  : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }

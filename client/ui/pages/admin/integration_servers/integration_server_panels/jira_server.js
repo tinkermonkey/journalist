@@ -1,38 +1,38 @@
-import './jira_server_browser.html';
+import './jira_server.html';
 import { Template } from 'meteor/templating';
 import './jira/jira_application_info';
 import './jira/jira_project_list';
-import './jira/jira_testbed';
-import './cached_data';
+import './jira/jira_api_testbed';
+import '../integration_server_cached_data';
 import '../integration_server_status_map';
 
 /**
  * Template Helpers
  */
-Template.JiraServerBrowser.helpers({});
+Template.JiraServer.helpers({});
 
 /**
  * Template Event Handlers
  */
-Template.JiraServerBrowser.events({});
+Template.JiraServer.events({});
 
 /**
  * Template Created
  */
-Template.JiraServerBrowser.onCreated(() => {
+Template.JiraServer.onCreated(() => {
   
 });
 
 /**
  * Template Rendered
  */
-Template.JiraServerBrowser.onRendered(() => {
+Template.JiraServer.onRendered(() => {
   
 });
 
 /**
  * Template Destroyed
  */
-Template.JiraServerBrowser.onDestroyed(() => {
+Template.JiraServer.onDestroyed(() => {
   
 });

@@ -1,7 +1,7 @@
 import './active_reports.html';
-import { Template } from 'meteor/templating';
-import { RobaDialog } from 'meteor/austinsand:roba-dialog';
-import { StatusReports } from '../../../../imports/api/status_reports/status_reports';
+import { Template }           from 'meteor/templating';
+import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
+import { StatusReports }      from '../../../../imports/api/status_reports/status_reports';
 import { StatusReportStates } from '../../../../imports/api/status_reports/status_report_states';
 import './add_report_form.js';
 
@@ -22,19 +22,19 @@ Template.ActiveReports.helpers({
  * Template Event Handlers
  */
 Template.ActiveReports.events({
-  "click .btn-assign-report" (e, instance) {
+  'click .btn-assign-report' (e, instance) {
     let context = instance.data;
     
     if (context.sourceCollection && context.sourceId) {
       
       // Show a form to select a date and contributor
       RobaDialog.show({
-        contentTemplate: "AddReportForm",
-        title          : "Assign Report",
+        contentTemplate: 'AddReportForm',
+        title          : 'Assign Report',
         width          : 500,
         buttons        : [
-          { text: "Cancel" },
-          { text: "Assign" }
+          { text: 'Cancel' },
+          { text: 'Assign' }
         ],
         callback       : function (btn) {
           if (btn.match(/assign/i)) {
@@ -59,7 +59,7 @@ Template.ActiveReports.events({
           }
         }.bind(this)
       });
-  
+      
     }
   }
 });

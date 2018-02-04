@@ -1,5 +1,5 @@
-import { Util } from '../../../../../imports/api/util';
-import { Session } from "meteor/session";
+import { Util }    from '../../../../../imports/api/util';
+import { Session } from 'meteor/session';
 
 let d3    = require('d3'),
     debug = false;

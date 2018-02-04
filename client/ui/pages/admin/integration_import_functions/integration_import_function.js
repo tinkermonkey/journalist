@@ -1,7 +1,8 @@
 import './integration_import_function.html';
-import { Template } from 'meteor/templating';
+import { Template }                   from 'meteor/templating';
+import { RobaDialog }                 from 'meteor/austinsand:roba-dialog';
 import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
-import { ImportedItem } from '../../../../../imports/api/imported_items/imported_items';
+import { ImportedItem }               from '../../../../../imports/api/imported_items/imported_items';
 import '../integration_servers/integration_server_import_testbed';
 import '../integration_servers/integration_server_field_reference';
 
@@ -18,16 +19,16 @@ Template.IntegrationImportFunction.helpers({
     let itemSchema     = ImportedItem.schema(),
         fieldReference = [];
     _.keys(itemSchema).forEach((key) => {
-      let field = itemSchema[key];
+      let field = itemSchema[ key ];
       
       // All of the user-facing fields have a descriptive label
-      if(field.label && field.label.length){
-        field.key = key;
+      if (field.label && field.label.length) {
+        field.key  = key;
         field.type = field.type && field.type.name;
         fieldReference.push(field);
       }
     });
-
+    
     return fieldReference
   }
 });
@@ -36,11 +37,11 @@ Template.IntegrationImportFunction.helpers({
  * Template Event Handlers
  */
 Template.IntegrationImportFunction.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
     let importFunctionId = FlowRouter.getParam('functionId'),
-        dataKey          = $(e.target).attr("data-key");
+        dataKey          = $(e.target).attr('data-key');
     
     console.log('edited:', importFunctionId, dataKey, newValue);
     if (importFunctionId && dataKey) {

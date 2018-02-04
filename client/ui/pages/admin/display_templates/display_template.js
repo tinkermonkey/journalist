@@ -1,6 +1,7 @@
 import './display_template.html';
-import { Template } from 'meteor/templating';
-import { Util } from '../../../../../imports/api/util';
+import { Template }   from 'meteor/templating';
+import { RobaDialog } from 'meteor/austinsand:roba-dialog';
+import { Util }       from '../../../../../imports/api/util';
 
 /**
  * Template Helpers
@@ -25,7 +26,7 @@ Template.DisplayTemplate.events({
     e.stopImmediatePropagation();
     
     let displayTemplate = Template.currentData(),
-        dataKey         = $(e.target).attr("data-key");
+        dataKey         = $(e.target).attr('data-key');
     
     //console.log('edited:', displayTemplateId, dataKey, newValue);
     if (displayTemplate._id && dataKey && dataKey) {
@@ -67,7 +68,7 @@ Template.DisplayTemplate.events({
     }
     
     try {
-      Blaze.renderWithData(Template[ displayTemplate.templateName ], previewContext, instance.$('.preview-container').get(0))
+      Blaze.renderWithData(Template[ displayTemplate.templateName ], previewContext, instance.$('.preview-container').get(0));
       instance.previewMessage.set('Rendered version ' + displayTemplate.currentVersion.toString() + ' at ' + moment().format('hh:mm:ss'));
       instance.allowPublish.set(true);
     } catch (e) {

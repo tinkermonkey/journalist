@@ -1,6 +1,5 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Util } from '../util.js';
+import { Mongo }         from 'meteor/mongo';
+import SimpleSchema      from 'simpl-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
 
 /**
@@ -10,19 +9,19 @@ import { SchemaHelpers } from '../schema_helpers.js';
  */
 export const IntegrationServerCache = new SimpleSchema({
   // The _id of the IntegrationServer from which this data came
-  serverId: {
+  serverId : {
     type: String
   },
-  key: {
+  key      : {
     type: String
   },
-  value: {
-    type: [Object],
+  value    : {
+    type    : Array, // Object
     blackbox: true
   },
   // Track the age of the data
   timestamp: {
-    type: Date,
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   }
 });
@@ -32,9 +31,15 @@ IntegrationServerCaches.attachSchema(IntegrationServerCache);
 
 // These are server side only
 IntegrationServerCaches.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+  remove () {
+    return true;
+  },
+  insert () {
+    return true;
+  },
+  update () {
+    return true;
+  }
 });
 
 /**

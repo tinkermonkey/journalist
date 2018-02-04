@@ -1,9 +1,0 @@
-.integration-config-table.narrow-width {
-  width: auto !important;
-}
-
-.integration-config-table td:first-child {
-  font-weight: bold;
-  white-space : nowrap;
-  width: 10%;
-}

@@ -1,5 +1,7 @@
 import './capacity_plan_releases.html';
-import { Template } from 'meteor/templating';
+import { Template }             from 'meteor/templating';
+import SimpleSchema             from 'simpl-schema';
+import { RobaDialog }           from 'meteor/austinsand:roba-dialog';
 import { CapacityPlanReleases } from '../../../../../imports/api/capacity_plans/capacity_plan_releases';
 
 /**
@@ -18,8 +20,8 @@ Template.CapacityPlanReleases.helpers({
 Template.CapacityPlanReleases.events({
   'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
-    let releaseId  = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey = $(e.target).attr("data-key");
+    let releaseId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey   = $(e.target).attr('data-key');
     
     if (releaseId && dataKey) {
       Meteor.call('editCapacityPlanRelease', releaseId, dataKey, newValue, (error, response) => {

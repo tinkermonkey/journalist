@@ -1,12 +1,12 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { Contributors } from '../contributors/contributors';
+import { Mongo }                         from 'meteor/mongo';
+import SimpleSchema                      from 'simpl-schema';
+import { ChangeTracker }                 from 'meteor/austinsand:roba-change-tracker';
+import { SchemaHelpers }                 from '../schema_helpers.js';
+import { Contributors }                  from '../contributors/contributors';
 import { ContributorProjectAssignments } from '../contributors/contributor_project_assignments';
-import { ContributorTeamRoles } from '../contributors/contributor_team_roles';
-import { Integrations } from '../integrations/integrations';
-import { Teams } from '../teams/teams';
+import { ContributorTeamRoles }          from '../contributors/contributor_team_roles';
+import { Integrations }                  from '../integrations/integrations';
+import { Teams }                         from '../teams/teams';
 
 /**
  * ============================================================================
@@ -29,7 +29,7 @@ export const Project = new SimpleSchema({
     optional: true
   },
   reports       : {
-    type    : [ String ],
+    type    : Array, // String
     optional: true
   },
   // Contributor that is the primary owner of this project

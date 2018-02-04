@@ -1,9 +1,9 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }            from 'meteor/mongo';
+import SimpleSchema         from 'simpl-schema';
+import { ChangeTracker }    from 'meteor/austinsand:roba-change-tracker';
+import { SchemaHelpers }    from '../schema_helpers.js';
 import { IntegrationTypes } from './integration_types';
-import { ItemTypes } from '../imported_items/item_types';
+import { ItemTypes }        from '../imported_items/item_types';
 
 /**
  * ============================================================================
@@ -15,13 +15,13 @@ export const IntegrationImportFunction = new SimpleSchema({
     type: String
   },
   integrationType: {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(IntegrationTypes)
   },
   itemTypes      : {
-    type         : [ Number ],
+    type         : Array, // Number
     allowedValues: _.values(ItemTypes),
-    optional: true
+    optional     : true
   },
   description    : {
     type    : String,

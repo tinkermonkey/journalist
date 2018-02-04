@@ -7,17 +7,17 @@ import './jira_integration_query_testbed';
  */
 Template.JiraIntegrationDetailPanel.helpers({
   queryDefinitions () {
-    let integration = this,
+    let integration      = this,
         queryDefinitions = Template.instance().queryDefinitions.get();
     
     // Transform the data structure for easy parsing in the template
     if (queryDefinitions && queryDefinitions.definitions) {
       return _.keys(queryDefinitions.definitions).map((key) => {
         return {
-          queryKey: key,
-          fieldKey: 'details.' + key,
-          fieldValue: integration.details ? integration.details[key] : null,
-          title: queryDefinitions.definitions[ key ],
+          queryKey  : key,
+          fieldKey  : 'details.' + key,
+          fieldValue: integration.details ? integration.details[ key ] : null,
+          title     : queryDefinitions.definitions[ key ],
         }
       })
     }

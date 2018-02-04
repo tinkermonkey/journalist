@@ -1,7 +1,8 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { IntegrationTypes } from './integration_types';
+import { Mongo }                          from 'meteor/mongo';
+import SimpleSchema                       from 'simpl-schema';
+import { SchemaHelpers }                  from '../schema_helpers.js';
+import { IntegrationTypes }               from './integration_types';
+import { IntegrationServerAuthProviders } from './integration_server_auth_providers';
 
 /**
  * ============================================================================
@@ -13,7 +14,7 @@ export const IntegrationServer = new SimpleSchema({
     type: String
   },
   integrationType     : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(IntegrationTypes)
   },
   baseUrl             : {
@@ -116,5 +117,11 @@ IntegrationServers.helpers({
     //console.log('IntegrationServers.mappedPhaseStatuses:', statusMap, workPhaseKey, workStateKey);
     
     return phaseStatuses
+  },
+  /**
+   * Get the auth provider config for this server
+   */
+  authProviderConfig () {
+    return IntegrationServerAuthProviders.findOne({ serverId: this._id })
   }
 });

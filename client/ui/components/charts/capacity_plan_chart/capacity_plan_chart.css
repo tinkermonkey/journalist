@@ -178,8 +178,8 @@
 }
 
 .effort-block-group.in-drag {
-  pointer-events   : none;
-  cursor           : pointer;
+  pointer-events : none;
+  cursor         : pointer;
 }
 
 .effort-block .contributor-background {

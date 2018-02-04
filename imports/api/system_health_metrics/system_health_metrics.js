@@ -1,5 +1,5 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }         from 'meteor/mongo';
+import SimpleSchema      from 'simpl-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
 
 /**
@@ -12,22 +12,22 @@ export const SystemHealthMetric = new SimpleSchema({
   title      : {
     type: String
   },
-  type      : {
-    type: String,
+  type       : {
+    type    : String,
     optional: true
   },
   isHealthy  : {
-    type: Boolean,
+    type        : Boolean,
     defaultValue: false
   },
   detail     : {
-    type: Object,
+    type    : Object,
     blackbox: true,
     optional: true
   },
   // Auto track last updated
   lastUpdated: {
-    type: Date,
+    type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   }
 });
@@ -37,9 +37,15 @@ SystemHealthMetrics.attachSchema(SystemHealthMetric);
 
 // These are server side only
 SystemHealthMetrics.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+  remove () {
+    return true;
+  },
+  insert () {
+    return true;
+  },
+  update () {
+    return true;
+  }
 });
 
 SystemHealthMetrics.helpers({});

@@ -1,5 +1,4 @@
-import { Meteor } from 'meteor/meteor';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Meteor }       from 'meteor/meteor';
 import { Contributors } from '../contributors/contributors';
 
 /**
@@ -55,10 +54,10 @@ Users.helpers({
       // OR
       // 3B) The current user is an administrator
       Contributors.insert({
-        email     : user.emails[ 0 ].address,
-        name      : user.profile.name,
-        userId    : user._id,
-        usertype  : user.usertype
+        email   : user.emails[ 0 ].address,
+        name    : user.profile.name,
+        userId  : user._id,
+        usertype: user.usertype
       });
       
       // Grab the new record
@@ -70,7 +69,7 @@ Users.helpers({
   /**
    * Quick fetch of the contributorId for permissions checks
    */
-  contributorId(){
+  contributorId () {
     let contributor = this.contributor();
     return contributor && contributor._id;
   }

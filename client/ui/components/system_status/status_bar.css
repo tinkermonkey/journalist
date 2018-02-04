@@ -1,10 +1,10 @@
 .status-bar {
-  display: flex;
-  align-items: center;
+  display     : flex;
+  align-items : center;
 }
 
 .status-bar label {
-  font-size: 1em;
-  font-weight: inherit;
-  margin: 0;
+  font-size   : 1em;
+  font-weight : inherit;
+  margin      : 0;
 }

@@ -1,6 +1,5 @@
 import './height_limited_content.html';
 import { Template } from 'meteor/templating';
-import { Util } from '../../../../imports/api/util';
 
 let maxHeight    = 150,
     minOverage   = 50,
@@ -14,9 +13,9 @@ Template.HeightLimitedContent.helpers({
     let instance = Template.instance();
     clearTimeout(instance.heightCheckTimeout);
     instance.heightCheckTimeout = setTimeout(() => {
-      let bodyEl      = instance.$(".height-limited-content-outer"),
+      let bodyEl      = instance.$('.height-limited-content-outer'),
           outerHeight = bodyEl.innerHeight(),
-          innerHeight = bodyEl.find(".height-limited-content-inner").innerHeight();
+          innerHeight = bodyEl.find('.height-limited-content-inner').innerHeight();
       
       //console.log(Util.timestamp(), 'Height Limited Content resize:', instance.elementId, innerHeight, outerHeight);
       
@@ -43,9 +42,9 @@ Template.HeightLimitedContent.events({
   'click .height-limited-content-controls' (e, instance) {
     let container   = $(e.target).closest('.height-limited-content-container'),
         isCollapsed = container.find('.height-limited-content-outer').hasClass('collapsed'),
-        bodyEl      = instance.$(".height-limited-content-outer"),
+        bodyEl      = instance.$('.height-limited-content-outer'),
         outerHeight = bodyEl.innerHeight(),
-        innerHeight = bodyEl.find(".height-limited-content-inner").innerHeight();
+        innerHeight = bodyEl.find('.height-limited-content-inner').innerHeight();
     
     if (isCollapsed) {
       container.find('.height-limited-content-outer.collapsed').removeClass('collapsed');
@@ -75,7 +74,7 @@ Template.HeightLimitedContent.onRendered(() => {
   let instance = Template.instance();
   
   setTimeout(() => {
-    let bodyEl = instance.$(".height-limited-content-outer");
+    let bodyEl = instance.$('.height-limited-content-outer');
     
     // Clear the max-height attribute
     bodyEl.css('max-height', '');

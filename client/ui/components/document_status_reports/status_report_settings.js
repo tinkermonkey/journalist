@@ -1,6 +1,6 @@
 import './status_report_settings.html';
-import { Template } from 'meteor/templating';
-import { RobaDialog } from 'meteor/austinsand:roba-dialog';
+import { Template }             from 'meteor/templating';
+import { RobaDialog }           from 'meteor/austinsand:roba-dialog';
 import { StatusReportSettings } from '../../../../imports/api/status_reports/status_report_settings';
 import '../later_preview/later_preview.js';
 
@@ -8,12 +8,12 @@ import '../later_preview/later_preview.js';
  * Template Helpers
  */
 Template.StatusReportSettings.helpers({
-  settings(){
+  settings () {
     let context = this;
-    if(context.sourceCollection && context.sourceId){
+    if (context.sourceCollection && context.sourceId) {
       return StatusReportSettings.findOne({
         sourceCollection: context.sourceCollection,
-        sourceId: context.sourceId
+        sourceId        : context.sourceId
       })
     }
   }
@@ -23,11 +23,11 @@ Template.StatusReportSettings.helpers({
  * Template Event Handlers
  */
 Template.StatusReportSettings.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let settingsId  = $(e.target).closest(".status-report-settings").attr("data-pk"),
-        dataKey = $(e.target).attr("data-key");
+    let settingsId = $(e.target).closest('.status-report-settings').attr('data-pk'),
+        dataKey    = $(e.target).attr('data-key');
     
     console.log('StatusReportSettings edited:', settingsId, dataKey, newValue);
     if (settingsId && dataKey) {
@@ -40,14 +40,14 @@ Template.StatusReportSettings.events({
       });
     }
   },
-  "click .configure-reporting-button"(e, instance){
+  'click .configure-reporting-button' (e, instance) {
     e.stopImmediatePropagation();
     
     let context = instance.data;
     
     console.log('StatusReportSettings creating setting:', context);
     if (context.contributorId && context.sourceCollection && context.sourceId) {
-      Meteor.call('addStatusReportSetting', context.contributorId , context.sourceCollection , context.sourceId, (error, response) => {
+      Meteor.call('addStatusReportSetting', context.contributorId, context.sourceCollection, context.sourceId, (error, response) => {
         if (error) {
           RobaDialog.error('Failed to add report settings: ' + error.toString())
         } else {
@@ -58,16 +58,16 @@ Template.StatusReportSettings.events({
       RobaDialog.error('Failed to add reporting settings: insufficient context in ' + JSON.stringify(context))
     }
   },
-  "click .btn-delete-settings"(e, instance, newValue){
+  'click .btn-delete-settings' (e, instance, newValue) {
     e.stopImmediatePropagation();
-  
-    let settingsId  = $(e.target).closest(".status-report-settings").attr("data-pk");
+    
+    let settingsId = $(e.target).closest('.status-report-settings').attr('data-pk');
     
     RobaDialog.ask('Delete Settings?', 'Are you sure that you want to delete the report settings?', () => {
       RobaDialog.hide();
       Meteor.call('deleteStatusReportSetting', settingsId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

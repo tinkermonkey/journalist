@@ -1,6 +1,7 @@
 import './add_import_function_form.html';
-import { Template } from 'meteor/templating';
-import { Util } from '../../../../../imports/api/util';
+import { Template }         from 'meteor/templating';
+import SimpleSchema         from 'simpl-schema';
+import { Util }             from '../../../../../imports/api/util';
 import { IntegrationTypes } from '../../../../../imports/api/integrations/integration_types';
 
 let schema = new SimpleSchema({

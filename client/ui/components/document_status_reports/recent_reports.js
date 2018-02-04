@@ -1,6 +1,7 @@
 import './recent_reports.html';
-import { Template } from 'meteor/templating';
-import { StatusReports } from '../../../../imports/api/status_reports/status_reports';
+import { Template }           from 'meteor/templating';
+import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
+import { StatusReports }      from '../../../../imports/api/status_reports/status_reports';
 import { StatusReportStates } from '../../../../imports/api/status_reports/status_report_states';
 import '../../components/height_limited_content/height_limited_content';
 
@@ -55,29 +56,29 @@ Template.RecentReports.helpers({
  * Template Event Handlers
  */
 Template.RecentReports.events({
-  "click .btn-load-more-reports" (e, instance) {
+  'click .btn-load-more-reports' (e, instance) {
     let max = instance.max.get();
     instance.max.set(max + maxIncrement)
   },
-  "click .btn-delete-report" (e, instance) {
-    let reportId = $(e.target).closest(".status-report-container").attr("data-pk");
+  'click .btn-delete-report' (e, instance) {
+    let reportId = $(e.target).closest('.status-report-container').attr('data-pk');
     
     RobaDialog.ask('Delete Report?', 'Are you sure that you want to delete this report?', () => {
       Meteor.call('deleteStatusReport', reportId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         } else {
           RobaDialog.hide();
         }
       });
     });
   },
-  "click .btn-reopen-report" (e, instance) {
-    let reportId = $(e.target).closest(".status-report-container").attr("data-pk");
+  'click .btn-reopen-report' (e, instance) {
+    let reportId = $(e.target).closest('.status-report-container').attr('data-pk');
     
     Meteor.call('reopenStatusReport', reportId, function (error, response) {
       if (error) {
-        RobaDialog.error("Delete failed: " + error.message);
+        RobaDialog.error('Delete failed: ' + error.message);
       }
     });
   },

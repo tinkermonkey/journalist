@@ -1,8 +1,8 @@
 import './status_reports_due.html';
-import { Template } from 'meteor/templating';
+import { Template }             from 'meteor/templating';
 import { StatusReportSettings } from '../../../../imports/api/status_reports/status_report_settings';
-import { StatusReports } from '../../../../imports/api/status_reports/status_reports';
-import { StatusReportStates } from '../../../../imports/api/status_reports/status_report_states';
+import { StatusReports }        from '../../../../imports/api/status_reports/status_reports';
+import { StatusReportStates }   from '../../../../imports/api/status_reports/status_report_states';
 
 /**
  * Template Helpers

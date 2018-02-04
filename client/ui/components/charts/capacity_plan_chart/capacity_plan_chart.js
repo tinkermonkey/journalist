@@ -1,11 +1,11 @@
 import './capacity_plan_chart.html';
 import './capacity_plan_chart.css';
-import { Template } from 'meteor/templating';
-import { D3CapacityPlanChart } from './d3_capacity_plan_chart';
+import { Template }                     from 'meteor/templating';
+import { D3CapacityPlanChart }          from './d3_capacity_plan_chart';
 import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plans/capacity_plan_strategic_efforts';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
-import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { CapacityPlanSprintBlocks }     from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanSprintLinks }      from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
+import { CapacityPlanBlockTypes }       from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 
 /**
  * Template Helpers

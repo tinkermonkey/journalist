@@ -1,9 +1,9 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
+import { Mongo }                from 'meteor/mongo';
+import SimpleSchema             from 'simpl-schema';
+import { ChangeTracker }        from 'meteor/austinsand:roba-change-tracker';
 import { ContributorTeamRoles } from './contributor_team_roles';
-import { Projects } from '../projects/projects';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Projects }             from '../projects/projects';
+import { SchemaHelpers }        from '../schema_helpers.js';
 
 /**
  * ============================================================================
@@ -24,7 +24,7 @@ export const ContributorProjectAssignment = new SimpleSchema({
   },
   // Percent dedicated to this team
   percent      : {
-    type        : Number,
+    type        : SimpleSchema.Integer,
     defaultValue: 100,
     min         : 1,
     max         : 100

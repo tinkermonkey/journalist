@@ -8,10 +8,10 @@ import './editable_contributor_roles.js';
  * Template Helpers
  */
 Template.ContributorTeamRoles.helpers({
-  firstRole(){
+  firstRole () {
     let roles = this.teamRoles().fetch();
     //console.log('firstRole:', roles);
-    return roles.length ? roles[0] : null
+    return roles.length ? roles[ 0 ] : null
   }
 });
 

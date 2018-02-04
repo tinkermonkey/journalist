@@ -1,6 +1,6 @@
-import { Session } from "meteor/session";
-import { Util } from '../../../../../imports/api/util';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { Session }                  from 'meteor/session';
+import { Util }                     from '../../../../../imports/api/util';
+import { CapacityPlanBlockTypes }   from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
 
 let d3     = require('d3'),
@@ -229,19 +229,19 @@ export class D3CapacityPlanEffortListHandler {
           .on('end', () => {
             chart.effortListForeground.attr('clip-path', null);
           });
-
+      
       // Resize the chart to fit this if needed
       let neededHeight = 4 * chart.config.efforts.margin + chart.config.header.height + chart.effortListHeight;
-      if(neededHeight > chart.height){
+      if (neededHeight > chart.height) {
         chart.restoreHeight = chart.height;
         chart.svg.transition()
-          .duration(250)
-          .style('height', neededHeight + 'px');
+            .duration(250)
+            .style('height', neededHeight + 'px');
         
         chart.innerShadowBottom
-          .transition()
-          .duration(250)
-          .attr('y', neededHeight - chart.config.shadow.height);
+            .transition()
+            .duration(250)
+            .attr('y', neededHeight - chart.config.shadow.height);
       }
     } else {
       // Attach the clip path to the foreground
@@ -263,14 +263,14 @@ export class D3CapacityPlanEffortListHandler {
           .attr('height', 0);
       
       // Restore the chart height if it was adjusted
-      if(chart.restoreHeight){
+      if (chart.restoreHeight) {
         chart.svg.transition()
-          .duration(250)
-          .style('height', chart.height + 'px');
+            .duration(250)
+            .style('height', chart.height + 'px');
         chart.innerShadowBottom
-          .transition()
-          .duration(250)
-          .attr('y', chart.height - chart.config.shadow.height);
+            .transition()
+            .duration(250)
+            .attr('y', chart.height - chart.config.shadow.height);
         delete chart.restoreHeight;
       }
     }

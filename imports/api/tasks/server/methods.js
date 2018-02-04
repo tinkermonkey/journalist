@@ -1,7 +1,7 @@
-import { Meteor } from 'meteor/meteor';
+import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import { Tasks } from '../tasks.js';
-import { Auth } from '../../auth.js';
+import { Tasks }        from '../tasks.js';
+import { Auth }         from '../../auth.js';
 
 Meteor.methods({
   /**
@@ -9,7 +9,7 @@ Meteor.methods({
    * @param contributorId
    * @param title
    */
-  addTask(contributorId, title){
+  addTask (contributorId, title) {
     console.log('addTask:', contributorId, title);
     let user = Auth.requireAuthentication();
     
@@ -22,7 +22,7 @@ Meteor.methods({
       // Create the task
       Tasks.insert({
         contributorId: contributorId,
-        title: title
+        title        : title
       });
     } else {
       console.error('Non-authorized user tried to add an task:', user.username, title);
@@ -36,7 +36,7 @@ Meteor.methods({
    * @param key
    * @param value
    */
-  editTask(taskId, key, value){
+  editTask (taskId, key, value) {
     console.log('editTask:', taskId, key);
     let user = Auth.requireAuthentication();
     
@@ -50,11 +50,11 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.managesContributor(task.contributorId) || user.isAdmin()) {
-      let update = {};
-      update[key] = value;
+      let update    = {};
+      update[ key ] = value;
       
       // Update the task
-      Tasks.update(taskId, {$set: update});
+      Tasks.update(taskId, { $set: update });
     } else {
       console.error('Non-admin user tried to edit an task:', user.username, key, value);
       throw new Meteor.Error(403);
@@ -65,7 +65,7 @@ Meteor.methods({
    * Delete an task record
    * @param taskId
    */
-  deleteTask(taskId){
+  deleteTask (taskId) {
     console.log('deleteTask:', taskId);
     let user = Auth.requireAuthentication();
     

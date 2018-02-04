@@ -1,4 +1,4 @@
-import { Util } from '../../../../../imports/api/util';
+import { Util }                            from '../../../../../imports/api/util';
 import { D3ContributorDragControlHandler } from './d3_contributor_drag_control_handler';
 
 let d3    = require('d3'),
@@ -176,7 +176,7 @@ export class D3CapacityPlanTeamHandler {
     self.contributorSelection.select('.contributor-background')
         .attr('x', -chart.namesWidth + chart.config.teams.padding)
         .attr('width', chart.namesWidth + chart.config.teams.padding - 2);
-
+    
     self.contributorSelection.select('.contributor-background-path')
         .attr('d', 'm' + (-chart.namesWidth + chart.config.teams.padding) + ' ' + (chart.config.contributors.height / 2) + ' l' + (chart.namesWidth + chart.config.teams.padding - 2) + ' 0');
     

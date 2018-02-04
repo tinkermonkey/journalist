@@ -1,4 +1,4 @@
-import { check } from 'meteor/check';
+import { check }               from 'meteor/check';
 import { SystemHealthMetrics } from '../system_health_metrics';
 
 let debug = false;

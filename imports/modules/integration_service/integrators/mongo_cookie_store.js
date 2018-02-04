@@ -1,9 +1,8 @@
 import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }  from 'meteor/mongo';
 
 const MemoryCookieStore = require('tough-cookie').MemoryCookieStore,
-      Future = require('fibers/future'),
+      Future            = require('fibers/future'),
       request           = require('request'),
       CookieStores      = new Mongo.Collection('cookie_stores'),
       debug             = true;
@@ -23,10 +22,10 @@ export class MongoCookieStore extends MemoryCookieStore {
     CookieStores.upsert({ key: this.key }, { $set: { key: this.key, lastInstantiated: Date.now() } });
     
     // Bind the persist function to the Meteor environment so the data can be stored
-    this.persistCookies = Meteor.bindEnvironment( function () {
+    this.persistCookies = Meteor.bindEnvironment(function () {
       debug && console.log('MongoCookieStore persistCookies:', this.key);
       let self = this;
-    
+      
       // If in the middle of a restore operation hold off
       if (!self.inRestore) {
         let cookieData = self.getAllCookiesSync().map((cookie) => {
@@ -35,7 +34,7 @@ export class MongoCookieStore extends MemoryCookieStore {
             data: cookie.toJSON()
           }
         });
-      
+        
         CookieStores.update({ key: this.key }, { $set: { cookies: cookieData, lastUpdated: Date.now() } });
       }
     }.bind(this));
@@ -49,8 +48,8 @@ export class MongoCookieStore extends MemoryCookieStore {
   putCookie (cookie, callback) {
     debug && console.log('MongoCookieStore putCookie:', this.key, cookie);
     
-    super.putCookie(cookie, () => { });
-    
+    super.putCookie(cookie, () => {
+    });
     
     this.persistCookies();
     
@@ -67,7 +66,8 @@ export class MongoCookieStore extends MemoryCookieStore {
   removeCookie (domain, path, key, callback) {
     debug && console.log('MongoCookieStore removeCookie:', this.key, domain, path, key);
     
-    super.removeCookie(domain, path, key, () => { });
+    super.removeCookie(domain, path, key, () => {
+    });
     
     this.persistCookies();
     
@@ -83,7 +83,8 @@ export class MongoCookieStore extends MemoryCookieStore {
   removeCookies (domain, path, callback) {
     debug && console.log('MongoCookieStore removeCookies:', this.key, domain, path);
     
-    super.removeCookies(domain, path, () => { });
+    super.removeCookies(domain, path, () => {
+    });
     
     this.persistCookies();
     
@@ -93,9 +94,9 @@ export class MongoCookieStore extends MemoryCookieStore {
   /**
    * Get all of the cookies in a synchronous manner
    */
-  getAllCookiesSync(){
+  getAllCookiesSync () {
     debug && console.log('MongoCookieStore getAllCookiesSync:', this.key);
-    let self = this,
+    let self   = this,
         future = new Future();
     
     let result = self.getAllCookies((error, cookies) => {
@@ -152,5 +153,4 @@ export class MongoCookieStore extends MemoryCookieStore {
     }
   }
   
-
 }

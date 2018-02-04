@@ -1,14 +1,15 @@
 import './edit_report_form.html';
-import { Template } from 'meteor/templating';
+import { Template }      from 'meteor/templating';
+import { RobaDialog }    from 'meteor/austinsand:roba-dialog';
 import { StatusReports } from '../../../../imports/api/status_reports/status_reports';
 
 /**
  * Template Helpers
  */
 Template.EditReportForm.helpers({
-  report(){
+  report () {
     let context = this;
-    if(context.reportId){
+    if (context.reportId) {
       return StatusReports.findOne(context.reportId)
     }
   }
@@ -18,11 +19,11 @@ Template.EditReportForm.helpers({
  * Template Event Handlers
  */
 Template.EditReportForm.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let statusReportId = $(e.target).closest(".edit-report-form").attr("data-pk"),
-        dataKey  = $(e.target).attr("data-key");
+    let statusReportId = $(e.target).closest('.edit-report-form').attr('data-pk'),
+        dataKey        = $(e.target).attr('data-key');
     
     console.log('EditReportForm edited:', statusReportId, dataKey, newValue);
     if (statusReportId && dataKey) {
@@ -33,16 +34,16 @@ Template.EditReportForm.events({
       });
     }
   },
-  "click .btn-close-form"(e, instance){
+  'click .btn-close-form' (e, instance) {
     Blaze.remove(instance.view);
   },
-  "click .btn-submit-report"(e, instance){
-    let statusReportId = $(e.target).closest(".edit-report-form").attr("data-pk");
+  'click .btn-submit-report' (e, instance) {
+    let statusReportId = $(e.target).closest('.edit-report-form').attr('data-pk');
     
-    if(statusReportId){
+    if (statusReportId) {
       Meteor.call('submitStatusReport', statusReportId, function (error, response) {
         if (error) {
-          RobaDialog.error("Submit failed: " + error.message);
+          RobaDialog.error('Submit failed: ' + error.message);
         } else {
           Blaze.remove(instance.view);
         }

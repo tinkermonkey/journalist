@@ -1,4 +1,4 @@
-import { Meteor } from 'meteor/meteor';
+import { Meteor }    from 'meteor/meteor';
 import { UserTypes } from '../user_types.js';
 
 Meteor.publish('user_level', function () {

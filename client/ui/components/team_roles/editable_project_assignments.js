@@ -1,6 +1,7 @@
 import './editable_project_assignments.html';
-import { Template } from 'meteor/templating';
-import { Contributors } from '../../../../imports/api/contributors/contributors';
+import { Template }                      from 'meteor/templating';
+import { RobaDialog }                    from 'meteor/austinsand:roba-dialog';
+import { Contributors }                  from '../../../../imports/api/contributors/contributors';
 import { ContributorProjectAssignments } from '../../../../imports/api/contributors/contributor_project_assignments';
 import './add_assignment_form.js';
 
@@ -8,7 +9,7 @@ import './add_assignment_form.js';
  * Template Helpers
  */
 Template.EditableProjectAssignments.helpers({
-  hasCapacity(){
+  hasCapacity () {
     let contributor = Contributors.findOne(this.contributorId);
     return contributor.hasCapacity()
   }
@@ -18,11 +19,11 @@ Template.EditableProjectAssignments.helpers({
  * Template Event Handlers
  */
 Template.EditableProjectAssignments.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let assignmentId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey      = $(e.target).attr("data-key");
+    let assignmentId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey      = $(e.target).attr('data-key');
     
     console.log('EditableProjectAssignments edited:', assignmentId, dataKey, newValue);
     if (assignmentId !== null && dataKey !== null) {
@@ -36,19 +37,19 @@ Template.EditableProjectAssignments.events({
       });
     }
   },
-  "click .btn-add-project-assignment" (e, instance) {
+  'click .btn-add-project-assignment' (e, instance) {
     e.stopImmediatePropagation();
     
-    let contributorId = $(e.target).closest(".editable-project-assignments").attr("data-contributor-id"),
-        teamRoleId    = $(e.target).closest(".editable-project-assignments").attr("data-pk");
+    let contributorId = $(e.target).closest('.editable-project-assignments').attr('data-contributor-id'),
+        teamRoleId    = $(e.target).closest('.editable-project-assignments').attr('data-pk');
     
     RobaDialog.show({
-      contentTemplate: "AddAssignmentForm",
-      title          : "Add Project Assignment",
+      contentTemplate: 'AddAssignmentForm',
+      title          : 'Add Project Assignment',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -73,11 +74,11 @@ Template.EditableProjectAssignments.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-assignment" (e, instance, newValue) {
+  'click .btn-delete-assignment' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let contributorId = $(e.target).closest(".editable-project-assignments").attr("data-contributor-id"),
-        assignmentId  = $(e.target).closest(".data-table-row").attr("data-pk"),
+    let contributorId = $(e.target).closest('.editable-project-assignments').attr('data-contributor-id'),
+        assignmentId  = $(e.target).closest('.data-table-row').attr('data-pk'),
         contributor   = Contributors.findOne(contributorId),
         assignment    = ContributorProjectAssignments.findOne(assignmentId);
     
@@ -86,7 +87,7 @@ Template.EditableProjectAssignments.events({
       RobaDialog.hide();
       Meteor.call('deleteContributorProjectAssignment', assignmentId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

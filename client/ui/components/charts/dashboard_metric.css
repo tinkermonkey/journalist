@@ -1,39 +1,39 @@
 .dashboard-metric-container {
-    display: flex;
-    min-height: 200px;
-    min-width: 200px;
-    flex-basis: 100%;
-    flex-shrink: 1;
-    padding: 20px;
-    justify-content: center;
-  }
+  display         : flex;
+  min-height      : 200px;
+  min-width       : 200px;
+  flex-basis      : 100%;
+  flex-shrink     : 1;
+  padding         : 20px;
+  justify-content : center;
+}
 
 .dashboard-metric {
-    text-align: center;
-    flex-basis: 100%;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    max-width: 300px;
-    border: 2px solid #999;
+  text-align     : center;
+  flex-basis     : 100%;
+  display        : flex;
+  flex-direction : column;
+  border-radius  : 10px;
+  max-width      : 300px;
+  border         : 2px solid #999;
 }
 
 .dashboard-metric-value-container {
-    flex-basis: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  flex-basis      : 100%;
+  display         : flex;
+  flex-direction  : column;
+  justify-content : center;
+  align-items     : center;
 }
 
 .dashboard-metric-value {
-    font-size: 96pt;
+  font-size : 96pt;
 }
 
 .dashboard-metric-title {
-    color: #999;
-    padding: 10px;
-    font-size: 14pt;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
+  color                   : #999;
+  padding                 : 10px;
+  font-size               : 14pt;
+  border-top-right-radius : 10px;
+  border-top-left-radius  : 10px;
 }

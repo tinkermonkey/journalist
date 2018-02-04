@@ -1,6 +1,6 @@
 //import { moment } from 'meteor/momentjs:moment';
-import { SyncedCron } from 'meteor/percolate:synced-cron';
-import { Integrations } from '../../api/integrations/integrations';
+import { SyncedCron }    from 'meteor/percolate:synced-cron';
+import { Integrations }  from '../../api/integrations/integrations';
 import { ImportedItems } from '../../api/imported_items/imported_items';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 
@@ -65,7 +65,7 @@ export class IntegrationAgent {
           name: queryJobKey,
           schedule (parser) {
             let parserText = self.integration.updateFrequency || 'every 10 minutes';
-            debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', queryJobKey, "'", parserText, "'");
+            debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', queryJobKey, '"', parserText, '"');
             return parser.text(parserText);
           },
           job () {

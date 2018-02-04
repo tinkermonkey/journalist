@@ -1,6 +1,6 @@
 import './area_chart.html';
 import './area_chart.css';
-import { Template } from 'meteor/templating';
+import { Template }      from 'meteor/templating';
 import { C3AreaWrapper } from './c3_area_wrapper';
 
 /**
@@ -24,16 +24,16 @@ Template.AreaChart.onCreated(() => {
  */
 Template.AreaChart.onRendered(() => {
   let instance = Template.instance();
-
+  
   // Set the elementId
   instance.$('.chart').attr('id', instance.elementId);
-
+  
   instance.autorun(() => {
     let context = Template.currentData();
-
+    
     // Clear any previous timeouts in flight
     clearTimeout(instance.updateTimeout);
-
+    
     // Throttle the update rate
     instance.updateTimeout = setTimeout(() => {
       if (!instance.chart) {

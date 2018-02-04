@@ -1,8 +1,8 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { SchemaHelpers } from '../schema_helpers';
-import { CapacityPlans } from './capacity_plans';
-import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
+import { Mongo }                    from 'meteor/mongo';
+import SimpleSchema                 from 'simpl-schema';
+import { SchemaHelpers }            from '../schema_helpers';
+import { CapacityPlans }            from './capacity_plans';
+import { CapacityPlanSprintLinks }  from './capacity_plan_sprint_links';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
 
 /**
@@ -36,7 +36,7 @@ export const CapacityPlanRelease = new SimpleSchema({
   }
 });
 
-export const CapacityPlanReleases = new Mongo.Collection("capacity_plan_releases");
+export const CapacityPlanReleases = new Mongo.Collection('capacity_plan_releases');
 CapacityPlanReleases.attachSchema(CapacityPlanRelease);
 ChangeTracker.trackChanges(CapacityPlanReleases, 'CapacityPlanReleases');
 

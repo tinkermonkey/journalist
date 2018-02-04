@@ -1,8 +1,8 @@
-import { Meteor } from 'meteor/meteor';
-import { check, Match } from 'meteor/check';
-import { Auth } from '../../auth';
-import { DisplayTemplates } from '../display_templates';
-import { DisplayTemplateGroups } from '../display_template_groups';
+import { Meteor }                    from 'meteor/meteor';
+import { check, Match }              from 'meteor/check';
+import { Auth }                      from '../../auth';
+import { DisplayTemplates }          from '../display_templates';
+import { DisplayTemplateGroups }     from '../display_template_groups';
 import { PublishedDisplayTemplates } from '../published_display_templates';
 
 Meteor.methods({

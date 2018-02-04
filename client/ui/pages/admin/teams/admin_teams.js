@@ -1,9 +1,10 @@
 import './admin_teams.html';
-import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Template }     from 'meteor/templating';
+import SimpleSchema     from 'simpl-schema';
+import { RobaDialog }   from 'meteor/austinsand:roba-dialog';
 import { Contributors } from '../../../../../imports/api/contributors/contributors';
-import { Teams } from '../../../../../imports/api/teams/teams.js';
-import { UserTypes } from '../../../../../imports/api/users/user_types';
+import { Teams }        from '../../../../../imports/api/teams/teams.js';
+import { UserTypes }    from '../../../../../imports/api/users/user_types';
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
 
@@ -34,11 +35,11 @@ Template.AdminTeams.helpers({
  * Template Event Handlers
  */
 Template.AdminTeams.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let teamId  = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey = $(e.target).attr("data-key");
+    let teamId  = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey = $(e.target).attr('data-key');
     
     console.log('edited:', teamId, dataKey, newValue);
     if (teamId && dataKey) {
@@ -49,24 +50,24 @@ Template.AdminTeams.events({
       });
     }
   },
-  "click .btn-add-team" (e, instance) {
+  'click .btn-add-team' (e, instance) {
     let context = Template.currentData();
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           title: {
             type : String,
-            label: "Title"
+            label: 'Title'
           }
         })
       },
-      title          : "Add Team",
+      title          : 'Add Team',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -91,15 +92,15 @@ Template.AdminTeams.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-team" (e, instance) {
-    let teamId = $(e.target).closest(".data-table-row").attr("data-pk"),
+  'click .btn-delete-team' (e, instance) {
+    let teamId = $(e.target).closest('.data-table-row').attr('data-pk'),
         team   = Teams.findOne(teamId);
     
     RobaDialog.ask('Delete Team?', 'Are you sure that you want to delete the team <span class="label label-primary"> ' + team.title + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteTeam', teamId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

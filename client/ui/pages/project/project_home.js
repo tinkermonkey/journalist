@@ -9,7 +9,7 @@ import './project_sidebar.js';
  * Template Helpers
  */
 Template.ProjectHome.helpers({
-  project(){
+  project () {
     let projectId = FlowRouter.getParam('projectId');
     return Projects.findOne(projectId)
   }

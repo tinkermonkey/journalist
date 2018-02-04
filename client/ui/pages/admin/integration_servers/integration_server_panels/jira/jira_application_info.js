@@ -6,7 +6,7 @@ import './jira_brain_dump';
  * Template Helpers
  */
 Template.JiraApplicationInfo.helpers({
-  serverInfoPayload(){
+  serverInfoPayload () {
     return { doHealthCheck: false }
   }
 });
@@ -19,7 +19,8 @@ Template.JiraApplicationInfo.events({});
 /**
  * Template Created
  */
-Template.JiraApplicationInfo.onCreated(() => {});
+Template.JiraApplicationInfo.onCreated(() => {
+});
 
 /**
  * Template Rendered

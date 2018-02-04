@@ -1,16 +1,16 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { ContributorTeamRoles } from './contributor_team_roles';
+import { Mongo }                         from 'meteor/mongo';
+import SimpleSchema                      from 'simpl-schema';
+import { ChangeTracker }                 from 'meteor/austinsand:roba-change-tracker';
+import { SchemaHelpers }                 from '../schema_helpers.js';
+import { ContributorTeamRoles }          from './contributor_team_roles';
 import { ContributorProjectAssignments } from './contributor_project_assignments';
-import { Efforts } from '../efforts/efforts';
-import { Priorities } from '../priorities/priorities';
-import { Projects } from '../projects/projects';
-import { Tasks } from '../tasks/tasks';
-import { Teams } from '../teams/teams';
-import { Users } from '../users/users.js';
-import { UserTypes } from '../users/user_types.js';
+import { Efforts }                       from '../efforts/efforts';
+import { Priorities }                    from '../priorities/priorities';
+import { Projects }                      from '../projects/projects';
+import { Tasks }                         from '../tasks/tasks';
+import { Teams }                         from '../teams/teams';
+import { Users }                         from '../users/users.js';
+import { UserTypes }                     from '../users/user_types.js';
 
 /**
  * ============================================================================
@@ -28,7 +28,7 @@ export const Contributor = new SimpleSchema({
   },
   // Set of identifiers used by various integrations to denote this contributor
   identifiers     : {
-    type    : [ String ],
+    type    : Array, // String
     optional: true
   },
   // Hashmap of profiles from the various integration servers, keyed by the server _id
@@ -37,7 +37,7 @@ export const Contributor = new SimpleSchema({
     blackbox: true,
     optional: true
   },
-  isActive          : {
+  isActive        : {
     type        : Boolean,
     defaultValue: true
   },
@@ -58,7 +58,7 @@ export const Contributor = new SimpleSchema({
   },
   // The user level from the user record for this contributor
   usertype        : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     defaultValue : UserTypes.contributor,
     allowedValues: _.values(UserTypes)
   },

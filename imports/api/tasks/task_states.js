@@ -1,8 +1,6 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Util } from '../util.js';
+import { Mongo }         from 'meteor/mongo';
+import SimpleSchema      from 'simpl-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { TaskStateColors } from './task_state_colors';
 
 /**
  * ============================================================================
@@ -10,31 +8,31 @@ import { TaskStateColors } from './task_state_colors';
  * ============================================================================
  */
 export const TaskState = new SimpleSchema({
-  title: {
+  title       : {
     type: String
   },
-  order: {
+  order       : {
     type: Number
   },
-  color: {
-    type: String,
+  color       : {
+    type         : String,
     allowedValues: _.keys(StatusReportStates),
-    defaultValue: _.keys(StatusReportStates)[0]
+    defaultValue : _.keys(StatusReportStates)[ 0 ]
   },
   // Standard tracking fields
-  dateCreated    : {
+  dateCreated : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy      : {
+  createdBy   : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified   : {
+  dateModified: {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy     : {
+  modifiedBy  : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -45,13 +43,13 @@ TaskStates.attachSchema(TaskState);
 
 // These are server side only
 TaskStates.deny({
-  remove() {
+  remove () {
     return true;
   },
-  insert() {
+  insert () {
     return true;
   },
-  update() {
+  update () {
     return true;
   }
 });

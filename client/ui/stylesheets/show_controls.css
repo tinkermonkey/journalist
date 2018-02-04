@@ -1,10 +1,10 @@
 .show-controls-on-hover .hidden-control {
-  opacity: 0;
-  transition: transform 0.4s, opacity 0.4s, height 0.4s, width 0.4s;
-  -webkit-transition: -webkit-transform 0.4s, opacity 0.4s, height 0.4s, width 0.4s;
+  opacity            : 0;
+  transition         : transform 0.4s, opacity 0.4s, height 0.4s, width 0.4s;
+  -webkit-transition : -webkit-transform 0.4s, opacity 0.4s, height 0.4s, width 0.4s;
 }
 
 .show-controls-on-hover:hover .hidden-control,
 .show-controls-on-hover .hidden-control.pinned {
-  opacity: 1;
+  opacity : 1;
 }

@@ -1,14 +1,14 @@
-import { Meteor } from 'meteor/meteor';
+import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import { Teams } from '../teams.js';
-import { Auth } from '../../auth.js';
+import { Teams }        from '../teams.js';
+import { Auth }         from '../../auth.js';
 
 Meteor.methods({
   /**
    * Create a new team
    * @param title
    */
-  addTeam(title){
+  addTeam (title) {
     console.log('addTeam:', title);
     let user = Auth.requireAuthentication();
     
@@ -33,7 +33,7 @@ Meteor.methods({
    * @param key
    * @param value
    */
-  editTeam(teamId, key, value){
+  editTeam (teamId, key, value) {
     console.log('editTeam:', teamId, key);
     let user = Auth.requireAuthentication();
     
@@ -44,11 +44,11 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      let update = {};
-      update[key] = value;
+      let update    = {};
+      update[ key ] = value;
       
       // Update the team
-      Teams.update(teamId, {$set: update});
+      Teams.update(teamId, { $set: update });
     } else {
       console.error('Non-admin user tried to edit a team:', user.username, key, value);
       throw new Meteor.Error(403);
@@ -59,7 +59,7 @@ Meteor.methods({
    * Delete a team record
    * @param teamId
    */
-  deleteTeam(teamId){
+  deleteTeam (teamId) {
     console.log('deleteTeam:', teamId);
     let user = Auth.requireAuthentication();
     

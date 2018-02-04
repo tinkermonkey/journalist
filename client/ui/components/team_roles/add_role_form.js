@@ -1,16 +1,17 @@
 import './add_role_form.html';
-import { Template } from 'meteor/templating';
+import { Template }                   from 'meteor/templating';
+import SimpleSchema                   from 'simpl-schema';
 import { ContributorRoleDefinitions } from '../../../../imports/api/contributors/contributor_role_definitions.js';
-import { Teams } from '../../../../imports/api/teams/teams';
+import { Teams }                      from '../../../../imports/api/teams/teams';
 
 let schema = new SimpleSchema({
   teamId: {
     type : String,
-    label: "Team"
+    label: 'Team'
   },
   roleId: {
     type : String,
-    label: "Role"
+    label: 'Role'
   }
 });
 
@@ -48,9 +49,9 @@ Template.AddRoleForm.onRendered(() => {
   let instance = Template.instance();
   
   // Set the value of the role selector to the default
-  if(instance.data.contributor){
+  if (instance.data.contributor) {
     console.log('AddRoleForm setting default role:', instance.data.contributor.roleId);
-    instance.$("select[name='roleId']").val(instance.data.contributor.roleId);
+    instance.$('select[name="roleId"]').val(instance.data.contributor.roleId);
   }
 });
 

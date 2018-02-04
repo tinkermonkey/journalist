@@ -1,10 +1,10 @@
-import { Meteor } from 'meteor/meteor';
-import { check, Match } from 'meteor/check';
-import { later } from 'meteor/mrt:later';
-import { StatusReports } from '../status_reports.js';
+import { Meteor }               from 'meteor/meteor';
+import { check, Match }         from 'meteor/check';
+import { later }                from 'meteor/mrt:later';
+import { StatusReports }        from '../status_reports.js';
 import { StatusReportSettings } from '../status_report_settings.js';
-import { StatusReportStates } from '../status_report_states.js';
-import { Auth } from '../../auth.js';
+import { StatusReportStates }   from '../status_report_states.js';
+import { Auth }                 from '../../auth.js';
 
 Meteor.methods({
   /**

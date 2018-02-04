@@ -1,7 +1,7 @@
 import './jira_import_testbed.html';
-import { Template } from 'meteor/templating';
-import { IntegrationImportFunctions } from '../../../../../../imports/api/integrations/integration_import_functions';
-import { IntegrationServers } from '../../../../../../imports/api/integrations/integration_servers';
+import { Template }                   from 'meteor/templating';
+import { IntegrationImportFunctions } from '../../../../../../../imports/api/integrations/integration_import_functions';
+import { IntegrationServers }         from '../../../../../../../imports/api/integrations/integration_servers';
 
 /**
  * Template Helpers
@@ -99,7 +99,7 @@ Template.JiraImportTestbed.onCreated(() => {
       } else {
         // Try pulling it out of the url
         let functionId = FlowRouter.getParam('functionId');
-        if(functionId){
+        if (functionId) {
           instance.functionId.set(functionId);
         } else {
           console.error('JiraImportTestbed: cannot determine function context');

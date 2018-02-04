@@ -7,7 +7,7 @@ import './status_circle.js';
  * Template Helpers
  */
 Template.StatusBar.helpers({
-  getCircleClass(){
+  getCircleClass () {
     if (this.status === false) {
       return 'fail'
     } else if (this.status === true) {

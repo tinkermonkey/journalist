@@ -1,5 +1,4 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }         from 'meteor/mongo';
 import { ImportedItems } from './imported_items';
 
 const omitFields = [
@@ -34,14 +33,14 @@ ImportedItems.after.insert((userId, document) => {
 });
 ImportedItems.after.update((userId, document, rawChangedFields) => {
   try {
-    ImportedItemCrumbs.update({_id: document._id}, {$set: _.omit(document, omitFields)});
+    ImportedItemCrumbs.update({ _id: document._id }, { $set: _.omit(document, omitFields) });
   } catch (e) {
     console.error('ImportedItemCrumbs.after.update failed:', document._id, _.omit(document, omitFields), e);
   }
 });
 ImportedItems.after.remove((userId, document) => {
   try {
-    ImportedItemCrumbs.remove({_id: document._id});
+    ImportedItemCrumbs.remove({ _id: document._id });
   } catch (e) {
     console.error('ImportedItemCrumbs.after.remove failed:', document._id, e);
   }

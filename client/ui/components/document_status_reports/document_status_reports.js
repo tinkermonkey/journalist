@@ -1,8 +1,8 @@
 import './document_status_reports.html';
-import { Template } from 'meteor/templating';
-import { RobaDialog } from 'meteor/austinsand:roba-dialog';
-import { Efforts } from '../../../../imports/api/efforts/efforts';
-import { Tasks } from '../../../../imports/api/tasks/tasks';
+import { Template }           from 'meteor/templating';
+import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
+import { Efforts }            from '../../../../imports/api/efforts/efforts';
+import { Tasks }              from '../../../../imports/api/tasks/tasks';
 import { StatusReportStates } from '../../../../imports/api/status_reports/status_report_states';
 import './status_report_settings';
 import './incomplete_reports';
@@ -14,7 +14,7 @@ let editMethods      = {
       Tasks  : 'editTask',
       Efforts: 'editEffort'
     },
-    collections   = {
+    collections      = {
       Tasks  : Tasks,
       Efforts: Efforts
     },
@@ -27,10 +27,10 @@ let editMethods      = {
  * Template Helpers
  */
 Template.DocumentStatusReports.helpers({
-  canBeCompleted(){
+  canBeCompleted () {
     return _.contains(completeableDocs, this.sourceCollection);
   },
-  documentIsComplete(){
+  documentIsComplete () {
     let context = this;
     
     if (context.sourceCollection && context.sourceId) {
@@ -38,7 +38,7 @@ Template.DocumentStatusReports.helpers({
       return doc.complete
     }
   },
-  canFileReport(){
+  canFileReport () {
     let currentContributor = Meteor.user().contributor();
     return this.contributorId === currentContributor._id || currentContributor.managesContributor(this.contributorId)
   }
@@ -48,13 +48,13 @@ Template.DocumentStatusReports.helpers({
  * Template Event Handlers
  */
 Template.DocumentStatusReports.events({
-  "click .btn-complete-document"(e, instance){
+  'click .btn-complete-document' (e, instance) {
     let context = instance.data;
     
     if (context.sourceCollection && context.sourceId) {
       let canBeComplete = _.contains(completeableDocs, context.sourceCollection),
           editMethod    = editMethods[ context.sourceCollection ];
-      if(canBeComplete && editMethod){
+      if (canBeComplete && editMethod) {
         console.log('Calling', editMethod, 'for document', context.sourceId);
         Meteor.call(editMethod, context.sourceId, 'complete', true, (error, response) => {
           if (error) {
@@ -64,13 +64,13 @@ Template.DocumentStatusReports.events({
       }
     }
   },
-  "click .btn-reopen-document"(e, instance){
+  'click .btn-reopen-document' (e, instance) {
     let context = instance.data;
     
     if (context.sourceCollection && context.sourceId) {
       let canBeComplete = _.contains(completeableDocs, context.sourceCollection),
           editMethod    = editMethods[ context.sourceCollection ];
-      if(canBeComplete && editMethod) {
+      if (canBeComplete && editMethod) {
         console.log('Calling', editMethod, 'for document', context.sourceId);
         Meteor.call(editMethod, context.sourceId, 'complete', false, (error, response) => {
           if (error) {
@@ -80,11 +80,11 @@ Template.DocumentStatusReports.events({
       }
     }
   },
-  "click .btn-file-report"(e, instance){
-    let context = instance.data,
+  'click .btn-file-report' (e, instance) {
+    let context            = instance.data,
         currentContributor = Meteor.user().contributor(),
-        canFileReport =context.contributorId === currentContributor._id || currentContributor.managesContributor(context.contributorId);
-  
+        canFileReport      = context.contributorId === currentContributor._id || currentContributor.managesContributor(context.contributorId);
+    
     if (canFileReport && context.sourceCollection && context.sourceId) {
       // Create a new report
       Meteor.call('addStatusReport', currentContributor._id, context.sourceCollection, context.sourceId, StatusReportStates.inProgress, context.nextDue, (error, response) => {
@@ -95,7 +95,7 @@ Template.DocumentStatusReports.events({
           instance.$('.btn-file-report').hide();
           
           // Render the edit form to the form container
-          Blaze.renderWithData(Template.EditReportForm, {reportId: response.reportId}, instance.$('.report-form-container').get(0))
+          Blaze.renderWithData(Template.EditReportForm, { reportId: response.reportId }, instance.$('.report-form-container').get(0))
         }
       });
     }

@@ -1,9 +1,10 @@
-import { Meteor } from 'meteor/meteor';
-import { Integrations } from '../integrations';
-import { IntegrationCalculatedFields } from '../integration_calculated_fields';
-import { IntegrationImportFunctions } from '../integration_import_functions';
-import { IntegrationServers } from '../integration_servers';
-import { IntegrationServerCaches } from '../integration_server_caches';
+import { Meteor }                         from 'meteor/meteor';
+import { Integrations }                   from '../integrations';
+import { IntegrationCalculatedFields }    from '../integration_calculated_fields';
+import { IntegrationImportFunctions }     from '../integration_import_functions';
+import { IntegrationServers }             from '../integration_servers';
+import { IntegrationServerCaches }        from '../integration_server_caches';
+import { IntegrationServerAuthProviders } from '../integration_server_auth_providers';
 
 Meteor.publish('integrations', function (projectId) {
   console.info('Publish: integrations', projectId);
@@ -133,4 +134,27 @@ Meteor.publish('integration_calculated_field', function (calculatedFieldId) {
     this.ready();
     return [];
   }
+});
+
+Meteor.publish('integration_server_auth_providers', function (serverId) {
+  console.info('Publish: integration_server_auth_providers:', serverId);
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return IntegrationServerAuthProviders.find({ serverId: serverId });
+    } else {
+      console.warn('integration_server_auth_providers requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('enabled_auth_providers', function () {
+  return IntegrationServerAuthProviders.find({
+    isEnabled: true
+  }, {
+    fields: { loginFunctionName: 1 }
+  });
 });

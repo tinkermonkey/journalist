@@ -1,8 +1,7 @@
-import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
-import { UserTypes } from '../../api/users/user_types.js';
+import { Meteor }       from 'meteor/meteor';
+import { Accounts }     from 'meteor/accounts-base';
+import { UserTypes }    from '../../api/users/user_types.js';
 import { Contributors } from '../../api/contributors/contributors.js';
-import { ContributorRoleDefinitions } from '../../api/contributors/contributor_role_definitions.js';
 
 /**
  * On startup, check to see if the fixture data should be loaded
@@ -31,9 +30,9 @@ Meteor.startup(() => {
     let admin = Meteor.users.findOne(adminId);
     console.log('Inserting contributor record for user:', admin);
     Contributors.insert({
-      email     : admin.emails[ 0 ].address,
-      name      : admin.profile.name,
-      userId    : adminId,
+      email   : admin.emails[ 0 ].address,
+      name    : admin.profile.name,
+      userId  : adminId,
       usertype: UserTypes.administrator
     });
     

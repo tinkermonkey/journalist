@@ -7,7 +7,8 @@
           <h1>
             <span class="glyphicon glyphicon-compressed blue"></span>
             {{title}}
-            <small><a href="{{pathFor 'ContributorHome' contributorId=contributorId}}" class="link-plain">{{contributorName contributorId}}</a></small>
+            <small><a href="{{pathFor 'ContributorHome' contributorId=contributorId}}" class="link-plain">{{contributorName
+              contributorId}}</a></small>
             {{#if complete}}
               (complete)
             {{/if}}
@@ -19,7 +20,7 @@
             {{#if userManagesContributor contributorId}}
               <h3>Reporting</h3>
               {{> StatusReportSettings sourceCollection='Efforts' sourceId=_id contributorId=contributorId }}
-            
+              
               <h4>Active Reports</h4>
               {{> ActiveReports sourceCollection='Efforts' sourceId=_id contributorId=contributorId }}
             {{/if}}

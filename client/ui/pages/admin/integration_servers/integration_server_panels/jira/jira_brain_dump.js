@@ -39,11 +39,12 @@ Template.JiraBrainDump.onCreated(() => {
   
   instance.autorun(() => {
     let context  = Template.currentData(),
-        serverId = FlowRouter.getParam('serverId'),
+        serverId = context && context.server && context.server._id,
         doorBell = instance.doorbell.get();
     
     // Fetch the project list
     console.log('JiraBrainDump fetching jiraData for', serverId, doorBell, context);
+    
     instance.showLoading.set(true);
     Meteor.call('fetchIntegrationServerData', serverId, {
       module : context.module,

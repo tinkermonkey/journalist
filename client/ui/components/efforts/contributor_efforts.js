@@ -1,6 +1,8 @@
 import './contributor_efforts.html';
-import { Template } from 'meteor/templating';
-import { Efforts } from '../../../../imports/api/efforts/efforts.js';
+import { Template }   from 'meteor/templating';
+import SimpleSchema   from 'simpl-schema';
+import { RobaDialog } from 'meteor/austinsand:roba-dialog';
+import { Efforts }    from '../../../../imports/api/efforts/efforts.js';
 import '../add_record_form/add_record_form.js';
 
 /**
@@ -12,11 +14,11 @@ Template.ContributorEfforts.helpers({});
  * Template Event Handlers
  */
 Template.ContributorEfforts.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let effortId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey  = $(e.target).attr("data-key");
+    let effortId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey  = $(e.target).attr('data-key');
     
     console.log('ContributorEfforts edited:', effortId, dataKey, newValue);
     if (effortId && dataKey) {
@@ -27,11 +29,11 @@ Template.ContributorEfforts.events({
       });
     }
   },
-  "click .btn-add-effort"(e, instance){
-    let contributorId = $(e.target).closest(".contributor-efforts").attr("data-pk");
+  'click .btn-add-effort' (e, instance) {
+    let contributorId = $(e.target).closest('.contributor-efforts').attr('data-pk');
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           title: {
@@ -40,11 +42,11 @@ Template.ContributorEfforts.events({
           }
         })
       },
-      title          : "Add Effort",
+      title          : 'Add Effort',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -69,14 +71,14 @@ Template.ContributorEfforts.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-effort"(e, instance){
-    let effortId = $(e.target).closest(".data-table-row").attr("data-pk"),
+  'click .btn-delete-effort' (e, instance) {
+    let effortId = $(e.target).closest('.data-table-row').attr('data-pk'),
         effort   = Efforts.findOne(effortId);
     
     RobaDialog.ask('Delete Effort?', 'Are you sure that you want to delete the effort <span class="label label-primary"> ' + effort.title + '</span> ?', () => {
       Meteor.call('deleteEffort', effortId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         } else {
           RobaDialog.hide();
         }

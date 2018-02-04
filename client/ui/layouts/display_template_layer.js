@@ -1,7 +1,7 @@
 import './display_template_layer.html';
-import { Template } from 'meteor/templating';
+import { Template }                  from 'meteor/templating';
 import { PublishedDisplayTemplates } from '../../../imports/api/display_templates/published_display_templates';
-import { Util } from '../../../imports/api/util';
+import { Util }                      from '../../../imports/api/util';
 
 let debug = false;
 

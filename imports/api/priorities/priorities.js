@@ -1,7 +1,6 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }         from 'meteor/mongo';
+import SimpleSchema      from 'simpl-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { Util } from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
 
 /**
@@ -11,29 +10,29 @@ import { SchemaHelpers } from '../schema_helpers.js';
  */
 export const Priority = new SimpleSchema({
   contributorId: {
-    type: String,
+    type      : String,
     denyUpdate: true
   },
-  title: {
+  title        : {
     type: String
   },
-  order: {
+  order        : {
     type: Number
   },
   // Standard tracking fields
-  dateCreated     : {
+  dateCreated  : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy       : {
+  createdBy    : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified    : {
+  dateModified : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy      : {
+  modifiedBy   : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -45,9 +44,15 @@ ChangeTracker.trackChanges(Priorities, 'Priorities');
 
 // These are server side only
 Priorities.deny({
-  remove() { return true; },
-  insert() { return true; },
-  update() { return true; }
+  remove () {
+    return true;
+  },
+  insert () {
+    return true;
+  },
+  update () {
+    return true;
+  }
 });
 
 /**

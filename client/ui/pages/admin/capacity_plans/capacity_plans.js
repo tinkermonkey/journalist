@@ -1,5 +1,7 @@
 import './capacity_plans.html';
-import { Template } from 'meteor/templating';
+import { Template }      from 'meteor/templating';
+import SimpleSchema      from 'simpl-schema';
+import { RobaDialog }    from 'meteor/austinsand:roba-dialog';
 import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
 
 /**
@@ -20,8 +22,8 @@ Template.CapacityPlans.helpers({
 Template.CapacityPlans.events({
   'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
-    let planId  = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey = $(e.target).attr("data-key");
+    let planId  = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey = $(e.target).attr('data-key');
     
     if (planId && dataKey) {
       Meteor.call('editCapacityPlan', planId, dataKey, newValue, (error, response) => {

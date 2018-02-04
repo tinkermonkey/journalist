@@ -1,5 +1,7 @@
 import './contributor_role_definitions.html';
-import { Template } from 'meteor/templating';
+import { Template }                   from 'meteor/templating';
+import SimpleSchema                   from 'simpl-schema';
+import { RobaDialog }                 from 'meteor/austinsand:roba-dialog';
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
 
 /**
@@ -15,11 +17,11 @@ Template.ContributorRoleDefinitions.helpers({
  * Template Event Handlers
  */
 Template.ContributorRoleDefinitions.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let definitionId  = $(e.target).closest(".sortable-table-row").attr("data-pk"),
-        dataKey = $(e.target).attr("data-key");
+    let definitionId = $(e.target).closest('.sortable-table-row').attr('data-pk'),
+        dataKey      = $(e.target).attr('data-key');
     
     console.log('ContributorRoleDefinitions edited:', definitionId, dataKey, newValue);
     if (definitionId !== null && dataKey !== null) {
@@ -33,9 +35,9 @@ Template.ContributorRoleDefinitions.events({
       });
     }
   },
-  "click .btn-add-definition"(e, instance){
+  'click .btn-add-definition' (e, instance) {
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           title: {
@@ -44,11 +46,11 @@ Template.ContributorRoleDefinitions.events({
           }
         })
       },
-      title          : "Add Role Definition",
+      title          : 'Add Role Definition',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -88,10 +90,10 @@ Template.ContributorRoleDefinitions.onCreated(() => {
 Template.ContributorRoleDefinitions.onRendered(() => {
   let instance = Template.instance();
   
-  instance.$(".sortable-table")
+  instance.$('.sortable-table')
       .sortable({
-        items               : "> .sortable-table-row",
-        handle              : ".drag-handle",
+        items               : '> .sortable-table-row',
+        handle              : '.drag-handle',
         helper (e, ui) {
           // fix the width
           ui.children().each(function () {
@@ -99,18 +101,18 @@ Template.ContributorRoleDefinitions.onRendered(() => {
           });
           return ui;
         },
-        axis                : "y",
+        axis                : 'y',
         forcePlaceholderSize: true,
         update (event, ui) {
-          instance.$(".sortable-table-row").each(function (i, el) {
+          instance.$('.sortable-table-row').each(function (i, el) {
             let newOrder    = i + 1,
-                storedOrder = $(el).attr("data-sort-order");
+                storedOrder = $(el).attr('data-sort-order');
             if (newOrder !== storedOrder) {
-              let rowId = $(el).attr("data-pk");
-
+              let rowId = $(el).attr('data-pk');
+              
               Meteor.call('editContributorRoleDefinition', rowId, 'order', newOrder, function (error, response) {
                 if (error) {
-                  RobaDialog.error("Priority order update failed: " + error.message);
+                  RobaDialog.error('Priority order update failed: ' + error.message);
                 }
               });
             }

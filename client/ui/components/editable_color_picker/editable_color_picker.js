@@ -43,15 +43,15 @@ Template.EditableColorPicker.onRendered(() => {
         format     : 'hex',
         useAlpha   : false,
         customClass: 'colorpicker-2x',
-        sliders: {
+        sliders    : {
           saturation: {
             maxLeft: 200,
+            maxTop : 200
+          },
+          hue       : {
             maxTop: 200
           },
-          hue: {
-            maxTop: 200
-          },
-          alpha: {
+          alpha     : {
             maxTop: 200
           }
         }

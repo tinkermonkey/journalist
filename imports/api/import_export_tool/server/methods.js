@@ -1,4 +1,4 @@
-import { Meteor } from 'meteor/meteor';
+import { Meteor }           from 'meteor/meteor';
 import { ImportExportTool } from './import_export_tool.js';
 
 Meteor.methods({

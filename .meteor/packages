@@ -18,13 +18,11 @@ ecmascript@0.10.0              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.3.1            # Server-side component of the `meteor shell` command
 
 insecure@1.0.7                # Allow all DB writes from clients (for prototyping)
-aldeed:collection2
 kadira:flow-router
 accounts-password@1.5.0
 optilude:jira-auth
 alanning:roles
 percolate:synced-cron
-lnmunhoz:autoform-markdown-editor
 kadira:blaze-layout
 austinsand:roba-spinner
 dburles:collection-helpers
@@ -39,13 +37,11 @@ austinsand:editable-text-area
 austinsand:editable-text-field
 austinsand:editable-text-array
 austinsand:editable-code
-austinsand:roba-change-tracker
 mizzao:jquery-ui
 mrt:later
 mrt:moment-timezone
 twbs:bootstrap
 austinsand:editable-checkbox
-aldeed:autoform
 markdown@1.0.12
 frpz:ping
 numeral:numeral
@@ -57,3 +53,9 @@ momentjs:moment
 u2622:persistent-session
 gilbertwat:bootstrap3-daterangepicker
 risul:bootstrap-colorpicker
+aldeed:collection2@3.0.0
+matb33:collection-hooks
+aldeed:autoform
+austinsand:roba-change-tracker
+aldeed:schema-deny
+service-configuration

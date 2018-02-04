@@ -1,8 +1,7 @@
 import './donut_chart.html';
 import './donut_chart.css';
-import { Template } from 'meteor/templating';
+import { Template }       from 'meteor/templating';
 import { C3DonutWrapper } from './c3_donut_wrapper';
-import { Util } from '../../../../imports/api/util';
 
 /**
  * Template Helpers
@@ -25,16 +24,16 @@ Template.DonutChart.onCreated(() => {
  */
 Template.DonutChart.onRendered(() => {
   let instance = Template.instance();
-
+  
   // Set the elementId
   instance.$('.chart').attr('id', instance.elementId);
-
+  
   instance.autorun(() => {
     let context = Template.currentData();
-
+    
     // Clear any previous timeouts in flight
     clearTimeout(instance.updateTimeout);
-
+    
     // Throttle the update rate
     instance.updateTimeout = setTimeout(() => {
       if (instance.chart === undefined) {

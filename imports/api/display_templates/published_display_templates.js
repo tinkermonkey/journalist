@@ -22,14 +22,14 @@ PublishedDisplayTemplates.helpers({
   /**
    * Compile the template
    */
-  compile(){
-    let displayTemplate = this;
-    Template[displayTemplate.templateName] = new Template(displayTemplate.templateName, eval(SpacebarsCompiler.compile(displayTemplate.templateLayout, { isTemplate: true })));
-    Template[displayTemplate.templateName].helpers(eval('new Object(' + displayTemplate.templateHelpers + ')'));
-    Template[displayTemplate.templateName].events(eval('new Object(' + displayTemplate.templateEvents + ')'));
-    Template[displayTemplate.templateName].onCreated(new Function(displayTemplate.templateCreated));
-    Template[displayTemplate.templateName].onRendered(new Function(displayTemplate.templateRendered));
-    Template[displayTemplate.templateName].onDestroyed(new Function(displayTemplate.templateDestroyed));
-    return Template[displayTemplate.templateName]
+  compile () {
+    let displayTemplate                      = this;
+    Template[ displayTemplate.templateName ] = new Template(displayTemplate.templateName, eval(SpacebarsCompiler.compile(displayTemplate.templateLayout, { isTemplate: true })));
+    Template[ displayTemplate.templateName ].helpers(eval('new Object(' + displayTemplate.templateHelpers + ')'));
+    Template[ displayTemplate.templateName ].events(eval('new Object(' + displayTemplate.templateEvents + ')'));
+    Template[ displayTemplate.templateName ].onCreated(new Function(displayTemplate.templateCreated));
+    Template[ displayTemplate.templateName ].onRendered(new Function(displayTemplate.templateRendered));
+    Template[ displayTemplate.templateName ].onDestroyed(new Function(displayTemplate.templateDestroyed));
+    return Template[ displayTemplate.templateName ]
   }
 });

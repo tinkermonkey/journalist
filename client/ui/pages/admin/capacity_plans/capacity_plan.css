@@ -1,6 +1,7 @@
 .report-link {
- margin-left: 2em;
+  margin-left : 2em;
 }
+
 .capacity-plan-chart-container {
   margin-top : 10px;
 }
@@ -32,13 +33,13 @@
 }
 
 .option-summary-release-timing {
-  margin-bottom: 1em;
+  margin-bottom : 1em;
 }
 
 .option-release-contents-table .item-title {
-  width: 25%;
+  width : 25%;
 }
 
 .option-release-contents-table .minimal-width {
-  width: 10%;
+  width : 10%;
 }

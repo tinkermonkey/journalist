@@ -1,0 +1,44 @@
+<template name="IntegrationServerAuthProvider">
+  {{#with authProviderConfig }}
+    <div class="auth-provider-config" data-pk="{{_id}}">
+      <table class="table data-table table-striped config-table narrow-width">
+        <tbody>
+        <tr class="show-controls-on-hover">
+          <td>Enabled</td>
+          <td>{{> EditableCheckbox dataKey="isEnabled" value=isEnabled }}</td>
+        </tr>
+        <tr class="show-controls-on-hover">
+          <td>Login function name</td>
+          <td>{{> EditableTextField dataKey="loginFunctionName" value=loginFunctionName emptyText="Login function name" }}</td>
+        </tr>
+        <tr class="show-controls-on-hover">
+          <td>Auth Service Key</td>
+          <td>{{> EditableTextField dataKey="authServiceKey" value=authServiceKey emptyText="Enter auth service name key" }}</td>
+        </tr>
+        <tr class="show-controls-on-hover">
+          <td>Auth Config</td>
+          <td>{{> EditableCode dataKey="authConfig" value=authConfig emptyText="Enter auth service config" language="javascript" }}</td>
+        </tr>
+        <tr class="show-controls-on-hover">
+          <td></td>
+          <td>
+            <button class="btn btn-danger btn-delete-auth-provider hidden-control">
+              <span class="glyphicon glyphicon-minus"></span>
+              Delete Auth Provider
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+     
+    </div>
+  {{else}}
+    <div class="alert alert-info">
+      This server is not configured as an auth provider.
+      <button class="btn btn-primary btn-add-auth-provider">
+        <span class="glyphicon glyphicon-plus"></span>
+        Add Auth Provider
+      </button>
+    </div>
+  {{/with}}
+</template>

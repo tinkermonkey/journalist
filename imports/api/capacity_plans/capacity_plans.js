@@ -1,12 +1,11 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { CapacityPlanOptions } from './capacity_plan_options';
-import { CapacityPlanReleases } from './capacity_plan_releases';
-import { CapacityPlanSprints } from './capacity_plan_sprints';
+import { Mongo }                        from 'meteor/mongo';
+import SimpleSchema                     from 'simpl-schema';
+import { SchemaHelpers }                from '../schema_helpers.js';
+import { CapacityPlanOptions }          from './capacity_plan_options';
+import { CapacityPlanReleases }         from './capacity_plan_releases';
 import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
-import { ContributorRoleDefinitions } from '../contributors/contributor_role_definitions';
-import { Teams } from '../teams/teams';
+import { ContributorRoleDefinitions }   from '../contributors/contributor_role_definitions';
+import { Teams }                        from '../teams/teams';
 
 /**
  * ============================================================================
@@ -22,7 +21,7 @@ export const CapacityPlan = new SimpleSchema({
     defaultValue: true
   },
   teamIds     : {
-    type    : [ String ],
+    type    : Array, // String
     optional: true
   },
   // Standard tracking fields
@@ -44,7 +43,7 @@ export const CapacityPlan = new SimpleSchema({
   }
 });
 
-export const CapacityPlans = new Mongo.Collection("capacity_plans");
+export const CapacityPlans = new Mongo.Collection('capacity_plans');
 CapacityPlans.attachSchema(CapacityPlan);
 ChangeTracker.trackChanges(CapacityPlans, 'CapacityPlans');
 

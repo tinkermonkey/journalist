@@ -10,9 +10,9 @@
           </td>
           <td>
             <span class="team-title">{{> EditableRecordSelector teamSelectorContext }}</span>
-          {{#unless ../hasSameRole}}
-            {{> EditableRecordSelector roleSelectorContext }}
-          {{/unless}}
+            {{#unless ../hasSameRole}}
+              {{> EditableRecordSelector roleSelectorContext }}
+            {{/unless}}
           </td>
           <td class="text-right">
             <a class="btn-delete-role link-red hidden-control">

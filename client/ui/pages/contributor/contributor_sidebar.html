@@ -4,11 +4,11 @@
     {{> ContributorPriorities }}
     {{> ContributorTasks }}
     {{> ContributorEfforts }}
-
+    
     {{#if userManagesContributor _id}}
       <h3>Reporting</h3>
       {{> StatusReportSettings sourceCollection='Contributors' sourceId=_id contributorId=managerId }}
-
+      
       <h4>Active Reports</h4>
       {{> ActiveReports sourceCollection='Contributors' sourceId=_id contributorId=managerId }}
     {{/if}}

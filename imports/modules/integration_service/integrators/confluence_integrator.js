@@ -1,4 +1,4 @@
-import { Integrator } from './integrator';
+import { Integrator }       from './integrator';
 import { IntegrationTypes } from '../../../api/integrations/integration_types';
 
 /**

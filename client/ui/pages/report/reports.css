@@ -1,62 +1,62 @@
 .report-header {
-    background-color: #666;
-    color: #fff;
-    align-items: stretch;
+  background-color : #666;
+  color            : #fff;
+  align-items      : stretch;
 }
 
 .report-subheader {
-    margin-top: 2em;
-    border-bottom: 1px solid #666;
+  margin-top    : 2em;
+  border-bottom : 1px solid #666;
 }
 
 .report-header-title {
-    padding: 20px;
-    flex-basis: 100%;
+  padding    : 20px;
+  flex-basis : 100%;
 }
 
 .report-subheader-title {
-    padding: 0px 20px;
-    flex-basis: 100%;
+  padding    : 0 20px;
+  flex-basis : 100%;
 }
 
 .report-header-splitter {
-    flex-basis: 50px;
-    background-color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    font-size: 14pt;
+  flex-basis       : 50px;
+  background-color : #333;
+  display          : flex;
+  flex-direction   : column;
+  align-items      : stretch;
+  font-size        : 14pt;
 }
 
 .report-header-splitter div {
-    justify-content: center;
-    font-weight: 500;
+  justify-content : center;
+  font-weight     : 500;
 }
 
 .report-header-right {
-    flex-basis: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    font-size: 12pt;
-    background-color: #333;
+  flex-basis       : 20%;
+  display          : flex;
+  flex-direction   : column;
+  align-items      : stretch;
+  font-size        : 12pt;
+  background-color : #333;
 }
 
 .report-header-right-bullet {
-    flex-basis: 100%;
-    display: flex;
-    border-bottom: 1px solid #666;
+  flex-basis    : 100%;
+  display       : flex;
+  border-bottom : 1px solid #666;
 }
 
 .report-header-right-bullet:last-child {
-    border-bottom: none;
+  border-bottom : none;
 }
 
 .report-header-right-bullet div {
-    padding: 7px;
-    flex-basis: 100%;
-    display: flex;
-    align-items: center;
+  padding     : 7px;
+  flex-basis  : 100%;
+  display     : flex;
+  align-items : center;
 }
 
 .report-header h1,
@@ -64,22 +64,22 @@
 .report-header h3,
 .report-header h4,
 .report-header h5 {
-    color: #fff;
+  color : #fff;
 }
 
 .report-header h1,
 .report-header h2 {
-    font-weight: 500;
+  font-weight : 500;
 }
 
 .yellow {
-    color: #ffff00;
+  color : #ffff00;
 }
 
 .orange {
-    color: #ffa600;
+  color : #ffa600;
 }
 
 .green {
-    color: #00af00;
+  color : #00af00;
 }

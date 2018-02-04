@@ -1,4 +1,4 @@
-import {Template} from 'meteor/templating';
+import { Template } from 'meteor/templating';
 import './status_circle.html';
 import './status_circle.css';
 

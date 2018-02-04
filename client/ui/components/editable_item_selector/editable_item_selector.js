@@ -19,8 +19,7 @@ Template.EditableItemSelector.helpers({
 /**
  * Template Event Handlers
  */
-Template.EditableItemSelector.events({
-});
+Template.EditableItemSelector.events({});
 
 /**
  * Template Created

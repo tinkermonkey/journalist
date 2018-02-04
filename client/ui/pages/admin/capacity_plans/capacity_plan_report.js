@@ -1,5 +1,5 @@
 import './capacity_plan_report.html';
-import { Template } from 'meteor/templating';
+import { Template }      from 'meteor/templating';
 import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
 import './capacity_plan.css';
 import './capacity_plan_releases';

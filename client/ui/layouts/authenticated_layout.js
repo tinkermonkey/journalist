@@ -5,7 +5,7 @@ import '../components/login/login';
 import '../components/misc/app_loading';
 import '../components/top_nav/top_nav';
 import './display_template_layer';
-import {Util} from '../../../imports/api/util';
+import { Util }     from '../../../imports/api/util';
 
 /**
  * Template Helpers
@@ -27,7 +27,7 @@ Template.AuthenticatedLayout.onCreated(() => {
   Util.standardSubscriptions(instance);
   
   instance.autorun(() => {
-    if(instance.subscriptionsReady()){
+    if (instance.subscriptionsReady()) {
       console.log(Util.timestamp(), 'AuthenticatedLayout data loaded');
     }
   })

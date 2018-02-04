@@ -1,5 +1,5 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }         from 'meteor/mongo';
+import SimpleSchema      from 'simpl-schema';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers } from '../schema_helpers.js';
 
@@ -21,15 +21,15 @@ export const Task = new SimpleSchema({
     optional: true
   },
   state          : {
-    type    : Number,
+    type    : SimpleSchema.Integer,
     optional: true
   },
   percentComplete: {
-    type        : Number,
+    type        : SimpleSchema.Integer,
     defaultValue: 0
   },
-  complete: {
-    type: Boolean,
+  complete       : {
+    type        : Boolean,
     defaultValue: false
   },
   // Standard tracking fields
@@ -57,13 +57,13 @@ ChangeTracker.trackChanges(Tasks, 'Tasks');
 
 // These are server side only
 Tasks.deny({
-  remove() {
+  remove () {
     return true;
   },
-  insert() {
+  insert () {
     return true;
   },
-  update() {
+  update () {
     return true;
   }
 });

@@ -12,7 +12,8 @@
     </thead>
     <tbody>
     {{#each users}}
-      <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+      <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+          data-pk="{{_id}}">
         <td>{{> EditableTextField dataKey="username" value=username emptyText="Username" }}</td>
         <td>{{> EditableTextField dataKey="email" value=userEmail emptyText="Email" }}</td>
         <td>{{> EditableTextField dataKey="name" value=profile.name emptyText="Name" }}</td>
@@ -26,9 +27,9 @@
         <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes}}</td>
         <td>
           {{#unless isCurrentContributor contributor._id}}
-          <a class="link-red hidden-control btn-delete-user">
-            <span class="glyphicon glyphicon-minus-sign"></span>
-          </a>
+            <a class="link-red hidden-control btn-delete-user">
+              <span class="glyphicon glyphicon-minus-sign"></span>
+            </a>
           {{/unless}}
         </td>
       </tr>

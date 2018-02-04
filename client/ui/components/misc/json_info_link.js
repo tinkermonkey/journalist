@@ -25,18 +25,18 @@ Template.JsonInfoLink.events({
             content  : '<a class="link-red pull-right btn-close" style="padding-left: 5px;"><span class="glyphicon glyphicon-remove"></span></a>' +
             '<pre class="json-info-link-content">' + JSON.stringify(context.data, null, '\t') + '</pre>',
           })
-          .popover("show");
+          .popover('show');
       
       // setup an event listener to handle the custom close button
       setTimeout(() => {
-        hoverElement.closest('.json-info-link-container').find(".btn-close").click((e) => {
+        hoverElement.closest('.json-info-link-container').find('.btn-close').click((e) => {
           hoverElement.removeClass('pinned');
-          hoverElement.popover("destroy");
+          hoverElement.popover('destroy');
         });
       }, 100);
     } else {
       hoverElement.removeClass('pinned');
-      hoverElement.popover("destroy");
+      hoverElement.popover('destroy');
     }
   }
 });

@@ -1,9 +1,11 @@
 import './capacity_plan_efforts.html';
-import { Session } from 'meteor/session';
-import { Template } from 'meteor/templating';
-import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { Session }                      from 'meteor/session';
+import SimpleSchema                     from 'simpl-schema';
+import { Template }                     from 'meteor/templating';
+import { RobaDialog }                   from 'meteor/austinsand:roba-dialog';
+import { CapacityPlanOptions }          from '../../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlanSprintBlocks }     from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes }       from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plans/capacity_plan_strategic_efforts';
 import './capacity_plan_effort_items';
 import '../../../components/editable_color_picker/editable_color_picker';
@@ -40,9 +42,9 @@ Template.CapacityPlanEfforts.events({
     
     let effortId = $(e.target).closest('.data-table').attr('data-pk'),
         dataKey  = $(e.target).attr('data-key');
-  
+    
     console.log('CapacityPlanEffortItems.edited:', effortId, dataKey, newValue);
-  
+    
     if (effortId && dataKey) {
       Meteor.call('editCapacityPlanStrategicEffort', effortId, dataKey, newValue, (error, response) => {
         if (error) {
@@ -109,7 +111,7 @@ Template.CapacityPlanEfforts.events({
       RobaDialog.hide();
       Meteor.call('deleteCapacityPlanStrategicEffort', effort._id, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

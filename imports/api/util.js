@@ -8,7 +8,7 @@ function gcd (a, b) {
     return a
   }
   return gcd(b, a % b)
-};
+}
 
 export const Util = {
   /**
@@ -46,7 +46,7 @@ export const Util = {
    */
   camelToTitle (word) {
     if (word) {
-      return (word.substr(0, 1).toUpperCase() + word.substr(1)).replace(/([A-Z])/g, " $1").trim();
+      return (word.substr(0, 1).toUpperCase() + word.substr(1)).replace(/([A-Z])/g, ' $1').trim();
     }
   },
   
@@ -56,7 +56,7 @@ export const Util = {
    */
   camelToDash (word) {
     if (word) {
-      return word.replace(/([A-Z])/g, "-$1").trim().toLowerCase();
+      return word.replace(/([A-Z])/g, '-$1').trim().toLowerCase();
     }
   },
   
@@ -66,11 +66,11 @@ export const Util = {
    */
   wordsToCamel (words) {
     if (words) {
-      return words.replace(/[\W]/g, " ")
+      return words.replace(/[\W]/g, ' ')
           .replace(/(^[a-z]|\s+[a-z])/g, (letter) => {
             return letter.trim().toUpperCase()
           })
-          .replace(/\s/g, "");
+          .replace(/\s/g, '');
     }
   },
   
@@ -143,19 +143,19 @@ export const Util = {
           line       = [],
           lineNumber = 0,
           lineHeight = 1.2, // ems
-          y          = text.attr("y"),
-          dy         = parseFloat(text.attr("dy") || 0),
-          tspan      = text.text(null).append("tspan").attr("x", text.attr("x")).attr("y", y).attr("dy", dy + "em");
+          y          = text.attr('y'),
+          dy         = parseFloat(text.attr('dy') || 0),
+          tspan      = text.text(null).append('tspan').attr('x', text.attr('x')).attr('y', y).attr('dy', dy + 'em');
       
       while (word = words.pop()) {
         line.push(word);
-        tspan.text(line.join(" "));
+        tspan.text(line.join(' '));
         if (tspan.node().getComputedTextLength() > width) {
           line.pop();
-          tspan.text(line.join(" "));
+          tspan.text(line.join(' '));
           line  = [ word ];
-          tspan = text.append("tspan").attr("x", text.attr("x")).attr("y", y)
-              .attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+          tspan = text.append('tspan').attr('x', text.attr('x')).attr('y', y)
+              .attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word);
         }
       }
     });

@@ -1,6 +1,6 @@
 import './integration_server_field_reference.html';
-import { Template } from 'meteor/templating';
-import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
+import { Template }                from 'meteor/templating';
+import { IntegrationServers }      from '../../../../../imports/api/integrations/integration_servers';
 import { IntegrationServerCaches } from '../../../../../imports/api/integrations/integration_server_caches';
 
 /**

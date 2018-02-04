@@ -1,8 +1,8 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }              from 'meteor/mongo';
+import SimpleSchema           from 'simpl-schema';
+import { SchemaHelpers }      from '../schema_helpers.js';
 import { StatusReportStates } from './status_report_states.js';
-import { CollectionDetails } from '../collection_details';
+import { CollectionDetails }  from '../collection_details';
 
 /**
  * ============================================================================
@@ -24,7 +24,7 @@ export const StatusReport = new SimpleSchema({
   },
   // The state of this report
   state           : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(StatusReportStates)
   },
   // Any miscellaneous metadata attributed to the report
@@ -82,7 +82,7 @@ StatusReports.helpers({
    * Retrieve the source document
    */
   sourceDocument () {
-    let report = this,
+    let report  = this,
         details = CollectionDetails[ report.sourceCollection ];
     if (details) {
       return details.collection.findOne(report.sourceId);
@@ -94,9 +94,9 @@ StatusReports.helpers({
    * Return the title or name of the document this setting pertains to
    */
   sourceLabel () {
-    let report = this,
+    let report         = this,
         sourceDocument = report.sourceDocument();
-    if(sourceDocument){
+    if (sourceDocument) {
       return sourceDocument.title || sourceDocument.name
     } else {
       console.error('StatusReports.sourceLabel failed to find source document:', report.sourceCollection, report.sourceId)
@@ -114,7 +114,7 @@ StatusReports.helpers({
    * Retrieve the route param of the source collection document page
    */
   sourceRouteParamValue () {
-    let report = this,
+    let report  = this,
         details = CollectionDetails[ report.sourceCollection ];
     if (details) {
       let hash                   = {};

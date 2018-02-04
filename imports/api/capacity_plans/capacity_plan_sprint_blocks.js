@@ -1,13 +1,13 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Auth } from '../auth';
-import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
-import { Contributors } from '../contributors/contributors';
-import { CapacityPlanOptions } from './capacity_plan_options';
-import { CapacityPlanReleases } from './capacity_plan_releases';
-import { CapacityPlanStrategicEfforts } from './capacity_plan_strategic_efforts';
+import { Mongo }                            from 'meteor/mongo';
+import SimpleSchema                         from 'simpl-schema';
+import { Auth }                             from '../auth';
+import { CapacityPlanBlockTypes }           from './capacity_plan_block_types';
+import { Contributors }                     from '../contributors/contributors';
+import { CapacityPlanOptions }              from './capacity_plan_options';
+import { CapacityPlanReleases }             from './capacity_plan_releases';
+import { CapacityPlanStrategicEfforts }     from './capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from './capacity_plan_strategic_effort_items';
-import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
+import { CapacityPlanSprintLinks }          from './capacity_plan_sprint_links';
 
 /**
  * ============================================================================
@@ -26,13 +26,13 @@ export const CapacityPlanSprintBlock = new SimpleSchema({
     type: Number
   },
   order       : {
-    type: Number,
+    type: SimpleSchema.Integer,
   },
   dataId      : {
     type: String
   },
   blockType   : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(CapacityPlanBlockTypes)
   },
   parentId    : {
@@ -45,7 +45,7 @@ export const CapacityPlanSprintBlock = new SimpleSchema({
   }
 });
 
-export const CapacityPlanSprintBlocks = new Mongo.Collection("capacity_plan_sprint_blocks");
+export const CapacityPlanSprintBlocks = new Mongo.Collection('capacity_plan_sprint_blocks');
 CapacityPlanSprintBlocks.attachSchema(CapacityPlanSprintBlock);
 ChangeTracker.trackChanges(CapacityPlanSprintBlocks, 'CapacityPlanSprintBlocks');
 

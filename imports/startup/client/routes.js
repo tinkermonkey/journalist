@@ -1,5 +1,5 @@
-import { Meteor } from 'meteor/meteor';
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { Meteor }      from 'meteor/meteor';
+import { FlowRouter }  from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 // Import the base templates
 import '../../../client/ui/layouts/unauthenticated_layout';
@@ -20,7 +20,7 @@ import '../../../client/ui/pages/admin/import_export/import_export';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_functions';
 import '../../../client/ui/pages/admin/integration_servers/integration_servers';
-import '../../../client/ui/pages/admin/integration_servers/integration_server_browser';
+import '../../../client/ui/pages/admin/integration_servers/integration_server';
 import '../../../client/ui/pages/admin/projects/admin_projects';
 import '../../../client/ui/pages/admin/projects/admin_project_integration';
 import '../../../client/ui/pages/admin/teams/admin_teams';
@@ -148,10 +148,10 @@ FlowRouter.route('/admin/integration_servers', {
   }
 });
 
-FlowRouter.route('/admin/integration_server_browser/:serverId', {
-  name: 'IntegrationServerBrowser',
+FlowRouter.route('/admin/integration_server/:serverId', {
+  name: 'IntegrationServer',
   action () {
-    BlazeLayout.render('AdminLayout', { main: 'IntegrationServerBrowser' });
+    BlazeLayout.render('AdminLayout', { main: 'IntegrationServer' });
   }
 });
 

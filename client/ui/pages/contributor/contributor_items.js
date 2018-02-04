@@ -1,7 +1,7 @@
 import './contributor_items.html';
-import { Template } from 'meteor/templating';
+import { Template }               from 'meteor/templating';
 import { ImportedItemWorkStates } from '../../../../imports/api/imported_items/imported_item_work_states';
-import { Util } from '../../../../imports/api/util';
+import { Util }                   from '../../../../imports/api/util';
 
 /**
  * Template Helpers

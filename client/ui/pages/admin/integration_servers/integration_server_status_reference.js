@@ -1,5 +1,6 @@
 import './integration_server_status_reference.html';
-import { Template } from 'meteor/templating';
+import { Template }           from 'meteor/templating';
+import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
 
 /**
  * Template Helpers
@@ -7,7 +8,7 @@ import { Template } from 'meteor/templating';
 Template.IntegrationServerStatusReference.helpers({
   statusList () {
     let statusList = Template.instance().statusList.get();
-    if(statusList){
+    if (statusList) {
       return _.sortBy(statusList, 'title')
     }
   }
@@ -31,14 +32,17 @@ Template.IntegrationServerStatusReference.onCreated(() => {
     let context = Template.currentData();
     
     if (context && context.serverId) {
-      Meteor.call('getIntegrationServerStatusList', context.serverId, (error, response) => {
-        if (error) {
-          console.error('getIntegrationServerStatusList failed:', error);
-        } else {
-          console.log('getIntegrationServerStatusList returned:', response);
-          instance.statusList.set(response);
-        }
-      });
+      let server = IntegrationServers.findOne(context.serverId);
+      if (server && server.isAuthenticated) {
+        Meteor.call('getIntegrationServerStatusList', context.serverId, (error, response) => {
+          if (error) {
+            console.error('getIntegrationServerStatusList failed:', error);
+          } else {
+            console.log('getIntegrationServerStatusList returned:', response);
+            instance.statusList.set(response);
+          }
+        });
+      }
     } else {
       console.error('IntegrationServerStatusReference passed no serverId');
     }

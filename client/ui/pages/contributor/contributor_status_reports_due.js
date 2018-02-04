@@ -1,37 +1,40 @@
 import './contributor_status_reports_due.html';
-import { Template } from 'meteor/templating';
+import { Template }             from 'meteor/templating';
+import { RobaDialog }           from 'meteor/austinsand:roba-dialog';
 import { StatusReportSettings } from '../../../../imports/api/status_reports/status_report_settings';
-import { StatusReports } from '../../../../imports/api/status_reports/status_reports';
-import { StatusReportStates } from '../../../../imports/api/status_reports/status_report_states';
+import { StatusReports }        from '../../../../imports/api/status_reports/status_reports';
+import { StatusReportStates }   from '../../../../imports/api/status_reports/status_report_states';
 
 /**
  * Template Helpers
  */
 Template.ContributorStatusReportsDue.helpers({
-  statusReportsDue() {
+  statusReportsDue () {
     let reportsDue = [];
-
+    
     // Cross reference the non-submitted reports
     StatusReports.find({
       contributorId: this._id,
-      state: { $ne: StatusReportStates.submitted }
+      state        : { $ne: StatusReportStates.submitted }
     }).forEach((report) => {
       reportsDue.push(report);
     });
-
+    
     // Get all of the scheduled reports
     StatusReportSettings.find({
       contributorId: this._id
     }).forEach((setting) => {
-      if (!reportsDue.find((item) => { return item.sourceCollection === setting.sourceCollection && item.sourceId === setting.sourceId })) {
+      if (!reportsDue.find((item) => {
+            return item.sourceCollection === setting.sourceCollection && item.sourceId === setting.sourceId
+          })) {
         reportsDue.push(setting);
       }
     });
-
+    
     // Sort by due date
     return reportsDue
   },
-  isImminentReport() {
+  isImminentReport () {
     let dueDate = this.nextDue || this.dueDate;
     if (dueDate) {
       return dueDate - Date.now() < 24 * 60 * 60 * 1000
@@ -43,16 +46,15 @@ Template.ContributorStatusReportsDue.helpers({
  * Template Event Handlers
  */
 Template.ContributorStatusReportsDue.events({
-  "click .btn-file-report"(e, instance) {
-    let id = $(e.target).closest(".status-report-breadcrumbs").attr("data-pk"),
-      context = this,
-      isReport = context.state !== undefined,
-      currentContributor = Meteor.user().contributor(),
-      canFileReport = context.contributorId === currentContributor._id || currentContributor.managesContributor(context.contributorId);
-
-
+  'click .btn-file-report' (e, instance) {
+    let id                 = $(e.target).closest('.status-report-breadcrumbs').attr('data-pk'),
+        context            = this,
+        isReport           = context.state !== undefined,
+        currentContributor = Meteor.user().contributor(),
+        canFileReport      = context.contributorId === currentContributor._id || currentContributor.managesContributor(context.contributorId);
+    
     console.log('File or edit report:', id, isReport, context);
-
+    
     if (canFileReport) {
       if (id && isReport) {
         console.log('File or edit report looks like an existing report');
@@ -66,7 +68,7 @@ Template.ContributorStatusReportsDue.events({
         } catch (e) {
           console.error('Failed to cleanup existing EditReportForm:', e);
         }
-
+        
         // Render the edit form to the form container
         console.log($('.report-form-container').get(0));
         Blaze.renderWithData(Template.EditReportForm, { reportId: id }, $('.report-form-container').get(0));
@@ -79,7 +81,7 @@ Template.ContributorStatusReportsDue.events({
           } else {
             // Hide the File Report link
             instance.$('.btn-file-report').hide();
-
+            
             // Check for an existing view
             try {
               let existingViewEl = instance.$('.edit-report-form-container').get(0);
@@ -90,7 +92,7 @@ Template.ContributorStatusReportsDue.events({
             } catch (e) {
               console.error('Failed to cleanup existing EditReportForm:', e);
             }
-
+            
             // Render the edit form to the form container
             Blaze.renderWithData(Template.EditReportForm, { reportId: response.reportId }, instance.$('.report-form-container').get(0))
           }
@@ -107,10 +109,10 @@ Template.ContributorStatusReportsDue.events({
  */
 Template.ContributorStatusReportsDue.onCreated(() => {
   let instance = Template.instance();
-
+  
   instance.autorun(() => {
     let context = Template.currentData();
-
+    
     instance.subscribe('contributor_incomplete_reports', context._id);
   })
 });

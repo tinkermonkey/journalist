@@ -1,11 +1,11 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { Contributors } from './contributors';
+import { Mongo }                         from 'meteor/mongo';
+import SimpleSchema                      from 'simpl-schema';
+import { ChangeTracker }                 from 'meteor/austinsand:roba-change-tracker';
+import { SchemaHelpers }                 from '../schema_helpers.js';
+import { Contributors }                  from './contributors';
 import { ContributorProjectAssignments } from './contributor_project_assignments';
-import { ContributorRoleDefinitions } from './contributor_role_definitions';
-import { Teams } from '../teams/teams';
+import { ContributorRoleDefinitions }    from './contributor_role_definitions';
+import { Teams }                         from '../teams/teams';
 
 /**
  * ============================================================================
@@ -32,7 +32,7 @@ export const ContributorTeamRole = new SimpleSchema({
   },
   // Text description providing a list of responsibilities for this role
   responsibilities: {
-    type    : [ String ],
+    type    : Array, // String
     optional: true
   },
   // Standard tracking fields
@@ -89,7 +89,7 @@ ContributorTeamRoles.helpers({
     if (_.isString(projectId)) {
       query.projectId = projectId
     }
-
+    
     return ContributorProjectAssignments.find(query, { sort: { percent: -1 } })
   },
   /**

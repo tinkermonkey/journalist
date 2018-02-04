@@ -1,12 +1,12 @@
 import './team_role_contributor_list.html';
 import { Template } from 'meteor/templating';
-import { Teams } from '../../../../imports/api/teams/teams';
+import { Teams }    from '../../../../imports/api/teams/teams';
 
 /**
  * Template Helpers
  */
 Template.TeamRoleContributorList.helpers({
-  contributorsInRole(teamId, roleId){
+  contributorsInRole (teamId, roleId) {
     //console.log('contributorsInRole:', teamId, roleId);
     return Teams.findOne(teamId).contributorsInRole(roleId)
   }

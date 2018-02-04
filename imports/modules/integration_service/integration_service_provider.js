@@ -1,19 +1,19 @@
-import { check } from 'meteor/check';
-import { Ping } from 'meteor/frpz:ping';
-import { SyncedCron } from 'meteor/percolate:synced-cron';
-import { Contributors } from '../../api/contributors/contributors';
-import { ContributorTeamRoles } from '../../api/contributors/contributor_team_roles';
-import { ContributorProjectAssignments } from '../../api/contributors/contributor_project_assignments';
-import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
+import { check }                                 from 'meteor/check';
+import { Ping }                                  from 'meteor/frpz:ping';
+import { SyncedCron }                            from 'meteor/percolate:synced-cron';
+import { Contributors }                          from '../../api/contributors/contributors';
+import { ContributorTeamRoles }                  from '../../api/contributors/contributor_team_roles';
+import { ContributorProjectAssignments }         from '../../api/contributors/contributor_project_assignments';
+import { HealthTracker }                         from '../../api/system_health_metrics/server/health_tracker';
 import { ImportedItems, ImportedItemTestSchema } from '../../api/imported_items/imported_items';
-import { Integrations } from '../../api/integrations/integrations';
-import { IntegrationServerCaches } from '../../api/integrations/integration_server_caches';
-import { IntegrationServers } from '../../api/integrations/integration_servers';
-import { IntegrationTypes } from '../../api/integrations/integration_types';
-import { UserTypes } from '../../api/users/user_types';
-import { ConfluenceIntegrator } from './integrators/confluence_integrator';
-import { JiraIntegrator } from './integrators/jira_integrator';
-import { IntegrationAgent } from './integration_agent';
+import { Integrations }                          from '../../api/integrations/integrations';
+import { IntegrationServerCaches }               from '../../api/integrations/integration_server_caches';
+import { IntegrationServers }                    from '../../api/integrations/integration_servers';
+import { IntegrationTypes }                      from '../../api/integrations/integration_types';
+import { UserTypes }                             from '../../api/users/user_types';
+import { ConfluenceIntegrator }                  from './integrators/confluence_integrator';
+import { JiraIntegrator }                        from './integrators/jira_integrator';
+import { IntegrationAgent }                      from './integration_agent';
 
 const { URL } = require('url');
 
@@ -208,7 +208,7 @@ export class IntegrationServiceProvider {
         healthy    = status.online === true;
         if (!healthy) {
           debug && console.log('IntegrationServiceProvider.checkHealth ping status:', status);
-          details.message = "Server did not respond to ping requests";
+          details.message = 'Server did not respond to ping requests';
         }
       } catch (e) {
         console.error('IntegrationServiceProvider.checkHealth ping failed:', self.url.hostname, e);
@@ -223,7 +223,7 @@ export class IntegrationServiceProvider {
         healthy        = authResult.success === true;
         if (!healthy) {
           debug && console.log('IntegrationServiceProvider.checkHealth auth result:', authResult);
-          details.message = "Server is not authenticated";
+          details.message = 'Server is not authenticated';
           IntegrationServers.update({ _id: self.server._id }, { $set: { isAuthenticated: false } });
         }
       }

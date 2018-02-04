@@ -1,6 +1,6 @@
 import './later_preview.html';
 import { Template } from 'meteor/templating';
-import { later } from 'meteor/mrt:later';
+import { later }    from 'meteor/mrt:later';
 
 /**
  * Template Helpers
@@ -10,13 +10,13 @@ Template.LaterPreview.helpers({
    * Process the later directive if one exists
    * @return {*}
    */
-  result(){
-    if(this.directive){
-      let schedule = later.parse.text(this.directive),
+  result () {
+    if (this.directive) {
+      let schedule  = later.parse.text(this.directive),
           rawResult = later.schedule(schedule).next(3);
       
       //console.log('LaterPreview:', schedule, rawResult);
-      if(schedule.schedules.length){
+      if (schedule.schedules.length) {
         return {
           next: rawResult
         }

@@ -1,9 +1,9 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ItemTypes } from './item_types';
+import { Mongo }                  from 'meteor/mongo';
+import SimpleSchema               from 'simpl-schema';
+import { ItemTypes }              from './item_types';
 import { ImportedItemWorkPhases } from './imported_item_work_phases';
 import { ImportedItemWorkStates } from './imported_item_work_states';
-import { Projects } from '../projects/projects';
+import { Projects }               from '../projects/projects';
 
 /**
  * ============================================================================
@@ -20,13 +20,13 @@ export const ImportedItem = new SimpleSchema({
     type: String
   },
   // The team(s) that may own this, plural because it can be indeterminate if an owner is on multiple teams for the same project
-  teamId      : {
-    type    : [ String ],
+  teamId       : {
+    type    : Array, // String
     optional: true
   },
   // Overall type of this item:
   itemType     : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(ItemTypes)
   },
   // Primary identifier in the originating system
@@ -64,17 +64,17 @@ export const ImportedItem = new SimpleSchema({
     optional: true
   },
   statusHistory: {
-    type: [ Object ],
+    type    : Array, // Object
     blackbox: true,
     optional: true
   },
   workPhase    : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(ImportedItemWorkPhases),
     optional     : true
   },
   workState    : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(ImportedItemWorkStates),
     optional     : true
   },
@@ -141,7 +141,7 @@ ImportedItems.helpers({
   /**
    * Grab the project
    */
-  project(){
+  project () {
     return Projects.findOne(this.projectId)
   }
 });

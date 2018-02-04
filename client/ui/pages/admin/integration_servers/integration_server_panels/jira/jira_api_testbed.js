@@ -1,11 +1,11 @@
-import './jira_testbed.html';
-import './jira_testbed.css';
+import './jira_api_testbed.html';
+import './jira_api_testbed.css';
 import { Template } from 'meteor/templating';
 
 /**
  * Template Helpers
  */
-Template.JiraTestbed.helpers({
+Template.JiraApiTestbed.helpers({
   results () {
     let results = Template.instance().results.get();
     if (_.isArray(results)) {
@@ -56,7 +56,7 @@ Template.JiraTestbed.helpers({
 /**
  * Template Event Handlers
  */
-Template.JiraTestbed.events({
+Template.JiraApiTestbed.events({
   'click .btn-refresh' (e, instance) {
     instance.run.set(true);
   },
@@ -64,11 +64,11 @@ Template.JiraTestbed.events({
     let showLoading = instance.showLoading.get(),
         module      = instance.module.get(),
         method      = instance.method.get(),
-        payload     = instance.$(".input-payload").val();
+        payload     = instance.$('.input-payload').val();
     
     // If the loading spinner is shown, just sit tight
     if (!showLoading) {
-      console.log('JiraTestbed .btn-load click loading data:', module, method, payload);
+      console.log('JiraApiTestbed .btn-load click loading data:', module, method, payload);
       
       // Convert the payload to JSON
       if (payload && payload.length) {
@@ -89,7 +89,7 @@ Template.JiraTestbed.events({
     let moduleName = this.toString(),
         callMap    = instance.callMap.get();
     
-    console.log('JiraTestbed module selection:', moduleName);
+    console.log('JiraApiTestbed module selection:', moduleName);
     if (moduleName) {
       let module = callMap.find((module) => {
         return module.name === moduleName
@@ -105,7 +105,7 @@ Template.JiraTestbed.events({
         moduleName = instance.module.get(),
         callMap    = instance.callMap.get();
     
-    console.log('JiraTestbed method selection:', methodName, moduleName);
+    console.log('JiraApiTestbed method selection:', methodName, moduleName);
     if (moduleName && methodName) {
       let module = callMap.find((module) => {
         return module.name === moduleName
@@ -113,7 +113,7 @@ Template.JiraTestbed.events({
       if (module && _.contains(module.methods, methodName)) {
         instance.method.set(methodName);
       } else {
-        console.error('JiraTestbed unable to locate method', methodName, 'in module', moduleName, ':', module);
+        console.error('JiraApiTestbed unable to locate method', methodName, 'in module', moduleName, ':', module);
       }
     }
   },
@@ -126,7 +126,7 @@ Template.JiraTestbed.events({
 /**
  * Template Created
  */
-Template.JiraTestbed.onCreated(() => {
+Template.JiraApiTestbed.onCreated(() => {
   let instance = Template.instance();
   
   instance.results      = new ReactiveVar([]);
@@ -145,9 +145,9 @@ Template.JiraTestbed.onCreated(() => {
     let serverId = FlowRouter.getParam('serverId'),
         callMap  = instance.callMap.get();
     
-    console.log('JiraTestbed callMap autorun');
+    console.log('JiraApiTestbed callMap autorun');
     if (callMap == null) {
-      console.log('JiraTestbed callMap autorun - fetching call map');
+      console.log('JiraApiTestbed callMap autorun - fetching call map');
       Meteor.call('getIntegrationServerCallMap', serverId, (error, response) => {
         if (error) {
           console.error('getIntegrationServerCallMap failed:', error);
@@ -172,7 +172,7 @@ Template.JiraTestbed.onCreated(() => {
     
     // Fetch the project list
     if (run && module && module.length && method && method.length) {
-      console.log('JiraTestbed fetching results:', serverId, module, method, payload);
+      console.log('JiraApiTestbed fetching results:', serverId, module, method, payload);
       instance.run.set(false);
       instance.showLoading.set(true);
       Meteor.call('fetchIntegrationServerData', serverId, { module: module, method: method, payload: payload }, (error, response) => {
@@ -187,7 +187,7 @@ Template.JiraTestbed.onCreated(() => {
         }
       });
     } else {
-      console.log('JiraTestbed no action on autorun:', serverId, module, method, payload);
+      console.log('JiraApiTestbed no action on autorun:', serverId, module, method, payload);
     }
   })
 });
@@ -195,13 +195,13 @@ Template.JiraTestbed.onCreated(() => {
 /**
  * Template Rendered
  */
-Template.JiraTestbed.onRendered(() => {
+Template.JiraApiTestbed.onRendered(() => {
   
 });
 
 /**
  * Template Destroyed
  */
-Template.JiraTestbed.onDestroyed(() => {
+Template.JiraApiTestbed.onDestroyed(() => {
   
 });

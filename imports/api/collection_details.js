@@ -1,7 +1,7 @@
-import { Efforts } from './efforts/efforts';
-import { Tasks } from './tasks/tasks';
-import { Teams } from './teams/teams';
-import { Projects } from './projects/projects';
+import { Efforts }      from './efforts/efforts';
+import { Tasks }        from './tasks/tasks';
+import { Teams }        from './teams/teams';
+import { Projects }     from './projects/projects';
 import { Contributors } from './contributors/contributors';
 
 export const CollectionDetails = {

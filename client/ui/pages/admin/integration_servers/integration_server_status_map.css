@@ -1,17 +1,17 @@
 .status-card {
-  margin: 2px;
-  padding: 5px;
-  border-radius: 3px;
-  background-color: #fefefe;
-  cursor : pointer;
+  margin           : 2px;
+  padding          : 5px;
+  border-radius    : 3px;
+  background-color : #fefefe;
+  cursor           : pointer;
 }
 
 .mapped-status-card {
-  background-color: #87dbff;
+  background-color : #87dbff;
 }
 
 .unmapped-status-card {
-  background-color: #efefef;
+  background-color : #efefef;
 }
 
 .status-card .json-info-link-container {
@@ -19,16 +19,16 @@
 }
 
 .status-drop-box {
-  padding: 5px;
-  border-radius: 5px;
+  padding       : 5px;
+  border-radius : 5px;
 }
 
 .status-drop-box-active {
-  background-color: #ffff00;
-  min-height: 100px;
+  background-color : #ffff00;
+  min-height       : 100px;
 }
 
 .status-drop-box-hover {
-  background-color: #007AC9;
-  min-height: 100px;
+  background-color : #007AC9;
+  min-height       : 100px;
 }

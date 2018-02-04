@@ -1,9 +1,9 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers';
+import { Mongo }                 from 'meteor/mongo';
+import SimpleSchema              from 'simpl-schema';
+import { ChangeTracker }         from 'meteor/austinsand:roba-change-tracker';
+import { SchemaHelpers }         from '../schema_helpers';
 import { DisplayTemplateGroups } from './display_template_groups';
-import { DisplayTemplateTypes } from './display_template_types';
+import { DisplayTemplateTypes }  from './display_template_types';
 
 /**
  * ============================================================================
@@ -21,9 +21,9 @@ export const DisplayTemplate = new SimpleSchema({
   },
   // General category of template
   templateType     : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(DisplayTemplateTypes),
-    defaultValue: DisplayTemplateTypes.component
+    defaultValue : DisplayTemplateTypes.component
   },
   templateLayout   : {
     type    : String,
@@ -66,11 +66,11 @@ export const DisplayTemplate = new SimpleSchema({
     optional: true
   },
   publishedVersion : {
-    type    : Number,
+    type    : SimpleSchema.Integer,
     optional: true
   },
   currentVersion   : {
-    type: Number,
+    type: SimpleSchema.Integer,
     autoValue () {
       if (this.userId && this.operator !== '$pull') {
         if (!this.isSet) {

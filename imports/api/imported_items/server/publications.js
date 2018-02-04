@@ -1,6 +1,6 @@
-import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
-import { ImportedItems } from '../imported_items';
+import { Meteor }             from 'meteor/meteor';
+import { check }              from 'meteor/check';
+import { ImportedItems }      from '../imported_items';
 import { ImportedItemCrumbs } from '../imported_item_crumbs';
 
 Meteor.publish('integration_imported_items', function (integrationId, start, limit) {

@@ -16,6 +16,7 @@
     "fibers": "^2.0.0",
     "jira-connector": "^2.7.0",
     "meteor-node-stubs": "~0.2.4",
+    "simpl-schema": "^1.4.1",
     "tough-cookie": "^2.3.3"
   },
   "description": "Reporting Planning Tracking",

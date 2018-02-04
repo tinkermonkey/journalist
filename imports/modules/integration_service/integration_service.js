@@ -1,7 +1,7 @@
-import { SyncedCron } from 'meteor/percolate:synced-cron';
+import { SyncedCron }                 from 'meteor/percolate:synced-cron';
 import { IntegrationServiceProvider } from './integration_service_provider';
-import { IntegrationServers } from '../../api/integrations/integration_servers';
-import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
+import { IntegrationServers }         from '../../api/integrations/integration_servers';
+import { HealthTracker }              from '../../api/system_health_metrics/server/health_tracker';
 
 let debug = true;
 
@@ -128,7 +128,7 @@ export const IntegrationService = {
    */
   destroyServiceProvider (server) {
     console.log('IntegrationService.destroyServiceProvider:', server._id, server.title);
-    let self  = this,
+    let self     = this,
         provider = self.getServiceProvider(server);
     
     if (provider) {
@@ -145,13 +145,13 @@ export const IntegrationService = {
    */
   authenticateServiceProvider (server, username, password) {
     console.log('IntegrationService.authenticateServiceProvider:', server._id, server.title, username);
-    let self  = this,
+    let self     = this,
         provider = self.getServiceProvider(server);
     
     if (provider) {
       return provider.authenticate(username, password);
     } else {
-      throw new Meteor.Error(404, "Service Provider not found");
+      throw new Meteor.Error(404, 'Service Provider not found');
     }
   },
   
@@ -161,13 +161,13 @@ export const IntegrationService = {
    */
   unAuthenticateServiceProvider (server) {
     console.log('IntegrationService.authenticateServiceProvider:', server._id, server.title);
-    let self  = this,
+    let self     = this,
         provider = self.getServiceProvider(server);
     
     if (provider) {
       return provider.unAuthenticate();
     } else {
-      throw new Meteor.Error(404, "Service Provider not found");
+      throw new Meteor.Error(404, 'Service Provider not found');
     }
   },
   
@@ -177,13 +177,13 @@ export const IntegrationService = {
    */
   checkServiceProviderHealth (server) {
     console.log('IntegrationService.checkServiceProviderHealth:', server._id, server.title);
-    let self  = this,
+    let self     = this,
         provider = self.getServiceProvider(server);
     
     if (provider) {
       return provider.checkHealth();
     } else {
-      throw new Meteor.Error(404, "Service Provider not found");
+      throw new Meteor.Error(404, 'Service Provider not found');
     }
   },
   
@@ -194,13 +194,13 @@ export const IntegrationService = {
    */
   fetchData (server, request) {
     debug && console.log('IntegrationService.fetchData:', server._id, server.title);
-    let self  = this,
+    let self     = this,
         provider = self.getServiceProvider(server);
     
     if (provider) {
       return provider.fetchData(request);
     } else {
-      throw new Meteor.Error(404, "Service Provider not found");
+      throw new Meteor.Error(404, 'Service Provider not found');
     }
   },
   
@@ -211,7 +211,7 @@ export const IntegrationService = {
    */
   testIntegration (integration, details) {
     console.log('IntegrationService.testIntegration:', integration._id);
-    let self  = this,
+    let self     = this,
         provider = self.getServiceProvider(integration.server());
     
     return provider.testIntegration(integration, details)

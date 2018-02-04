@@ -1,6 +1,6 @@
 import './top_nav.html';
 import './top_nav.css';
-import { Template } from 'meteor/templating';
+import { Template }            from 'meteor/templating';
 import { SystemHealthMetrics } from '../../../../imports/api/system_health_metrics/system_health_metrics';
 import './status_menu_item'
 
@@ -10,7 +10,7 @@ import './status_menu_item'
 Template.TopNav.helpers({
   statusMetrics (type, unhealthyOnly) {
     let filter = { type: type };
-    if(unhealthyOnly){
+    if (unhealthyOnly) {
       filter.isHealthy = false;
     }
     return SystemHealthMetrics.find(filter, { sort: { isHealthy: 1, title: 1 } })

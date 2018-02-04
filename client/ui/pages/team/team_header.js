@@ -1,6 +1,6 @@
 import './team_header.html';
-import { Template } from 'meteor/templating';
-import { ContributorTeamRoles } from '../../../../imports/api/contributors/contributor_team_roles';
+import { Template }                   from 'meteor/templating';
+import { ContributorTeamRoles }       from '../../../../imports/api/contributors/contributor_team_roles';
 import { ContributorRoleDefinitions } from '../../../../imports/api/contributors/contributor_role_definitions';
 import './team_role_contributor_list';
 

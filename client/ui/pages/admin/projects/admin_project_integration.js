@@ -1,5 +1,6 @@
 import './admin_project_integration.html';
-import { Template } from 'meteor/templating';
+import { Template }     from 'meteor/templating';
+import { RobaDialog }   from 'meteor/austinsand:roba-dialog';
 import { Integrations } from '../../../../../imports/api/integrations/integrations';
 import './admin_project_integration_details';
 import './admin_integration_imported_item_browser';
@@ -20,11 +21,11 @@ Template.AdminProjectIntegration.helpers({
  * Template Event Handlers
  */
 Template.AdminProjectIntegration.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
     let integrationId = FlowRouter.getParam('integrationId'),
-        dataKey       = $(e.target).attr("data-key");
+        dataKey       = $(e.target).attr('data-key');
     
     console.log('AdminProjectIntegration edited:', integrationId, dataKey, newValue);
     if (integrationId !== null && dataKey !== null) {

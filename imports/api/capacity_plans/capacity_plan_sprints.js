@@ -1,5 +1,5 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }    from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 
 /**
  * ============================================================================
@@ -28,7 +28,7 @@ export const CapacityPlanSprint = new SimpleSchema({
   }
 });
 
-export const CapacityPlanSprints = new Mongo.Collection("capacity_plan_sprints");
+export const CapacityPlanSprints = new Mongo.Collection('capacity_plan_sprints');
 CapacityPlanSprints.attachSchema(CapacityPlanSprint);
 
 // These are server side only

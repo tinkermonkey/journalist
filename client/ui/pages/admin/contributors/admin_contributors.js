@@ -1,6 +1,8 @@
 import './admin_contributors.html';
-import { Template } from 'meteor/templating';
-import { Contributors } from '../../../../../imports/api/contributors/contributors.js';
+import { Template }                   from 'meteor/templating';
+import SimpleSchema                   from 'simpl-schema';
+import { RobaDialog }                 from 'meteor/austinsand:roba-dialog';
+import { Contributors }               from '../../../../../imports/api/contributors/contributors.js';
 import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions.js';
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
@@ -29,11 +31,11 @@ Template.AdminContributors.helpers({
  * Template Event Handlers
  */
 Template.AdminContributors.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let contributorId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey       = $(e.target).attr("data-key");
+    let contributorId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey       = $(e.target).attr('data-key');
     
     console.log('AdminContributors edited:', contributorId, dataKey, newValue);
     if (contributorId && dataKey) {
@@ -44,11 +46,11 @@ Template.AdminContributors.events({
       });
     }
   },
-  "click .btn-add-contributor" (e, instance) {
+  'click .btn-add-contributor' (e, instance) {
     let roleDefinition = this;
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           email: {
@@ -63,11 +65,11 @@ Template.AdminContributors.events({
           },
         })
       },
-      title          : "Add Contributor",
+      title          : 'Add Contributor',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -92,15 +94,15 @@ Template.AdminContributors.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-contributor" (e, instance) {
-    let contributorId = $(e.target).closest(".data-table-row").attr("data-pk"),
+  'click .btn-delete-contributor' (e, instance) {
+    let contributorId = $(e.target).closest('.data-table-row').attr('data-pk'),
         contributor   = Contributors.findOne(contributorId);
     
     RobaDialog.ask('Delete Contributor?', 'Are you sure that you want to delete the contributor <span class="label label-primary"> ' + contributor.email + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteContributor', contributorId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

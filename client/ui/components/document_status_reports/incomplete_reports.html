@@ -3,31 +3,32 @@
     <div class="incomplete-reports">
       {{#if reports.count}}
         <h3>Incomplete Reports</h3>
-      
-        <table class="data-table full-width">
         
-        {{#each reports}}
-          <tr class="data-table-row" data-pk="{{_id}}">
-            <td class="no-wrap">
-              <a href="{{pathFor 'ContributorHome' contributorId=contributorId}}" class="link-plain">{{contributorName contributorId}}</a>
-            </td>
-            <td class="no-wrap">{{dateFormat dueDate}}</td>
-            <td><!-- data type specific info goes here --></td>
-            <td>
-              Created on {{dateFormat dateCreated 'MMM Do'}}, last edited {{dateFormat dateModified 'MMM Do'}} at {{dateFormat dateModified 'h:mm a'}}
-            </td>
-            <td class="text-right no-wrap">
-              <a class="btn-edit-report">
-                <span class="glyphicon glyphicon-open-file"></span>
-                Edit
-              </a>
-              <a class="btn-delete-report link-red">
-                <span class="glyphicon glyphicon-minus-sign"></span>
-                Delete
-              </a>
-            </td>
-          </tr>
-        {{/each}}
+        <table class="data-table full-width">
+          
+          {{#each reports}}
+            <tr class="data-table-row" data-pk="{{_id}}">
+              <td class="no-wrap">
+                <a href="{{pathFor 'ContributorHome' contributorId=contributorId}}" class="link-plain">{{contributorName contributorId}}</a>
+              </td>
+              <td class="no-wrap">{{dateFormat dueDate}}</td>
+              <td><!-- data type specific info goes here --></td>
+              <td>
+                Created on {{dateFormat dateCreated 'MMM Do'}}, last edited {{dateFormat dateModified 'MMM Do'}} at {{dateFormat
+                dateModified 'h:mm a'}}
+              </td>
+              <td class="text-right no-wrap">
+                <a class="btn-edit-report">
+                  <span class="glyphicon glyphicon-open-file"></span>
+                  Edit
+                </a>
+                <a class="btn-delete-report link-red">
+                  <span class="glyphicon glyphicon-minus-sign"></span>
+                  Delete
+                </a>
+              </td>
+            </tr>
+          {{/each}}
         </table>
       {{/if}}
     </div>

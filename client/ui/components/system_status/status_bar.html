@@ -5,7 +5,8 @@
       {{> StatusCircle cssClass=getCircleClass }}
     {{else}}
       {{> StatusCircle cssClass=getCircleClass }}
-      <label>{{label}}{{#if subLabel}} <small>({{subLabel}})</small>{{/if}}</label>
+      <label>{{label}}{{#if subLabel}}
+        <small>({{subLabel}})</small>{{/if}}</label>
     {{/unless}}
   </div>
 </template>

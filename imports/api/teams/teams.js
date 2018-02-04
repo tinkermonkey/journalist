@@ -1,11 +1,11 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { Contributors } from '../contributors/contributors.js';
+import { Mongo }                         from 'meteor/mongo';
+import SimpleSchema                      from 'simpl-schema';
+import { ChangeTracker }                 from 'meteor/austinsand:roba-change-tracker';
+import { SchemaHelpers }                 from '../schema_helpers.js';
+import { Contributors }                  from '../contributors/contributors.js';
 import { ContributorProjectAssignments } from '../contributors/contributor_project_assignments.js';
-import { ContributorRoleDefinitions } from '../contributors/contributor_role_definitions.js';
-import { ContributorTeamRoles } from '../contributors/contributor_team_roles.js';
+import { ContributorRoleDefinitions }    from '../contributors/contributor_role_definitions.js';
+import { ContributorTeamRoles }          from '../contributors/contributor_team_roles.js';
 
 /**
  * ============================================================================
@@ -32,7 +32,7 @@ export const Team = new SimpleSchema({
     optional: true
   },
   reports               : {
-    type    : [ String ],
+    type    : Array, // String
     optional: true
   },
   // Standard tracking fields
@@ -158,8 +158,8 @@ Teams.helpers({
           return teamRole.roleDefinition().capacityRole()._id
         }))
   },
-  contributorsInCapacityRole(roleDefinitionId){
-    let team = this,
+  contributorsInCapacityRole (roleDefinitionId) {
+    let team           = this,
         contributorIds = _.uniq(team.contributorRoles()
             .fetch()
             .filter((teamRole) => {
@@ -169,7 +169,7 @@ Teams.helpers({
               return teamRole.contributorId
             }));
     
-    return Contributors.find({_id: {$in: contributorIds}}, {sort: {name: 1}})
+    return Contributors.find({ _id: { $in: contributorIds } }, { sort: { name: 1 } })
   },
   /**
    * Get all of the distinct non-manager role definitions on this team for a given project

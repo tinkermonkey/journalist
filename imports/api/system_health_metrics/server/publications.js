@@ -1,4 +1,4 @@
-import { Meteor } from 'meteor/meteor';
+import { Meteor }              from 'meteor/meteor';
 import { SystemHealthMetrics } from '../system_health_metrics.js';
 
 Meteor.publish('system_health_metrics', function () {

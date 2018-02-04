@@ -1,7 +1,7 @@
 .team-roster-assignments td:first-child {
-  padding-right: 5px;
-  width: 3em;
-  white-space: nowrap;
+  padding-right : 5px;
+  width         : 3em;
+  white-space   : nowrap;
 }
 
 .team-roster-assignments a,
@@ -10,11 +10,11 @@
 }
 
 .team-roster-name {
-  font-size: 1.4em;
+  font-size : 1.4em;
 }
 
 .team-roster-assignment-percent-bar {
-  height: 5px;
-  background-color: #007AC9;
-  margin-bottom: 10px;
+  height           : 5px;
+  background-color : #007AC9;
+  margin-bottom    : 10px;
 }

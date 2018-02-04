@@ -1,8 +1,9 @@
 import './add_integration_form.html';
-import { Template } from 'meteor/templating';
-import { Util } from '../../../../../imports/api/util';
+import { Template }           from 'meteor/templating';
+import SimpleSchema           from 'simpl-schema';
+import { Util }               from '../../../../../imports/api/util';
 import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
-import { ItemTypes } from '../../../../../imports/api/imported_items/item_types';
+import { ItemTypes }          from '../../../../../imports/api/imported_items/item_types';
 
 let schema = new SimpleSchema({
   serverId: {

@@ -4,14 +4,14 @@
  * Copyright 2013 Jonathan Miles
  * Project URL : http://www.jondmiles.com/bootstrap-treeview
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an 'AS IS' BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -24,15 +24,15 @@
 
 import './bootstrap-treeview.css';
 
-;(function ($, window, document, undefined) {
+(function ($, window, document, undefined) {
   
   /*global jQuery, console*/
   
   'use strict';
   
-  var pluginName = 'treeview';
+  const pluginName = 'treeview';
   
-  var _default = {};
+  const _default = {};
   
   _default.settings = {
     
@@ -93,7 +93,7 @@ import './bootstrap-treeview.css';
     revealResults: true
   };
   
-  var Tree = function (element, options) {
+  const Tree = function (element, options) {
     
     this.$element  = $(element);
     this.elementId = element.id;
@@ -284,8 +284,8 @@ import './bootstrap-treeview.css';
     }
     level += 1;
     
-    var parent = node;
-    var _this  = this;
+    const parent = node;
+    const _this  = this;
     $.each(node.nodes, function checkStates (index, node) {
       
       // nodeId : unique, incremental identifier
@@ -314,6 +314,7 @@ import './bootstrap-treeview.css';
       
       // set expanded state; if not provided based on levels
       if (!node.state.hasOwnProperty('expanded')) {
+        // noinspection RedundantIfStatementJS
         if (!node.state.disabled &&
             (level < _this.options.levels) &&
             (node.nodes && node.nodes.length > 0)) {
@@ -345,13 +346,13 @@ import './bootstrap-treeview.css';
       event.preventDefault();
     }
     
-    var target = $(event.target);
-    var node   = this.findNode(target);
+    const target = $(event.target);
+    let node     = this.findNode(target);
     if (!node || node.state.disabled) {
       return;
     }
     
-    var classList = target.attr('class') ? target.attr('class').split(' ') : [];
+    const classList = target.attr('class') ? target.attr('class').split(' ') : [];
     if ((classList.indexOf('expand-icon') !== -1)) {
       
       this.toggleExpandedState(node, _default.options);
@@ -384,8 +385,8 @@ import './bootstrap-treeview.css';
   // data attribute nodeid, which is used to lookup the node in the flattened structure.
   Tree.prototype.findNode = function (target) {
     
-    var nodeId = target.closest('li.list-group-item').attr('data-nodeid');
-    var node   = this.nodes[ nodeId ];
+    const nodeId = target.closest('li.list-group-item').attr('data-nodeid');
+    let node     = this.nodes[ nodeId ];
     
     if (!node) {
       console.log('Error: node does not exist');
@@ -557,10 +558,10 @@ import './bootstrap-treeview.css';
     }
     level += 1;
     
-    var _this = this;
+    const _this = this;
     $.each(nodes, function addNodes (id, node) {
       
-      var treeItem = $(_this.template.item)
+      const treeItem = $(_this.template.item)
           .addClass('node-' + _this.elementId)
           .addClass(node.state.checked ? 'node-checked' : '')
           .addClass(node.state.disabled ? 'node-disabled' : '')
@@ -571,7 +572,7 @@ import './bootstrap-treeview.css';
           .attr('style', _this.buildStyleOverride(node));
       
       // Add indent/spacer to mimic tree structure
-      for (var i = 0; i < (level - 1); i++) {
+      for (let i = 0; i < (level - 1); i++) {
         treeItem.append(_this.template.indent);
       }
       
@@ -599,7 +600,7 @@ import './bootstrap-treeview.css';
       }
       
       // Add node icon
-      var displayIcon = false;
+      let displayIcon = false;
       if (_this.options.showLeafIconOnly) {
         if (!node.nodes || node.nodes.length == 0) {
           displayIcon = true;
@@ -679,14 +680,14 @@ import './bootstrap-treeview.css';
   // 1. selectedNode
   // 2. node|data assigned color overrides
   Tree.prototype.buildStyleOverride = function (node) {
-    var style = '';
+    let style = '';
     
     if (node.state.disabled) {
       return '';
     }
     
-    var color     = node.color;
-    var backColor = node.backColor;
+    let color     = node.color;
+    let backColor = node.backColor;
     
     if (this.options.highlightSelected && node.state.selected) {
       if (this.options.selectedColor) {
@@ -706,11 +707,11 @@ import './bootstrap-treeview.css';
       }
     }
     
-    if(color){
+    if (color) {
       style += 'color:' + color + ';';
     }
     
-    if(backColor){
+    if (backColor) {
       style += 'background-color:' + backColor + ';';
     }
     
@@ -728,7 +729,7 @@ import './bootstrap-treeview.css';
   // Construct trees style based on user options
   Tree.prototype.buildStyle = function () {
     
-    var style = '.node-' + this.elementId + '{';
+    let style = '.node-' + this.elementId + '{';
     
     if (this.options.color) {
       style += 'color:' + this.options.color + ';';
@@ -764,7 +765,7 @@ import './bootstrap-treeview.css';
     badge : '<span class="badge"></span>'
   };
   
-  Tree.prototype.css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'
+  Tree.prototype.css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}';
   
   /**
    Returns a single node object that matches the given node id.
@@ -781,7 +782,7 @@ import './bootstrap-treeview.css';
    @returns {Object} node - The parent node
    */
   Tree.prototype.getParent = function (identifier) {
-    var node = this.identifyNode(identifier);
+    const node = this.identifyNode(identifier);
     return this.nodes[ node.parentId ];
   };
   
@@ -791,9 +792,9 @@ import './bootstrap-treeview.css';
    @returns {Array} nodes - Sibling nodes
    */
   Tree.prototype.getSiblings = function (identifier) {
-    var node   = this.identifyNode(identifier);
-    var parent = this.getParent(node);
-    var nodes  = parent ? parent.nodes : this.tree;
+    const node   = this.identifyNode(identifier);
+    const parent = this.getParent(node);
+    const nodes  = parent ? parent.nodes : this.tree;
     return nodes.filter(function (obj) {
       return obj.nodeId !== node.nodeId;
     });
@@ -907,7 +908,7 @@ import './bootstrap-treeview.css';
    @param {optional Object} options
    */
   Tree.prototype.collapseAll = function (options) {
-    var identifiers = this.findNodes('true', 'g', 'state.expanded');
+    const identifiers = this.findNodes('true', 'g', 'state.expanded');
     this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
       this.setExpandedState(node, false, options);
     }, this));
@@ -939,7 +940,7 @@ import './bootstrap-treeview.css';
       this.expandLevels(this.tree, options.levels, options);
     }
     else {
-      var identifiers = this.findNodes('false', 'g', 'state.expanded');
+      const identifiers = this.findNodes('false', 'g', 'state.expanded');
       this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
         this.setExpandedState(node, true, options);
       }, this));
@@ -968,6 +969,7 @@ import './bootstrap-treeview.css';
     options = $.extend({}, _default.options, options);
     
     $.each(nodes, $.proxy(function (index, node) {
+      // noinspection RedundantConditionalExpressionJS
       this.setExpandedState(node, (level > 0) ? true : false, options);
       if (node.nodes) {
         this.expandLevels(node.nodes, level - 1, options);
@@ -982,12 +984,11 @@ import './bootstrap-treeview.css';
    */
   Tree.prototype.revealNode = function (identifiers, options) {
     this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
-      var parentNode = this.getParent(node);
+      let parentNode = this.getParent(node);
       while (parentNode) {
         this.setExpandedState(parentNode, true, options);
         parentNode = this.getParent(parentNode);
       }
-      ;
     }, this));
     
     this.render();
@@ -1011,7 +1012,7 @@ import './bootstrap-treeview.css';
    @param {optional Object} options
    */
   Tree.prototype.checkAll = function (options) {
-    var identifiers = this.findNodes('false', 'g', 'state.checked');
+    const identifiers = this.findNodes('false', 'g', 'state.checked');
     this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
       this.setCheckedState(node, true, options);
     }, this));
@@ -1037,7 +1038,7 @@ import './bootstrap-treeview.css';
    @param {optional Object} options
    */
   Tree.prototype.uncheckAll = function (options) {
-    var identifiers = this.findNodes('true', 'g', 'state.checked');
+    const identifiers = this.findNodes('true', 'g', 'state.checked');
     this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
       this.setCheckedState(node, false, options);
     }, this));
@@ -1076,7 +1077,7 @@ import './bootstrap-treeview.css';
    @param {optional Object} options
    */
   Tree.prototype.disableAll = function (options) {
-    var identifiers = this.findNodes('false', 'g', 'state.disabled');
+    const identifiers = this.findNodes('false', 'g', 'state.disabled');
     this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
       this.setDisabledState(node, true, options);
     }, this));
@@ -1102,7 +1103,7 @@ import './bootstrap-treeview.css';
    @param {optional Object} options
    */
   Tree.prototype.enableAll = function (options) {
-    var identifiers = this.findNodes('true', 'g', 'state.disabled');
+    const identifiers = this.findNodes('true', 'g', 'state.disabled');
     this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
       this.setDisabledState(node, false, options);
     }, this));
@@ -1172,14 +1173,14 @@ import './bootstrap-treeview.css';
     
     this.clearSearch({ render: false });
     
-    var results = [];
+    let results = [];
     if (pattern && pattern.length > 0) {
       
       if (options.exactMatch) {
         pattern = '^' + pattern + '$';
       }
       
-      var modifier = 'g';
+      let modifier = 'g';
       if (options.ignoreCase) {
         modifier += 'i';
       }
@@ -1215,7 +1216,7 @@ import './bootstrap-treeview.css';
     
     options = $.extend({}, { render: true }, options);
     
-    var results = $.each(this.findNodes('true', 'g', 'searchResult'), function (index, node) {
+    const results = $.each(this.findNodes('true', 'g', 'searchResult'), function (index, node) {
       node.searchResult = false;
     });
     
@@ -1232,8 +1233,8 @@ import './bootstrap-treeview.css';
    * @return {Number} the node id
    */
   Tree.prototype.findNodeIdByCustomId = function (customId) {
-    var nodeId = undefined;
-    for (var i = 0; i < this.nodes.length; i++) {
+    let nodeId = undefined;
+    for (let i = 0; i < this.nodes.length; i++) {
       if (this.nodes[ i ].customId == customId) {
         nodeId = this.nodes[ i ].nodeId;
         break;
@@ -1258,24 +1259,24 @@ import './bootstrap-treeview.css';
    * @return {Object} - containing three parameters, 'customIds', 'nodeIds' and 'nodesMap'.
    */
   Tree.prototype.findNodesByCustomIds = function (customIds) {
-    var nodesMap        = {};
-    var matchingNodeIds = [];
-    var result          = { customIds: customIds, nodeIds: matchingNodeIds, nodesMap: nodesMap };
+    const nodesMap        = {};
+    const matchingNodeIds = [];
+    const result          = { customIds: customIds, nodeIds: matchingNodeIds, nodesMap: nodesMap };
     
     if (customIds == undefined || customIds.length == 0) {
       this.$element.trigger('findNodesByCustomIdsComplete', result);
       return result;
     }
     
-    var customId = undefined;
-    var node     = undefined;
-    for (var i = 0; i < customIds.length; i++) {
+    let customId = undefined;
+    let node     = undefined;
+    for (let i = 0; i < customIds.length; i++) {
       customId = customIds[ i ];
-      for (var j = 0; j < this.nodes.length; j++) {
+      for (let j = 0; j < this.nodes.length; j++) {
         node = this.nodes[ j ];
         
         if (node.customId == customId) {
-          var matchingNodes = nodesMap[ customId ] || [];
+          const matchingNodes = nodesMap[ customId ] || [];
           matchingNodes.push(node);
           nodesMap[ customId ] = matchingNodes;
           matchingNodeIds.push(node.nodeId);
@@ -1300,9 +1301,9 @@ import './bootstrap-treeview.css';
     modifier  = modifier || 'g';
     attribute = attribute || 'text';
     
-    var _this = this;
+    const _this = this;
     return $.grep(this.nodes, function (node) {
-      var val = _this.getNodeValue(node, attribute);
+      let val = _this.getNodeValue(node, attribute);
       if (typeof val === 'string') {
         return val.match(new RegExp(pattern, modifier));
       }
@@ -1317,10 +1318,10 @@ import './bootstrap-treeview.css';
    @return {String} value - Matching attributes string representation
    */
   Tree.prototype.getNodeValue = function (obj, attr) {
-    var index = attr.indexOf('.');
+    const index = attr.indexOf('.');
     if (index > 0) {
-      var _obj  = obj[ attr.substring(0, index) ];
-      var _attr = attr.substring(index + 1, attr.length);
+      const _obj  = obj[ attr.substring(0, index) ];
+      const _attr = attr.substring(index + 1, attr.length);
       return this.getNodeValue(_obj, _attr);
     }
     else {
@@ -1333,7 +1334,7 @@ import './bootstrap-treeview.css';
     }
   };
   
-  var logError = function (message) {
+  const logError = function (message) {
     if (window.console) {
       window.console.error(message);
     }
@@ -1343,10 +1344,10 @@ import './bootstrap-treeview.css';
   // handle updates and method calls
   $.fn[ pluginName ] = function (options, args) {
     
-    var result;
+    let result;
     
     this.each(function () {
-      var _this = $.data(this, pluginName);
+      let _this = $.data(this, pluginName);
       if (typeof options === 'string') {
         if (!_this) {
           logError('Not initialized, can not call method : ' + options);

@@ -14,7 +14,7 @@ Template.CapacityPlanOptionSummary.helpers({
     let release = this;
     return release.sprintCount(optionId) > 1
   },
-  sprintWeekCount(option){
+  sprintWeekCount (option) {
     return moment.duration(option.sprintLength).asWeeks()
   }
 });

@@ -1,9 +1,9 @@
 import './contributor_home.html';
 import './contributor_home.css';
-import { Meteor } from 'meteor/meteor';
-import { Template } from 'meteor/templating';
+import { Meteor }       from 'meteor/meteor';
+import { Template }     from 'meteor/templating';
 import { Contributors } from '../../../../imports/api/contributors/contributors';
-import { Users } from '../../../../imports/api/users/users';
+import { Users }        from '../../../../imports/api/users/users';
 import './contributor_sidebar.js';
 import './contributor_banner.js';
 import './contributor_header.js';

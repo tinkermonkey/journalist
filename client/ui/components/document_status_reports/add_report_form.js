@@ -1,5 +1,6 @@
 import './add_report_form.html';
-import { Template } from 'meteor/templating';
+import { Template }     from 'meteor/templating';
+import SimpleSchema     from 'simpl-schema';
 import { Contributors } from '../../../../imports/api/contributors/contributors.js';
 
 let schema = new SimpleSchema({
@@ -8,7 +9,7 @@ let schema = new SimpleSchema({
   },
   dueDate      : {
     type : Date,
-    label: "Due Date"
+    label: 'Due Date'
   }
 });
 

@@ -1,0 +1,36 @@
+<template name="JiraServer">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Data</h2>
+      {{#RobaTabGroup name="server-tabs" navClass="nav-tabs"}}
+        {{#RobaTab name="statusMap" title="Status Map"}}
+          {{> IntegrationServerStatusMap }}
+        {{/RobaTab}}
+        {{#RobaTab name="application" title="Application"}}
+          {{#if isAuthenticated}}
+            {{> JiraApplicationInfo }}
+          {{else}}
+            <div class="alert alert-warning">Server must be authenticated</div>
+          {{/if}}
+        {{/RobaTab}}
+        {{#RobaTab name="projects" title="Projects"}}
+          {{#if isAuthenticated}}
+            {{> JiraProjectList }}
+          {{else}}
+            <div class="alert alert-warning">Server must be authenticated</div>
+          {{/if}}
+        {{/RobaTab}}
+        {{#RobaTab name="testbed" title="Testbed"}}
+          {{#if isAuthenticated}}
+            {{> JiraApiTestbed }}
+          {{else}}
+            <div class="alert alert-warning">Server must be authenticated</div>
+          {{/if}}
+        {{/RobaTab}}
+        {{#RobaTab name="cache" title="Cached Data"}}
+          {{> IntegrationServerCachedData }}
+        {{/RobaTab}}
+      {{/RobaTabGroup}}
+    </div>
+  </div>
+</template>

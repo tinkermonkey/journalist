@@ -8,9 +8,9 @@ export const Auth = {
    * Global helper for methods to require authentication
    * @returns {user}
    */
-  requireAuthentication() {
+  requireAuthentication () {
     let user = Users.findOne(Meteor.userId());
-    if(user){
+    if (user) {
       return user
     }
     throw new Meteor.Error('403');
@@ -22,9 +22,9 @@ export const Auth = {
    * @param doc
    * @returns {*|boolean}
    */
-  denyIfNotAdmin(userId, doc) {
+  denyIfNotAdmin (userId, doc) {
     let user = Users.findOne(userId);
-    if(userId && user){
+    if (userId && user) {
       return !user.isAdmin();
     }
     return true;

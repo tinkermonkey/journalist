@@ -8,8 +8,7 @@ import '../../components/team_roles/contributor_team_roles.js';
 /**
  * Template Helpers
  */
-Template.ContributorSidebar.helpers({
-});
+Template.ContributorSidebar.helpers({});
 
 /**
  * Template Event Handlers

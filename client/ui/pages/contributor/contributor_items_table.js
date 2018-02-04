@@ -1,5 +1,5 @@
 import './contributor_items_table.html';
-import { Template } from 'meteor/templating';
+import { Template }           from 'meteor/templating';
 import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
 
 /**

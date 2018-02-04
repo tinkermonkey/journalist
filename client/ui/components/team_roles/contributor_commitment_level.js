@@ -4,8 +4,7 @@ import { Template } from 'meteor/templating';
 /**
  * Template Helpers
  */
-Template.ContributorCommitmentLevel.helpers({
-});
+Template.ContributorCommitmentLevel.helpers({});
 
 /**
  * Template Event Handlers

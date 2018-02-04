@@ -1,13 +1,13 @@
 import './dev_team_banner.html';
-import { Template } from 'meteor/templating';
-import { Projects } from '../../../../../imports/api/projects/projects';
-import { ImportedItemCrumbs } from '../../../../../imports/api/imported_items/imported_item_crumbs';
-import { ImportedItemWorkPhases } from '../../../../../imports/api/imported_items/imported_item_work_phases';
+import { Template }                      from 'meteor/templating';
+import { Projects }                      from '../../../../../imports/api/projects/projects';
+import { ImportedItemCrumbs }            from '../../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItemWorkPhases }        from '../../../../../imports/api/imported_items/imported_item_work_phases';
 import { ContributorProjectAssignments } from '../../../../../imports/api/contributors/contributor_project_assignments';
-import { ItemTypes } from '../../../../../imports/api/imported_items/item_types';
-import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
-import { ContributorTeamRoles } from '../../../../../imports/api/contributors/contributor_team_roles';
-import { Util } from '../../../../../imports/api/util';
+import { ItemTypes }                     from '../../../../../imports/api/imported_items/item_types';
+import { ContributorRoleDefinitions }    from '../../../../../imports/api/contributors/contributor_role_definitions';
+import { ContributorTeamRoles }          from '../../../../../imports/api/contributors/contributor_team_roles';
+import { Util }                          from '../../../../../imports/api/util';
 import '../../../components/charts/donut_chart';
 import '../../../components/charts/dashboard_metric';
 

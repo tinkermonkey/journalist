@@ -1,5 +1,5 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo }         from 'meteor/mongo';
+import SimpleSchema      from 'simpl-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
 
 /**
@@ -8,40 +8,40 @@ import { SchemaHelpers } from '../schema_helpers.js';
  * ============================================================================
  */
 export const ContributorRoleDefinition = new SimpleSchema({
-  title        : {
+  title          : {
     type: String
   },
-  order        : {
-    type        : Number,
+  order          : {
+    type        : SimpleSchema.Integer,
     defaultValue: 0
   },
-  isManager: {
+  isManager      : {
     type        : Boolean,
     defaultValue: false
   },
-  planCapacity: {
+  planCapacity   : {
     type        : Boolean,
     defaultValue: true
   },
   countCapacityAs: {
-    type: String,
+    type    : String,
     optional: true
   },
   // Standard tracking fields
-  dateCreated  : {
+  dateCreated    : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy    : {
+  createdBy      : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy,
     optional : true
   },
-  dateModified : {
+  dateModified   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy   : {
+  modifiedBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy,
     optional : true
@@ -72,22 +72,22 @@ ContributorRoleDefinitions.helpers({
   /**
    * Return the role definition id that this should be counted as capacity for
    */
-  capacityRole(){
+  capacityRole () {
     let roleDef = this;
-
-    if(roleDef.countCapacityAs){
+    
+    if (roleDef.countCapacityAs) {
       return ContributorRoleDefinitions.findOne(roleDef.countCapacityAs)
     } else {
       return roleDef
     }
   },
-
+  
   /**
    * Should this role be counted towards capacity
    */
-  countForCapacity(){
+  countForCapacity () {
     let roleDef = this;
-
+    
     return roleDef.capacityRole().planCapacity === true
   }
 });

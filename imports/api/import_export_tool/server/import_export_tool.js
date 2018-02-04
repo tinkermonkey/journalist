@@ -1,21 +1,21 @@
-import { Meteor } from "meteor/meteor";
-import { moment } from 'meteor/momentjs:moment';
-import { Picker } from 'meteor/meteorhacks:picker';
-import { Contributors } from '../../contributors/contributors';
+import { Meteor }                        from 'meteor/meteor';
+import { moment }                        from 'meteor/momentjs:moment';
+import { Picker }                        from 'meteor/meteorhacks:picker';
+import { Contributors }                  from '../../contributors/contributors';
 import { ContributorProjectAssignments } from '../../contributors/contributor_project_assignments';
-import { ContributorRoleDefinitions } from '../../contributors/contributor_role_definitions';
-import { ContributorTeamRoles } from '../../contributors/contributor_team_roles';
-import { IntegrationCalculatedFields } from '../../integrations/integration_calculated_fields';
-import { DisplayTemplates } from '../../display_templates/display_templates';
-import { DisplayTemplateGroups } from '../../display_templates/display_template_groups';
-import { PublishedDisplayTemplates } from '../../display_templates/published_display_templates';
-import { IntegrationImportFunctions } from '../../integrations/integration_import_functions';
-import { IntegrationServerCaches } from '../../integrations/integration_server_caches';
-import { IntegrationServers } from '../../integrations/integration_servers';
-import { Integrations } from '../../integrations/integrations';
-import { Projects } from '../../projects/projects';
-import { Teams } from '../../teams/teams';
-import { Users } from '../../users/users';
+import { ContributorRoleDefinitions }    from '../../contributors/contributor_role_definitions';
+import { ContributorTeamRoles }          from '../../contributors/contributor_team_roles';
+import { IntegrationCalculatedFields }   from '../../integrations/integration_calculated_fields';
+import { DisplayTemplates }              from '../../display_templates/display_templates';
+import { DisplayTemplateGroups }         from '../../display_templates/display_template_groups';
+import { PublishedDisplayTemplates }     from '../../display_templates/published_display_templates';
+import { IntegrationImportFunctions }    from '../../integrations/integration_import_functions';
+import { IntegrationServerCaches }       from '../../integrations/integration_server_caches';
+import { IntegrationServers }            from '../../integrations/integration_servers';
+import { Integrations }                  from '../../integrations/integrations';
+import { Projects }                      from '../../projects/projects';
+import { Teams }                         from '../../teams/teams';
+import { Users }                         from '../../users/users';
 
 let AdmZip        = require('adm-zip'),
     fs            = require('fs'),
@@ -77,7 +77,7 @@ export const ImportExportTool = {
         filePath = path.join(handler.dataPath, fileName),
         data, collectionName;
     
-    console.info("ImportExportTool.importData importing " + fileName);
+    console.info('ImportExportTool.importData importing ' + fileName);
     
     // unzip it if needed
     if (filePath.match(/\.zip$/)) {
@@ -87,20 +87,20 @@ export const ImportExportTool = {
       if (zipEntries) {
         zipEntries.forEach((zipEntry) => {
           if (zipEntry.entryName && zipEntry.entryName.match(/\.json$/)) {
-            console.info("ImportExportTool.importData reading file " + zipEntry.entryName);
+            console.info('ImportExportTool.importData reading file ' + zipEntry.entryName);
             
             let input = zipFile.readAsText(zipEntry, handler.encoding);
             
             try {
               data           = JSON.parse(input);
-              collectionName = zipEntry.entryName.replace(/\.json$/i, "");
+              collectionName = zipEntry.entryName.replace(/\.json$/i, '');
               
               handler.insertDataIntoCollection(data, collectionName);
             } catch (e) {
-              console.error("ImportExportTool.importData JSON parse failed: " + e.toString());
+              console.error('ImportExportTool.importData JSON parse failed: ' + e.toString());
             }
           } else {
-            console.error("Zip file did not contain any zip entries: " + filePath);
+            console.error('Zip file did not contain any zip entries: ' + filePath);
           }
         });
       }
@@ -109,11 +109,11 @@ export const ImportExportTool = {
       try {
         let input      = fs.readFileSync(filePath, handler.encoding);
         data           = JSON.parse(input);
-        collectionName = path.basename(filePath).replace(/\.json$/i, "");
+        collectionName = path.basename(filePath).replace(/\.json$/i, '');
         
         handler.insertDataIntoCollection(data, collectionName);
       } catch (e) {
-        console.error("JSON file did not contain any entries: " + filePath);
+        console.error('JSON file did not contain any entries: ' + filePath);
       }
     }
     
@@ -131,7 +131,7 @@ export const ImportExportTool = {
         let key   = importKeys[ collectionName ] || '_id',
             query = {};
         data.forEach((record) => {
-          console.info("ImportExportTool.insertDataIntoCollection inserting " + collectionName);
+          console.info('ImportExportTool.insertDataIntoCollection inserting ' + collectionName);
           query[ key ] = record[ key ];
           collectionMap[ collectionName ].upsert(query, { $set: record }, { validate: false });
         });
@@ -139,7 +139,7 @@ export const ImportExportTool = {
         console.error(e);
       }
     } else {
-      console.error("ImportExportTool.insertDataIntoCollection failed: collection [" + collectionName + "] not found");
+      console.error('ImportExportTool.insertDataIntoCollection failed: collection [' + collectionName + '] not found');
     }
   },
   /**
@@ -147,45 +147,45 @@ export const ImportExportTool = {
    * @param collectionNames (optional) A list of collection names
    */
   exportData (collectionNames) {
-    console.info("ImportExportTool.exportData:", collectionNames);
+    console.info('ImportExportTool.exportData:', collectionNames);
     let handler = this,
         dataDir = path.join(handler.dataPath, moment().format('YYYY_MM_DD_HH_mm_ss'));
     
     collectionNames = _.isArray(collectionNames) ? collectionNames : _.keys(collectionMap);
     
     if (fs.existsSync(dataDir)) {
-      console.info("ImportExportTool.exportData removing existing files");
+      console.info('ImportExportTool.exportData removing existing files');
       fs.readdirSync(dataDir).filter((filepath) => {
         return path.basename(filepath).match(handler.fileRegex) != null
       }).forEach((filepath) => {
-        console.info("Removing file: " + filepath);
+        console.info('Removing file: ' + filepath);
         
         fs.unlinkSync(path.join(dataDir, filepath));
       });
     }
     
     let zipFile = new AdmZip();
-  
-    console.info("ImportExportTool.exportData exporting collections:", collectionNames);
+    
+    console.info('ImportExportTool.exportData exporting collections:', collectionNames);
     collectionNames.forEach((collectionName) => {
       let cursor = collectionMap[ collectionName ].find({});
       
-      zipFile.addFile(collectionName + ".json", new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
+      zipFile.addFile(collectionName + '.json', new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
     });
     
-    dataDir = dataDir + ".zip";
+    dataDir = dataDir + '.zip';
     
-    console.info("ImportExportTool.exportData creating data directory: " + dataDir);
+    console.info('ImportExportTool.exportData creating data directory: ' + dataDir);
     
     zipFile.writeZip(dataDir);
     
     // delete the file after 5 minutes have passed
     Meteor.setTimeout(function () {
       fs.unlinkSync(dataDir);
-      console.info("ImportExportTool.exportData deleted " + dataDir);
+      console.info('ImportExportTool.exportData deleted ' + dataDir);
     }, 30000);
     
-    console.info("ImportExportTool.exportData complete");
+    console.info('ImportExportTool.exportData complete');
     
     return path.basename(dataDir);
   },
@@ -196,10 +196,10 @@ export const ImportExportTool = {
    */
   getPayload (cursor, collectionName) {
     let handler     = this,
-        output      = "",
+        output      = '',
         recordCount = cursor.count();
     
-    console.info("ImportExportTool.getPayload exporting " + collectionName + " (" + recordCount + " records)");
+    console.info('ImportExportTool.getPayload exporting ' + collectionName + ' (' + recordCount + ' records)');
     
     output += "[\n";
     cursor.forEach((record, i) => {
@@ -207,7 +207,7 @@ export const ImportExportTool = {
     });
     output += "]\n";
     
-    console.info("ImportExportTool.getPayload done Exporting " + collectionName);
+    console.info('ImportExportTool.getPayload done Exporting ' + collectionName);
     
     return output;
   }

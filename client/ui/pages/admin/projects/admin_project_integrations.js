@@ -1,8 +1,8 @@
 import './admin_project_integrations.html';
-import { Template } from 'meteor/templating';
-import { Integrations } from '../../../../../imports/api/integrations/integrations';
+import { Template }           from 'meteor/templating';
+import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
+import { Integrations }       from '../../../../../imports/api/integrations/integrations';
 import { ImportedItemCounts } from './imported_item_counts';
-import { Util } from '../../../../../imports/api/util';
 import './add_integration_form';
 import './admin_project_integration';
 
@@ -20,11 +20,11 @@ Template.AdminProjectIntegrations.helpers({
  * Template Event Handlers
  */
 Template.AdminProjectIntegrations.events({
-  "edited .editable" (e, instance, newValue) {
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let integrationId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey       = $(e.target).attr("data-key");
+    let integrationId = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey       = $(e.target).attr('data-key');
     
     console.log('AdminProjectIntegrations edited:', integrationId, dataKey, newValue);
     if (integrationId !== null && dataKey !== null) {
@@ -36,19 +36,19 @@ Template.AdminProjectIntegrations.events({
       });
     }
   },
-  "click .btn-add-integration" (e, instance) {
+  'click .btn-add-integration' (e, instance) {
     let project = Template.currentData();
     
     RobaDialog.show({
-      contentTemplate: "AddIntegrationForm",
+      contentTemplate: 'AddIntegrationForm',
       contentData    : {
         project: project
       },
-      title          : "Add Integration",
+      title          : 'Add Integration',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         console.log('AdminProjectIntegrations AddIntegrationForm submit:', btn);
@@ -76,10 +76,10 @@ Template.AdminProjectIntegrations.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-integration" (e, instance, newValue) {
+  'click .btn-delete-integration' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let integrationId = $(e.target).closest(".data-table-row").attr("data-pk"),
+    let integrationId = $(e.target).closest('.data-table-row').attr('data-pk'),
         integration   = Integrations.findOne(integrationId);
     
     RobaDialog.ask('Delete Integration?', 'Are you sure that you want to delete the integration of <span class="label label-primary">' +
@@ -89,7 +89,7 @@ Template.AdminProjectIntegrations.events({
       RobaDialog.hide();
       Meteor.call('deleteIntegration', integrationId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         }
       });
     });

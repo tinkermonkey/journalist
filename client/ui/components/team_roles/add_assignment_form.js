@@ -1,15 +1,16 @@
 import './add_assignment_form.html';
 import { Template } from 'meteor/templating';
+import SimpleSchema from 'simpl-schema';
 import { Projects } from '../../../../imports/api/projects/projects';
 
 let assignmentSchema = new SimpleSchema({
   projectId: {
     type : String,
-    label: "Project"
+    label: 'Project'
   },
   percent  : {
     type : Number,
-    label: "Percent"
+    label: 'Percent'
   }
 });
 

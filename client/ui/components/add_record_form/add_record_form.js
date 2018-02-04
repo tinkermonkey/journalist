@@ -4,8 +4,7 @@ import { Template } from 'meteor/templating';
 /**
  * Template Helpers
  */
-Template.AddRecordForm.helpers({
-});
+Template.AddRecordForm.helpers({});
 
 /**
  * Template Event Handlers

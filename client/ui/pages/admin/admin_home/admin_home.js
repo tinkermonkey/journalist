@@ -1,15 +1,15 @@
 import './admin_home.html';
-import { Template } from 'meteor/templating';
-import { Contributors } from '../../../../../imports/api/contributors/contributors';
-import { ContributorRoleDefinitions } from '../../../../../imports/api/contributors/contributor_role_definitions';
+import { Template }                    from 'meteor/templating';
+import { Contributors }                from '../../../../../imports/api/contributors/contributors';
+import { ContributorRoleDefinitions }  from '../../../../../imports/api/contributors/contributor_role_definitions';
 import { IntegrationCalculatedFields } from '../../../../../imports/api/integrations/integration_calculated_fields';
-import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
-import { DisplayTemplates } from '../../../../../imports/api/display_templates/display_templates';
-import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
-import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
-import { Projects } from '../../../../../imports/api/projects/projects';
-import { Teams } from '../../../../../imports/api/teams/teams';
-import { Users } from '../../../../../imports/api/users/users';
+import { CapacityPlans }               from '../../../../../imports/api/capacity_plans/capacity_plans';
+import { DisplayTemplates }            from '../../../../../imports/api/display_templates/display_templates';
+import { IntegrationImportFunctions }  from '../../../../../imports/api/integrations/integration_import_functions';
+import { IntegrationServers }          from '../../../../../imports/api/integrations/integration_servers';
+import { Projects }                    from '../../../../../imports/api/projects/projects';
+import { Teams }                       from '../../../../../imports/api/teams/teams';
+import { Users }                       from '../../../../../imports/api/users/users';
 import './admin_stats_imported_items';
 import './admin_stats_contributors';
 

@@ -1,7 +1,7 @@
-import { Meteor } from 'meteor/meteor';
+import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import { Efforts } from '../efforts.js';
-import { Auth } from '../../auth.js';
+import { Efforts }      from '../efforts.js';
+import { Auth }         from '../../auth.js';
 
 Meteor.methods({
   /**
@@ -9,7 +9,7 @@ Meteor.methods({
    * @param contributorId
    * @param title
    */
-  addEffort(contributorId, title){
+  addEffort (contributorId, title) {
     console.log('addEffort:', contributorId, title);
     let user = Auth.requireAuthentication();
     
@@ -22,7 +22,7 @@ Meteor.methods({
       // Create the effort
       Efforts.insert({
         contributorId: contributorId,
-        title: title
+        title        : title
       });
     } else {
       console.error('Non-authorized user tried to add an effort:', user.username, title);
@@ -36,7 +36,7 @@ Meteor.methods({
    * @param key
    * @param value
    */
-  editEffort(effortId, key, value){
+  editEffort (effortId, key, value) {
     console.log('editEffort:', effortId, key);
     let user = Auth.requireAuthentication();
     
@@ -50,11 +50,11 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.managesContributor(effort.contributorId) || user.isAdmin()) {
-      let update = {};
-      update[key] = value;
+      let update    = {};
+      update[ key ] = value;
       
       // Update the effort
-      Efforts.update(effortId, {$set: update});
+      Efforts.update(effortId, { $set: update });
     } else {
       console.error('Non-admin user tried to edit an effort:', user.username, key, value);
       throw new Meteor.Error(403);
@@ -65,7 +65,7 @@ Meteor.methods({
    * Delete an effort record
    * @param effortId
    */
-  deleteEffort(effortId){
+  deleteEffort (effortId) {
     console.log('deleteEffort:', effortId);
     let user = Auth.requireAuthentication();
     

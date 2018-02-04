@@ -1,0 +1,84 @@
+<template name="IntegrationServer">
+  {{#if Template.subscriptionsReady }}
+    {{#with server}}
+      {{setPageTitle 'Journalist - Admin Server - ' title }}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'IntegrationServers' }}">Servers</a></li>
+              <li class="active">Integration Server</li>
+            </ol>
+            
+            <h1>{{title}}</h1>
+            <div class="integration-server-url"><a href="{{baseUrl}}" target="_blank">{{baseUrl}}</a></div>
+          
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <h2>Configuration</h2>
+            <table class="table data-table table-striped config-table narrow-width">
+              <tbody>
+              <tr class="show-controls-on-hover">
+                <td>Title</td>
+                <td>
+                </td>
+                <td>{{> EditableTextField dataKey="title" value=title emptyText="Server Title" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Server Type</td>
+                <td></td>
+                <td>{{> EditableEnumSelector dataKey="integrationType" value=integrationType enum=IntegrationTypes emptyText="Type" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Base URL</td>
+                <td>
+                  <a class="hidden-control" href="{{baseUrl}}" target="_blank">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td>{{> EditableTextField dataKey="baseUrl" value=baseUrl emptyText="Server base URL" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Health Check Period</td>
+                <td>
+                </td>
+                <td>{{> EditableTextField dataKey="healthCheckFrequency" value=healthCheckFrequency emptyText="Enter later directive" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Cache Update Period</td>
+                <td>
+                </td>
+                <td>{{> EditableTextField dataKey="cacheUpdateFrequency" value=cacheUpdateFrequency emptyText="Enter later directive" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Active</td>
+                <td>
+                </td>
+                <td>{{> EditableCheckbox dataKey="isActive" value=isActive }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Authenticated</td>
+                <td>
+                </td>
+                <td>{{> AuthenticateServerLink }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <h2>Auth Provider Configuration</h2>
+            {{> IntegrationServerAuthProvider }}
+          </div>
+        </div>
+        
+        {{> Template.dynamic template=integrationServerPanel }}
+      </div>
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

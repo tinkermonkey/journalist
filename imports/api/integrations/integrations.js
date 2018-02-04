@@ -1,13 +1,13 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { Util } from '../util.js';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }                       from 'meteor/mongo';
+import SimpleSchema                    from 'simpl-schema';
+import { ChangeTracker }               from 'meteor/austinsand:roba-change-tracker';
+import { Util }                        from '../util.js';
+import { SchemaHelpers }               from '../schema_helpers.js';
 import { IntegrationCalculatedFields } from './integration_calculated_fields';
-import { IntegrationImportFunctions } from './integration_import_functions';
-import { IntegrationServers } from './integration_servers';
-import { ItemTypes } from '../imported_items/item_types';
-import { Projects } from '../projects/projects';
+import { IntegrationImportFunctions }  from './integration_import_functions';
+import { IntegrationServers }          from './integration_servers';
+import { ItemTypes }                   from '../imported_items/item_types';
+import { Projects }                    from '../projects/projects';
 
 /**
  * ============================================================================
@@ -25,7 +25,7 @@ export const Integration = new SimpleSchema({
   },
   // Type of items this integration provides
   itemType                : {
-    type         : Number,
+    type         : SimpleSchema.Integer,
     allowedValues: _.values(ItemTypes)
   },
   // The _id of the integration import function to use
@@ -45,16 +45,16 @@ export const Integration = new SimpleSchema({
   },
   // The list of _id of the calculated fields to use
   calculatedFieldIds      : {
-    type    : [ String ],
+    type    : Array, // String
     optional: true
   },
   // The frequency of the basic update task
-  updateFrequency: {
+  updateFrequency         : {
     type        : String,
     defaultValue: 'every 5 minutes'
   },
   // The frequency of the basic update task
-  deepSyncFrequency: {
+  deepSyncFrequency       : {
     type        : String,
     defaultValue: 'at 1:00am every day'
   },

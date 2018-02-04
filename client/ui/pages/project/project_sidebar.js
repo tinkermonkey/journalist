@@ -1,5 +1,5 @@
 import './project_sidebar.html';
-import { Template } from 'meteor/templating';
+import { Template }                  from 'meteor/templating';
 import { PublishedDisplayTemplates } from '../../../../imports/api/display_templates/published_display_templates';
 
 /**

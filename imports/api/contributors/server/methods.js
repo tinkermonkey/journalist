@@ -1,10 +1,10 @@
-import { Meteor } from 'meteor/meteor';
-import { check, Match } from 'meteor/check';
-import { Contributors } from '../contributors.js';
-import { ContributorTeamRoles } from '../contributor_team_roles.js';
+import { Meteor }                        from 'meteor/meteor';
+import { check, Match }                  from 'meteor/check';
+import { Contributors }                  from '../contributors.js';
+import { ContributorTeamRoles }          from '../contributor_team_roles.js';
 import { ContributorProjectAssignments } from '../contributor_project_assignments.js';
-import { ContributorRoleDefinitions } from '../contributor_role_definitions.js';
-import { Auth } from '../../auth.js';
+import { ContributorRoleDefinitions }    from '../contributor_role_definitions.js';
+import { Auth }                          from '../../auth.js';
 
 Meteor.methods({
   /**
@@ -30,9 +30,9 @@ Meteor.methods({
       if (check === 0) {
         // Create the contributor
         let contributorId = Contributors.insert({
-          email     : email,
-          name      : name,
-          roleId    : roleId
+          email : email,
+          name  : name,
+          roleId: roleId
         });
         
         // Look for users to sync up

@@ -1,6 +1,8 @@
 import './contributor_tasks.html';
-import { Template } from 'meteor/templating';
-import { Tasks } from '../../../../imports/api/tasks/tasks.js';
+import { Template }   from 'meteor/templating';
+import SimpleSchema   from 'simpl-schema';
+import { RobaDialog } from 'meteor/austinsand:roba-dialog';
+import { Tasks }      from '../../../../imports/api/tasks/tasks.js';
 import '../add_record_form/add_record_form.js';
 
 /**
@@ -12,11 +14,11 @@ Template.ContributorTasks.helpers({});
  * Template Event Handlers
  */
 Template.ContributorTasks.events({
-  "edited .editable"(e, instance, newValue){
+  'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let taskId = $(e.target).closest(".data-table-row").attr("data-pk"),
-        dataKey  = $(e.target).attr("data-key");
+    let taskId  = $(e.target).closest('.data-table-row').attr('data-pk'),
+        dataKey = $(e.target).attr('data-key');
     
     console.log('ContributorTasks edited:', taskId, dataKey, newValue);
     if (taskId && dataKey) {
@@ -27,11 +29,11 @@ Template.ContributorTasks.events({
       });
     }
   },
-  "click .btn-add-task"(e, instance){
-    let contributorId = $(e.target).closest(".contributor-tasks").attr("data-pk");
+  'click .btn-add-task' (e, instance) {
+    let contributorId = $(e.target).closest('.contributor-tasks').attr('data-pk');
     
     RobaDialog.show({
-      contentTemplate: "AddRecordForm",
+      contentTemplate: 'AddRecordForm',
       contentData    : {
         schema: new SimpleSchema({
           title: {
@@ -40,11 +42,11 @@ Template.ContributorTasks.events({
           }
         })
       },
-      title          : "Add Task",
+      title          : 'Add Task',
       width          : 500,
       buttons        : [
-        { text: "Cancel" },
-        { text: "Add" }
+        { text: 'Cancel' },
+        { text: 'Add' }
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
@@ -69,14 +71,14 @@ Template.ContributorTasks.events({
       }.bind(this)
     });
   },
-  "click .btn-delete-task"(e, instance){
-    let taskId = $(e.target).closest(".data-table-row").attr("data-pk"),
+  'click .btn-delete-task' (e, instance) {
+    let taskId = $(e.target).closest('.data-table-row').attr('data-pk'),
         task   = Tasks.findOne(taskId);
     
     RobaDialog.ask('Delete Task?', 'Are you sure that you want to delete the task <span class="label label-primary"> ' + task.title + '</span> ?', () => {
       Meteor.call('deleteTask', taskId, function (error, response) {
         if (error) {
-          RobaDialog.error("Delete failed: " + error.message);
+          RobaDialog.error('Delete failed: ' + error.message);
         } else {
           RobaDialog.hide();
         }

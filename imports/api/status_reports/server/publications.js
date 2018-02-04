@@ -1,7 +1,7 @@
-import { Meteor } from 'meteor/meteor';
-import { StatusReports } from '../status_reports';
+import { Meteor }               from 'meteor/meteor';
+import { StatusReports }        from '../status_reports';
 import { StatusReportSettings } from '../status_report_settings';
-import { StatusReportStates } from '../status_report_states';
+import { StatusReportStates }   from '../status_report_states';
 
 Meteor.publish('status_report_settings', function () {
   console.log('Publish: status_report_settings');

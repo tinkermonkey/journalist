@@ -5,7 +5,7 @@ import { Template } from 'meteor/templating';
  * Template Helpers
  */
 Template.TeamBanner.helpers({
-  teamBannerTemplate(){
+  teamBannerTemplate () {
     let team = this;
     return team.bannerTemplate || 'DevTeamBanner'
   }

@@ -1,7 +1,7 @@
-import { Meteor } from 'meteor/meteor';
-import { Contributors } from '../contributors';
-import { ContributorTeamRoles } from '../contributor_team_roles';
-import { ContributorRoleDefinitions } from '../contributor_role_definitions';
+import { Meteor }                        from 'meteor/meteor';
+import { Contributors }                  from '../contributors';
+import { ContributorTeamRoles }          from '../contributor_team_roles';
+import { ContributorRoleDefinitions }    from '../contributor_role_definitions';
 import { ContributorProjectAssignments } from '../contributor_project_assignments';
 
 Meteor.publish('contributors', function () {

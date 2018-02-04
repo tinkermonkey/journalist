@@ -1,11 +1,11 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { SchemaHelpers } from '../schema_helpers.js';
-import { CapacityPlans } from './capacity_plans';
-import { CapacityPlanSprints } from './capacity_plan_sprints';
+import { Mongo }                    from 'meteor/mongo';
+import SimpleSchema                 from 'simpl-schema';
+import { SchemaHelpers }            from '../schema_helpers.js';
+import { CapacityPlans }            from './capacity_plans';
+import { CapacityPlanSprints }      from './capacity_plan_sprints';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
-import { CapacityPlanBlockTypes } from './capacity_plan_block_types';
-import { CapacityPlanSprintLinks } from './capacity_plan_sprint_links';
+import { CapacityPlanBlockTypes }   from './capacity_plan_block_types';
+import { CapacityPlanSprintLinks }  from './capacity_plan_sprint_links';
 
 /**
  * ============================================================================
@@ -26,11 +26,11 @@ export const CapacityPlanOption = new SimpleSchema({
     }
   },
   sprintLength: {
-    type        : Number,
+    type        : SimpleSchema.Integer,
     defaultValue: 2 * 7 * 24 * 60 * 60 * 1000
   },
   sprintCount : {
-    type        : Number,
+    type        : SimpleSchema.Integer,
     defaultValue: 4
   },
   // Standard tracking fields
@@ -52,7 +52,7 @@ export const CapacityPlanOption = new SimpleSchema({
   }
 });
 
-export const CapacityPlanOptions = new Mongo.Collection("capacity_plan_options");
+export const CapacityPlanOptions = new Mongo.Collection('capacity_plan_options');
 CapacityPlanOptions.attachSchema(CapacityPlanOption);
 ChangeTracker.trackChanges(CapacityPlanOptions, 'CapacityPlanOptions');
 

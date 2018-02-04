@@ -1,9 +1,6 @@
 import './capacity_plan_summary_report.html';
-import { Template } from 'meteor/templating';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
-import { CapacityPlanSprintLinks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
+import { Template }      from 'meteor/templating';
 import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
-import { CapacityPlanBlockTypes } from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import './capacity_plan.css';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
@@ -36,7 +33,7 @@ Template.CapacityPlanSummaryReport.helpers({
   capacityPlanRoles () {
     let plan          = CapacityPlans.findOne(FlowRouter.getParam('planId')),
         currentRoleId = Template.instance().currentPlanningRole.get(),
-        roles = plan.roles();
+        roles         = plan.roles();
     
     // If there's no current role set, set one
     if (!currentRoleId && roles.length) {
