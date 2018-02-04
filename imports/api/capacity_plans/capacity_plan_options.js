@@ -21,9 +21,7 @@ export const CapacityPlanOption = new SimpleSchema({
   },
   startDate   : {
     type        : Date,
-    defaultValue: () => {
-      return moment().add(7, 'days').startOf('week').toDate()
-    }
+    optional    : true
   },
   sprintLength: {
     type        : SimpleSchema.Integer,
