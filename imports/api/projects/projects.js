@@ -32,6 +32,9 @@ export const Project = new SimpleSchema({
     type    : Array, // String
     optional: true
   },
+  'reports.$': {
+    type: String
+  },
   // Contributor that is the primary owner of this project
   owner         : {
     type    : String,

@@ -24,6 +24,9 @@ export const ImportedItem = new SimpleSchema({
     type    : Array, // String
     optional: true
   },
+  'teamId.$': {
+    type: String
+  },
   // Overall type of this item:
   itemType     : {
     type         : SimpleSchema.Integer,
@@ -65,8 +68,11 @@ export const ImportedItem = new SimpleSchema({
   },
   statusHistory: {
     type    : Array, // Object
-    blackbox: true,
     optional: true
+  },
+  'statusHistory.$': {
+    type: Object,
+    blackbox: true
   },
   workPhase    : {
     type         : SimpleSchema.Integer,

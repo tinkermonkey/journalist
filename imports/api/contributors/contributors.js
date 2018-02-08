@@ -31,6 +31,9 @@ export const Contributor = new SimpleSchema({
     type    : Array, // String
     optional: true
   },
+  'identifiers.$': {
+    type: String
+  },
   // Hashmap of profiles from the various integration servers, keyed by the server _id
   profiles        : {
     type    : Object,

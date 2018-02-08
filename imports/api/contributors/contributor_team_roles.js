@@ -35,6 +35,9 @@ export const ContributorTeamRole = new SimpleSchema({
     type    : Array, // String
     optional: true
   },
+  'responsibilities.$': {
+    type: String
+  },
   // Standard tracking fields
   dateCreated     : {
     type     : Date,

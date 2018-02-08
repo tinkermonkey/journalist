@@ -24,6 +24,9 @@ export const CapacityPlan = new SimpleSchema({
     type    : Array, // String
     optional: true
   },
+  'teamIds.$': {
+    type: String
+  },
   // Standard tracking fields
   dateCreated : {
     type     : Date,

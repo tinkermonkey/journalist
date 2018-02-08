@@ -1,6 +1,7 @@
 import { Mongo }         from 'meteor/mongo';
 import SimpleSchema      from 'simpl-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
+import {ItemTypes} from "../imported_items/item_types";
 
 /**
  * ============================================================================
@@ -17,7 +18,11 @@ export const IntegrationServerCache = new SimpleSchema({
   },
   value    : {
     type    : Array, // Object
+  },
+  'value.$': {
+    type: Object,
     blackbox: true
+
   },
   // Track the age of the data
   timestamp: {

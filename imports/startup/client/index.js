@@ -1,3 +1,5 @@
+import SimpleSchema from 'simpl-schema';
+
 // Base functionality
 import './routes.js';
 import './client.js';
@@ -13,3 +15,8 @@ import '../../../client/ui/stylesheets/team_roster_assignments.css';
 // Supporting configuration
 import '../accounts_config.js';
 import '../later_config.js';
+
+Meteor.startup(() => {
+  // Make sure simpleSchema is configured correctly
+  SimpleSchema.extendOptions(['autoform', 'denyUpdate']);
+});
