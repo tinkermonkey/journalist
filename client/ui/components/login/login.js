@@ -73,7 +73,11 @@ Template.Login.events({
  * Template Created
  */
 Template.Login.onCreated(function () {
-
+  let instance = Template.instance();
+  
+  instance.autorun(() => {
+  
+  })
 });
 
 /**
