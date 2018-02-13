@@ -1,10 +1,10 @@
 //import { moment } from 'meteor/momentjs:moment';
-import { SyncedCron }    from 'meteor/percolate:synced-cron';
-import { Integrations }  from '../../api/integrations/integrations';
+import { SyncedCron } from 'meteor/percolate:synced-cron';
+import { Integrations } from '../../api/integrations/integrations';
 import { ImportedItems } from '../../api/imported_items/imported_items';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 
-let debug = true,
+let debug = false,
     trace = false;
 
 export class IntegrationAgent {
@@ -42,7 +42,8 @@ export class IntegrationAgent {
     });
     
     // Schedule the job to run the query periodically
-    self.queryJobKeys = [];
+    self.updateQueryJobKeys = [];
+    self.syncQueryJobKeys = [];
     self.updateQueryJobs();
   }
   
@@ -56,20 +57,40 @@ export class IntegrationAgent {
     
     // Get the query definitions
     if (queryDefinitions) {
+      // Create a basic update job for each query
       _.keys(queryDefinitions).forEach((queryKey) => {
-        let queryJobKey = self.trackerKey + '-query-' + queryKey;
-        self.queryJobKeys.push(queryKey);
-        SyncedCron.remove(queryJobKey);
+        let jobKey = self.trackerKey + '-query-' + queryKey;
+        self.updateQueryJobKeys.push(queryKey);
+        SyncedCron.remove(jobKey);
         
         SyncedCron.add({
-          name: queryJobKey,
+          name: jobKey,
           schedule (parser) {
             let parserText = self.integration.updateFrequency || 'every 10 minutes';
-            debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', queryJobKey, '"', parserText, '"');
+            debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', jobKey, '"', parserText, '"');
             return parser.text(parserText);
           },
           job () {
-            self.executeQuery(queryKey);
+            self.executeQuery(queryKey, false);
+          }
+        });
+      });
+      
+      // Create a deep sync job for each query
+      _.keys(queryDefinitions).forEach((queryKey) => {
+        let jobKey = self.trackerKey + '-sync-' + queryKey;
+        self.syncQueryJobKeys.push(queryKey);
+        SyncedCron.remove(jobKey);
+    
+        SyncedCron.add({
+          name: jobKey,
+          schedule (parser) {
+            let parserText = self.integration.deepSyncFrequency || 'at 1:00 am';
+            debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', jobKey, '"', parserText, '"');
+            return parser.text(parserText);
+          },
+          job () {
+            self.executeQuery(queryKey, true);
           }
         });
       });
@@ -78,20 +99,30 @@ export class IntegrationAgent {
   
   /**
    * Execute the query
+   *
+   * @param queryKey
+   * @param deepSync
    */
-  executeQuery (queryKey) {
-    debug && console.log('IntegrationAgent.executeQuery:', this.integration._id, queryKey);
-    let self  = this,
-        query = self.integration.details[ queryKey ];
+  executeQuery (queryKey, deepSync) {
+    debug && console.log('IntegrationAgent.executeQuery:', this.integration._id, queryKey, deepSync);
+    let self      = this,
+        query     = self.integration.details[ queryKey ],
+        startTime = Date.now();
     
     if (self.serviceProvider.isHealthy()) {
       try {
+        // Force deepSync to a boolean
+        deepSync = deepSync === true;
+        if(deepSync){
+          console.log('IntegrationAgent.executeQuery running deep sync:', this.integration._id, queryKey);
+        }
+        
         // Determine when the last import was to pull in the updates
         let startTime        = Date.now(),
             mostRecentImport = ImportedItems.findOne({ integrationId: self.integration._id }, { lastImported: -1 }),
             lastUpdate;
         
-        if (mostRecentImport && mostRecentImport.lastImported) {
+        if (mostRecentImport && mostRecentImport.lastImported && !deepSync) {
           lastUpdate = mostRecentImport.lastImported;
         } else {
           lastUpdate = moment().subtract(6, 'months').hours(0).minutes(0).seconds(0);
@@ -128,6 +159,8 @@ export class IntegrationAgent {
     } else {
       HealthTracker.update(self.trackerKey, false, { message: 'Service provider is not healthy' });
     }
+  
+    console.log('IntegrationAgent.executeQuery complete:', this.integration._id, queryKey, deepSync, Date.now() - startTime);
   }
   
   /**
@@ -200,7 +233,7 @@ export class IntegrationAgent {
     
     // Remove the cron job to check status & cache
     SyncedCron.remove(self.trackerKey);
-    self.queryJobKeys.forEach((jobKey) => {
+    self.updateQueryJobKeys.forEach((jobKey) => {
       SyncedCron.remove(jobKey);
     });
   }

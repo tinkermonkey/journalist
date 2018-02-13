@@ -1,8 +1,8 @@
-import { Mongo }              from 'meteor/mongo';
-import SimpleSchema           from 'simpl-schema';
-import { SchemaHelpers }      from '../schema_helpers.js';
+import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
+import { SchemaHelpers } from '../schema_helpers.js';
 import { StatusReportStates } from './status_report_states.js';
-import { CollectionDetails }  from '../collection_details';
+import { CollectionDetails } from '../collection_details';
 
 /**
  * ============================================================================
@@ -123,5 +123,12 @@ StatusReports.helpers({
     } else {
       console.error('StatusReports.sourceCollectionRouteParam failed to find collection:', report.sourceCollection)
     }
+  },
+  
+  /**
+   * Is this report 'open'
+   */
+  isOpen () {
+    return _.contains([ StatusReportStates.assigned, StatusReportStates.inProgress ], this.state)
   }
 });

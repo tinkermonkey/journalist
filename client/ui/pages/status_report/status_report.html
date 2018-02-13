@@ -1,0 +1,9 @@
+<template name="StatusReport">
+  {{#if Template.subscriptionsReady}}
+    {{#with statusReport}}
+    
+    {{else}}
+      {{> NotFound }}
+    {{/with}}
+  {{/if}}
+</template>

@@ -4,6 +4,7 @@ import { RobaDialog }           from 'meteor/austinsand:roba-dialog';
 import { StatusReportSettings } from '../../../../imports/api/status_reports/status_report_settings';
 import { StatusReports }        from '../../../../imports/api/status_reports/status_reports';
 import { StatusReportStates }   from '../../../../imports/api/status_reports/status_report_states';
+import '../status_report/status_report_sausage';
 
 /**
  * Template Helpers
@@ -33,12 +34,6 @@ Template.ContributorStatusReportsDue.helpers({
     
     // Sort by due date
     return reportsDue
-  },
-  isImminentReport () {
-    let dueDate = this.nextDue || this.dueDate;
-    if (dueDate) {
-      return dueDate - Date.now() < 24 * 60 * 60 * 1000
-    }
   }
 });
 

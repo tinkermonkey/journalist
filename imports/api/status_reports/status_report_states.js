@@ -1,7 +1,5 @@
 export const StatusReportStates = {
   assigned  : 0,
   inProgress: 1,
-  late      : 2,
-  expired   : 3,
-  submitted : 4
+  submitted : 2
 };

@@ -30,6 +30,7 @@ import '../../../client/ui/pages/effort/effort';
 import '../../../client/ui/pages/project/project_home';
 import '../../../client/ui/pages/report/report_container';
 import '../../../client/ui/pages/report/support/weekly_support_report';
+import '../../../client/ui/pages/status_report/status_report';
 import '../../../client/ui/pages/task/task';
 import '../../../client/ui/pages/team/team_home';
 import '../../../client/ui/pages/user/user_profile';
@@ -90,6 +91,12 @@ FlowRouter.route('/report/:templateName/:contextId', {
     BlazeLayout.render('ReportLayout', { main: 'ReportContainer' });
   }
 });
+FlowRouter.route('/status_report/:reportId', {
+  name: 'StatusReport',
+  action () {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'StatusReport' });
+  }
+});
 FlowRouter.route('/task/:taskId', {
   name: 'Task',
   action () {
@@ -102,7 +109,6 @@ FlowRouter.route('/team/:teamId', {
     BlazeLayout.render('AuthenticatedLayout', { main: 'TeamHome' });
   }
 });
-
 FlowRouter.route('/user_profile', {
   name: 'UserProfile',
   action () {

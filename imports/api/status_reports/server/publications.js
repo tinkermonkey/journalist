@@ -1,7 +1,7 @@
-import { Meteor }               from 'meteor/meteor';
-import { StatusReports }        from '../status_reports';
+import { Meteor } from 'meteor/meteor';
+import { StatusReports } from '../status_reports';
 import { StatusReportSettings } from '../status_report_settings';
-import { StatusReportStates }   from '../status_report_states';
+import { StatusReportStates } from '../status_report_states';
 
 Meteor.publish('status_report_settings', function () {
   console.log('Publish: status_report_settings');
@@ -10,6 +10,22 @@ Meteor.publish('status_report_settings', function () {
         contributorList = user.contributor().allStaffIds();
     contributorList.push(user.contributor()._id);
     return StatusReportSettings.find({ contributorId: { $in: contributorList } });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('status_report', function (reportId) {
+  console.log('Publish: status_report');
+  if (this.userId) {
+    let user            = Meteor.user(),
+        contributorList = user.contributor().allStaffIds();
+    contributorList.push(user.contributor()._id);
+    return StatusReports.find({
+      _id          : reportId,
+      contributorId: { $in: contributorList }
+    });
   } else {
     this.ready();
     return [];

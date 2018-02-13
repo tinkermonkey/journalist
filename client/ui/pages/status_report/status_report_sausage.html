@@ -1,0 +1,39 @@
+<template name="StatusReportSausage">
+  <!-- context is a status report record or a status report setting -->
+  <div class="status-report-breadcrumbs no-wrap" data-pk="{{_id}}">
+    <ol class="breadcrumb">
+      <li class="active">{{sourceCollection}}</li>
+      <li>
+        <a href="{{pathFor sourceDetails.routeName sourceRouteParamValue}}">{{sourceLabel}}</a>
+      </li>
+      <li>
+        {{#if isOpen}}
+          {{#if dueDate}}
+            due <span class="{{isImminentReport}}">{{fromNow dueDate}}</span>
+            ({{dateFormat dueDate 'ddd MMM Do'}} at {{dateFormat dueDate 'h:mm a'}})
+          {{else}}
+            No due date
+          {{/if}}
+          , last updated {{fromNow dateModified}}
+        {{else}}
+          Submitted {{dateFormat submitDate 'ddd MMM Do, hh:mm a'}}
+        {{/if}}
+      </li>
+      <li class="breadcrumb-controls">
+        <a href="{{pathFor 'StatusReport' reportId=_id}}">
+          <span class="glyphicon glyphicon-folder-open"></span>
+        </a>
+        {{#if userControlsReport}}
+          <a class="btn-reopen-report hidden-control">
+            <span class="glyphicon glyphicon-folder-open"></span>
+            Reopen
+          </a>
+          <a class="btn-delete-report link-red hidden-control">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+            Delete
+          </a>
+        {{/if}}
+      </li>
+    </ol>
+  </div>
+</template>

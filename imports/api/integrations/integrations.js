@@ -59,7 +59,7 @@ export const Integration = new SimpleSchema({
   // The frequency of the basic update task
   deepSyncFrequency: {
     type: String,
-    defaultValue: 'at 1:00am every day'
+    defaultValue: 'at 1:00 am'
   },
   // Configuration blob
   details: {

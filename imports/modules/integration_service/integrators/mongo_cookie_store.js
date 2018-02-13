@@ -5,7 +5,7 @@ const MemoryCookieStore = require('tough-cookie').MemoryCookieStore,
       Future            = require('fibers/future'),
       request           = require('request'),
       CookieStores      = new Mongo.Collection('cookie_stores'),
-      debug             = true;
+      debug             = false;
 
 export class MongoCookieStore extends MemoryCookieStore {
   constructor (key) {

@@ -17,7 +17,7 @@ import { IntegrationAgent }                      from './integration_agent';
 
 const { URL } = require('url');
 
-let debug = true,
+let debug = false,
     trace = false;
 
 export class IntegrationServiceProvider {

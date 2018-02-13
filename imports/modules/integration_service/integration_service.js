@@ -3,7 +3,7 @@ import { IntegrationServiceProvider } from './integration_service_provider';
 import { IntegrationServers }         from '../../api/integrations/integration_servers';
 import { HealthTracker }              from '../../api/system_health_metrics/server/health_tracker';
 
-let debug = true;
+let debug = false;
 
 /**
  * Singleton responsible for tracking and managing the integrations

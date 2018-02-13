@@ -9,7 +9,7 @@ import { ImportedItemWorkStates } from '../../../api/imported_items/imported_ite
 // Pull in the jira connector
 const JiraConnector    = require('jira-connector'),
       request          = require('request'),
-      debug            = true,
+      debug            = false,
       trace            = false,
       queryDefinitions = {
         master: 'Master Select Query'
