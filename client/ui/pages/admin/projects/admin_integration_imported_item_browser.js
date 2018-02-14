@@ -88,9 +88,23 @@ Template.AdminIntegrationImportedItemBrowser.events({
       instance.reprocessing.set(true);
       Meteor.call('reprocessIntegrationItems', integration._id, (error, response) => {
         instance.reprocessing.set(false);
-        console.log('reprocessIntegrationItems response:', response);
+        //console.log('reprocessIntegrationItems response:', response);
         if (error) {
           RobaDialog.error('Reprocessing failed:' + error.toString())
+        }
+      });
+    }
+  },
+  'click .btn-deep-sync' (e, instance) {
+    let integration = this;
+    
+    if (integration && integration._id) {
+      instance.reprocessing.set(true);
+      Meteor.call('deepSyncIntegration', integration._id, (error, response) => {
+        instance.reprocessing.set(false);
+        //console.log('deepSyncIntegration response:', response);
+        if (error) {
+          RobaDialog.error('Deep sync failed:' + error.toString())
         }
       });
     }
