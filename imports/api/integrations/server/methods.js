@@ -676,6 +676,30 @@ Meteor.methods({
   },
   
   /**
+   * Perform a deep-sync re-loading everything from the source of truth
+   * @param integrationId
+   */
+  deepSyncIntegration (integrationId) {
+    console.log('deepSyncIntegration:', integrationId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(integrationId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      // grab the integration
+      let integration = Integrations.findOne(integrationId);
+      
+      return IntegrationService.getServiceProvider(integration.server()).getIntegrationAgent(integration).executeAllQueries(true);
+    } else {
+      console.error('Non-admin user tried to deep sync an integration:', user.username, integrationId);
+      throw new Meteor.Error(403);
+    }
+    
+  },
+  
+  /**
    * Add an integration server auth provider
    * @param serverId
    */

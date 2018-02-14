@@ -9,6 +9,20 @@ Template.StatusReport.helpers({
   statusReport () {
     let reportId = FlowRouter.getParam('reportId');
     return StatusReports.findOne(reportId)
+  },
+  'edited .editable' (e, instance, newValue) {
+    e.stopImmediatePropagation();
+    
+    let statusReportId = $(e.target).closest('.status-report-container').attr('data-pk'),
+        dataKey        = $(e.target).attr('data-key');
+    
+    if (statusReportId && dataKey) {
+      Meteor.call('editStatusReport', statusReportId, dataKey, newValue, (error, response) => {
+        if (error) {
+          RobaDialog.error('Update failed:' + error.toString());
+        }
+      });
+    }
   }
 });
 

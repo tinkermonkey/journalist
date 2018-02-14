@@ -59,29 +59,7 @@ Template.RecentReports.events({
   'click .btn-load-more-reports' (e, instance) {
     let max = instance.max.get();
     instance.max.set(max + maxIncrement)
-  },
-  'click .btn-delete-report' (e, instance) {
-    let reportId = $(e.target).closest('.status-report-container').attr('data-pk');
-    
-    RobaDialog.ask('Delete Report?', 'Are you sure that you want to delete this report?', () => {
-      Meteor.call('deleteStatusReport', reportId, function (error, response) {
-        if (error) {
-          RobaDialog.error('Delete failed: ' + error.message);
-        } else {
-          RobaDialog.hide();
-        }
-      });
-    });
-  },
-  'click .btn-reopen-report' (e, instance) {
-    let reportId = $(e.target).closest('.status-report-container').attr('data-pk');
-    
-    Meteor.call('reopenStatusReport', reportId, function (error, response) {
-      if (error) {
-        RobaDialog.error('Delete failed: ' + error.message);
-      }
-    });
-  },
+  }
 });
 
 /**

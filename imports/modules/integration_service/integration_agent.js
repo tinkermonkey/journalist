@@ -165,15 +165,17 @@ export class IntegrationAgent {
   
   /**
    * Execute all of the queries on-demand
+   *
+   * @param deepSync Perform a complete deep sync for all of the queries
    */
-  executeAllQueries () {
+  executeAllQueries (deepSync) {
     debug && console.log('IntegrationAgent.executeAllQueries:', this.integration._id);
     let self             = this,
         queryDefinitions = self.serviceProvider.getQueryDefinitions();
     
     if (queryDefinitions) {
       _.keys(queryDefinitions).forEach((queryKey) => {
-        self.executeQuery(queryKey);
+        self.executeQuery(queryKey, deepSync);
       });
     }
   }
@@ -185,16 +187,6 @@ export class IntegrationAgent {
     debug && console.log('IntegrationAgent.reprocessItems:', this.integration._id);
     let self           = this,
         importFunction = self.integration.importFunction();
-    
-    /*
-    let testIem         = ImportedItems.findOne({ integrationId: self.integration._id }),
-        reprocessedItem = self.serviceProvider.postProcessItem(testIem.document);
-    
-    return {
-      reprocessedItem: reprocessedItem,
-      reimportResult : self.serviceProvider.importItem(importFunction, reprocessedItem, self.integration.projectId)
-    };
-    */
     
     // Load all of the items and reprocess them
     ImportedItems.find({ integrationId: self.integration._id }).forEach((item, i) => {

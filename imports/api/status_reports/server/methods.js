@@ -136,13 +136,19 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.managesContributor(statusReport.contributorId) || user.isAdmin() || user.contributorId() === statusReport.contributorId) {
-      // Delete the statusReport
+      // Mark the report submitted
       StatusReports.update(statusReportId, {
         $set: {
           state     : StatusReportStates.submitted,
           submitDate: Date.now()
         }
       });
+      
+      // Find any settings for this context and make sure they get updated
+      let setting = StatusReportSettings.findOne({});
+      if(setting){
+      
+      }
     } else {
       console.error('Non-authorized user tried to submit a statusReport:', user.username, statusReportId);
       throw new Meteor.Error(403);
@@ -164,7 +170,7 @@ Meteor.methods({
     let statusReport = StatusReports.findOne(statusReportId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(statusReport.contributorId) || user.isAdmin()) {
+    if (user.managesContributor(statusReport.contributorId) || user.isAdmin() || statusReport.contributorId === user.contributor()._id) {
       // Delete the statusReport
       StatusReports.update(statusReportId, {
         $set  : {
@@ -206,10 +212,8 @@ Meteor.methods({
       });
       
       // Set the first due date
-      let setting = StatusReportSettings.findOne(settingId),
-          nextDue = later.schedule(later.parse.text(setting.laterDirective)).next(1, setting.startDate);
-      
-      StatusReportSettings.update(settingId, { $set: { nextDue: nextDue } });
+      let setting = StatusReportSettings.findOne(settingId);
+      setting.updateNextDue();
     } else {
       console.error('Non-authorized user tried to add a statusReportSetting:', user.username, sourceCollection, sourceId);
       throw new Meteor.Error(403);

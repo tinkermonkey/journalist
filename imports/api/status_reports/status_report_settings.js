@@ -1,6 +1,6 @@
-import { Mongo }             from 'meteor/mongo';
-import SimpleSchema          from 'simpl-schema';
-import { SchemaHelpers }     from '../schema_helpers.js';
+import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
+import { SchemaHelpers } from '../schema_helpers.js';
 import { CollectionDetails } from '../collection_details';
 
 /**
@@ -111,5 +111,19 @@ StatusReportSettings.helpers({
    */
   dueDate () {
     return this.nextDue
+  },
+  /**
+   * Update the due date for this report setting
+   */
+  updateNextDue () {
+    let setting   = this,
+        startDate = new Date(Math.min(new Date(), this.startDate));
+    
+    try {
+      let nextDue = later.schedule(later.parse.text(setting.laterDirective)).next(1, startDate);
+      StatusReportSettings.update(setting._id, { $set: { nextDue: nextDue } })
+    } catch (e) {
+    
+    }
   }
 });

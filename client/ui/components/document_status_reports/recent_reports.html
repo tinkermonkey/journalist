@@ -5,47 +5,15 @@
       
       {{#if reports.count}}
         {{#each reports}}
-          <div class="status-report-container show-controls-on-hover" data-pk="{{_id}}">
-            <div class="status-report-breadcrumbs no-wrap">
-              <ol class="breadcrumb">
-                {{#if showSourcePath}}
-                  <li class="active">{{sourceCollection}}</li>
-                  <li>
-                    <a href="{{pathFor sourceDetails.routeName sourceRouteParamValue}}">{{sourceLabel}}</a>
-                  </li>
-                {{else}}
-                  <li class="active">
-                    <a href="{{pathFor 'ContributorHome' contributorId=contributorId}}" class="link-plain">
-                      {{contributorName contributorId}}
-                    </a>
-                  </li>
-                {{/if}}
-                <li>
-                  {{dateFormat submitDate 'ddd MMM Do, hh:mm a'}}
-                </li>
-                <li class="breadcrumb-controls">
-                  {{#if userManagesContributor contributorId}}
-                    <a class="btn-reopen-report hidden-control">
-                      <span class="glyphicon glyphicon-folder-open"></span>
-                      Reopen
-                    </a>
-                    <a class="btn-delete-report link-red hidden-control">
-                      <span class="glyphicon glyphicon-minus-sign"></span>
-                      Delete
-                    </a>
-                  {{/if}}
-                </li>
-              </ol>
-            </div>
-            
-            <div class="status-report-header">
-            
-            </div>
+          {{> StatusReportSausage context=this }}
+          
+          {{#if ../showPreview}}
             {{#HeightLimitedContent}}
               {{#markdown}}{{body}}{{/markdown}}
             {{/HeightLimitedContent}}
-          </div>
+          {{/if}}
         {{/each}}
+      
         {{#if moreReports}}
           <div class="display-more-bar">
             <a class="btn-load-more-reports">

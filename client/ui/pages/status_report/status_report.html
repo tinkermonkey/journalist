@@ -1,7 +1,26 @@
 <template name="StatusReport">
   {{#if Template.subscriptionsReady}}
     {{#with statusReport}}
-    
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 status-report-container" data-pk="{{_id}}">
+            <h1>
+              Status Report
+              {{#if isOpen}}
+                <small>(Not Submitted)</small>
+              {{/if}}
+            </h1>
+            {{> StatusReportSausage context=this }}
+            
+            <h2>Report Body</h2>
+            {{#if isOpen}}
+              {{> EditableCode dataKey="body" value=body emptyText="Enter a report" mode="inline" language="markdown" }}
+            {{else}}
+              {{#markdown}}{{body}}{{/markdown}}
+            {{/if}}
+          </div>
+        </div>
+      </div>
     {{else}}
       {{> NotFound }}
     {{/with}}

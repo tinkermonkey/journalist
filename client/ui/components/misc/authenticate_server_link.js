@@ -1,6 +1,6 @@
 import './authenticate_server_link.html';
-import { Template }   from 'meteor/templating';
-import SimpleSchema   from 'simpl-schema';
+import { Template } from 'meteor/templating';
+import SimpleSchema from 'simpl-schema';
 import { RobaDialog } from 'meteor/austinsand:roba-dialog';
 
 /**
@@ -41,23 +41,30 @@ Template.AuthenticateServerLink.events({
         { text: 'Log In' }
       ],
       callback       : function (btn) {
+        console.log('authentication link login button clicked');
         if (btn.match(/log in/i)) {
           let formId = 'addRecordForm';
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
-            RobaDialog.hide();
+            AutoForm.resetForm(formId);
             
             console.log('Making call to authenticateIntegrationServer...');
             Meteor.call('authenticateIntegrationServer', server._id, formData.username, formData.password, (error, response) => {
               console.log('authenticateIntegrationServer response:', error, response);
               if (error) {
                 RobaDialog.error('Failed to authenticate to server:' + error.toString())
+              } else if(!response.success) {
+                RobaDialog.error('Authentication Failed')
+              } else {
+                RobaDialog.hide();
               }
             });
-            
-            AutoForm.resetForm(formId)
+          } else {
+            console.log('Login form not valid:', AutoForm.validateForm(formId));
+            AutoForm.resetForm(formId);
           }
         } else {
+          AutoForm.resetForm('addRecordForm');
           RobaDialog.hide();
         }
       }.bind(this)

@@ -2,6 +2,7 @@ import { Meteor }                         from 'meteor/meteor';
 import { UploadServer }                   from 'meteor/tomi:upload-server';
 import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { ServiceConfiguration }           from 'meteor/service-configuration';
+import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
 // include the base layer functionality
 import './register-api.js';
 import './fixture.js';
@@ -66,5 +67,23 @@ Meteor.startup(() => {
   // Make sure simpleSchema is configured correctly
   SimpleSchema.extendOptions(['autoform', 'denyUpdate']);
 
+  // Create a cron job to update the report next due dates nightly
+  SyncedCron.remove('status-report-due-date-updater');
+  SyncedCron.add({
+    name: 'status-report-due-date-updater',
+    schedule (parser) {
+      let parserText = 'every 5 minutes';
+      return parser.text(parserText);
+    },
+    job () {
+      console.log('==== Updating status report next due dates...');
+      StatusReportSettings.find({}).forEach((setting) => {
+        setting.updateNextDue();
+      });
+      console.log('==== Update complete');
+    }
+  });
+  
+  
   console.log('===========================');
 });
