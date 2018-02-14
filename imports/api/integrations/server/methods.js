@@ -1,11 +1,11 @@
-import { Meteor }                         from 'meteor/meteor';
-import { check, Match }                   from 'meteor/check';
-import { Auth }                           from '../../auth';
-import { Integrations }                   from '../integrations';
-import { IntegrationCalculatedFields }    from '../integration_calculated_fields';
-import { IntegrationImportFunctions }     from '../integration_import_functions';
-import { IntegrationServers }             from '../integration_servers';
-import { IntegrationService }             from '../../../modules/integration_service/integration_service';
+import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
+import { Auth } from '../../auth';
+import { Integrations } from '../integrations';
+import { IntegrationCalculatedFields } from '../integration_calculated_fields';
+import { IntegrationImportFunctions } from '../integration_import_functions';
+import { IntegrationServers } from '../integration_servers';
+import { IntegrationService } from '../../../modules/integration_service/integration_service';
 import { IntegrationServerAuthProviders } from '../integration_server_auth_providers';
 
 Meteor.methods({
@@ -689,9 +689,12 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       // grab the integration
-      let integration = Integrations.findOne(integrationId);
+      let integration = Integrations.findOne(integrationId),
+          startTime   = Date.now(),
+          result      = IntegrationService.getServiceProvider(integration.server()).getIntegrationAgent(integration)
+              .executeAllQueries(true);
       
-      return IntegrationService.getServiceProvider(integration.server()).getIntegrationAgent(integration).executeAllQueries(true);
+      console.log('deepSyncIntegration complete:', integrationId, Date.now() - startTime);
     } else {
       console.error('Non-admin user tried to deep sync an integration:', user.username, integrationId);
       throw new Meteor.Error(403);
@@ -713,7 +716,7 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       // Check for an existing provider config
-      if(IntegrationServerAuthProviders.find({serverId: serverId}).count() === 0){
+      if (IntegrationServerAuthProviders.find({ serverId: serverId }).count() === 0) {
         // Insert the project percent
         IntegrationServerAuthProviders.insert({
           serverId: serverId

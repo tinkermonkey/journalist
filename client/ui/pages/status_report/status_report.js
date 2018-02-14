@@ -9,12 +9,20 @@ Template.StatusReport.helpers({
   statusReport () {
     let reportId = FlowRouter.getParam('reportId');
     return StatusReports.findOne(reportId)
-  },
+  }
+});
+
+/**
+ * Template Event Handlers
+ */
+Template.StatusReport.events({
   'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
     let statusReportId = $(e.target).closest('.status-report-container').attr('data-pk'),
         dataKey        = $(e.target).attr('data-key');
+    
+    console.log('Edited status report:', statusReportId, dataKey, newValue);
     
     if (statusReportId && dataKey) {
       Meteor.call('editStatusReport', statusReportId, dataKey, newValue, (error, response) => {
@@ -25,11 +33,6 @@ Template.StatusReport.helpers({
     }
   }
 });
-
-/**
- * Template Event Handlers
- */
-Template.StatusReport.events({});
 
 /**
  * Template Created
