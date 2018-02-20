@@ -14,10 +14,12 @@
             <thead>
             <tr>
               <th></th>
+              <th></th>
               <th>Title</th>
               <th>Owner</th>
               <th>Default Reporter</th>
               <th>Banner Template</th>
+              <th>Home Template</th>
               <th>Reports</th>
               <th>Modified</th>
               <th></th>
@@ -28,6 +30,11 @@
               <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
                   data-pk="{{_id}}">
                 <td class="open-link">
+                  <a class="hidden-control" href="{{pathFor 'AdminTeam' teamId=_id}}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td class="open-link">
                   <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=_id}}">
                     <span class="glyphicon glyphicon-home"></span>
                   </a>
@@ -36,6 +43,7 @@
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
                 <td>{{> EditableRecordSelector reporterSelectorContext }}</td>
                 <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component }}</td>
                 <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" }}</td>
                 <td>{{dateFormat dateModified}}</td>
                 <td>

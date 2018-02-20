@@ -6,6 +6,7 @@ import '../../../client/ui/layouts/unauthenticated_layout';
 import '../../../client/ui/layouts/authenticated_layout';
 import '../../../client/ui/layouts/report_layout';
 // Import the pages
+import '../../../client/ui/pages/admin/contributors/admin_contributor';
 import '../../../client/ui/pages/admin/contributors/admin_contributors';
 import '../../../client/ui/pages/admin/admin_home/admin_home';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field';
@@ -23,6 +24,7 @@ import '../../../client/ui/pages/admin/integration_servers/integration_servers';
 import '../../../client/ui/pages/admin/integration_servers/integration_server';
 import '../../../client/ui/pages/admin/projects/admin_projects';
 import '../../../client/ui/pages/admin/projects/admin_project_integration';
+import '../../../client/ui/pages/admin/teams/admin_team';
 import '../../../client/ui/pages/admin/teams/admin_teams';
 import '../../../client/ui/pages/admin/users/admin_users';
 import '../../../client/ui/pages/contributor/contributor_home';
@@ -133,6 +135,13 @@ FlowRouter.route('/report/weekly_support_report/:projectId', {
  * Admin Routes
  *
  */
+FlowRouter.route('/admin/contributor/:contributorId', {
+  name: 'AdminContributor',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminContributor' });
+  }
+});
+
 FlowRouter.route('/admin/contributors', {
   name: 'AdminContributors',
   action () {
@@ -284,6 +293,13 @@ FlowRouter.route('/admin/teams', {
   name: 'AdminTeams',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'AdminTeams' });
+  }
+});
+
+FlowRouter.route('/admin/team/:teamId', {
+  name: 'AdminTeam',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminTeam' });
   }
 });
 

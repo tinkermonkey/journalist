@@ -2,7 +2,7 @@ import { Meteor }        from 'meteor/meteor';
 import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
 
 Meteor.startup(() => {
-  ChangeTracker.setDebug(true);
+  ChangeTracker.setDebug(false);
   ChangeTracker.setIgnoredFieldList([
     'createdBy',
     'dateCreated',

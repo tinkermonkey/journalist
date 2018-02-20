@@ -1,7 +1,6 @@
 import './editable_popover.html';
 import './editable_popover.css';
 import { Template } from 'meteor/templating';
-import '../editable_item_selector/editable_item_search';
 
 /**
  * Template Helpers

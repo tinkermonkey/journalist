@@ -3,14 +3,24 @@
     {{setPageTitle 'Journalist - ' title }}
     {{#if Template.subscriptionsReady}}
       <div class="full-width page-banner">
-        <div class="banner-title">{{title}}</div>
-        {{> TeamBanner }}
+        {{#if bannerTemplate}}
+          {{> Template.dynamic template=bannerTemplate }}
+        {{else}}
+          <div class="banner-title">{{title}}</div>
+          {{> TeamBanner }}
+        {{/if}}
       </div>
       <div class="container">
         <div class="row">
           <div class="col-md-9">
-            <h2>Team Members</h2>
-            {{> TeamHeader }}
+            
+            {{#if homeTemplate}}
+              {{> Template.dynamic template=homeTemplate }}
+            {{else}}
+              <h2>Team Members</h2>
+              {{> TeamHeader }}
+            {{/if}}
+          
           </div>
           <div class="col-md-3">{{> TeamSidebar }}</div>
         </div>

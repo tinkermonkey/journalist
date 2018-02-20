@@ -31,11 +31,17 @@ export const Team = new SimpleSchema({
     type    : String,
     optional: true
   },
+  // Home page template
+  homeTemplate          : {
+    type    : String,
+    optional: true
+  },
+  // Reports to show for this team
   reports               : {
     type    : Array, // String
     optional: true
   },
-  'reports.$': {
+  'reports.$'           : {
     type: String
   },
   // Standard tracking fields
@@ -161,6 +167,10 @@ Teams.helpers({
           return teamRole.roleDefinition().capacityRole()._id
         }))
   },
+  /**
+   * Get the list of contributors in a specific role
+   * @param roleDefinitionId
+   */
   contributorsInCapacityRole (roleDefinitionId) {
     let team           = this,
         contributorIds = _.uniq(team.contributorRoles()

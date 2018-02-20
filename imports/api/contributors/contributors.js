@@ -11,6 +11,7 @@ import { Tasks }                         from '../tasks/tasks';
 import { Teams }                         from '../teams/teams';
 import { Users }                         from '../users/users.js';
 import { UserTypes }                     from '../users/user_types.js';
+import { ContributorRoleDefinitions }    from './contributor_role_definitions';
 
 /**
  * ============================================================================
@@ -31,7 +32,7 @@ export const Contributor = new SimpleSchema({
     type    : Array, // String
     optional: true
   },
-  'identifiers.$': {
+  'identifiers.$' : {
     type: String
   },
   // Hashmap of profiles from the various integration servers, keyed by the server _id
@@ -140,6 +141,13 @@ Contributors.helpers({
     return _.uniq(this.teamRoles().map((teamRole) => {
       return teamRole.roleId
     })).length < 2
+  },
+  /**
+   * Get the roles for this contributor on a specific team
+   */
+  rolesOnTeam (teamId) {
+    console.log('rolesOnTeam:', this._id, this.name, teamId, ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId }).count());
+    return ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId });
   },
   /**
    * Get the list of teams that this contributor participates in
@@ -384,5 +392,13 @@ Contributors.helpers({
     // Default sort, check for sortBy.hash because that is what is passed in by Spacebars if sortBy is not passed
     sortBy = _.isObject(sortBy) && sortBy.hash === null ? sortBy : { title: 1 };
     return Tasks.find({ contributorId: this._id, complete: false }, { sort: sortBy })
+  },
+  /**
+   * Get the role definition for the default role for this contributor
+   */
+  defaultRole () {
+    if (this.roleId) {
+      return ContributorRoleDefinitions.findOne(this.roleId)
+    }
   }
 });

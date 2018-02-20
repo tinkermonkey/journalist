@@ -46,6 +46,10 @@ button {
   border-width : 1px;
 }
 
+table.table .table {
+  background : none;
+}
+
 .blue {
   color : #007AC9;
 }

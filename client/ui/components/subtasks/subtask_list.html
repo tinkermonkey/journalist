@@ -1,0 +1,40 @@
+<template name="SubtaskList">
+  {{#if Template.subscriptionsReady}}
+    <table class="data-table sortable-table subtask-list">
+      {{#each subtasks}}
+        <tr class="subtask-list-item sortable-table-row show-controls-on-hover" data-pk="{{_id}}" data-sort-order="{{order}}">
+          <td class="drag-handle">
+            <span class="glyphicon glyphicon-record"></span>
+          </td>
+          <td class="{{#if isCompleted}}subtask-completed{{/if}}">
+            {{> EditableTextField dataKey='title' value=title }}
+          </td>
+          <td class="open-link">
+            {{> EditableCheckbox dataKey='isCompleted' value=isCompleted cssClass='hidden-control'}}
+          </td>
+          <td>
+            {{#if 0}}
+              {{> EditableDateRange dataKey='dueDate' value=dueDate config=dueDatePickerConfig emptyText='Due Date' cssClass='hidden-control' }}
+            {{/if}}
+          </td>
+          <td class="btn-delete">
+            {{#ConfirmedButton btnClass='btn-danger btn-delete-subtask' btnText='Confirm'}}
+              <span class="glyphicon glyphicon-remove"></span>
+            {{/ConfirmedButton}}
+          </td>
+        </tr>
+        {{doorbell}}
+      {{/each}}
+      <tr class="{{#if subtasks.count}}show-controls-on-hover{{/if}}">
+        <td class="open-link">
+          <span class="glyphicon glyphicon-plus-sign hidden-control blue"></span>
+        </td>
+        <td colspan="5">
+          {{> EditableTextField dataKey='newSubtask' value=newSubtaskValue emptyText='Add Subtask' mode='popover' cssClass='hidden-control' }}
+        </td>
+      </tr>
+    </table>
+  {{else}}
+    {{> RobaSpinner rainbow=true scale=0.5 }}
+  {{/if}}
+</template>

@@ -1,25 +1,35 @@
 <template name="ContributorHome">
   {{#with contributor}}
     {{setPageTitle 'Journalist - ' name }}
-    <div class="full-width">{{> ContributorBanner }}</div>
+    <div class="full-width">
+      {{#if defaultRole.bannerTemplate}}
+        {{> Template.dynamic template=defaultRole.bannerTemplate }}
+      {{else}}
+        {{> ContributorBanner }}
+      {{/if}}
+    </div>
     <div class="container">
       <div class="row">
         <div class="col-md-9">
           <h1>{{name}}</h1>
-          {{> ContributorHeader }}
           
-          {{#RobaTabGroup name="contributor-tabs" navClass="nav-pills"}}
-            {{#if shouldSeeReports }}
-              {{#RobaTab name="status-report-due" title="Reports Due"}}
-                {{> ContributorStatusReportsDue }}
+          {{#if defaultRole.homeTemplate}}
+            {{> Template.dynamic template=defaultRole.homeTemplate }}
+          {{else}}
+            {{> ContributorHeader }}
+            
+            {{#RobaTabGroup name="contributor-tabs" navClass="nav-pills"}}
+              {{#if shouldSeeReports }}
+                {{#RobaTab name="status-report-due" title="Reports Due"}}
+                  {{> ContributorStatusReportsDue }}
+                {{/RobaTab}}
+              {{/if}}
+              
+              {{#RobaTab name="status-reports" title="Reports Filed"}}
+                {{> RecentReports }}
               {{/RobaTab}}
-            {{/if}}
-            
-            {{#RobaTab name="status-reports" title="Reports Filed"}}
-              {{> RecentReports }}
-            {{/RobaTab}}
-            
-          {{/RobaTabGroup}}
+            {{/RobaTabGroup}}
+          {{/if}}
         </div>
         <div class="col-md-3">
           {{> ContributorSidebar }}

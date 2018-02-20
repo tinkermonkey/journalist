@@ -2,30 +2,7 @@
   <div class="editable editable-contributor-roles show-controls-on-hover" data-pk="{{_id}}">
     <table class="table data-table overhang-table-left">
       {{#each contributorRoles}}
-        <tr class="data-table-row" data-pk="{{_id}}">
-          <td class="open-link">
-            <a class="hidden-control" href="{{pathFor 'TeamHome' teamId=teamId}}">
-              <span class="glyphicon glyphicon-folder-open"></span>
-            </a>
-          </td>
-          <td>
-            <span class="team-title">{{> EditableRecordSelector teamSelectorContext }}</span>
-            {{#unless ../hasSameRole}}
-              {{> EditableRecordSelector roleSelectorContext }}
-            {{/unless}}
-          </td>
-          <td class="text-right">
-            <a class="btn-delete-role link-red hidden-control">
-              <span class="glyphicon glyphicon-minus-sign"></span>
-            </a>
-          </td>
-        </tr>
-        <tr class="data-table-row" data-pk="{{_id}}">
-          <td></td>
-          <td colspan="3">
-            {{> EditableProjectAssignments }}
-          </td>
-        </tr>
+        {{> EditableContributorRole }}
       {{/each}}
     </table>
     {{#if hasCapacity}}

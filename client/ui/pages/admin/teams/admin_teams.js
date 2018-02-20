@@ -41,7 +41,6 @@ Template.AdminTeams.events({
     let teamId  = $(e.target).closest('.data-table-row').attr('data-pk'),
         dataKey = $(e.target).attr('data-key');
     
-    console.log('edited:', teamId, dataKey, newValue);
     if (teamId && dataKey) {
       Meteor.call('editTeam', teamId, dataKey, newValue, (error, response) => {
         if (error) {

@@ -4,9 +4,9 @@
     <h3>Live Reports</h3>
     
     <ul class="list-group">
-      {{#each projectReports}}
+      {{#each teamReports}}
         <li class="list-group-item">
-          <a href="{{pathFor 'Report' templateName=templateName contextId=../_id }}" target="_blank">{{templateName}}</a>
+          <a href="{{pathFor 'Report' templateName=templateName contextId=../_id }}" target="_blank">{{camelToTitle templateName}}</a>
         </li>
       {{/each}}
     </ul>

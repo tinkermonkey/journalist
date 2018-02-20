@@ -1,12 +1,12 @@
-<template name="AdminProjectHome">
-  {{#with project}}
+<template name="AdminTeam">
+  {{#with team}}
     {{#if Template.subscriptionsReady}}
-      <div class="container project-container" data-pk="{{_id}}">
+      <div class="container team-container" data-pk="{{_id}}">
         <div class="row">
           <div class="col-md-12">
             <ol class="breadcrumb">
               <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
-              <li><a href="{{pathFor 'AdminProjects' }}">Projects</a></li>
+              <li><a href="{{pathFor 'AdminTeams' }}">Teams</a></li>
               <li class="active">{{title}}</li>
             </ol>
             
@@ -16,23 +16,17 @@
         
         <div class="row">
           <div class="col-md-12">
-            {{> EditableTextArea dataKey="description" value=description emptyText="Enter a project description" }}
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="col-md-12">
             <h2>Configuration</h2>
             <table class="table data-table table-striped config-table narrow-width">
               <tbody>
               <tr class="show-controls-on-hover">
-                <td>Project Title</td>
+                <td>Team Title</td>
                 <td class="open-link">
                 </td>
                 <td>{{> EditableTextField dataKey='title' value=title mode='inline' }}</td>
               </tr>
               <tr class="show-controls-on-hover">
-                <td>Project Owner</td>
+                <td>Team Owner</td>
                 <td class="open-link">
                   {{#if owner}}
                     <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=owner }}">
@@ -41,6 +35,17 @@
                   {{/if}}
                 </td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Default Reporter</td>
+                <td class="open-link">
+                  {{#if reportingContributorId}}
+                    <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=reportingContributorId }}">
+                      <span class="glyphicon glyphicon-folder-open"></span>
+                    </a>
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector reporterSelectorContext }}</td>
               </tr>
               <tr class="show-controls-on-hover">
                 <td>Banner Template</td>
@@ -73,8 +78,54 @@
         
         <div class="row">
           <div class="col-md-12">
-            <h2>Project Integrations</h2>
-            {{> AdminProjectIntegrations }}
+            <h2>Team Composition</h2>
+            
+            <table class="table data-table table-striped">
+              <thead>
+              <tr>
+                <th></th>
+                <th></th>
+                <th>Name</th>
+                <th>Default Role</th>
+                <th>Team Roles</th>
+                <th>Other Teams</th>
+              </tr>
+              </thead>
+              <tbody>
+              {{#each contributors}}
+                <tr class="data-table-row show-controls-on-hover">
+                  <td class="open-link">
+                    <a class="hidden-control" href="{{pathFor 'AdminContributor' contributorId=_id}}">
+                      <span class="glyphicon glyphicon-folder-open"></span>
+                    </a>
+                  </td>
+                  <td class="open-link">
+                    <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=_id}}">
+                      <span class="glyphicon glyphicon-home"></span>
+                    </a>
+                  </td>
+                  <td>{{name}}</td>
+                  <td>{{renderTeamRole roleId}}</td>
+                  <td>
+                    <table class="table data-table">
+                      {{#each rolesOnTeam ../_id}}
+                        {{> EditableContributorRole }}
+                      {{/each}}
+                    </table>
+                  </td>
+                  <td>
+                    {{#each contributorOtherTeams}}
+                      <table class="table data-table">
+                      {{#each ../rolesOnTeam _id}}
+                        {{> EditableContributorRole }}
+                      {{/each}}
+                      </table>
+                    {{/each}}
+                  </td>
+                </tr>
+              {{/each}}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

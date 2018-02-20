@@ -13,6 +13,11 @@
               (complete)
             {{/if}}
           </h1>
+          
+          <h2>Subtasks</h2>
+          {{> SubtaskList sourceCollection='Efforts' sourceId=_id contributorId=contributorId }}
+          
+          <h2>Status Reports</h2>
           {{> DocumentStatusReports sourceCollection='Efforts' sourceId=_id contributorId=contributorId }}
         </div>
         <div class="col-md-3">

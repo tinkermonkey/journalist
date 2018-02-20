@@ -1,0 +1,8 @@
+<template name="AdminDisplayTemplateLink">
+  {{#with template}}
+    <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=_id groupId=parentGroup }}">
+      <span class="glyphicon glyphicon-folder-open"></span>
+    </a>
+  {{else}}
+  {{/with}}
+</template>

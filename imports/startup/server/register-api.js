@@ -39,6 +39,9 @@ import '../../api/projects/server/publications';
 // Status Reports
 import '../../api/status_reports/server/methods';
 import '../../api/status_reports/server/publications';
+// Subtasks
+import '../../api/subtasks/server/methods';
+import '../../api/subtasks/server/publications';
 // System Status
 //import '../../api/system_health_metrics/server/methods';
 import '../../api/system_health_metrics/server/publications';

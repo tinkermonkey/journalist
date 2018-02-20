@@ -27,6 +27,24 @@ export const ContributorRoleDefinition = new SimpleSchema({
     type    : String,
     optional: true
   },
+  // Banner Template
+  bannerTemplate : {
+    type    : String,
+    optional: true
+  },
+  // Home page template
+  homeTemplate   : {
+    type    : String,
+    optional: true
+  },
+  // Reports to show for this role
+  reports        : {
+    type    : Array, // String
+    optional: true
+  },
+  'reports.$'    : {
+    type: String
+  },
   // Standard tracking fields
   dateCreated    : {
     type     : Date,

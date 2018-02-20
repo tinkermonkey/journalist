@@ -1,0 +1,12 @@
+.subtask-list {
+  width : auto !important;
+}
+
+.subtask-list .sortable-table-row .drag-handle {
+  opacity : 1;
+  color: #298cff;
+}
+
+.subtask-completed .editable-click > span:first-child {
+  text-decoration-line : line-through;
+}

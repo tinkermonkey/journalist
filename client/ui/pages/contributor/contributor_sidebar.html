@@ -12,5 +12,17 @@
       <h4>Active Reports</h4>
       {{> ActiveReports sourceCollection='Contributors' sourceId=_id contributorId=managerId }}
     {{/if}}
+    
+    {{#if defaultRole.reports}}
+      <h3>Live Reports</h3>
+    
+      <ul class="list-group">
+        {{#each roleReports}}
+          <li class="list-group-item">
+            <a href="{{pathFor 'Report' templateName=templateName contextId=../_id }}" target="_blank">{{camelToTitle templateName}}</a>
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
   </div>
 </template>

@@ -28,6 +28,11 @@ export const Project = new SimpleSchema({
     type    : String,
     optional: true
   },
+  // Home page template
+  homeTemplate: {
+    type    : String,
+    optional: true
+  },
   reports       : {
     type    : Array, // String
     optional: true

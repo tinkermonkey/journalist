@@ -4,6 +4,7 @@ import { RobaDialog }           from 'meteor/austinsand:roba-dialog';
 import { Contributors }         from '../../../../imports/api/contributors/contributors';
 import { ContributorTeamRoles } from '../../../../imports/api/contributors/contributor_team_roles';
 import './add_role_form.js';
+import './editable_contributor_role';
 
 /**
  * Template Helpers
@@ -18,24 +19,6 @@ Template.EditableContributorRoles.helpers({
  * Template Event Handlers
  */
 Template.EditableContributorRoles.events({
-  'edited .editable' (e, instance, newValue) {
-    e.stopImmediatePropagation();
-    
-    let roleId  = $(e.target).closest('.data-table-row').attr('data-pk'),
-        dataKey = $(e.target).attr('data-key');
-    
-    console.log('EditableContributorRoles edited:', roleId, dataKey, newValue);
-    if (roleId !== null && dataKey !== null) {
-      // Create the project
-      Meteor.call('editContributorTeamRole', roleId, dataKey, newValue, (error, response) => {
-        if (error) {
-          RobaDialog.error('Failed to edit team role:' + error.toString())
-        } else {
-          RobaDialog.hide();
-        }
-      });
-    }
-  },
   'click .btn-add-role' (e, instance) {
     let contributor = Template.currentData();
     
@@ -99,12 +82,7 @@ Template.EditableContributorRoles.events({
  * Template Created
  */
 Template.EditableContributorRoles.onCreated(() => {
-  let instance = Template.instance();
-  
-  instance.autorun(() => {
-    let contributor = Template.currentData();
-    
-  })
+
 });
 
 /**
