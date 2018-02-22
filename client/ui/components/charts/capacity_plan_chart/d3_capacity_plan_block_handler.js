@@ -1,14 +1,13 @@
 import { Util }                            from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes }          from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { D3ContributorDragControlHandler } from './d3_contributor_drag_control_handler';
-import { Session }                         from 'meteor/session';
 
 let d3            = require('d3'),
     d3Drag        = require('d3-drag'),
     controlTextX  = 0,
     controlTextY  = 0,
     controlRadius = 10,
-    debug         = true,
+    debug         = false,
     trace         = false;
 
 export class D3CapacityPlanBlockHandler {
@@ -736,8 +735,8 @@ export class D3CapacityPlanBlockHandler {
       });
       
       // Make sure the blocks are ordered correctly
-      sprintReleases.sort((releaseBlock) => {
-        return releaseBlock.order
+      sprintReleases.sort((a, b) => {
+        return (a.order || 0) > (b.order || 0) ? 1 : -1
       }).forEach((releaseBlock, i) => {
         if (releaseBlock.order !== i) {
           // Fix the order
@@ -748,8 +747,8 @@ export class D3CapacityPlanBlockHandler {
       
       // position the blocks
       let dy = 0;
-      sprintReleases.sort((releaseBlock) => {
-        return releaseBlock.order
+      sprintReleases.sort((a, b) => {
+        return (a.order || 0) > (b.order || 0) ? 1 : -1
       }).forEach((releaseBlock, i) => {
         chart.data.sprints[ releaseBlock.index ].y = releaseBlock.y = dy;
         dy += Math.max(releaseBlock.titleLength, chart.config.releases.height) + 2 * chart.config.releases.padding + chart.config.efforts.margin;
@@ -1083,10 +1082,9 @@ export class D3CapacityPlanBlockHandler {
       return
     }
     
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', effortBlock);
-    let self         = this,
-        chart        = this.chart,
-        sprintNumber = Session.get('hover-sprint-number');
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', effortBlock, this.chart.drag);
+    let self  = this,
+        chart = this.chart;
     
     chart.drag.dragElement.classed('in-drag', false);
     chart.inEffortDrag = false;
@@ -1102,8 +1100,9 @@ export class D3CapacityPlanBlockHandler {
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
     chart.linkLayer.style('opacity', 1);
     
-    if (_.isNumber(sprintNumber)) {
-      let sprintBlocks = chart.data.sprints[ sprintNumber ] && chart.data.sprints[ sprintNumber ].effortBlocks,
+    if (chart.drag.hover && chart.drag.hover.record) {
+      let sprintNumber = chart.drag.hover.record.sprintNumber,
+          sprintBlocks = chart.data.sprints[ sprintNumber ] && chart.data.sprints[ sprintNumber ].effortBlocks,
           mouseY       = d3.event.y - chart.config.efforts.margin;
       
       // If it's the same sprint, this is a re-ordering
@@ -1115,7 +1114,7 @@ export class D3CapacityPlanBlockHandler {
           let aY = a._id === effortBlock._id ? mouseY : a.y + a.displacement,
               bY = b._id === effortBlock._id ? mouseY : b.y + b.displacement;
           
-          return aY > bY
+          return aY > bY ? 1 : -1
         }).forEach((block, i) => {
           block.updateOrder(i);
         });
@@ -1131,7 +1130,7 @@ export class D3CapacityPlanBlockHandler {
             let aY = a._id === effortBlock._id ? mouseY : a.y + a.displacement,
                 bY = b._id === effortBlock._id ? mouseY : b.y + b.displacement;
             
-            return aY > bY
+            return aY > bY ? 1 : -1
           }).forEach((block, i) => {
             block.updateOrder(i);
           });
@@ -1143,8 +1142,6 @@ export class D3CapacityPlanBlockHandler {
       }
       
       //self.resetBlocksInSprint(sprintNumber);
-      
-      Session.set('hover-sprint-number', null);
     }
     
     delete chart.drag

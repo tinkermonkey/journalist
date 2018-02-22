@@ -1,5 +1,4 @@
 import { Util }    from '../../../../../imports/api/util';
-import { Session } from 'meteor/session';
 
 let d3    = require('d3'),
     debug = false;
@@ -162,7 +161,6 @@ export class D3CapacityPlanSprintHandler {
           
           element.closest('.sprint-background-group').classed('hover', true);
           if (chart.inEffortDrag) {
-            Session.set('hover-sprint-number', sprint.sprintNumber);
             chart.drag.hover = {
               type   : 'sprint',
               record : sprint,
@@ -175,7 +173,6 @@ export class D3CapacityPlanSprintHandler {
           element.closest('.sprint-background-group').classed('hover', false);
           
           if (chart.inEffortDrag) {
-            Session.set('hover-sprint-number', null);
             delete chart.drag.hover;
             
             // Reset the sprint block positions

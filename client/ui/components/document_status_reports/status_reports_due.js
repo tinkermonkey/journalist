@@ -30,7 +30,7 @@ Template.StatusReportsDue.helpers({
     return reportsDue.sort((a, b) => {
       let dueDateA = a.dueDate || a.nextDue,
           dueDateB = b.dueDate || b.nextDue;
-      return dueDateA > dueDateB
+      return dueDateA > dueDateB ? 1 : -1
     })
   },
   isImminentReport () {

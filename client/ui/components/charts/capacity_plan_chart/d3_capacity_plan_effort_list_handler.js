@@ -1,4 +1,3 @@
-import { Session }                  from 'meteor/session';
 import { Util }                     from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes }   from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
@@ -286,11 +285,10 @@ export class D3CapacityPlanEffortListHandler {
         chart       = this.chart,
         dragElement = d3.select(d3.event.sourceEvent.target).closest('.effort-block-group');
     
-    Session.set('in-effort-drag', true);
-    
     // Freeze out all contributor blocks and effort titles from pointer events
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
+    chart.inEffortDrag = true;
     
     chart.drag = {
       dragElement: dragElement,
@@ -323,13 +321,12 @@ export class D3CapacityPlanEffortListHandler {
    * @param effort
    */
   effortDragEnd (effort) {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', effort);
-    let self         = this,
-        chart        = this.chart,
-        sprintNumber = Session.get('hover-sprint-number');
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.dragEnd:', effort, this.chart.drag);
+    let self  = this,
+        chart = this.chart;
     
     chart.drag.dragElement.classed('no-mouse', false);
-    Session.set('in-effort-drag', false);
+    chart.inEffortDrag = false;
     
     chart.drag.dragElement
         .transition()
@@ -340,8 +337,9 @@ export class D3CapacityPlanEffortListHandler {
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', false);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', false);
     
-    if (_.isNumber(sprintNumber)) {
-      let sprintBlockCount = chart.data.option.sprintBlocks(sprintNumber, CapacityPlanBlockTypes.effort).count(),
+    if (chart.drag.hover && chart.drag.hover.record) {
+      let sprintNumber     = chart.drag.hover.record.sprintNumber,
+          sprintBlockCount = chart.data.option.sprintBlocks(sprintNumber, CapacityPlanBlockTypes.effort).count(),
           existingBlock    = chart.data.option.sprintBlock(sprintNumber, effort._id);
       
       // Make sure that this doesn't already exist in this sprint
@@ -361,8 +359,6 @@ export class D3CapacityPlanEffortListHandler {
       } else {
         console.error('Sprint', sprintNumber, 'already has a block for the effort', effort.title, effort._id);
       }
-      
-      Session.set('hover-sprint-number', null);
     }
     
     delete chart.drag
