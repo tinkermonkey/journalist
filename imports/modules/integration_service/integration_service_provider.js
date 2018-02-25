@@ -17,7 +17,7 @@ import { IntegrationAgent }                      from './integration_agent';
 
 const { URL } = require('url');
 
-let debug = false,
+let debug = true,
     trace = false;
 
 export class IntegrationServiceProvider {
@@ -201,31 +201,37 @@ export class IntegrationServiceProvider {
     
     // Make sure there's something to connect to
     if (self.url && self.url.hostname) {
-      // Ping the server
-      debug && console.log('IntegrationServiceProvider.checkHealth pinging server:', self.url.hostname, self.url.port);
-      try {
-        let status = Ping.host(self.url.hostname, 3);
-        healthy    = status.online === true;
-        if (!healthy) {
-          debug && console.log('IntegrationServiceProvider.checkHealth ping status:', status);
-          details.message = 'Server did not respond to ping requests';
+      if(self.server.isAuthenticated === true){
+        // Ping the server
+        debug && console.log('IntegrationServiceProvider.checkHealth pinging server:', self.url.hostname, self.url.port);
+        try {
+          let status = Ping.host(self.url.hostname, 3);
+          healthy    = status.online === true;
+          if (!healthy) {
+            debug && console.log('IntegrationServiceProvider.checkHealth ping status:', status);
+            details.message = 'Server did not respond to ping requests';
+          }
+        } catch (e) {
+          console.error('IntegrationServiceProvider.checkHealth ping failed:', self.url.hostname, e);
+          HealthTracker.update(self.trackerKey, false, { message: 'Ping failed' });
+          self.healthy = false;
+          return;
         }
-      } catch (e) {
-        console.error('IntegrationServiceProvider.checkHealth ping failed:', self.url.hostname, e);
-        HealthTracker.update(self.trackerKey, false, { message: 'Ping failed' });
-        self.healthy = false;
-        return;
-      }
-      
-      // Check an authenticated end point to make sure the server is authenticated
-      if (healthy) {
-        let authResult = self.integrator.checkAuthentication();
-        healthy        = authResult.success === true;
-        if (!healthy) {
-          debug && console.log('IntegrationServiceProvider.checkHealth auth result:', authResult);
-          details.message = 'Server is not authenticated';
-          IntegrationServers.update({ _id: self.server._id }, { $set: { isAuthenticated: false } });
+  
+        // Check an authenticated end point to make sure the server is authenticated
+        if (healthy) {
+          let authResult = self.integrator.checkAuthentication();
+          healthy        = authResult.success === true;
+          if (!healthy) {
+            debug && console.log('IntegrationServiceProvider.checkHealth auth result:', authResult);
+            details.message = 'Server is not authenticated';
+            IntegrationServers.update({ _id: self.server._id }, { $set: { isAuthenticated: false } });
+          }
         }
+      } else {
+        healthy = false;
+        details.message = 'Server is not authenticated';
+        debug && console.log('IntegrationServiceProvider.checkHealth not authenticated:', self.url.hostname);
       }
       
       // Update the status

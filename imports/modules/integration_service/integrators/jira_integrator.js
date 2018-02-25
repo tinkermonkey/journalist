@@ -9,7 +9,7 @@ import { ImportedItemWorkStates } from '../../../api/imported_items/imported_ite
 // Pull in the jira connector
 const JiraConnector    = require('jira-connector'),
       request          = require('request'),
-      debug            = false,
+      debug            = true,
       trace            = false,
       queryDefinitions = {
         master: 'Master Select Query'
@@ -40,9 +40,9 @@ export class JiraIntegrator extends Integrator {
     this.type = IntegrationTypes.jira;
     
     // Create a cookie jar and load any stored data from Mongo
-    this.cookieStore = new MongoCookieStore(this.provider.trackerKey);
-    this.cookieStore.restoreCookies();
-    this.cookieJar = request.jar(this.cookieStore);
+    //this.cookieStore = new MongoCookieStore(this.provider.trackerKey);
+    //this.cookieStore.restoreCookies();
+    //this.cookieJar = request.jar(this.cookieStore);
     
     return this;
   }
@@ -643,6 +643,19 @@ export class JiraIntegrator extends Integrator {
    * Log out from this integration
    */
   unAuthenticate () {
-    throw new Meteor.Error(500, 'Integrator generic method called, must be overridden');
+    console.log('JiraIntegrator.unAuthenticate:', this.provider.server.title);
+    let self = this;
+    
+    try {
+      self.provider.clearAuthData();
+      return {
+        success: true
+      }
+    } catch (e) {
+      return {
+        success: false,
+        error  : e
+      }
+    }
   }
 }

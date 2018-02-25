@@ -53,7 +53,7 @@ Template.AuthenticateServerLink.events({
               console.log('authenticateIntegrationServer response:', error, response);
               if (error) {
                 RobaDialog.error('Failed to authenticate to server:' + error.toString())
-              } else if(!response.success) {
+              } else if(response.success === false) {
                 RobaDialog.error('Authentication Failed')
               } else {
                 RobaDialog.hide();
