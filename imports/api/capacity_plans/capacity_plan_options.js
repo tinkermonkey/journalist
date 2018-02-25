@@ -20,8 +20,8 @@ export const CapacityPlanOption = new SimpleSchema({
     type: String
   },
   startDate   : {
-    type        : Date,
-    optional    : true
+    type    : Date,
+    optional: true
   },
   sprintLength: {
     type        : SimpleSchema.Integer,
@@ -30,6 +30,12 @@ export const CapacityPlanOption = new SimpleSchema({
   sprintCount : {
     type        : SimpleSchema.Integer,
     defaultValue: 4
+  },
+  // Store display settings for the team
+  userSettings: {
+    type    : Object,
+    optional: true,
+    blackbox: true
   },
   // Standard tracking fields
   dateCreated : {
@@ -107,6 +113,159 @@ if (Meteor.isServer) {
  * Helpers
  */
 CapacityPlanOptions.helpers({
+  /**
+   * Get the team settings for the current user
+   */
+  getUserSettings () {
+    let option       = this,
+        userSettings = option.userSettings || {};
+    
+    return userSettings[ Meteor.userId() ] || {}
+  },
+  /**
+   * Update the all of the team settings for a user
+   * @param settings
+   */
+  updateUserSettings (settings) {
+    let option       = this,
+        userSettings = option.userSettings || {};
+    
+    // Store the user settings
+    userSettings[ Meteor.userId() ] = settings;
+    
+    if (Meteor.isServer) {
+      CapacityPlanOptions.update(option._id, { $set: { userSettings: userSettings } })
+    } else {
+      Meteor.call('editCapacityPlanOption', option._id, 'userSettings', userSettings, (error) => {
+        if (error) {
+          RobaDialog.error('Update failed:' + error.toString())
+        }
+      })
+    }
+  },
+  /**
+   * Get the team settings for the current user
+   * @param teamId
+   */
+  getTeamSettings (teamId) {
+    let option       = this,
+        userSettings = option.getUserSettings();
+    
+    if (userSettings[ teamId ]) {
+      return userSettings[ teamId ]
+    } else {
+      return {
+        teamId : teamId,
+        visible: true,
+        order  : option.plan().teams().fetch().findIndex((team) => {
+          return team._id === teamId
+        })
+      }
+    }
+  },
+  /**
+   * Get all of the team settings for the current user sorted by display order
+   */
+  getAllTeamSettings () {
+    let option = this;
+    
+    return option.plan()
+        .teams()
+        .fetch()
+        .map((team) => {
+          return option.getTeamSettings(team._id)
+        })
+        .sort((a, b) => {
+          return a.order > b.order ? 1 : -1
+        });
+  },
+  /**
+   * Update the settings for a team for a user
+   * @param teamId
+   * @param teamSettings
+   */
+  updateTeamSettings (teamId, teamSettings) {
+    let option       = this,
+        userSettings = option.getUserSettings();
+    
+    // Update the team settings
+    userSettings[ teamId ] = teamSettings;
+    
+    option.updateUserSettings(userSettings);
+  },
+  /**
+   * Update the team order for this option
+   * @param teamId
+   * @param newOrder
+   */
+  updateTeamOrder (teamId, newOrder) {
+    let option       = this,
+        userSettings = option.getUserSettings(),
+        teamSettings, currentIndex;
+    
+    // Re-index the order to make sure the order is sequential
+    teamSettings = option.getAllTeamSettings().map((teamSetting, i) => {
+      teamSetting.order = i;
+      if (teamSetting.teamId === teamId) {
+        currentIndex = i;
+      }
+      return teamSetting;
+    });
+    
+    // Displace the team currently in the order requested
+    if (currentIndex !== undefined) {
+      let moveIndex = Math.min(Math.max(parseInt(newOrder) || 0, 0), teamSettings.length);
+      
+      teamSettings[ moveIndex ].order    = currentIndex;
+      teamSettings[ currentIndex ].order = moveIndex;
+    }
+    
+    // Map the team settings back to the user settings object
+    teamSettings.sort((a, b) => {
+          return a.order > b.order ? 1 : -1
+        })
+        .forEach((teamSetting, i) => {
+          teamSetting.order = i;
+          
+          userSettings[ teamSetting.teamId ] = teamSetting
+        });
+    
+    option.updateUserSettings(userSettings);
+  },
+  /**
+   * Move a team up in the order
+   * @param teamId
+   */
+  moveTeamUp (teamId) {
+    let option       = this,
+        teamSettings = option.getTeamSettings(teamId);
+    
+    option.updateTeamOrder(teamId, teamSettings.order - 1)
+  },
+  /**
+   * Move a team down in the order
+   * @param teamId
+   */
+  moveTeamDown (teamId) {
+    let option       = this,
+        teamSettings = option.getTeamSettings(teamId);
+    
+    option.updateTeamOrder(teamId, teamSettings.order + 1)
+  },
+  /**
+   * Toggle team visibility for this option
+   * @param teamId
+   */
+  toggleTeamVisibility (teamId) {
+    let option       = this,
+        teamSettings = option.getTeamSettings(teamId);
+    
+    // Set the visible flag
+    teamSettings.visible = !teamSettings.visible;
+    
+    // Store the user settings
+    option.updateTeamSettings(teamId, teamSettings);
+  },
   /**
    * Get the plan this option belongs to
    */
@@ -353,7 +512,7 @@ CapacityPlanOptions.helpers({
   },
   
   /**
-   * Make sure the release link for an effort always emanates from the last block in the option
+   * Make sure the release link for an effort always emanates from the last block for an effort
    */
   healReleaseLinks (effortId, ignoreBlockId) {
     let option         = this,
@@ -370,64 +529,58 @@ CapacityPlanOptions.helpers({
     }));
     
     //console.log('healReleaseLinks effortId, sprints:', effortId, sprints);
-    if (sprints.length > 1) {
-      // Get the maximum sprint number for this effort
-      let effortBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch(),
-          strictBlocks = CapacityPlanSprintBlocks.find(strictCriteria).fetch(),
-          finalSprint  = sprints[ sprints.length - 1 ];
+    // Get the maximum sprint number for this effort
+    let effortBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch(),
+        strictBlocks = CapacityPlanSprintBlocks.find(strictCriteria).fetch(),
+        finalSprint  = sprints[ sprints.length - 1 ];
+    
+    //console.log('healReleaseLinks finalSprint, effortBlocks', finalSprint, effortBlocks, strictBlocks);
+    
+    // Determine the correct release target
+    let targetReleaseLinks = _.uniq(_.flatten(effortBlocks.map((block) => {
+      return block.sourceLinks().fetch()
+    })), (link) => {
+      return link.targetId
+    });
+    //console.log('healReleaseLinks targetReleaseLinks:', targetReleaseLinks);
+    
+    // If there are no target releases, nothing to heal
+    if (targetReleaseLinks.length) {
+      let chosenReleaseBlockId = targetReleaseLinks[ 0 ].targetId;
+      //console.log('healReleaseLinks chosenReleaseBlockId:', chosenReleaseBlockId);
       
-      //console.log('healReleaseLinks finalSprint, effortBlocks', finalSprint, effortBlocks, strictBlocks);
-      
-      // Determine the correct release target
-      let targetReleaseLinks = _.uniq(_.flatten(effortBlocks.map((block) => {
-        return block.sourceLinks().fetch()
-      })), (link) => {
-        return link.targetId
+      // Go through the non-final blocks and remove any release links
+      blockCriteria.sprintNumber = { $lt: finalSprint };
+      CapacityPlanSprintBlocks.find(blockCriteria).forEach((block) => {
+        block.sourceLinks().forEach((link) => {
+          CapacityPlanSprintLinks.remove(link._id)
+        })
       });
-      //console.log('healReleaseLinks targetReleaseLinks:', targetReleaseLinks);
+      blockCriteria.sprintNumber = { $gt: finalSprint };
+      CapacityPlanSprintBlocks.find(blockCriteria).forEach((block) => {
+        block.sourceLinks().forEach((link) => {
+          CapacityPlanSprintLinks.remove(link._id)
+        })
+      });
       
-      // If there are no target releases, nothing to heal
-      if (targetReleaseLinks.length) {
-        let chosenReleaseBlockId = targetReleaseLinks[ 0 ].targetId;
-        //console.log('healReleaseLinks chosenReleaseBlockId:', chosenReleaseBlockId);
-        
-        // Go through the non-final blocks and remove any release links
-        blockCriteria.sprintNumber = { $lt: finalSprint };
-        CapacityPlanSprintBlocks.find(blockCriteria).forEach((block) => {
-          block.sourceLinks().forEach((link) => {
-            CapacityPlanSprintLinks.remove(link._id)
-          })
-        });
-        blockCriteria.sprintNumber = { $gt: finalSprint };
-        CapacityPlanSprintBlocks.find(blockCriteria).forEach((block) => {
-          block.sourceLinks().forEach((link) => {
-            CapacityPlanSprintLinks.remove(link._id)
-          })
-        });
-        
-        // Get the block that should link to the release
-        strictCriteria.sprintNumber = finalSprint;
-        let finalBlock              = CapacityPlanSprintBlocks.findOne(strictCriteria);
-        
-        // Validate any remaining links
-        finalBlock.sourceLinks().forEach((link, i) => {
-          if (link.targetId !== chosenReleaseBlockId || i > 0) {
-            CapacityPlanSprintLinks.remove(link._id)
-          }
-        });
-        
-        // Make sure there is a link from the final block
-        if (finalBlock.sourceLinks().count() === 0) {
-          // Insert a release link to replace the ones that were removed
-          //console.log('healReleaseLinks adding a link to the chosen block:', chosenReleaseBlockId);
-          let releaseBlock = CapacityPlanSprintBlocks.findOne(chosenReleaseBlockId);
-          releaseBlock.addLink(finalBlock._id, finalBlock.sprintNumber, CapacityPlanBlockTypes.effort);
-          
-          // Make sure the release is still in the right sprint
-          if (releaseBlock.sprintNumber < finalBlock.sprintNumber) {
-            releaseBlock.updateSprintNumber(finalBlock.sprintNumber)
-          }
+      // Get the block that should link to the release
+      strictCriteria.sprintNumber = finalSprint;
+      let finalBlock              = CapacityPlanSprintBlocks.findOne(strictCriteria);
+      
+      // Validate any remaining links
+      finalBlock.sourceLinks().forEach((link, i) => {
+        if (link.targetId !== chosenReleaseBlockId || i > 0) {
+          CapacityPlanSprintLinks.remove(link._id)
         }
+      });
+      
+      // Make sure there is a link from the final block
+      if (finalBlock.sourceLinks().count() === 0) {
+        // Insert a release link to replace the ones that were removed
+        //console.log('healReleaseLinks adding a link to the chosen block:', chosenReleaseBlockId);
+        let releaseBlock = CapacityPlanSprintBlocks.findOne(chosenReleaseBlockId);
+        releaseBlock.addLink(finalBlock._id, finalBlock.sprintNumber, CapacityPlanBlockTypes.effort);
+        
       }
     }
   }

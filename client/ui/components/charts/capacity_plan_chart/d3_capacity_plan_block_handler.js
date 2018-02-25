@@ -1,6 +1,7 @@
 import { Util }                            from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes }          from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { D3ContributorDragControlHandler } from './d3_contributor_drag_control_handler';
+import { CapacityPlanSprintLinks }         from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_links';
 
 let d3            = require('d3'),
     d3Drag        = require('d3-drag'),
@@ -124,14 +125,20 @@ export class D3CapacityPlanBlockHandler {
               record : d,
               element: element
             };
+          } else {
+            // show the release links if any
+            chart.svg.selectAll('.release-link[data-effort-id="' + d.dataId + '"]').classed('highlight', true)
           }
         })
         .on('mouseleave', (d) => {
           let element = d3.select(d3.event.target);
-          
           element.classed('hover', false);
+          
           if (chart.inContributorDrag) {
             delete chart.drag.hover;
+          } else {
+            // Hide the release links if any
+            chart.svg.selectAll('.release-link[data-effort-id="' + d.dataId + '"]').classed('highlight', false)
           }
         });
     
@@ -149,25 +156,52 @@ export class D3CapacityPlanBlockHandler {
     
     dragGroupEnter.append('g').attr('class', 'link-drag-link-container');
     
-    let dragContainerEnter = dragGroupEnter.append('g')
+    let effortLinkerEnter = dragGroupEnter.append('g')
         .attr('class', 'link-drag-handle-container')
         .call(self.effortLinkDrag);
     
-    dragContainerEnter.append('circle')
+    effortLinkerEnter.append('circle')
         .attr('class', 'link-drag-handle')
         .attr('cx', 0)
         .attr('cy', 0)
         .attr('r', 7);
     
-    dragContainerEnter.append('circle')
+    effortLinkerEnter.append('circle')
         .attr('class', 'link-drag-handle-dot')
         .attr('cx', 0)
         .attr('cy', 0)
         .attr('r', 2);
     
+    let effortUnlinkerEnter = dragGroupEnter.append('g')
+        .attr('class', 'effort-controls effort-unlinker-container')
+        .append('g')
+        .attr('class', 'effort-control effort-control-remove-release-link')
+        .on('click', (block) => {
+          block.sourceLinks().forEach((link) => {
+            CapacityPlanSprintLinks.remove(link._id);
+          })
+        })
+        .on('mouseenter', (block) => {
+          // show the release links if any
+          chart.svg.selectAll('.release-link[data-effort-id="' + block.dataId + '"]').classed('highlight', true)
+        })
+        .on('mouseleave', (block) => {
+          // hide the release links if any
+          chart.svg.selectAll('.release-link[data-effort-id="' + block.dataId + '"]').classed('highlight', true)
+        });
+    
+    effortUnlinkerEnter.append('circle')
+        .attr('class', 'effort-control-background')
+        .attr('r', controlRadius);
+    
+    effortUnlinkerEnter.append('text')
+        .attr('x', controlTextX)
+        .attr('y', controlTextY)
+        .text('\u00D7');
+    
     // Add controls for this effort
     let effortControlsEnter = effortBlockEnter.append('g')
-        .attr('class', 'effort-controls');
+        .attr('class', 'effort-controls effort-block-controls');
     
     let removeButtonEnter = effortControlsEnter.append('g')
         .attr('class', 'effort-control effort-control-remove')
@@ -259,13 +293,22 @@ export class D3CapacityPlanBlockHandler {
     // Don't show the link to add to a release if this is already part of a release
     self.effortBlockSelection.select('.link-drag-handle-container')
         .classed('no-mouse', (d) => {
-          return !d.showReleaseControls
+          return !d.showReleaseLinker
         })
         .style('opacity', (d) => {
-          return d.showReleaseControls ? 1 : 0
+          return d.showReleaseLinker ? 1 : 0
         });
     
-    self.effortBlockSelection.select('.effort-controls')
+    // Don't show the link to remove from a release if this is not part of a release
+    self.effortBlockSelection.select('.effort-control-remove-release-link')
+        .classed('no-mouse', (d) => {
+          return !d.showReleaseUnlinker
+        })
+        .style('display', (d) => {
+          return d.showReleaseUnlinker ? 'block' : 'none'
+        });
+    
+    self.effortBlockSelection.select('.effort-block-controls')
         .attr('transform', (effort) => {
           return 'translate(' + chart.sprintBodyWidth + ', 3)'
         });

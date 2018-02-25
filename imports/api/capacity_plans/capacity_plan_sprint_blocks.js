@@ -242,7 +242,7 @@ CapacityPlanSprintBlocks.helpers({
    * @param sprintNumber
    */
   updateSprintNumber (sprintNumber) {
-    console.log('CapacityPlanSprintBlocks.updateSprintNumber:', this._id, this.parentId, sprintNumber);
+    //console.log('CapacityPlanSprintBlocks.updateSprintNumber:', this._id, this.parentId, sprintNumber);
     let block = this;
     
     CapacityPlanSprintBlocks.update(block._id, { $set: { sprintNumber: sprintNumber } });
@@ -263,6 +263,14 @@ CapacityPlanSprintBlocks.helpers({
       
       // Heal the links
       block.option().healContributorLinks(block.dataId)
+    } else {
+      // Update all of the links sourceSprint and targetSprint
+      block.sourceLinks().forEach((link) => {
+        CapacityPlanSprintLinks.update(link._id, { $set: { sourceSprint: sprintNumber } });
+      });
+      block.targetLinks().forEach((link) => {
+        CapacityPlanSprintLinks.update(link._id, { $set: { targetSprint: sprintNumber } });
+      });
     }
   },
   

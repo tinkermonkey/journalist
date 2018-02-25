@@ -151,6 +151,9 @@ export class D3CapacityPlanLinkHandler {
         .attr('data-release-id', (d) => {
           return d.releaseId
         })
+        .attr('data-effort-id', (d) => {
+          return d.source().dataId
+        })
         .on('mouseenter', (d) => {
           if (!chart.inEffortDrag) {
             chart.svg.selectAll('.release-highlight[data-release-id="' + d.targetId + '"]').classed('highlight', true)

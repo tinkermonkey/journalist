@@ -1,5 +1,6 @@
 import './top_nav.html';
 import './top_nav.css';
+import { Meteor }              from 'meteor/meteor';
 import { Template }            from 'meteor/templating';
 import { SystemHealthMetrics } from '../../../../imports/api/system_health_metrics/system_health_metrics';
 import './status_menu_item'
@@ -15,12 +16,20 @@ Template.TopNav.helpers({
     }
     return SystemHealthMetrics.find(filter, { sort: { isHealthy: 1, title: 1 } })
   },
+  meteorServerStatus () {
+    let status = Meteor.status();
+    return {
+      title: 'Journalist Server',
+      isHealthy: status.connected
+    }
+  },
   statusSummary () {
-    let status = SystemHealthMetrics.find({}).map((metric) => {
-      return metric.isHealthy
-    }).reduce((acc, val) => {
-      return acc && val
-    }, true);
+    let serverStatus = Meteor.status(),
+        status = SystemHealthMetrics.find({}).map((metric) => {
+          return metric.isHealthy
+        }).reduce((acc, val) => {
+          return acc && val
+        }, true) && serverStatus.connected;
     return {
       title    : status === true ? 'System Healthy' : 'System Unhealthy',
       isHealthy: status

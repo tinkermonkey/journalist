@@ -118,6 +118,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li class="disabled"><a>Services</a></li>
+                {{> StatusMenuItem meteorServerStatus }}
                 {{#each statusMetrics}}
                   {{> StatusMenuItem }}
                 {{/each}}

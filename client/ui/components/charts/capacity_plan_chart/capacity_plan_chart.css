@@ -37,6 +37,33 @@
 /**
  * Contributors & teams list
  */
+.team-title-group {
+  cursor: pointer;
+}
+
+.team-title {
+  font-size          : 18px;
+  text-anchor        : end;
+  alignment-baseline : hanging;
+}
+
+.team-title-background {
+  fill: rgba(255, 255, 255, 0.25);
+  -webkit-transition : fill 0.5s, opacity 0.5s;
+  -moz-transition    : fill 0.5s, opacity 0.5s;
+  -ms-transition     : fill 0.5s, opacity 0.5s;
+  -o-transition      : fill 0.5s, opacity 0.5s;
+  transition         : fill 0.5s, opacity 0.5s;
+}
+
+.team-title-background.collapsed {
+  fill: rgba(127, 127, 127, 0.25);
+}
+
+.team-title-group:hover .team-title-background {
+  fill: #ff009d;
+}
+
 .contributor-group {
   cursor : pointer;
 }
@@ -112,7 +139,7 @@
 }
 
 .y-axis-separator {
-  stroke-width    : 3px;
+  stroke-width    : 4px;
   stroke          : #fff;
   shape-rendering : crispEdges;
 }
@@ -190,6 +217,7 @@
   fill : #fff;
 }
 
+.team-controls,
 .effort-controls,
 .release-controls,
 .contributor-controls {
@@ -202,6 +230,7 @@
   transition-delay   : 0.125s;
 }
 
+.team-group:hover .team-controls,
 .effort-block-group:hover .effort-controls,
 .release-block-group:hover .release-controls,
 .contributor-block-group:hover .contributor-controls {

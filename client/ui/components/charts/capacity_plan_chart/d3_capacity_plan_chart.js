@@ -1,3 +1,4 @@
+import { Session }                         from 'meteor/session';
 import { Util }                            from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes }          from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 import { D3CapacityPlanBlockHandler }      from './d3_capacity_plan_block_handler';
@@ -23,11 +24,13 @@ export class D3CapacityPlanChart {
     // Merge the passed config with the default config
     this.config = _.extend({
       contributors: {
-        height: 25,
+        height: 26,
         width : 120
       },
       teams       : {
-        padding: 8
+        padding     : 8,
+        titleHeight : 30,
+        titlePadding: 6
       },
       header      : {
         height: 75
@@ -155,7 +158,7 @@ export class D3CapacityPlanChart {
     // Create a layer for the effort list
     self.effortListLayer = self.baseLayer.append('g')
         .attr('class', 'effort-list-layer')
-        .attr('transform', 'translate(' + self.config.efforts.margin + ',' + (self.config.efforts.margin + self.config.header.height) + ')');
+        .attr('transform', 'translate(0,' + (self.config.header.height) + ')');
     
     self.effortListBackground = self.effortListLayer.append('g')
         .attr('class', 'effort-list-background-group')
@@ -167,7 +170,7 @@ export class D3CapacityPlanChart {
     // Append a control to show and hide the effort list
     self.effortListControl = self.effortListLayer.append('g')
         .attr('class', 'effort-list-control-group')
-        .attr('transform', 'translate(' + self.config.efforts.margin + ', -20)')
+        .attr('transform', 'translate(' + self.config.efforts.margin + ', -30)')
         .append('circle')
         .attr('class', 'effort-list-control')
         .attr('cx', 0)
@@ -345,25 +348,42 @@ export class D3CapacityPlanChart {
     
     // Store the option and plan records
     self.data = data;
-    
+  
     // Capture the teams
-    let contributorIndex       = 0;
-    self.data.contributorOrder = {};
-    self.data.teams            = self.data.plan.teams().map((team) => {
-      return {
-        _id         : team._id,
-        title       : team.title,
-        contributors: team.contributorsInCapacityRole(self.data.roleId).fetch().map((contributor) => {
-          contributorIndex += 1;
-          if (self.data.contributorOrder[ contributor._id ] === undefined) {
-            self.data.contributorOrder[ contributor._id ] = contributorIndex;
+    let contributorIndex            = 0;
+    self.data.contributorOrder      = {};
+    self.data.contributorVisibility = {};
+    self.data.teams                 = self.data.plan.teams()
+        .map((team, i) => {
+          let teamSettings = self.data.option.getTeamSettings(team._id),
+              visible      = teamSettings.visible;
+
+          return {
+            _id         : team._id,
+            title       : team.title,
+            visible     : visible,
+            order       : teamSettings.order !== undefined ? teamSettings.order : i,
+            contributors: team.contributorsInCapacityRole(self.data.roleId).fetch().map((contributor) => {
+              contributorIndex += 1;
+              if (self.data.contributorOrder[ contributor._id ] === undefined) {
+                self.data.contributorOrder[ contributor._id ] = contributorIndex;
+              }
+              
+              // Inherit the visibility of the team
+              contributor.visible = visible;
+              
+              // Keep track of whether this contributor should be shown, using an or in case the contributor is on multiple teams and one is shown
+              self.data.contributorVisibility[ contributor._id ] = self.data.contributorVisibility[ contributor._id ] || visible;
+              
+              return contributor
+            }),
           }
-          return contributor
+        }).filter((team) => {
+          return team.contributors.length > 0
         })
-      }
-    }).filter((team) => {
-      return team.contributors.length > 0
-    });
+        .sort((a, b) => {
+          return a.order > b.order ? 1 : -1
+        });
     
     // Capture the sprints
     self.data.sprints.forEach((sprint) => {
@@ -375,6 +395,9 @@ export class D3CapacityPlanChart {
                 .fetch()
                 .filter((contributorBlock) => {
                   return self.data.contributorOrder[ contributorBlock.dataId ] !== undefined
+                })
+                .filter((contributorBlock) => {
+                  return self.data.contributorVisibility[ contributorBlock.dataId ]
                 })
                 .sort((a, b) => {
                   return self.data.contributorOrder[ a.dataId ] > self.data.contributorOrder[ b.dataId ] ? 1 : -1
@@ -405,9 +428,16 @@ export class D3CapacityPlanChart {
             effortBlock.displacement = 0;
             
             // Only show the release controls on the last sprint of an effort and if the effort is not already targeted for a release
-            effortBlock.showReleaseControls = effortBlock.cousins().fetch().reduce((maxSprint, cousin) => {
+            effortBlock.showReleaseLinker = effortBlock.cousins().fetch().reduce((maxSprint, cousin) => {
               return Math.max(cousin.sprintNumber, maxSprint)
             }, 0) === effortBlock.sprintNumber && effortBlock.sourceLinks().count() === 0;
+            
+            // Only show the release unlink controls on the last sprint if there is a link
+            effortBlock.showReleaseUnlinker = effortBlock.cousins().fetch().reduce((maxSprint, cousin) => {
+              //console.log('showReleaseUnlinker:', effortBlock.title, effortBlock.sprintNumber, cousin.sprintNumber, maxSprint, effortBlock.sourceLinks().count());
+              return Math.max(cousin.sprintNumber, maxSprint)
+            }, 0) === effortBlock.sprintNumber && effortBlock.sourceLinks().count() > 0;
+            //console.log('showReleaseUnlinker result:', effortBlock.title, effortBlock.sprintNumber, effortBlock.showReleaseUnlinker);
             
             return effortBlock
           });
@@ -428,11 +458,12 @@ export class D3CapacityPlanChart {
         let sprintNumber = self.data.sprints.length - 1;
         if (releaseBlock.targetLinks().count()) {
           sprintNumber = 0;
-          //console.log('Found links for release:', releaseBlock, releaseBlock.targetLinks().fetch());
+          console.log('Found links for release:', releaseBlock._id, releaseBlock.targetLinks().fetch());
           releaseBlock.targetLinks().forEach((link) => {
+            console.log('Release Content:', releaseBlock._id, link.sourceSprint);
             if (link.sourceSprint > sprintNumber) {
-              //console.log('Found new maximum sprint number:', sprintNumber, link);
               sprintNumber = link.sourceSprint;
+              console.log('Found new maximum sprint number for release:', releaseBlock._id, sprintNumber, link.sourceSprint);
             }
           })
         }

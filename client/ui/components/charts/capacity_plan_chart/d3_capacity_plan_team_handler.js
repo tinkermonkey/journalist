@@ -1,8 +1,11 @@
 import { Util }                            from '../../../../../imports/api/util';
 import { D3ContributorDragControlHandler } from './d3_contributor_drag_control_handler';
 
-let d3    = require('d3'),
-    debug = false;
+let d3            = require('d3'),
+    controlTextX  = 0,
+    controlTextY  = 0,
+    controlRadius = 10,
+    debug         = false;
 
 export class D3CapacityPlanTeamHandler {
   /**
@@ -19,7 +22,7 @@ export class D3CapacityPlanTeamHandler {
     let self  = this,
         chart = this.chart;
     
-    self.calculateTeamHeights();
+    self.calculateEnvelopes();
     
     // Service the teams sections
     self.insertTeams();
@@ -56,12 +59,83 @@ export class D3CapacityPlanTeamHandler {
     
     self.updateTeamsSelection();
     
-    self.teamSelection.enter()
+    // Insert the base group
+    let teamEnter = self.teamSelection.enter()
         .append('g')
         .attr('class', 'team-group')
         .attr('data-team-id', (d) => {
           return d._id
         });
+    
+    // Insert the title group
+    let teamTitleEnter = teamEnter.append('g')
+        .attr('class', 'team-title-group')
+        .on('click', (team) => {
+          chart.data.option.toggleTeamVisibility(team._id);
+        })
+        .on('mouseenter', (team) => {
+          // Highlight all of the team contributors
+          team.contributors.forEach((contributor) => {
+            chart.svg.selectAll('.contributor-highlight[data-contributor-id="' + contributor._id + '"]').classed('highlight', true)
+          });
+        })
+        .on('mouseleave', (team) => {
+          // Remove highlight from all of the team contributors
+          team.contributors.forEach((contributor) => {
+            chart.svg.selectAll('.contributor-highlight[data-contributor-id="' + contributor._id + '"]').classed('highlight', false)
+          });
+        });
+    
+    teamTitleEnter.append('rect')
+        .attr('class', 'team-title-background')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('height', chart.config.teams.titleHeight)
+        .attr('width', chart.namesWidth + chart.config.teams.padding);
+    
+    teamTitleEnter.append('text')
+        .attr('class', 'team-title')
+        .text((team) => {
+          return team.title
+        });
+    
+    // Insert the re-order controls
+    // Add controls for this effort
+    let teamControlsEnter = teamEnter.append('g')
+        .attr('class', 'team-controls');
+    
+    let upButtonEnter = teamControlsEnter.append('g')
+        .attr('class', 'effort-control effort-control-up')
+        .attr('transform', 'translate(' + (1 * controlRadius + 2 * chart.config.efforts.padding) + ', 0)')
+        .on('click', (team) => {
+          chart.data.option.moveTeamUp(team._id)
+        });
+    
+    upButtonEnter.append('circle')
+        .attr('class', 'effort-control-background')
+        .attr('r', controlRadius);
+    
+    upButtonEnter.append('text')
+        .attr('x', controlTextX)
+        .attr('y', controlTextY)
+        .text('\u2191');
+    
+    let downButtonEnter = teamControlsEnter.append('g')
+        .attr('class', 'effort-control effort-control-down')
+        .attr('transform', 'translate(' + (3 * controlRadius + 3 * chart.config.efforts.padding) + ', 0)')
+        .on('click', (team) => {
+          chart.data.option.moveTeamDown(team._id)
+        });
+    
+    downButtonEnter.append('circle')
+        .attr('class', 'effort-control-background')
+        .attr('r', controlRadius);
+    
+    downButtonEnter.append('text')
+        .attr('x', controlTextX)
+        .attr('y', controlTextY)
+        .text('\u2193');
+    
   }
   
   /**
@@ -74,9 +148,31 @@ export class D3CapacityPlanTeamHandler {
     
     self.updateTeamsSelection();
     
-    self.teamSelection.attr('transform', (team, i) => {
-      return 'translate(0,' + team.envelope.y1 + ')'
-    });
+    // Place the team envelope
+    self.teamSelection
+        .transition()
+        .duration(500)
+        .attr('transform', (team, i) => {
+          return 'translate(0,' + team.envelope.y1 + ')'
+        });
+    
+    // Update the team title
+    self.teamSelection.select('.team-title')
+        .text((team) => {
+          return team.title
+        })
+        .transition()
+        .duration(500)
+        .attr('transform', () => {
+          return 'translate(' + (chart.namesWidth - chart.config.teams.padding) + ', ' + chart.config.teams.titlePadding + ')'
+        });
+    
+    // Update the team title background
+    self.teamSelection.select('.team-title-background')
+        .classed('collapsed', (team) => {
+          return team.visible === false
+        })
+        .attr('width', chart.namesWidth + chart.config.teams.padding - 2);
   }
   
   /**
@@ -169,9 +265,12 @@ export class D3CapacityPlanTeamHandler {
     
     self.updateContributorSelection();
     
-    self.contributorSelection.attr('transform', (contributor) => {
-      return 'translate(' + (chart.namesWidth - chart.config.teams.padding) + ',' + (contributor.envelope.y1 + chart.config.teams.padding) + ')'
-    });
+    self.contributorSelection.attr('opacity', (contributor) => {
+          return contributor.visible ? 1 : 0
+        })
+        .attr('transform', (contributor) => {
+          return 'translate(' + (chart.namesWidth - chart.config.teams.padding) + ',' + (contributor.envelope.y1) + ')'
+        });
     
     self.contributorSelection.select('.contributor-background')
         .attr('x', -chart.namesWidth + chart.config.teams.padding)
@@ -198,23 +297,29 @@ export class D3CapacityPlanTeamHandler {
   /**
    * Size all of the team blocks
    */
-  calculateTeamHeights () {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.calculateTeamHeights');
+  calculateEnvelopes () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.calculateEnvelopes');
     let self  = this,
         chart = this.chart;
     
     // Set the y position for the groups
-    let dy           = 0,
+    let dy = 0,
         height,
         width;
+    
     chart.namesWidth = 0;
     chart.data.teams.forEach((team) => {
       // Measure the width of the title
       chart.offscreenLayer.append('text')
           .attr('id', '_' + team._id)
+          .attr('class', 'team-title')
           .text(team.title);
       
-      height = team.contributors.length * chart.config.contributors.height + 2 * chart.config.teams.padding;
+      if (team.visible) {
+        height = chart.config.teams.titleHeight + team.contributors.length * chart.config.contributors.height + chart.config.teams.padding;
+      } else {
+        height = chart.config.teams.titleHeight + chart.config.teams.padding;
+      }
       
       team.envelope = {
         x1    : 0,
@@ -224,6 +329,9 @@ export class D3CapacityPlanTeamHandler {
         height: height,
         width : chart.offscreenLayer.select('#_' + team._id).node().getBoundingClientRect().width
       };
+      
+      // Factor in the team title to the max width calc
+      chart.namesWidth = Math.max(team.envelope.width, chart.namesWidth);
       
       team.contributors.forEach((contributor, i) => {
         // Measure the width of the title
@@ -236,12 +344,13 @@ export class D3CapacityPlanTeamHandler {
         
         contributor.envelope = {
           x1   : 0,
-          y1   : i * chart.config.contributors.height,
+          y1   : i * chart.config.contributors.height + chart.config.teams.titleHeight,
           x2   : width,
-          y2   : (i + 1) * chart.config.contributors.height,
+          y2   : (i + 1) * chart.config.contributors.height + chart.config.teams.titleHeight,
           width: width
         };
         
+        // Factor in the contributor name to the max width calc
         chart.namesWidth = Math.max(width, chart.namesWidth);
       });
       
