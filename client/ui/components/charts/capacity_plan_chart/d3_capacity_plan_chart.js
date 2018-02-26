@@ -333,6 +333,11 @@ export class D3CapacityPlanChart {
         self.scale          = self.proposedScale;
         self.lastUpdateTime = 0;
         self.update(data);
+        
+        // Sometimes when scaled down the
+        setTimeout(() => {
+          self.update(data);
+        }, 500);
         return;
       } else {
         self.baseLayer.attr('transform', 'translate(' + self.config.margin.left + ',' + self.config.margin.top + '), scale(' + self.scale + ')');
@@ -443,12 +448,16 @@ export class D3CapacityPlanChart {
       sprint.effortBlocks = self.data.option.sprintBlocks(sprint.sprintNumber, CapacityPlanBlockTypes.effort)
           .fetch()
           .filter((effortBlock) => {
-            return CapacityPlanSprintBlocks.find({
-              optionId : self.data.option._id,
-              blockType: CapacityPlanBlockTypes.contributor,
-              dataId   : { $in: self.data.contributorIdList },
-              parentId : effortBlock._id
-            }).count() > 0
+            if(self.data.teamId){
+              return CapacityPlanSprintBlocks.find({
+                optionId : self.data.option._id,
+                blockType: CapacityPlanBlockTypes.contributor,
+                dataId   : { $in: self.data.contributorIdList },
+                parentId : effortBlock._id
+              }).count() > 0
+            } else {
+              return true
+            }
           })
           .map((effortBlock) => {
             // Get all of the contributors for this effort

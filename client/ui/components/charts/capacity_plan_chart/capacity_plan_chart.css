@@ -464,7 +464,11 @@ path.release-highlight.highlight {
 }
 
 .printable .team-title-background {
-  fill : #ff009d;
+  fill : #ffffff;
+}
+
+.printable .team-title {
+  font-weight: bold;
 }
 
 .printable .contributor-link {

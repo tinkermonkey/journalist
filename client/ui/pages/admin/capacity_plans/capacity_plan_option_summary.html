@@ -2,19 +2,6 @@
   <div class="options-summary">
     <table class="options-summary-table">
       {{#each capacityPlan.options}}
-        {{#if ../showCharts}}
-          <tr>
-            <td colspan="2">
-              <h3>{{title}}</h3>
-              {{#each plan.teams}}
-                {{#if teamHasContributions ..}}
-                  <h4>{{title}}</h4>
-                  {{> CapacityPlanChart option=.. roleIds=planRoles teamId=_id cssClass='printable' }}
-                {{/if}}
-              {{/each}}
-            </td>
-          </tr>
-        {{/if}}
         <tr>
           <td class="option-summary-title">
             <h2>{{title}}</h2>
@@ -69,6 +56,15 @@
                 </table>
               </div>
             {{/each}}
+            
+            {{#if ../showCharts}}
+              <h3>Team Plans</h3>
+              {{#each plan.teams}}
+                {{#if teamHasContributions ..}}
+                  {{> CapacityPlanChart option=.. roleIds=planRoles teamId=_id cssClass='printable' }}
+                {{/if}}
+              {{/each}}
+            {{/if}}
           </td>
         </tr>
       {{/each}}

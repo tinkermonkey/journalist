@@ -350,7 +350,7 @@ CapacityPlanOptions.helpers({
     let option = this;
     
     CapacityPlanSprints.remove({
-      planId      : option._id,
+      optionId      : option._id,
       sprintNumber: { $gte: option.sprintCount }
     });
     
