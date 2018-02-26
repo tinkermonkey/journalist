@@ -1,7 +1,7 @@
-import { Mongo }         from 'meteor/mongo';
-import SimpleSchema      from 'simpl-schema';
-import { ChangeTracker } from 'meteor/austinsand:roba-change-tracker';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }                    from 'meteor/mongo';
+import SimpleSchema                 from 'simpl-schema';
+import { ChangeTracker }            from 'meteor/austinsand:roba-change-tracker';
+import { SchemaHelpers }            from '../schema_helpers.js';
 
 /**
  * ============================================================================
@@ -59,4 +59,10 @@ Efforts.deny({
 /**
  * Helpers
  */
-Efforts.helpers({});
+Efforts.helpers({
+  // Get all of the sprint blocks for an option
+  optionBlocks (optionId) {
+    let effort = this;
+    return
+  }
+});

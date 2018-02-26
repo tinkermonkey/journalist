@@ -38,7 +38,7 @@
  * Contributors & teams list
  */
 .team-title-group {
-  cursor: pointer;
+  cursor : pointer;
 }
 
 .team-title {
@@ -48,7 +48,7 @@
 }
 
 .team-title-background {
-  fill: rgba(255, 255, 255, 0.25);
+  fill               : rgba(255, 255, 255, 0.25);
   -webkit-transition : fill 0.5s, opacity 0.5s;
   -moz-transition    : fill 0.5s, opacity 0.5s;
   -ms-transition     : fill 0.5s, opacity 0.5s;
@@ -57,11 +57,11 @@
 }
 
 .team-title-background.collapsed {
-  fill: rgba(127, 127, 127, 0.25);
+  fill : rgba(127, 127, 127, 0.25);
 }
 
 .team-title-group:hover .team-title-background {
-  fill: #ff009d;
+  fill : #ff009d;
 }
 
 .contributor-group {
@@ -200,8 +200,8 @@
 
 .effort-block.hover,
 .effort-block:hover {
-  stroke       : #fff;
-  stroke-width : 2px;
+  stroke       : #ff009d;
+  stroke-width : 3px;
 }
 
 .effort-block-group.in-drag {
@@ -217,33 +217,33 @@
   fill : #fff;
 }
 
-.team-controls,
-.effort-controls,
-.release-controls,
-.contributor-controls {
+.effort-block-group.effort-highlight .effort-block {
+  fill         : #ff009d !important;
+  stroke       : #ff009d;
+  stroke-width : 3px;
+}
+
+.effort-link {
+  fill               : none;
+  stroke             : #ff009d;
+  stroke-width       : 1px;
   opacity            : 0;
-  -webkit-transition : opacity 0.5s;
-  -moz-transition    : opacity 0.5s;
-  -ms-transition     : opacity 0.5s;
-  -o-transition      : opacity 0.5s;
-  transition         : opacity 0.5s;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
   transition-delay   : 0.125s;
 }
 
-.team-group:hover .team-controls,
-.effort-block-group:hover .effort-controls,
-.release-block-group:hover .release-controls,
-.contributor-block-group:hover .contributor-controls {
-  opacity : 1;
+.effort-link.highlight {
+  fill         : none;
+  stroke       : #ff009d;
+  stroke-width : 20px;
+  opacity      : 1;
 }
 
-.effort-block-group.effort-highlight .effort-block {
-  fill         : rgb(22, 231, 58) !important;
-  stroke-width : 2px;
-  stroke       : #fff;
-}
-
-.effort-control-background,
+.round-control-background,
 .contributor-control-background {
   fill         : #298cff;
   stroke       : #fff;
@@ -251,25 +251,25 @@
   filter       : url(#controls-drop-shadow);
 }
 
-.effort-control text,
+.round-control text,
 .contributor-control text {
   fill               : #fff;
   text-anchor        : middle;
   alignment-baseline : middle;
 }
 
-.effort-control:hover,
+.round-control:hover,
 .contributor-control:hover {
   cursor : pointer;
 }
 
-.effort-control:hover .effort-control-background,
+.round-control:hover .round-control-background,
 .contributor-control:hover .contributor-control-background {
   stroke       : #ff009d;
   stroke-width : 2px;
 }
 
-.effort-control:hover text,
+.round-control:hover text,
 .contributor-control:hover text {
   fill : #ff009d;
 }
@@ -290,6 +290,7 @@
 path.contributor-highlight.highlight {
   stroke       : #7eff00 !important;
   stroke-width : 25px;
+  opacity      : 1;
 }
 
 .contributor-background-path {
@@ -303,16 +304,35 @@ path.contributor-highlight.highlight {
   transition-delay   : 0.125s;
 }
 
+.link-layer,
+.highlight-link-layer {
+  pointer-events : none;
+}
+
 .contributor-link {
+  fill         : none;
+  stroke       : #fff;
+  stroke-width : 1px;
+}
+
+.contributor-highlight-link {
   fill               : none;
   stroke             : #fff;
   stroke-width       : 1px;
-  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
-  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
-  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
-  -o-transition      : stroke 0.25s, stroke-width 0.25s;
-  transition         : stroke 0.25s, stroke-width 0.25s;
+  opacity            : 0;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
   transition-delay   : 0.125s;
+}
+
+.contributor-background-link {
+  fill         : none;
+  stroke       : #298cff;
+  opacity      : 0;
+  stroke-width : 10px;
 }
 
 /**
@@ -320,6 +340,8 @@ path.contributor-highlight.highlight {
  */
 .release-block {
   fill             : rgb(22, 231, 58);
+  stroke           : #fff;
+  stroke-width     : 1px;
   shape-rendering  : crispEdges;
   transition-delay : 0.125s;
 }
@@ -337,19 +359,46 @@ path.contributor-highlight.highlight {
 
 .release-link {
   fill               : none;
-  stroke             : none;
-  stroke-width       : 3px;
-  -webkit-transition : stroke 0.25s, stroke-width 0.25s;
-  -moz-transition    : stroke 0.25s, stroke-width 0.25s;
-  -ms-transition     : stroke 0.25s, stroke-width 0.25s;
-  -o-transition      : stroke 0.25s, stroke-width 0.25s;
-  transition         : stroke 0.25s, stroke-width 0.25s;
+  stroke-width       : 1px;
+  opacity            : 0;
+  -webkit-transition : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -moz-transition    : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -ms-transition     : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  -o-transition      : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+  transition         : stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
   transition-delay   : 0.125s;
 }
 
+.release-link-gradient-stop-1 {
+  stop-color : #ff009d;
+}
+
+.release-link-gradient-stop-2 {
+  stop-color : rgb(22, 231, 58);
+}
+
 path.release-highlight.highlight {
-  stroke       : rgb(22, 231, 58) !important;
-  stroke-width : 10px;
+  stroke-width : 20px;
+  opacity      : 1;
+}
+
+/**
+ * Generic controls directives
+ */
+.controls-group,
+.controls-group-2 {
+  opacity            : 0;
+  -webkit-transition : opacity 0.5s;
+  -moz-transition    : opacity 0.5s;
+  -ms-transition     : opacity 0.5s;
+  -o-transition      : opacity 0.5s;
+  transition         : opacity 0.5s;
+  transition-delay   : 0.125s;
+}
+
+.controls-hover:hover .controls-group,
+.controls-hover-2:hover .controls-group-2 {
+  opacity : 1;
 }
 
 /**
@@ -401,14 +450,29 @@ path.release-highlight.highlight {
   stroke : #999;
 }
 
-.printable .effort-block.hover,
-.printable .effort-block:hover {
-  stroke       : #9b9b9b;
-  stroke-width : 3px;
+.printable .effort-list-control {
+  stroke : #fff;
+  cursor : pointer;
 }
 
-.printable .contributo-link {
+.printable .effort-list-control:hover {
+  stroke : #ff009d;
+}
+
+.printable .effort-list-background {
+  fill : #fff;
+}
+
+.printable .team-title-background {
+  fill : #ff009d;
+}
+
+.printable .contributor-link {
   stroke : rgba(199, 199, 199, 0.5);
+}
+
+.printable .contributor-background {
+  fill : #fff;
 }
 
 .printable .contributor-background-path {

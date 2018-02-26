@@ -1,4 +1,4 @@
-import { Util }    from '../../../../../imports/api/util';
+import { Util } from '../../../../../imports/api/util';
 
 let d3    = require('d3'),
     debug = false;
@@ -185,14 +185,14 @@ export class D3CapacityPlanSprintHandler {
         .attr('x1', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('y1', 0)
         .attr('x2', chart.linkSectionWidth - chart.config.sprints.padding)
-        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+        .attr('y2', chart.maxContentHeight());
     
     sprintBackgroundEnter.append('line')
         .attr('class', 'sprint-background-border sprint-background-border-right')
         .attr('x1', chart.sprintWidth + chart.config.sprints.padding)
         .attr('y1', 0)
         .attr('x2', chart.sprintWidth + chart.config.sprints.padding)
-        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+        .attr('y2', chart.maxContentHeight());
     
   }
   
@@ -212,22 +212,22 @@ export class D3CapacityPlanSprintHandler {
     // Size the timelines
     self.sprintBackgroundSelection.selectAll('.sprint-link-section')
         .attr('width', chart.linkSectionWidth - chart.config.sprints.padding)
-        .attr('height', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+        .attr('height', chart.maxContentHeight());
     
     self.sprintBackgroundSelection.selectAll('.sprint-body-section')
         .attr('x', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('width', chart.sprintBodyWidth + chart.config.sprints.padding * 2)
-        .attr('height', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+        .attr('height', chart.maxContentHeight());
     
     self.sprintBackgroundSelection.selectAll('.sprint-background-border-left')
         .attr('x1', chart.linkSectionWidth - chart.config.sprints.padding)
         .attr('x2', chart.linkSectionWidth - chart.config.sprints.padding)
-        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+        .attr('y2', chart.maxContentHeight());
     
     self.sprintBackgroundSelection.selectAll('.sprint-background-border-right')
         .attr('x1', chart.sprintWidth + chart.config.sprints.padding)
         .attr('x2', chart.sprintWidth + chart.config.sprints.padding)
-        .attr('y2', Math.max(chart.contributorsHeight, chart.maxSprintHeight || 0));
+        .attr('y2', chart.maxContentHeight());
     
   }
   
@@ -304,11 +304,25 @@ export class D3CapacityPlanSprintHandler {
     let self  = this,
         chart = this.chart;
     
-    chart.bodyWidth        = chart.svg.node()
+    // Calculate an unscaled sizing
+    chart.unscaled           = {};
+    chart.unscaled.bodyWidth = chart.svg.node()
         .getBoundingClientRect().width - chart.config.margin.left - chart.config.margin.right - chart.config.sprints.padding - chart.bodyLeft;
-    chart.sprintWidth      = parseInt(Math.min(chart.bodyWidth / (chart.data.sprints.length + 0.2), chart.config.sprints.width));
-    chart.sprintBodyWidth  = parseInt(Math.max(chart.namesWidth, chart.sprintWidth * 0.66));
+    chart.unscaled.sprintWidth      = parseInt(chart.unscaled.bodyWidth / (chart.data.sprints.length + 0.2));
+    chart.unscaled.sprintBodyWidth  = parseInt(chart.unscaled.sprintWidth * 0.75);
+    chart.unscaled.linkSectionWidth = chart.unscaled.sprintWidth - chart.unscaled.sprintBodyWidth;
+    
+    // Calculate the proposed scale
+    console.log('proposedScale:', chart.unscaled.linkSectionWidth, chart.unscaled.bodyWidth, chart.unscaled.sprintWidth, chart.unscaled.sprintBodyWidth);
+    chart.proposedScale = Math.max(Math.min(chart.unscaled.linkSectionWidth / (chart.config.releases.width * 2), 1), chart.config.minScale);
+    
+    // Calculate the size based on the current scale
+    chart.bodyWidth        = (chart.scaleClientRect(chart.svg.node().getBoundingClientRect()).width) -
+        chart.config.margin.left - chart.config.margin.right - chart.config.sprints.padding - chart.bodyLeft;
+    chart.sprintWidth      = parseInt(chart.bodyWidth / (chart.data.sprints.length + 0.2));
+    chart.sprintBodyWidth  = parseInt(chart.sprintWidth * 0.75);
     chart.linkSectionWidth = chart.sprintWidth - chart.sprintBodyWidth;
+    
   }
   
   /**

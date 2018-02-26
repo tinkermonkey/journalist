@@ -95,7 +95,7 @@ export class D3CapacityPlanBlockHandler {
     
     let effortBlockEnter = self.effortBlockSelection.enter()
         .append('g')
-        .attr('class', 'effort-block-group')
+        .attr('class', 'effort-block-group controls-hover')
         .attr('transform', self.positionEffortBlock.bind(self))
         .attr('data-block-id', (d) => {
           return d._id
@@ -115,6 +115,7 @@ export class D3CapacityPlanBlockHandler {
         .attr('rx', 4)
         .attr('ry', 4)
         .attr('width', chart.sprintBodyWidth)
+        
         .on('mouseenter', (d) => {
           let element = d3.select(d3.event.target);
           element.classed('hover', true);
@@ -126,8 +127,19 @@ export class D3CapacityPlanBlockHandler {
               element: element
             };
           } else {
+            // Clean up any residual anything
+            chart.sprintBodyLayer.selectAll('.effort-block-group').classed('effort-highlight', false);
+            chart.highlightLinkLayer.selectAll('.effort-link').classed('highlight', false);
+            chart.highlightLinkLayer.selectAll('.release-highlight').classed('highlight', false);
+  
             // show the release links if any
-            chart.svg.selectAll('.release-link[data-effort-id="' + d.dataId + '"]').classed('highlight', true)
+            chart.highlightLinkLayer.selectAll('.release-link[data-effort-id="' + d.dataId + '"]').classed('highlight', true);
+            
+            // Highlight the effort links
+            chart.highlightLinkLayer.selectAll('.effort-link[data-effort-id="' + d.dataId + '"]').classed('highlight', true);
+            
+            // Highlight the other blocks for this effort
+            chart.sprintBodyLayer.selectAll('.effort-block-group[data-effort-id="' + d.dataId + '"] .effort-block').classed('hover', true);
           }
         })
         .on('mouseleave', (d) => {
@@ -138,12 +150,21 @@ export class D3CapacityPlanBlockHandler {
             delete chart.drag.hover;
           } else {
             // Hide the release links if any
-            chart.svg.selectAll('.release-link[data-effort-id="' + d.dataId + '"]').classed('highlight', false)
+            chart.highlightLinkLayer.selectAll('.release-link[data-effort-id="' + d.dataId + '"]').classed('highlight', false);
+            
+            // Remove the highlight from the effort links
+            chart.highlightLinkLayer.selectAll('.effort-link[data-effort-id="' + d.dataId + '"]').classed('highlight', false);
+            
+            // Remove highlight from the other blocks for this effort
+            chart.sprintBodyLayer.selectAll('.effort-block-group[data-effort-id="' + d.dataId + '"] .effort-block').classed('hover', false);
           }
         });
     
     effortDragEnter.append('text')
         .attr('class', 'effort-title')
+        .attr('data-target-id', (block) => {
+          return block._id
+        })
         .attr('x', chart.config.efforts.padding)
         .attr('y', chart.config.contributors.height);
     
@@ -173,9 +194,9 @@ export class D3CapacityPlanBlockHandler {
         .attr('r', 2);
     
     let effortUnlinkerEnter = dragGroupEnter.append('g')
-        .attr('class', 'effort-controls effort-unlinker-container')
+        .attr('class', 'controls-group effort-unlinker-container')
         .append('g')
-        .attr('class', 'effort-control effort-control-remove-release-link')
+        .attr('class', 'round-control effort-control-remove-release-link')
         .on('click', (block) => {
           block.sourceLinks().forEach((link) => {
             CapacityPlanSprintLinks.remove(link._id);
@@ -191,7 +212,7 @@ export class D3CapacityPlanBlockHandler {
         });
     
     effortUnlinkerEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     effortUnlinkerEnter.append('text')
@@ -201,10 +222,10 @@ export class D3CapacityPlanBlockHandler {
     
     // Add controls for this effort
     let effortControlsEnter = effortBlockEnter.append('g')
-        .attr('class', 'effort-controls effort-block-controls');
+        .attr('class', 'controls-group effort-block-controls');
     
     let removeButtonEnter = effortControlsEnter.append('g')
-        .attr('class', 'effort-control effort-control-remove')
+        .attr('class', 'round-control effort-control-remove')
         .attr('transform', 'translate(-' + (2 * controlRadius + 1 * chart.config.efforts.padding) + ', 0)')
         .on('click', (block) => {
           // Grab some context
@@ -226,7 +247,7 @@ export class D3CapacityPlanBlockHandler {
         });
     
     removeButtonEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     removeButtonEnter.append('text')
@@ -235,14 +256,14 @@ export class D3CapacityPlanBlockHandler {
         .text('\u00D7');
     
     let upButtonEnter = effortControlsEnter.append('g')
-        .attr('class', 'effort-control effort-control-up')
+        .attr('class', 'round-control effort-control-up')
         .attr('transform', 'translate(-' + (3 * controlRadius + 2 * chart.config.efforts.padding) + ', 0)')
         .on('click', (effort) => {
           effort.moveUp();
         });
     
     upButtonEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     upButtonEnter.append('text')
@@ -251,14 +272,14 @@ export class D3CapacityPlanBlockHandler {
         .text('\u2191');
     
     let downButtonEnter = effortControlsEnter.append('g')
-        .attr('class', 'effort-control effort-control-down')
+        .attr('class', 'round-control effort-control-down')
         .attr('transform', 'translate(-' + (4 * controlRadius + 3 * chart.config.efforts.padding) + ', 0)')
         .on('click', (effort) => {
           effort.moveDown();
         });
     
     downButtonEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     downButtonEnter.append('text')
@@ -418,7 +439,7 @@ export class D3CapacityPlanBlockHandler {
     
     let contributorBlockEnter = self.contributorBlockSelection.enter()
         .append('g')
-        .attr('class', 'contributor-block-group')
+        .attr('class', 'contributor-block-group controls-hover-2')
         .attr('data-block-id', (d) => {
           return d._id
         })
@@ -484,16 +505,18 @@ export class D3CapacityPlanBlockHandler {
         });
     
     // Add link drag control
-    self.controlHandler.insert(contributorBlockEnter);
+    let dragContainerEnter = contributorBlockEnter.append('g')
+        .attr('class', 'controls-group-2');
+    self.controlHandler.insert(dragContainerEnter);
     
     // Add a button to remove this contributor
     let contributorRemoveButtonEnter = contributorBlockEnter.append('g')
-        .attr('class', 'contributor-controls')
+        .attr('class', 'controls-group-2')
         .append('g')
         .attr('class', 'contributor-control contributor-control-remove')
         .attr('transform', 'translate(-' + (controlRadius) + ', ' + (chart.config.contributors.height / 2) + ')')
         .on('click', (block) => {
-          console.log('Remove contributor block:', block);
+          debug && console.log('Remove contributor block:', block);
           block.remove();
           chart.data.option.healContributorLinks(block.dataId);
           chart.svg.selectAll('.contributor-highlight[data-contributor-id="' + block.dataId + '"]').classed('highlight', false)
@@ -568,7 +591,7 @@ export class D3CapacityPlanBlockHandler {
     
     let releaseBlockEnter = self.releaseBlockselection.enter()
         .append('g')
-        .attr('class', 'release-block-group')
+        .attr('class', 'release-block-group controls-hover')
         .attr('transform', self.positionReleaseBlock.bind(self))
         .attr('data-block-id', (d) => {
           return d._id
@@ -584,6 +607,8 @@ export class D3CapacityPlanBlockHandler {
         .attr('class', 'release-block')
         .attr('x', 0)
         .attr('y', 0)
+        .attr('rx', 4)
+        .attr('ry', 4)
         .attr('width', chart.config.releases.width)
         .on('mouseenter', (d) => {
           let element = d3.select(d3.event.target);
@@ -600,8 +625,9 @@ export class D3CapacityPlanBlockHandler {
             d.targetLinks().forEach((link) => {
               let effortId = link.source().dataId;
               chart.sprintBodyLayer.selectAll('.effort-block-group[data-effort-id="' + effortId + '"]').classed('effort-highlight', true);
+              chart.highlightLinkLayer.selectAll('.effort-link[data-effort-id="' + effortId + '"]').classed('highlight', true);
             });
-            chart.linkLayer.selectAll('.release-highlight[data-release-id="' + d.dataId + '"]').classed('highlight', true);
+            chart.highlightLinkLayer.selectAll('.release-highlight[data-release-id="' + d.dataId + '"]').classed('highlight', true);
           }
         })
         .on('mouseleave', (d) => {
@@ -612,7 +638,8 @@ export class D3CapacityPlanBlockHandler {
             delete chart.drag.hover;
           } else {
             chart.sprintBodyLayer.selectAll('.effort-block-group').classed('effort-highlight', false);
-            chart.linkLayer.selectAll('.release-highlight[data-release-id="' + d.dataId + '"]').classed('highlight', false);
+            chart.highlightLinkLayer.selectAll('.effort-link').classed('highlight', false);
+            chart.highlightLinkLayer.selectAll('.release-highlight').classed('highlight', false);
           }
         });
     
@@ -624,17 +651,17 @@ export class D3CapacityPlanBlockHandler {
     
     // Add controls for this effort
     let releaseControlsEnter = releaseBlockEnter.append('g')
-        .attr('class', 'release-controls');
+        .attr('class', 'controls-group');
     
     let upButtonEnter = releaseControlsEnter.append('g')
-        .attr('class', 'effort-control effort-control-up')
+        .attr('class', 'round-control effort-control-up')
         .attr('transform', 'translate(' + chart.config.releases.width + ', ' + (chart.config.efforts.padding) + ')')
         .on('click', (block) => {
           block.moveUp();
         });
     
     upButtonEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     upButtonEnter.append('text')
@@ -643,14 +670,14 @@ export class D3CapacityPlanBlockHandler {
         .text('\u2191');
     
     let downButtonEnter = releaseControlsEnter.append('g')
-        .attr('class', 'effort-control effort-control-down')
+        .attr('class', 'round-control effort-control-down')
         .attr('transform', 'translate(' + chart.config.releases.width + ', ' + (2 * controlRadius + 2 * chart.config.efforts.padding) + ')')
         .on('click', (block) => {
           block.moveDown();
         });
     
     downButtonEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     downButtonEnter.append('text')
@@ -768,7 +795,7 @@ export class D3CapacityPlanBlockHandler {
           .attr('data-release-id', releaseBlock._id)
           .text(releaseBlock.title);
       
-      releaseBlock.titleLength = titleTemp.node().getBoundingClientRect().width;
+      releaseBlock.titleLength = chart.scaleClientRect(titleTemp.node().getBoundingClientRect()).width;
     });
     
     // Position the release blocks
@@ -969,12 +996,12 @@ export class D3CapacityPlanBlockHandler {
     chart.sprintBodyLayer.selectAll('.effort-block-group').classed('no-mouse', true);
     chart.sprintBodyLayer.selectAll('.contributor-block-group').classed('no-mouse', true);
     
-    chart.bodyBounds = chart.chartBody.node().getBoundingClientRect();
+    chart.bodyBounds = chart.scaleClientRect(chart.chartBody.node().getBoundingClientRect());
     
     chart.drag = {
       dragHandle: dragHandle,
       dragLink  : dragLink,
-      offsetY   : dragHandle.closest('.effort-block-group').node().getBoundingClientRect().y - chart.bodyBounds.y
+      offsetY   : chart.scaleClientRect(dragHandle.closest('.effort-block-group').node().getBoundingClientRect()).y - chart.bodyBounds.y
     };
     
     chart.drag.dragHandle.classed('in-drag', true);

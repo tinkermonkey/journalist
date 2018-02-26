@@ -1,7 +1,15 @@
 <template name="CapacityPlanOptionSummary">
   <div class="options-summary">
     <table class="options-summary-table">
-      {{#each options}}
+      {{#each capacityPlan.options}}
+        {{#if ../showCharts}}
+          <tr>
+            <td colspan="2">
+              <h3>{{title}}</h3>
+              {{> CapacityPlanChart option=this roleIds=planRoles cssClass='printable' }}
+            </td>
+          </tr>
+        {{/if}}
         <tr>
           <td class="option-summary-title">
             <h2>{{title}}</h2>

@@ -57,7 +57,8 @@ Template.CapacityPlanChart.onRendered(() => {
             optionId : option._id,
             blockType: { $in: [ CapacityPlanBlockTypes.contributor, CapacityPlanBlockTypes.effort ] }
           }).fetch(),
-          roleId          : context.roleId,
+          roleIds         : _.isArray(context.roleIds) ? context.roleIds : [ context.roleId ],
+          teamId          : context.teamId,
           efforts         : CapacityPlanStrategicEfforts.find({ planId: option.planId }, { sort: { title: 1 } }).fetch(),
           releases        : CapacityPlanSprintBlocks.find({ optionId: option._id, blockType: CapacityPlanBlockTypes.release }).fetch(),
           releaseLinks    : CapacityPlanSprintLinks.find({ optionId: option._id, targetType: CapacityPlanBlockTypes.release }).fetch()

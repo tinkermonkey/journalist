@@ -1,6 +1,6 @@
-import { Session }                         from 'meteor/session';
 import { Util }                            from '../../../../../imports/api/util';
 import { CapacityPlanBlockTypes }          from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { CapacityPlanSprintBlocks }        from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
 import { D3CapacityPlanBlockHandler }      from './d3_capacity_plan_block_handler';
 import { D3CapacityPlanEffortListHandler } from './d3_capacity_plan_effort_list_handler';
 import { D3CapacityPlanLinkHandler }       from './d3_capacity_plan_link_handler';
@@ -23,6 +23,7 @@ export class D3CapacityPlanChart {
     
     // Merge the passed config with the default config
     this.config = _.extend({
+      minScale    : 0.33,
       contributors: {
         height: 26,
         width : 120
@@ -70,6 +71,9 @@ export class D3CapacityPlanChart {
     
     // Throttle the updates
     this.lastUpdateTime = 0;
+    
+    // Keep track of the scale
+    this.scale = 1;
   }
   
   /**
@@ -126,9 +130,17 @@ export class D3CapacityPlanChart {
     self.sprintBackgroundLayer = self.chartBody.append('g')
         .attr('class', 'sprint-background-layer');
     
+    // Create a layer for background links
+    self.backgroundLinkLayer = self.chartBody.append('g')
+        .attr('class', 'background-link-layer');
+    
     // Create a layer for the links
     self.linkLayer = self.chartBody.append('g')
         .attr('class', 'link-layer');
+    
+    // Create a layer for highlight links
+    self.highlightLinkLayer = self.chartBody.append('g')
+        .attr('class', 'highlight-link-layer');
     
     // Create a layer for the timeline
     self.sprintBodyLayer = self.chartBody.append('g')
@@ -138,9 +150,14 @@ export class D3CapacityPlanChart {
     self.chartHighlightLayer = self.chartBody.append('g')
         .attr('class', 'chart-highlight-layer');
     
-    // Create a layer for the contributor layer
+    // Create a layer for the contributors list
     self.contributorLayer = self.baseLayer.append('g')
         .attr('class', 'contributor-layer')
+        .attr('transform', 'translate(0,' + self.config.header.height + ')');
+    
+    // Create a layer for the teams list
+    self.teamLayer = self.baseLayer.append('g')
+        .attr('class', 'teams-layer')
         .attr('transform', 'translate(0,' + self.config.header.height + ')');
     
     // Create a y-axis separator
@@ -222,7 +239,8 @@ export class D3CapacityPlanChart {
         .attr('in2', 'outerGlowOut1')
         .attr('operator', 'over');
     
-    self.topGradientId = 'hover-top-gradient-' + self.containerId;
+    // Create a gradient for the top inner-shadow
+    self.topGradientId = 'inner-top-gradient-' + self.containerId;
     self.topGradient   = self.svgDefs.append('linearGradient')
         .attr('id', self.topGradientId)
         .attr('x1', 0)
@@ -239,8 +257,8 @@ export class D3CapacityPlanChart {
         .attr('class', 'shadow-gradient-stop-3')
         .attr('offset', '100%');
     
-    self.bottomGradientId = 'hover-bottom-gradient-' + self.containerId;
-    self.bottomGradientId = 'hover-bottom-gradient-' + self.containerId;
+    // Create a gradient for the bottom inner-shadow
+    self.bottomGradientId = 'inner-bottom-gradient-' + self.containerId;
     self.bottomGradient   = self.svgDefs.append('linearGradient')
         .attr('id', self.bottomGradientId)
         .attr('x1', 0)
@@ -260,6 +278,21 @@ export class D3CapacityPlanChart {
     // Attach the gradients
     self.innerShadowTop.style('fill', 'url(#' + self.topGradientId + ')');
     self.innerShadowBottom.style('fill', 'url(#' + self.bottomGradientId + ')');
+    
+    // Create a gradient for the release links
+    self.releaseLinkGradientId = 'release-link-gradient-' + self.containerId;
+    self.releaseLinkGradient   = self.svgDefs.append('linearGradient')
+        .attr('id', self.releaseLinkGradientId)
+        .attr('x1', 0)
+        .attr('y1', 0)
+        .attr('x2', 1)
+        .attr('y2', 0);
+    self.releaseLinkGradient.append('stop')
+        .attr('class', 'release-link-gradient-stop-1')
+        .attr('offset', '0%');
+    self.releaseLinkGradient.append('stop')
+        .attr('class', 'release-link-gradient-stop-2')
+        .attr('offset', '100%');
     
     // Create a link generator function
     self.linker = d3.linkHorizontal();
@@ -287,7 +320,6 @@ export class D3CapacityPlanChart {
     self.lastUpdateTime = Date.now();
     
     if (self.parseData(data)) {
-      
       self.teamHandler.update();
       
       self.bodyLeft = self.namesWidth + self.config.teams.padding;
@@ -295,41 +327,51 @@ export class D3CapacityPlanChart {
       
       self.sprintHandler.update();
       
+      // Scale down if needed and loop through again short circuiting the throttling
+      console.log(Util.timestamp(), 'D3CapacityPlanChart.update:', self.proposedScale, self.scale);
+      if (Math.abs(self.proposedScale - self.scale) > 0.05) {
+        self.scale          = self.proposedScale;
+        self.lastUpdateTime = 0;
+        self.update(data);
+        return;
+      } else {
+        self.baseLayer.attr('transform', 'translate(' + self.config.margin.left + ',' + self.config.margin.top + '), scale(' + self.scale + ')');
+      }
+      
       self.blockHandler.update();
       
       self.sprintHandler.updateSprintBackgrounds();
-      
-      // Center the contributors vertically
-      if (self.contributorsHeight < self.maxSprintHeight) {
-        self.contributorLayer.attr('transform', 'translate(0, ' + (self.config.header.height + (self.maxSprintHeight - self.contributorsHeight) / 2) + ')')
-      } else {
-        self.contributorLayer.attr('transform', 'translate(0, ' + self.config.header.height + ')')
-      }
       
       // Update the yAxis separator
       self.yAxisSeparator
           .attr('x1', 0)
           .attr('y1', 0)
           .attr('x2', 0)
-          .attr('y2', Math.max(self.contributorsHeight, self.maxSprintHeight));
+          .attr('y2', self.maxContentHeight());
       
       // Update the links
       self.linkHandler.update();
       
       // Resize to fit the content
-      self.height = Math.max(self.contributorsHeight, self.maxSprintHeight) + self.config.margin.top + self.config.margin.bottom + self.config.header.height;
-      if (self.restoreHeight === undefined || self.restoreHeight < self.height) {
-        self.svg.style('height', self.height + 'px');
-        
-        // Update the background drop shadows
-        self.innerShadowBottom.attr('y', self.height - self.config.shadow.height);
-      }
+      self.height = self.scale * (self.maxContentHeight() + self.config.header.height) + self.config.margin.top + self.config.margin.bottom;
+      self.svg.style('height', self.height + 'px');
+      
+      // Update the background drop shadows
+      self.innerShadowBottom.attr('y', self.height - self.config.shadow.height);
       
       // Update the effort list
       self.effortListHandler.update();
     }
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.update completed:', Date.now() - startTime);
+  }
+  
+  /**
+   * Get the height that should be used as the 'height'
+   */
+  maxContentHeight () {
+    let self = this;
+    return Math.max(self.tempBodyHeight || 0, self.contributorsHeight || 0, self.maxSprintHeight || 0)
   }
   
   /**
@@ -348,7 +390,7 @@ export class D3CapacityPlanChart {
     
     // Store the option and plan records
     self.data = data;
-  
+    
     // Capture the teams
     let contributorIndex            = 0;
     self.data.contributorOrder      = {};
@@ -357,13 +399,13 @@ export class D3CapacityPlanChart {
         .map((team, i) => {
           let teamSettings = self.data.option.getTeamSettings(team._id),
               visible      = teamSettings.visible;
-
+          
           return {
             _id         : team._id,
             title       : team.title,
             visible     : visible,
             order       : teamSettings.order !== undefined ? teamSettings.order : i,
-            contributors: team.contributorsInCapacityRole(self.data.roleId).fetch().map((contributor) => {
+            contributors: team.contributorsInCapacityRoles(self.data.roleIds).fetch().map((contributor) => {
               contributorIndex += 1;
               if (self.data.contributorOrder[ contributor._id ] === undefined) {
                 self.data.contributorOrder[ contributor._id ] = contributorIndex;
@@ -506,7 +548,42 @@ export class D3CapacityPlanChart {
       effort.title = effort.itemTitle();
     });
     
+    // Create synthetic links for all of the efforts
+    self.data.effortLinks = [];
+    self.data.efforts.forEach((effort) => {
+      // Get all of the blocks
+      let previousBlock;
+      CapacityPlanSprintBlocks.find({
+        optionId: self.data.option._id,
+        dataId  : effort._id
+      }, { sort: { sprintNumber: 1 } }).forEach((block) => {
+        if (previousBlock) {
+          self.data.effortLinks.push({
+            _id     : previousBlock._id + '_' + block._id,
+            sourceId: previousBlock._id,
+            targetId: block._id,
+            effortId: effort._id
+          });
+        }
+        previousBlock = _.clone(block);
+      });
+    });
+    
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);
     return true
+  }
+  
+  /**
+   * Scale a client rect from getBoundingClientRecot
+   */
+  scaleClientRect (rect) {
+    let self = this;
+    
+    return {
+      x     : rect.x / self.scale,
+      y     : rect.y / self.scale,
+      width : rect.width / self.scale,
+      height: rect.height / self.scale
+    }
   }
 }

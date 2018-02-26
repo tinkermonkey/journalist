@@ -230,12 +230,17 @@ export class D3CapacityPlanEffortListHandler {
           });
       
       // Resize the chart to fit this if needed
-      let neededHeight = 4 * chart.config.efforts.margin + chart.config.header.height + chart.effortListHeight;
+      let neededHeight = chart.scale * (4 * chart.config.efforts.margin + chart.effortListHeight) + chart.config.header.height;
       if (neededHeight > chart.height) {
         chart.restoreHeight = chart.height;
+        chart.tempBodyHeight = neededHeight - (chart.height - chart.maxContentHeight());
         chart.svg.transition()
             .duration(250)
-            .style('height', neededHeight + 'px');
+            .style('height', neededHeight + 'px')
+            .on('end', () => {
+              chart.sprintHandler.updateSprintBackgrounds();
+              chart.sprintHandler.updateSprintBodies();
+            });
         
         chart.innerShadowBottom
             .transition()
@@ -263,13 +268,19 @@ export class D3CapacityPlanEffortListHandler {
       
       // Restore the chart height if it was adjusted
       if (chart.restoreHeight) {
+        delete chart.tempBodyHeight;
+        chart.sprintHandler.updateSprintBackgrounds();
+        chart.sprintHandler.updateSprintBodies();
+        
         chart.svg.transition()
             .duration(250)
             .style('height', chart.height + 'px');
+        
         chart.innerShadowBottom
             .transition()
             .duration(250)
             .attr('y', chart.height - chart.config.shadow.height);
+        
         delete chart.restoreHeight;
       }
     }

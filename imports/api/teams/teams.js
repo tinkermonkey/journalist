@@ -185,6 +185,23 @@ Teams.helpers({
     return Contributors.find({ _id: { $in: contributorIds } }, { sort: { name: 1 } })
   },
   /**
+   * Get the list of contributors in set of roles
+   * @param roleDefinitionIds
+   */
+  contributorsInCapacityRoles (roleDefinitionIds) {
+    let team           = this,
+        contributorIds = _.uniq(team.contributorRoles()
+            .fetch()
+            .filter((teamRole) => {
+              return _.contains(roleDefinitionIds, teamRole.roleDefinition().capacityRole()._id)
+            })
+            .map((teamRole) => {
+              return teamRole.contributorId
+            }));
+    
+    return Contributors.find({ _id: { $in: contributorIds } }, { sort: { name: 1 } })
+  },
+  /**
    * Get all of the distinct non-manager role definitions on this team for a given project
    * @param projectId
    */

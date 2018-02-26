@@ -16,6 +16,13 @@ Template.CapacityPlanOptionSummary.helpers({
   },
   sprintWeekCount (option) {
     return moment.duration(option.sprintLength).asWeeks()
+  },
+  planRoles () {
+    let option = this;
+    
+    return option.plan().roles().map((role) => {
+      return role._id
+    });
   }
 });
 

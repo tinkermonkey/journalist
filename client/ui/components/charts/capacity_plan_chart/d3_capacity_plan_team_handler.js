@@ -29,6 +29,11 @@ export class D3CapacityPlanTeamHandler {
     self.updateTeams();
     self.removeTeams();
     
+    // Service the teams groups on the contributorLayer
+    self.insertContributorTeams();
+    self.updateContributorTeams();
+    self.removeContributorTeams();
+    
     // Service the contributors
     self.insertContributors();
     self.updateContributors();
@@ -43,7 +48,7 @@ export class D3CapacityPlanTeamHandler {
     let self  = this,
         chart = this.chart;
     
-    self.teamSelection = chart.contributorLayer.selectAll('.team-group')
+    self.teamSelection = chart.teamLayer.selectAll('.team-group')
         .data(chart.data.teams, (team) => {
           return team._id
         });
@@ -62,7 +67,7 @@ export class D3CapacityPlanTeamHandler {
     // Insert the base group
     let teamEnter = self.teamSelection.enter()
         .append('g')
-        .attr('class', 'team-group')
+        .attr('class', 'team-group controls-hover')
         .attr('data-team-id', (d) => {
           return d._id
         });
@@ -102,17 +107,17 @@ export class D3CapacityPlanTeamHandler {
     // Insert the re-order controls
     // Add controls for this effort
     let teamControlsEnter = teamEnter.append('g')
-        .attr('class', 'team-controls');
+        .attr('class', 'controls-group');
     
     let upButtonEnter = teamControlsEnter.append('g')
-        .attr('class', 'effort-control effort-control-up')
+        .attr('class', 'round-control effort-control-up')
         .attr('transform', 'translate(' + (1 * controlRadius + 2 * chart.config.efforts.padding) + ', 0)')
         .on('click', (team) => {
           chart.data.option.moveTeamUp(team._id)
         });
     
     upButtonEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     upButtonEnter.append('text')
@@ -121,14 +126,14 @@ export class D3CapacityPlanTeamHandler {
         .text('\u2191');
     
     let downButtonEnter = teamControlsEnter.append('g')
-        .attr('class', 'effort-control effort-control-down')
+        .attr('class', 'round-control effort-control-down')
         .attr('transform', 'translate(' + (3 * controlRadius + 3 * chart.config.efforts.padding) + ', 0)')
         .on('click', (team) => {
           chart.data.option.moveTeamDown(team._id)
         });
     
     downButtonEnter.append('circle')
-        .attr('class', 'effort-control-background')
+        .attr('class', 'round-control-background')
         .attr('r', controlRadius);
     
     downButtonEnter.append('text')
@@ -161,8 +166,6 @@ export class D3CapacityPlanTeamHandler {
         .text((team) => {
           return team.title
         })
-        .transition()
-        .duration(500)
         .attr('transform', () => {
           return 'translate(' + (chart.namesWidth - chart.config.teams.padding) + ', ' + chart.config.teams.titlePadding + ')'
         });
@@ -187,6 +190,69 @@ export class D3CapacityPlanTeamHandler {
   }
   
   /**
+   * Update the selection of currently existing teams groups for the contributor layer
+   */
+  updateContributorTeamSelection () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.updateContributorTeamSelection');
+    let self  = this,
+        chart = this.chart;
+    
+    self.contributorTeamSelection = chart.contributorLayer.selectAll('.contributor-team-group')
+        .data(chart.data.teams, (team) => {
+          return team._id
+        });
+  }
+  
+  /**
+   * Insert new teams groups for the contributor layer
+   */
+  insertContributorTeams () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.insertContributorTeams');
+    let self  = this,
+        chart = this.chart;
+    
+    self.updateContributorTeamSelection();
+    
+    // Insert the base group
+    self.contributorTeamSelection.enter()
+        .append('g')
+        .attr('class', 'contributor-team-group')
+        .attr('data-team-id', (d) => {
+          return d._id
+        });
+  }
+  
+  /**
+   * Update existing teams groups for the contributor layer
+   */
+  updateContributorTeams () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.updateContributorTeams');
+    let self  = this,
+        chart = this.chart;
+    
+    self.updateContributorTeamSelection();
+    
+    // Place the team envelope
+    self.contributorTeamSelection
+        .transition()
+        .duration(500)
+        .attr('transform', (team, i) => {
+          return 'translate(0,' + team.envelope.y1 + ')'
+        });
+  }
+  
+  /**
+   * Remove unneeded teams groups on the contributor layer
+   */
+  removeContributorTeams () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.removeContributorTeams');
+    let self  = this,
+        chart = this.chart;
+    
+    self.contributorTeamSelection.exit().remove();
+  }
+  
+  /**
    * Update the selection of currently existing contributors
    */
   updateContributorSelection () {
@@ -195,7 +261,7 @@ export class D3CapacityPlanTeamHandler {
         chart = this.chart;
     
     self.contributorSelection = chart.contributorLayer
-        .selectAll('.team-group')
+        .selectAll('.contributor-team-group')
         .selectAll('.contributor-group')
         .data((d, i) => {
           return d.contributors
@@ -216,7 +282,7 @@ export class D3CapacityPlanTeamHandler {
     
     let contributorGroupsEnter = self.contributorSelection.enter()
         .append('g')
-        .attr('class', 'contributor-group')
+        .attr('class', 'contributor-group link-drag-hover')
         .attr('data-contributor-id', (d) => {
           return d._id
         })
@@ -265,8 +331,8 @@ export class D3CapacityPlanTeamHandler {
     
     self.updateContributorSelection();
     
-    self.contributorSelection.attr('opacity', (contributor) => {
-          return contributor.visible ? 1 : 0
+    self.contributorSelection.attr('display', (contributor) => {
+          return contributor.visible ? 'block' : 'none'
         })
         .attr('transform', (contributor) => {
           return 'translate(' + (chart.namesWidth - chart.config.teams.padding) + ',' + (contributor.envelope.y1) + ')'
