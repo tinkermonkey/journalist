@@ -3,16 +3,20 @@ import { UploadServer }                   from 'meteor/tomi:upload-server';
 import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { ServiceConfiguration }           from 'meteor/service-configuration';
 import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
+
 // include the base layer functionality
-import './register-api.js';
-import './fixture.js';
-import './change_tracker_config.js';
+import './register-api';
+import './fixture';
+import './change_tracker_config';
+
 // configure
-import '../accounts_config.js';
-import '../later_config.js';
-import '../synced_cron_config.js';
+import '../accounts_config';
+import '../later_config';
+import '../moment_config';
+import '../synced_cron_config';
+
 // Integration Service
-import { IntegrationService }             from '../../modules/integration_service/integration_service.js';
+import { IntegrationService }             from '../../modules/integration_service/integration_service';
 import { HealthTracker }                  from '../../api/system_health_metrics/server/health_tracker';
 import SimpleSchema from "simpl-schema";
 
