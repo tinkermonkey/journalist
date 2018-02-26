@@ -84,8 +84,8 @@ if (Meteor.isServer) {
           planId      : option.planId,
           optionId    : option._id,
           sprintNumber: i,
-          startDate   : moment(option.startDate).add(i * option.sprintLength, 'ms').startOf('isoWeek').toDate(),
-          endDate     : moment(option.startDate).add((i + 1) * option.sprintLength, 'ms').startOf('isoWeek').subtract(3, 'days').toDate()
+          startDate   : moment(option.startDate).add(i * option.sprintLength, 'ms').isoWeekday(1).toDate(),
+          endDate     : moment(option.startDate).add((i + 1) * option.sprintLength, 'ms').isoWeekday(1).subtract(3, 'days').toDate()
         });
       }
     }
@@ -363,8 +363,8 @@ CapacityPlanOptions.helpers({
           planId      : option.planId,
           optionId    : option._id,
           sprintNumber: i,
-          startDate   : moment(option.startDate).add(i * option.sprintLength, 'ms').startOf('isoWeek').toDate(),
-          endDate     : moment(option.startDate).add((i + 1) * option.sprintLength, 'ms').startOf('isoWeek').subtract(3, 'days').toDate()
+          startDate   : moment(option.startDate).add(i * option.sprintLength, 'ms').isoWeekday(1).toDate(),
+          endDate     : moment(option.startDate).add((i + 1) * option.sprintLength, 'ms').isoWeekday(1).subtract(3, 'days').toDate()
         }
       });
     }
