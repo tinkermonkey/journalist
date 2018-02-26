@@ -396,6 +396,14 @@ export class D3CapacityPlanChart {
     self.data.contributorOrder      = {};
     self.data.contributorVisibility = {};
     self.data.teams                 = self.data.plan.teams()
+        .fetch()
+        .filter((team) => {
+          if (self.data.teamId) {
+            return team._id === self.data.teamId
+          } else {
+            return true
+          }
+        })
         .map((team, i) => {
           let teamSettings = self.data.option.getTeamSettings(team._id),
               visible      = teamSettings.visible;
@@ -427,10 +435,21 @@ export class D3CapacityPlanChart {
           return a.order > b.order ? 1 : -1
         });
     
+    self.data.contributorIdList = _.keys(self.data.contributorOrder);
+    
     // Capture the sprints
     self.data.sprints.forEach((sprint) => {
       // Pull in the effort blocks and the data within them
       sprint.effortBlocks = self.data.option.sprintBlocks(sprint.sprintNumber, CapacityPlanBlockTypes.effort)
+          .fetch()
+          .filter((effortBlock) => {
+            return CapacityPlanSprintBlocks.find({
+              optionId : self.data.option._id,
+              blockType: CapacityPlanBlockTypes.contributor,
+              dataId   : { $in: self.data.contributorIdList },
+              parentId : effortBlock._id
+            }).count() > 0
+          })
           .map((effortBlock) => {
             // Get all of the contributors for this effort
             effortBlock.contributorBlocks = self.data.option.sprintBlocks(sprint.sprintNumber, CapacityPlanBlockTypes.contributor, effortBlock._id)

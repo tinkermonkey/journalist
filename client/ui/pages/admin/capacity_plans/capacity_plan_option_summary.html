@@ -6,7 +6,12 @@
           <tr>
             <td colspan="2">
               <h3>{{title}}</h3>
-              {{> CapacityPlanChart option=this roleIds=planRoles cssClass='printable' }}
+              {{#each plan.teams}}
+                {{#if teamHasContributions ..}}
+                  <h4>{{title}}</h4>
+                  {{> CapacityPlanChart option=.. roleIds=planRoles teamId=_id cssClass='printable' }}
+                {{/if}}
+              {{/each}}
             </td>
           </tr>
         {{/if}}

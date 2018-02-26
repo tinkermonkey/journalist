@@ -1,6 +1,8 @@
 import './capacity_plan_option_summary.html';
-import { Template } from 'meteor/templating';
+import { Template }                 from 'meteor/templating';
 import '../../../components/height_limited_content/height_limited_content';
+import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes }   from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
 
 /**
  * Template Helpers
@@ -17,10 +19,21 @@ Template.CapacityPlanOptionSummary.helpers({
   sprintWeekCount (option) {
     return moment.duration(option.sprintLength).asWeeks()
   },
+  teamHasContributions (option) {
+    let team           = this,
+        contributorIds = team.contributors().map((contributor) => {
+          return contributor._id
+        });
+    return CapacityPlanSprintBlocks.find({
+      optionId : option._id,
+      blockType: CapacityPlanBlockTypes.contributor,
+      dataId   : { $in: contributorIds }
+    }).count() > 0
+  },
   planRoles () {
-    let option = this;
+    let context = Template.instance().data;
     
-    return option.plan().roles().map((role) => {
+    return context.capacityPlan.roles().map((role) => {
       return role._id
     });
   }
