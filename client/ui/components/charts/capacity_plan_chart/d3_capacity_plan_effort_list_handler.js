@@ -31,24 +31,30 @@ export class D3CapacityPlanEffortListHandler {
     let self  = this,
         chart = this.chart;
     
-    self.calculateBlockSizes();
+    self.filterBlockList();
+    self.positionBlocks();
     
-    // Service the effort list
-    self.insertEffortListItems();
-    self.updateEffortListItems();
-    self.removeEffortListItems();
+    // Service the un-used effort list
+    self.insertUnplannedEffortListItems();
+    self.updateUnplannedEffortListItems();
+    self.removeUnplannedEffortListItems();
+    
+    // Service the used effort list
+    self.insertPlannedEffortListItems();
+    self.updatePlannedEffortListItems();
+    self.removePlannedEffortListItems();
   }
   
   /**
    * Select all of the efforts in the effort list
    */
-  updateEffortBlockSelection () {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.updateEffortBlockSelection');
+  updateUnplannedEffortListSelection () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.updateUnplannedEffortListSelection');
     let self  = this,
         chart = this.chart;
     
-    self.effortBlockSelection = chart.effortListLayer.select('.effort-list-foreground').selectAll('.effort-block-group')
-        .data(chart.data.efforts, (d) => {
+    self.unplannedEffortListSelection = chart.unplannedEffortList.selectAll('.effort-block-group')
+        .data(self.unplannedEffortList, (d) => {
           return d._id
         });
   }
@@ -56,14 +62,14 @@ export class D3CapacityPlanEffortListHandler {
   /**
    * Insert newly added efforts to the effort list
    */
-  insertEffortListItems () {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.insertEffortListItems');
+  insertUnplannedEffortListItems () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.insertUnplannedEffortListItems');
     let self  = this,
         chart = this.chart;
     
-    self.updateEffortBlockSelection();
+    self.updateUnplannedEffortListSelection();
     
-    let effortBlockEnter = self.effortBlockSelection.enter()
+    let effortBlockEnter = self.unplannedEffortListSelection.enter()
         .append('g')
         .attr('class', 'effort-block-group')
         .attr('transform', self.positionEffortBlock.bind(self))
@@ -100,15 +106,15 @@ export class D3CapacityPlanEffortListHandler {
   /**
    * Update all of the efforts in the effort list
    */
-  updateEffortListItems () {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.updateEffortListItems');
+  updateUnplannedEffortListItems () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.updateUnplannedEffortListItems');
     let self  = this,
         chart = this.chart;
     
-    self.updateEffortBlockSelection();
+    self.updateUnplannedEffortListSelection();
     
     // Reposition and size the effort block groups
-    self.effortBlockSelection.select('.effort-block')
+    self.unplannedEffortListSelection.select('.effort-block')
         .attr('height', (d) => {
           return d.height
         })
@@ -118,20 +124,20 @@ export class D3CapacityPlanEffortListHandler {
         });
     
     // Update the effort title
-    self.effortBlockSelection.select('.effort-title')
+    self.unplannedEffortListSelection.select('.effort-title')
         .text((d) => {
           return d.title
         })
         .call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
     
     // Move the body to fit the title
-    self.effortBlockSelection.select('.effort-block-body')
+    self.unplannedEffortListSelection.select('.effort-block-body')
         .attr('transform', (d) => {
           return 'translate(0, ' + d.height + ')'
         });
     
     // Animate the repositioning
-    self.effortBlockSelection.transition()
+    self.unplannedEffortListSelection.transition()
         .duration(500)
         .on('end', () => {
         })
@@ -142,49 +148,201 @@ export class D3CapacityPlanEffortListHandler {
   /**
    * Remove any unneeded efforts from the effort list
    */
-  removeEffortListItems () {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.removeEffortListItems');
+  removeUnplannedEffortListItems () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.removeUnplannedEffortListItems');
     let self  = this,
         chart = this.chart;
     
-    self.effortBlockSelection.exit().remove();
+    self.unplannedEffortListSelection.exit().remove();
+  }
+  
+  /**
+   * Select all of the efforts in the effort list
+   */
+  updatePlannedEffortListSelection () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.updatePlannedEffortListSelection');
+    let self  = this,
+        chart = this.chart;
+    
+    self.plannedEffortListSelection = chart.plannedEffortList.selectAll('.effort-block-group')
+        .data(self.plannedEffortList, (d) => {
+          return d._id
+        });
+  }
+  
+  /**
+   * Insert newly added efforts to the effort list
+   */
+  insertPlannedEffortListItems () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.insertPlannedEffortListItems');
+    let self  = this,
+        chart = this.chart;
+    
+    self.updatePlannedEffortListSelection();
+    
+    let effortBlockEnter = self.plannedEffortListSelection.enter()
+        .append('g')
+        .attr('class', 'effort-block-group')
+        .attr('transform', self.positionEffortBlock.bind(self))
+        .attr('data-block-id', (d) => {
+          return d._id
+        })
+        .attr('data-effort-id', (d) => {
+          return d.dataId
+        })
+        .call(self.effortDrag);
+    
+    effortBlockEnter.append('rect')
+        .attr('class', 'effort-block')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('rx', 4)
+        .attr('ry', 4)
+        .attr('width', chart.sprintBodyWidth)
+        .on('mouseenter', (d) => {
+          let element = d3.select(d3.event.target);
+          element.classed('hover', true);
+          
+          // show the release links if any
+          chart.highlightLinkLayer.selectAll('.release-link[data-effort-id="' + d._id + '"]').classed('highlight', true);
+          
+          // Highlight the effort links
+          chart.highlightLinkLayer.selectAll('.effort-link[data-effort-id="' + d._id + '"]').classed('highlight', true);
+          
+          // Highlight the other blocks for this effort
+          chart.sprintBodyLayer.selectAll('.effort-block-group[data-effort-id="' + d._id + '"] .effort-block').classed('hover', true);
+        })
+        .on('mouseleave', (d) => {
+          let element = d3.select(d3.event.target);
+          element.classed('hover', false);
+          
+          // show the release links if any
+          chart.highlightLinkLayer.selectAll('.release-link[data-effort-id="' + d._id + '"]').classed('highlight', false);
+          
+          // Highlight the effort links
+          chart.highlightLinkLayer.selectAll('.effort-link[data-effort-id="' + d._id + '"]').classed('highlight', false);
+          
+          // Highlight the other blocks for this effort
+          chart.sprintBodyLayer.selectAll('.effort-block-group[data-effort-id="' + d._id + '"] .effort-block').classed('hover', false);
+        });
+    
+    effortBlockEnter.append('text')
+        .attr('class', 'effort-title')
+        .attr('x', chart.config.efforts.padding)
+        .attr('y', chart.config.contributors.height);
+  }
+  
+  /**
+   * Update all of the efforts in the effort list
+   */
+  updatePlannedEffortListItems () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.updatePlannedEffortListItems');
+    let self  = this,
+        chart = this.chart;
+    
+    self.updatePlannedEffortListSelection();
+    
+    // Position the unplanned efort list group
+    chart.plannedEffortList.attr('transform', 'translate(0,' + chart.unplannedEffortListHeight + ')');
+    
+    // Reposition and size the effort block groups
+    self.plannedEffortListSelection.select('.effort-block')
+        .attr('height', (d) => {
+          return d.height
+        })
+        .attr('width', chart.sprintBodyWidth)
+        .style('fill', (d) => {
+          return d.color
+        });
+    
+    // Update the effort title
+    self.plannedEffortListSelection.select('.effort-title')
+        .text((d) => {
+          return d.title
+        })
+        .call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
+    
+    // Move the body to fit the title
+    self.plannedEffortListSelection.select('.effort-block-body')
+        .attr('transform', (d) => {
+          return 'translate(0, ' + d.height + ')'
+        });
+    
+    // Animate the repositioning
+    self.plannedEffortListSelection.transition()
+        .duration(500)
+        .on('end', () => {
+        })
+        .attr('transform', self.positionEffortBlock.bind(self));
+    
+  }
+  
+  /**
+   * Remove any unneeded efforts from the effort list
+   */
+  removePlannedEffortListItems () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.removePlannedEffortListItems');
+    let self  = this,
+        chart = this.chart;
+    
+    self.plannedEffortListSelection.exit().remove();
   }
   
   /**
    * Size the effort blocks
    */
-  calculateBlockSizes () {
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.calculateBlockSizes');
+  positionBlocks () {
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.positionBlocks');
     let self  = this,
         chart = this.chart;
     
-    // Size all of the blocks
-    let dy = chart.config.efforts.margin;
-    chart.data.efforts.forEach((effort) => {
-      // Size the title so the height can be accurate
-      let titleTemp = chart.offscreenLayer.append('text')
-          .attr('class', 'effort-title')
-          .attr('data-effort-id', effort._id)
-          .text(effort.title);
-      
-      titleTemp.call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
-      
-      let lineCount = chart.offscreenLayer.select('.effort-title[data-effort-id="' + effort._id + '"]').selectAll('tspan')
-          .nodes().length;
-      
-      if (lineCount > 1) {
-        effort.height = (chart.config.contributors.height * 1.0) * lineCount + chart.config.efforts.padding;
-      } else {
-        effort.height = chart.config.efforts.padding * 2 + chart.config.contributors.height;
-      }
+    // Size all of the unplanned blocks
+    let dy = chart.config.efforts.margin + chart.config.efforts.titleHeight;
+    self.unplannedEffortList.forEach((effort) => {
+      self.calculateBlockSize(effort);
       
       // Position the block
       effort.y = dy;
       dy += effort.height + chart.config.efforts.margin;
     });
     
-    chart.effortListHeight = dy;
+    chart.unplannedEffortListHeight = dy + chart.config.efforts.margin;
     
+    // Size all of the planned blocks
+    dy = chart.config.efforts.margin + chart.config.efforts.titleHeight;
+    self.plannedEffortList.forEach((effort) => {
+      self.calculateBlockSize(effort);
+      
+      // Position the block
+      effort.y = dy;
+      dy += effort.height + chart.config.efforts.margin;
+    });
+    
+    chart.plannedEffortListHeight = dy;
+    
+    chart.effortListHeight = chart.unplannedEffortListHeight + chart.plannedEffortListHeight;
+  }
+  
+  calculateBlockSize (effort) {
+    let self  = this,
+        chart = self.chart;
+    
+    // Size the title so the height can be accurate
+    let titleTemp = chart.offscreenLayer.append('text')
+        .attr('class', 'effort-title')
+        .attr('data-effort-id', effort._id)
+        .text(effort.title);
+    
+    titleTemp.call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
+    
+    let lineCount = chart.offscreenLayer.select('.effort-title[data-effort-id="' + effort._id + '"]').selectAll('tspan')
+        .nodes().length;
+    
+    if (lineCount > 1) {
+      effort.height = (chart.config.contributors.height * 1.0) * lineCount + chart.config.efforts.padding;
+    } else {
+      effort.height = chart.config.efforts.padding * 2 + chart.config.contributors.height;
+    }
   }
   
   /**
@@ -194,6 +352,21 @@ export class D3CapacityPlanEffortListHandler {
   positionEffortBlock (block) {
     let chart = this.chart;
     return 'translate(' + chart.config.efforts.margin + ', ' + block.y + ')'
+  }
+  
+  /**
+   * Filter the effort list into those that are planned and those that are not
+   */
+  filterBlockList () {
+    let self = this;
+    
+    self.plannedEffortList = self.chart.data.efforts.filter((effort) => {
+      return effort.usageCount > 0
+    });
+    
+    self.unplannedEffortList = self.chart.data.efforts.filter((effort) => {
+      return effort.usageCount < 1
+    });
   }
   
   /**
@@ -232,8 +405,8 @@ export class D3CapacityPlanEffortListHandler {
       // Resize the chart to fit this if needed
       let neededHeight = chart.scale * (4 * chart.config.efforts.margin + chart.effortListHeight) + chart.config.header.height;
       if (neededHeight > chart.height) {
-        chart.restoreHeight = chart.height;
-        chart.tempBodyHeight = neededHeight - (chart.height - chart.maxContentHeight());
+        chart.restoreHeight     = chart.height;
+        chart.tempContentHeight = neededHeight - (chart.height - chart.maxContentHeight());
         chart.svg.transition()
             .duration(250)
             .style('height', neededHeight + 'px')
@@ -268,7 +441,8 @@ export class D3CapacityPlanEffortListHandler {
       
       // Restore the chart height if it was adjusted
       if (chart.restoreHeight) {
-        delete chart.tempBodyHeight;
+        delete chart.tempContentHeight;
+        chart.height = chart.restoreHeight;
         chart.sprintHandler.updateSprintBackgrounds();
         chart.sprintHandler.updateSprintBodies();
         

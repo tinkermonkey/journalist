@@ -41,9 +41,10 @@ export class D3CapacityPlanChart {
         padding: 5
       },
       efforts     : {
-        minHeight: 20,
-        padding  : 5,
-        margin   : 10
+        minHeight  : 20,
+        padding    : 5,
+        margin     : 10,
+        titleHeight: 30
       },
       releases    : {
         width  : 35,
@@ -211,6 +212,26 @@ export class D3CapacityPlanChart {
         .attr('class', 'effort-list-foreground')
         .attr('clip-path', 'url(#' + self.effortListClipPathId + ')');
     
+    // Create a group in the effort list foreground for the unused efforts
+    self.unplannedEffortList = self.effortListForeground.append('g')
+        .attr('class', 'unplanned-effort-list');
+    
+    self.unplannedEffortList.append('text')
+        .attr('class', 'effort-list-title')
+        .attr('x', self.config.efforts.margin)
+        .attr('y', self.config.efforts.margin)
+        .text('Un-planned efforts');
+    
+    // Create a group in the effort list foreground for the used efforts
+    self.plannedEffortList = self.effortListForeground.append('g')
+        .attr('class', 'planned-effort-list');
+    
+    self.plannedEffortList.append('text')
+        .attr('class', 'effort-list-title')
+        .attr('x', self.config.efforts.margin)
+        .attr('y', self.config.efforts.margin)
+        .text('Planned efforts');
+    
     // Create a clip path for contributor names
     self.contributorClipPathId = 'contributorName-' + self.containerId;
     self.contributorClipPath   = self.svgDefs.append('clipPath')
@@ -376,7 +397,7 @@ export class D3CapacityPlanChart {
    */
   maxContentHeight () {
     let self = this;
-    return Math.max(self.tempBodyHeight || 0, self.contributorsHeight || 0, self.maxSprintHeight || 0)
+    return Math.max(self.tempContentHeight || 0, self.contributorsHeight || 0, self.maxSprintHeight || 0)
   }
   
   /**
@@ -448,7 +469,7 @@ export class D3CapacityPlanChart {
       sprint.effortBlocks = self.data.option.sprintBlocks(sprint.sprintNumber, CapacityPlanBlockTypes.effort)
           .fetch()
           .filter((effortBlock) => {
-            if(self.data.teamId){
+            if (self.data.teamId) {
               return CapacityPlanSprintBlocks.find({
                 optionId : self.data.option._id,
                 blockType: CapacityPlanBlockTypes.contributor,
@@ -574,6 +595,26 @@ export class D3CapacityPlanChart {
     self.data.efforts.forEach((effort) => {
       // Replace the title with a linked item title if one exists
       effort.title = effort.itemTitle();
+    });
+    
+    // Sort the efforts into those in a plan and those not used yet
+    self.data.usedEfforts   = [];
+    self.data.unUsedEfforts = [];
+    self.data.efforts.forEach((effort) => {
+      effort.usageCount = CapacityPlanSprintBlocks.find({
+        optionId : self.data.option._id,
+        blockType: CapacityPlanBlockTypes.effort,
+        dataId   : effort._id
+      }).count();
+      
+      console.log('effort.usageCount:', effort.usageCount, effort.title)
+      /*
+      if (usageCount > 0) {
+        self.data.usedEfforts.push(effort)
+      } else {
+        self.data.unUsedEfforts.push(effort)
+      }
+      */
     });
     
     // Create synthetic links for all of the efforts

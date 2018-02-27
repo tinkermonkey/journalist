@@ -74,7 +74,7 @@ export class D3CapacityPlanBlockHandler {
     let self  = this,
         chart = this.chart;
     
-    self.effortBlockSelection = chart.sprintBodyLayer.selectAll('.sprint-body-group')
+    self.effortListSelection = chart.sprintBodyLayer.selectAll('.sprint-body-group')
         .selectAll('.effort-block-group')
         .data((sprint) => {
           return sprint.effortBlocks
@@ -93,7 +93,7 @@ export class D3CapacityPlanBlockHandler {
     
     self.updateEffortBlockSelection();
     
-    let effortBlockEnter = self.effortBlockSelection.enter()
+    let effortBlockEnter = self.effortListSelection.enter()
         .append('g')
         .attr('class', 'effort-block-group controls-hover')
         .attr('transform', self.positionEffortBlock.bind(self))
@@ -306,13 +306,13 @@ export class D3CapacityPlanBlockHandler {
     self.updateEffortBlockSelection();
     
     // Position the controls
-    self.effortBlockSelection.select('.link-drag-group')
+    self.effortListSelection.select('.link-drag-group')
         .attr('transform', (effort) => {
           return 'translate(' + chart.sprintBodyWidth + ', ' + (controlRadius * 2 + chart.config.efforts.padding) + ')'
         });
     
     // Don't show the link to add to a release if this is already part of a release
-    self.effortBlockSelection.select('.link-drag-handle-container')
+    self.effortListSelection.select('.link-drag-handle-container')
         .classed('no-mouse', (d) => {
           return !d.showReleaseLinker
         })
@@ -321,7 +321,7 @@ export class D3CapacityPlanBlockHandler {
         });
     
     // Don't show the link to remove from a release if this is not part of a release
-    self.effortBlockSelection.select('.effort-control-remove-release-link')
+    self.effortListSelection.select('.effort-control-remove-release-link')
         .classed('no-mouse', (d) => {
           return !d.showReleaseUnlinker
         })
@@ -329,12 +329,12 @@ export class D3CapacityPlanBlockHandler {
           return d.showReleaseUnlinker ? 'block' : 'none'
         });
     
-    self.effortBlockSelection.select('.effort-block-controls')
+    self.effortListSelection.select('.effort-block-controls')
         .attr('transform', (effort) => {
           return 'translate(' + chart.sprintBodyWidth + ', 3)'
         });
     
-    self.effortBlockSelection.select('.effort-control-up')
+    self.effortListSelection.select('.effort-control-up')
         .classed('hide', (effort) => {
           // Hide the up button if this is the first
           return effort.order === 0;
@@ -347,14 +347,14 @@ export class D3CapacityPlanBlockHandler {
           }
         });
     
-    self.effortBlockSelection.select('.effort-control-down')
+    self.effortListSelection.select('.effort-control-down')
         .classed('hide', (effort) => {
           // Hide the down button if this is the last in the list
           return effort.order === effort.siblingCount() - 1;
         });
     
     // Reposition and size the effort block groups
-    self.effortBlockSelection.select('.effort-block')
+    self.effortListSelection.select('.effort-block')
         .attr('height', (d) => {
           return d.height
         })
@@ -364,20 +364,20 @@ export class D3CapacityPlanBlockHandler {
         });
     
     // Update the effort title
-    self.effortBlockSelection.select('.effort-title')
+    self.effortListSelection.select('.effort-title')
         .text((d) => {
           return d.title
         })
         .call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
     
     // Move the body to fit the title
-    self.effortBlockSelection.select('.effort-block-body')
+    self.effortListSelection.select('.effort-block-body')
         .attr('transform', (d) => {
           return 'translate(0, ' + d.headerHeight + ')'
         });
     
     // Animate the repositioning
-    self.effortBlockSelection.transition()
+    self.effortListSelection.transition()
         .duration(500)
         .on('end', () => {
           chart.linkHandler.update();
@@ -404,7 +404,7 @@ export class D3CapacityPlanBlockHandler {
     let self  = this,
         chart = this.chart;
     
-    self.effortBlockSelection.exit().remove();
+    self.effortListSelection.exit().remove();
   }
   
   /**

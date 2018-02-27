@@ -425,6 +425,11 @@ path.release-highlight.highlight {
   filter       : url(#controls-drop-shadow);
 }
 
+.effort-list-title {
+  font-size          : 18px;
+  alignment-baseline : hanging;
+}
+
 /**
  * Separate styling for printable charts
  */
