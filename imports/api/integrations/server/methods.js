@@ -1,11 +1,12 @@
-import { Meteor } from 'meteor/meteor';
-import { check, Match } from 'meteor/check';
-import { Auth } from '../../auth';
-import { Integrations } from '../integrations';
-import { IntegrationCalculatedFields } from '../integration_calculated_fields';
-import { IntegrationImportFunctions } from '../integration_import_functions';
-import { IntegrationServers } from '../integration_servers';
-import { IntegrationService } from '../../../modules/integration_service/integration_service';
+import { Meteor }                         from 'meteor/meteor';
+import { check, Match }                   from 'meteor/check';
+import { ServiceConfiguration }           from 'meteor/service-configuration';
+import { Auth }                           from '../../auth';
+import { Integrations }                   from '../integrations';
+import { IntegrationCalculatedFields }    from '../integration_calculated_fields';
+import { IntegrationImportFunctions }     from '../integration_import_functions';
+import { IntegrationServers }             from '../integration_servers';
+import { IntegrationService }             from '../../../modules/integration_service/integration_service';
 import { IntegrationServerAuthProviders } from '../integration_server_auth_providers';
 
 Meteor.methods({
@@ -743,7 +744,17 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
+      // Load the provider
+      let provider = IntegrationServerAuthProviders.findOne(providerId);
+      
+      // Remove the record
       IntegrationServerAuthProviders.remove(providerId);
+      
+      // Remove the Service Configuration
+      console.log('deleteIntegrationServerAuthProvider removing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+      ServiceConfiguration.configurations.remove({
+        service: provider.authServiceKey
+      });
     } else {
       console.error('Non-admin user tried to delete an integration server auth provider:', user.username, providerId);
       throw new Meteor.Error(403);
@@ -776,6 +787,28 @@ Meteor.methods({
         
         // Update the contributor
         IntegrationServerAuthProviders.update(providerId, { $set: update });
+        
+        // Fetch the provider record
+        let provider = IntegrationServerAuthProviders.findOne(providerId);
+        
+        // Update the serviceConfiguration if it's enabled
+        if (provider.isEnabled) {
+          console.log('editIntegrationServerAuthProvider updating auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+          try {
+            let update = { $set: provider.compileAuthConfig() };
+            
+            ServiceConfiguration.configurations.upsert({
+              service: provider.authServiceKey
+            }, update);
+          } catch (e) {
+            console.error('editIntegrationServerAuthProvider failed to update provider:', provider._id, provider.authServiceKey, provider.loginFunctionName, e);
+          }
+        } else if (key === 'isEnabled' && value === false) {
+          console.log('editIntegrationServerAuthProvider removing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+          ServiceConfiguration.configurations.remove({
+            service: provider.authServiceKey
+          });
+        }
       } else {
         throw new Meteor.Error(404);
       }
