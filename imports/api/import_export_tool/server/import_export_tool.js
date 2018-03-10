@@ -1,41 +1,71 @@
-import { Meteor }                        from 'meteor/meteor';
-import { moment }                        from 'meteor/momentjs:moment';
-import { Picker }                        from 'meteor/meteorhacks:picker';
-import { Contributors }                  from '../../contributors/contributors';
-import { ContributorProjectAssignments } from '../../contributors/contributor_project_assignments';
-import { ContributorRoleDefinitions }    from '../../contributors/contributor_role_definitions';
-import { ContributorTeamRoles }          from '../../contributors/contributor_team_roles';
-import { IntegrationCalculatedFields }   from '../../integrations/integration_calculated_fields';
-import { DisplayTemplates }              from '../../display_templates/display_templates';
-import { DisplayTemplateGroups }         from '../../display_templates/display_template_groups';
-import { PublishedDisplayTemplates }     from '../../display_templates/published_display_templates';
-import { IntegrationImportFunctions }    from '../../integrations/integration_import_functions';
-import { IntegrationServerCaches }       from '../../integrations/integration_server_caches';
-import { IntegrationServers }            from '../../integrations/integration_servers';
-import { Integrations }                  from '../../integrations/integrations';
-import { Projects }                      from '../../projects/projects';
-import { Teams }                         from '../../teams/teams';
-import { Users }                         from '../../users/users';
+import { Meteor }                           from 'meteor/meteor';
+import { moment }                           from 'meteor/momentjs:moment';
+import { Picker }                           from 'meteor/meteorhacks:picker';
+import { CapacityPlans }                    from '../../capacity_plans/capacity_plans';
+import { CapacityPlanOptions }              from '../../capacity_plans/capacity_plan_options';
+import { CapacityPlanReleases }             from '../../capacity_plans/capacity_plan_releases';
+import { CapacityPlanSprintBlocks }         from '../../capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanSprintLinks }          from '../../capacity_plans/capacity_plan_sprint_links';
+import { CapacityPlanSprints }              from '../../capacity_plans/capacity_plan_sprints';
+import { CapacityPlanStrategicEffortItems } from '../../capacity_plans/capacity_plan_strategic_effort_items';
+import { CapacityPlanStrategicEfforts }     from '../../capacity_plans/capacity_plan_strategic_efforts';
+import { Contributors }                     from '../../contributors/contributors';
+import { ContributorProjectAssignments }    from '../../contributors/contributor_project_assignments';
+import { ContributorRoleDefinitions }       from '../../contributors/contributor_role_definitions';
+import { ContributorTeamRoles }             from '../../contributors/contributor_team_roles';
+import { DisplayTemplates }                 from '../../display_templates/display_templates';
+import { DisplayTemplateGroups }            from '../../display_templates/display_template_groups';
+import { Efforts }                          from '../../efforts/efforts';
+import { PublishedDisplayTemplates }        from '../../display_templates/published_display_templates';
+import { IntegrationCalculatedFields }      from '../../integrations/integration_calculated_fields';
+import { IntegrationImportFunctions }       from '../../integrations/integration_import_functions';
+import { IntegrationServerAuthProviders }   from '../../integrations/integration_server_auth_providers';
+import { IntegrationServerCaches }          from '../../integrations/integration_server_caches';
+import { IntegrationServers }               from '../../integrations/integration_servers';
+import { Integrations }                     from '../../integrations/integrations';
+import { Priorities }                       from '../../priorities/priorities';
+import { Projects }                         from '../../projects/projects';
+import { StatusReportSettings }             from '../../status_reports/status_report_settings';
+import { StatusReports }                    from '../../status_reports/status_reports';
+import { Subtasks }                         from '../../subtasks/subtasks';
+import { Tasks }                            from '../../tasks/tasks';
+import { Teams }                            from '../../teams/teams';
+import { Users }                            from '../../users/users';
 
 let AdmZip        = require('adm-zip'),
     fs            = require('fs'),
     path          = require('path'),
     collectionMap = {
-      Contributors                 : Contributors,
-      ContributorProjectAssignments: ContributorProjectAssignments,
-      ContributorRoleDefinitions   : ContributorRoleDefinitions,
-      ContributorTeamRoles         : ContributorTeamRoles,
-      DisplayTemplates             : DisplayTemplates,
-      DisplayTemplateGroups        : DisplayTemplateGroups,
-      PublishedDisplayTemplates    : PublishedDisplayTemplates,
-      IntegrationCalculatedFields  : IntegrationCalculatedFields,
-      IntegrationImportFunctions   : IntegrationImportFunctions,
-      IntegrationServerCaches      : IntegrationServerCaches,
-      IntegrationServers           : IntegrationServers,
-      Integrations                 : Integrations,
-      Projects                     : Projects,
-      Teams                        : Teams,
-      Users                        : Users
+      CapacityPlans                   : CapacityPlans,
+      CapacityPlanOptions             : CapacityPlanOptions,
+      CapacityPlanReleases            : CapacityPlanReleases,
+      CapacityPlanSprintBlocks        : CapacityPlanSprintBlocks,
+      CapacityPlanSprintLinks         : CapacityPlanSprintLinks,
+      CapacityPlanSprints             : CapacityPlanSprints,
+      CapacityPlanStrategicEffortItems: CapacityPlanStrategicEffortItems,
+      CapacityPlanStrategicEfforts    : CapacityPlanStrategicEfforts,
+      Contributors                    : Contributors,
+      ContributorProjectAssignments   : ContributorProjectAssignments,
+      ContributorRoleDefinitions      : ContributorRoleDefinitions,
+      ContributorTeamRoles            : ContributorTeamRoles,
+      DisplayTemplates                : DisplayTemplates,
+      DisplayTemplateGroups           : DisplayTemplateGroups,
+      Efforts                         : Efforts,
+      PublishedDisplayTemplates       : PublishedDisplayTemplates,
+      IntegrationCalculatedFields     : IntegrationCalculatedFields,
+      IntegrationImportFunctions      : IntegrationImportFunctions,
+      IntegrationServerAuthProviders  : IntegrationServerAuthProviders,
+      IntegrationServerCaches         : IntegrationServerCaches,
+      IntegrationServers              : IntegrationServers,
+      Integrations                    : Integrations,
+      Projects                        : Projects,
+      Priorities                      : Priorities,
+      StatusReportSettings            : StatusReportSettings,
+      StatusReports                   : StatusReports,
+      Subtasks                        : Subtasks,
+      Tasks                           : Tasks,
+      Teams                           : Teams,
+      Users                           : Users
     },
     importKeys    = {
       DisplayTemplates         : 'templateName',
