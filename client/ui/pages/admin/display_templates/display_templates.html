@@ -14,6 +14,7 @@
                 </li>
               {{/each}}
             {{/if}}
+            
             <li class="active">{{title}}</li>
           {{else}}
             <li class="active">Display Templates</li>
@@ -74,66 +75,35 @@
             {{> DisplayTemplate currentTemplate }}
           {{else}}
             {{#with currentGroup}}
-              <h2>{{title}}</h2>
-              <table class="table data-table full-width border-bottom">
-                <thead>
-                <tr>
-                  <th></th>
-                  <th>Template Name</th>
-                  <th>Type</th>
-                  <th>Current Version</th>
-                  <th>Published</th>
-                  <th>Modified By</th>
-                  <th>Modified</th>
-                  <th></th>
-                  <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {{#each displayTemplates}}
-                  <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
-                      data-pk="{{_id}}">
-                    <td class="open-link">
-                      <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=_id groupId=../_id}}">
-                        <span class="glyphicon glyphicon-folder-open"></span>
-                      </a>
-                    </td>
-                    <td>{{> EditableTextField dataKey="templateName" value=templateName emptyText="Template Name" }}</td>
-                    <td>{{> EditableEnumSelector enum=DisplayTemplateTypes dataKey="templateType" value=templateType emptyText="Template Type" }}</td>
-                    <td>
-                      {{ currentVersion }}
-                      {{#if unpublishedChanges }}
-                        <span class="label label-warning">
-                      Unpublished Changes
-                    </span>
-                      {{else}}
-                        <span class="label label-success">
-                      Up to date
-                    </span>
-                      {{/if}}
-                    </td>
-                    <td>{{ dateFormat lastPublished }}</td>
-                    <td>{{ userName modifiedBy }}</td>
-                    <td>{{ dateFormat dateModified }}</td>
-                    <td>
-                      <a class="hidden-control btn-move-template">
-                        <span class="glyphicon glyphicon-move"></span>
-                      </a>
-                    </td>
-                    <td>
-                      <a class="link-red hidden-control btn-delete-display-template">
-                        <span class="glyphicon glyphicon-minus-sign"></span>
-                      </a>
-                    </td>
-                  </tr>
-                {{/each}}
-                </tbody>
-              </table>
+              <div class="display-template-group-title show-controls-on-hover">
+                <h2>{{title}}</h2>
+                <ul class="nav nav-pills">
+                  <li role="presentation">
+                    <a class="hidden-control btn-edit-group">
+                      <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                  </li>
+                  <li role="presentation">
+                    <a class="hidden-control btn-delete-group">
+                      <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            
+              {{> DisplayTemplateList displayTemplates }}
+            
               <button class="btn btn-xs btn-primary btn-add-display-template">
                 <span class="glyphicon glyphicon-plus"></span>
                 Add Display Template
               </button>
             {{else}}
+              <h2>Unpublished Changes</h2>
+              {{> DisplayTemplateList unplublishedTemplates }}
+            
+              <h2>Orphaned Templates</h2>
+              {{> DisplayTemplateList orphanedTemplates }}
+              
             {{/with}}
           {{/if}}
         {{else}}

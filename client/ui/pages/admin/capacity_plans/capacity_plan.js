@@ -86,7 +86,7 @@ Template.CapacityPlan.events({
     let planId  = FlowRouter.getParam('planId'),
         dataKey = $(e.target).attr('data-key');
     
-    console.log('Plan Edit:', planId, dataKey, newValue);
+    //console.log('Plan Edit:', planId, dataKey, newValue);
     
     if (planId && dataKey) {
       Meteor.call('editCapacityPlan', planId, dataKey, newValue, (error, response) => {
@@ -102,7 +102,7 @@ Template.CapacityPlan.events({
     let optionId = FlowRouter.getParam('optionId'),
         dataKey  = $(e.target).attr('data-key');
     
-    console.log('Option Edit:', optionId, dataKey, newValue);
+    //console.log('Option Edit:', optionId, dataKey, newValue);
     if (optionId && dataKey) {
       Meteor.call('editCapacityPlanOption', optionId, dataKey, newValue, (error, response) => {
         if (error) {
@@ -161,8 +161,7 @@ Template.CapacityPlan.events({
     });
   },
   'click .btn-edit-option' () {
-    let planId   = FlowRouter.getParam('planId'),
-        optionId = FlowRouter.getParam('optionId'),
+    let optionId = FlowRouter.getParam('optionId'),
         option   = CapacityPlanOptions.findOne(optionId);
     
     RobaDialog.show({
@@ -180,10 +179,10 @@ Template.CapacityPlan.events({
       width          : 500,
       buttons        : [
         { text: 'Cancel' },
-        { text: 'Add' }
+        { text: 'Save' }
       ],
       callback       : function (btn) {
-        if (btn.match(/add/i)) {
+        if (btn.match(/save/i)) {
           let formId = 'addRecordForm';
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
@@ -191,7 +190,7 @@ Template.CapacityPlan.events({
             // Create the display template
             Meteor.call('editCapacityPlanOption', optionId, 'title', formData.title, (error, response) => {
               if (error) {
-                RobaDialog.error('Failed to create capacity plan option:' + error.toString())
+                RobaDialog.error('Failed to update capacity plan option:' + error.toString())
               } else {
                 RobaDialog.hide();
               }

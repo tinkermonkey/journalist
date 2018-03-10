@@ -1,3 +1,16 @@
 .preview-container {
   margin-top : 10px;
 }
+
+.display-template-group-title {
+  display: inline-block;
+}
+
+.display-template-group-title > * {
+  display: inline-block;
+}
+
+.display-template-group-title > .nav {
+  vertical-align: bottom;
+  margin-bottom: 5px;
+}

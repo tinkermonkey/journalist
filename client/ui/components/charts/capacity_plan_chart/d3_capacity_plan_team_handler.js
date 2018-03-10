@@ -287,7 +287,7 @@ export class D3CapacityPlanTeamHandler {
           return d._id
         })
         .on('mouseenter', (d) => {
-          if (!chart.inContributorDrag) {
+          if (chart.drag === undefined) {
             chart.svg.selectAll('.contributor-highlight[data-contributor-id="' + d._id + '"]').classed('highlight', true)
           }
         })

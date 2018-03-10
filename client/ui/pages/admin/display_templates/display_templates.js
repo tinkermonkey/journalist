@@ -7,6 +7,7 @@ import { DisplayTemplateGroups } from '../../../../../imports/api/display_templa
 import '../integration_servers/integration_server_field_reference';
 import '../../../components/bootstrap-treeview/bootstrap-treeview';
 import './display_template';
+import './display_template_list';
 
 /**
  * Template Helpers
@@ -27,6 +28,12 @@ Template.DisplayTemplates.helpers({
     if (templateId) {
       return DisplayTemplates.findOne(templateId)
     }
+  },
+  unplublishedTemplates () {
+    //return DisplayTemplates.find({ parentGroup: groupId }, { sort: { templateName: 1 } })
+  },
+  orphanedTemplates () {
+    return DisplayTemplates.find({ parentGroup: { $exists: false } }, { sort: { templateName: 1 } })
   }
 });
 
@@ -195,11 +202,54 @@ Template.DisplayTemplates.events({
       });
     });
   },
+  'click .btn-edit-group' () {
+    let groupId = FlowRouter.getParam('groupId'),
+        group   = DisplayTemplateGroups.findOne(groupId);
+    
+    RobaDialog.show({
+      contentTemplate: 'AddRecordForm',
+      contentData    : {
+        schema: new SimpleSchema({
+          title: {
+            type        : String,
+            label       : 'Group Title',
+            defaultValue: group.title
+          }
+        })
+      },
+      title          : 'Edit Group Title',
+      width          : 500,
+      buttons        : [
+        { text: 'Cancel' },
+        { text: 'Save' }
+      ],
+      callback       : function (btn) {
+        if (btn.match(/save/i)) {
+          let formId = 'addRecordForm';
+          if (AutoForm.validateForm(formId)) {
+            let formData = AutoForm.getFormValues(formId).insertDoc;
+            
+            // Create the display template
+            Meteor.call('editDisplayTemplateGroup', groupId, 'title', formData.title, (error, response) => {
+              if (error) {
+                RobaDialog.error('Failed to update display template group:' + error.toString())
+              } else {
+                RobaDialog.hide();
+              }
+              AutoForm.resetForm(formId)
+            });
+          }
+        } else {
+          RobaDialog.hide();
+        }
+      }.bind(this)
+    });
+  },
   'click .btn-delete-group' (e, instance) {
     let group  = this,
         parent = group.parent();
     
-    RobaDialog.ask('Delete Template?', 'Are you sure that you want to delete the template group<span class="label label-primary"> ' + group.title + '</span> ?', () => {
+    RobaDialog.ask('Delete Group?', 'Are you sure that you want to delete the template group <span class="label label-primary">' + group.title + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteDisplayTemplateGroup', group._id, function (error, response) {
         if (error) {

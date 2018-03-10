@@ -31,8 +31,7 @@ export class D3CapacityPlanLinkDragHandler {
         chart         = this.chart,
         dragHandle    = d3.select(d3.event.sourceEvent.target).closest('.link-drag-handle-container'),
         linkContainer = dragHandle.closest('.link-drag-group').select('.link-drag-link-container'),
-        dragLink      = linkContainer.append('path')
-            .attr('class', 'link-drag-link');
+        dragLink      = linkContainer.append('path').attr('class', 'link-drag-link');
     
     // Freeze out all contributor blocks and effort titles from pointer events
     chart.sprintBackgroundLayer.selectAll('.sprint-background-group').classed('no-mouse', true);

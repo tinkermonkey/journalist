@@ -115,12 +115,11 @@ export class D3CapacityPlanBlockHandler {
         .attr('rx', 4)
         .attr('ry', 4)
         .attr('width', chart.sprintBodyWidth)
-        
         .on('mouseenter', (d) => {
           let element = d3.select(d3.event.target);
           element.classed('hover', true);
           
-          if (chart.inContributorDrag) {
+          if (chart.drag !== undefined) {
             chart.drag.hover = {
               type   : CapacityPlanBlockTypes.effort,
               record : d,
@@ -146,7 +145,7 @@ export class D3CapacityPlanBlockHandler {
           let element = d3.select(d3.event.target);
           element.classed('hover', false);
           
-          if (chart.inContributorDrag) {
+          if (chart.drag !== undefined) {
             delete chart.drag.hover;
           } else {
             // Hide the release links if any
@@ -450,7 +449,7 @@ export class D3CapacityPlanBlockHandler {
           return d._id
         })
         .on('mouseenter', (d) => {
-          if (!chart.inContributorDrag) {
+          if (chart.drag === undefined) {
             chart.svg.selectAll('.contributor-highlight[data-contributor-id="' + d.dataId + '"]').classed('highlight', true)
           }
         })
@@ -614,7 +613,7 @@ export class D3CapacityPlanBlockHandler {
           let element = d3.select(d3.event.target);
           element.classed('hover', true);
           
-          if (chart.inEffortLinkDrag) {
+          if (chart.drag !== undefined) {
             chart.drag.hover = {
               type   : CapacityPlanBlockTypes.release,
               record : d,
@@ -634,7 +633,7 @@ export class D3CapacityPlanBlockHandler {
           let element = d3.select(d3.event.target);
           
           element.classed('hover', false);
-          if (chart.inEffortLinkDrag) {
+          if (chart.drag !== undefined) {
             delete chart.drag.hover;
           } else {
             chart.sprintBodyLayer.selectAll('.effort-block-group').classed('effort-highlight', false);

@@ -97,7 +97,7 @@
 .effort-block-group:hover .link-drag-handle-dot,
 .link-drag-handle-container.in-drag .link-drag-handle,
 .link-drag-handle-container.in-drag .link-drag-handle-dot {
-  opacity : 1;
+  opacity : 1 !important;
 }
 
 .link-drag-handle:hover {
