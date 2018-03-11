@@ -11,6 +11,7 @@ import './capacity_plan_efforts';
 import './capacity_plan_option_summary';
 import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
 import '../../../components/editable_date_range/editable_date_range';
+import { Teams }               from '../../../../../imports/api/teams/teams';
 
 /**
  * Template Helpers
@@ -73,6 +74,19 @@ Template.CapacityPlan.helpers({
     }
     
     return roles
+  },
+  selectedOptionContext () {
+    return {
+      valueField  : '_id',
+      displayField: 'title',
+      value       : this.selectedOptionId,
+      dataKey     : 'selectedOptionId',
+      collection  : CapacityPlanOptions,
+      emptyText   : 'Select option',
+      cssClass    : 'capacity-plan',
+      mode        : 'popup',
+      query       : { planId: this._id }
+    };
   }
 });
 
@@ -86,7 +100,7 @@ Template.CapacityPlan.events({
     let planId  = FlowRouter.getParam('planId'),
         dataKey = $(e.target).attr('data-key');
     
-    //console.log('Plan Edit:', planId, dataKey, newValue);
+    console.log('Plan Edit:', planId, dataKey, newValue);
     
     if (planId && dataKey) {
       Meteor.call('editCapacityPlan', planId, dataKey, newValue, (error, response) => {

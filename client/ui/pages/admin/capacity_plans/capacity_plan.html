@@ -74,25 +74,29 @@
             <h2>Context</h2>
             <table class="table data-table table-striped">
               <tbody>
-              <tr class="show-controls-on-hover">
+              <tr>
                 <td>Teams</td>
                 <td>{{> EditableRecordChecklist teamSelectorContext query=availableTeamsQuery dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams' cssClass='capacity-plan' }}</td>
               </tr>
-              <tr class="show-controls-on-hover">
+              <tr>
                 <td>First Sprint Date</td>
                 <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan' }}</td>
               </tr>
               {{#with currentOption }}
-                <tr class="show-controls-on-hover">
+                <tr>
                   <td>Sprint Count</td>
                   <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"  cssClass='capacity-plan-option' }}</td>
                 </tr>
-                <tr class="show-controls-on-hover">
+                <tr>
                   <td>Sprint Length</td>
                   <td>{{> EditableEnumSelector enum=sprintLengthOptions dataKey='sprintLength' value=sprintLength emptyText='Sprint Length' mode='popup'  cssClass='capacity-plan-option'}}</td>
                 </tr>
               {{/with}}
               </tbody>
+              <tr>
+                <td>Selected Option</td>
+                <td>{{> EditableRecordSelector selectedOptionContext }}</td>
+              </tr>
             </table>
           
           </div>
@@ -103,7 +107,7 @@
       </div>
       <div class="container">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-12 capacity-plan-efforts-container">
             {{> CapacityPlanEfforts }}
           </div>
         </div>
