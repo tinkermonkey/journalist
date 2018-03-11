@@ -1,7 +1,8 @@
 import { Meteor }                         from 'meteor/meteor';
-import { UploadServer }                   from 'meteor/tomi:upload-server';
-import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { ServiceConfiguration }           from 'meteor/service-configuration';
+import { UploadServer }                   from 'meteor/tomi:upload-server';
+import { SyncedCron }                     from 'meteor/percolate:synced-cron';
+import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
 //
 // include the base layer functionality
@@ -15,17 +16,28 @@ import '../later_config';
 import '../moment_config';
 import '../synced_cron_config';
 //
+// Upgrade
+import './upgrade';
+//
 // Integration Service
 import { IntegrationService }             from '../../modules/integration_service/integration_service';
 import { HealthTracker }                  from '../../api/system_health_metrics/server/health_tracker';
 import SimpleSchema                       from "simpl-schema";
+import { Clustering }                     from 'meteor/austinsand:journalist-clustering';
 
 Meteor.startup(() => {
-  console.log('===========================');
+  console.log('============================================================================================================');
   console.log('Journalist Server Start');
-  console.log('===========================');
-  HealthTracker.init();
-  IntegrationService.start();
+  console.log('Cluster node:', Clustering.workerId());
+  console.log('Cluster master:', Clustering.isMaster());
+  console.log('============================================================================================================');
+  
+  if (Clustering.isMaster()) {
+    SyncedCron.stop();
+    SyncedCron.start();
+    HealthTracker.init();
+    IntegrationService.start();
+  }
   
   // Initialize the upload server
   UploadServer.init({
@@ -52,21 +64,23 @@ Meteor.startup(() => {
   SimpleSchema.extendOptions([ 'autoform', 'denyUpdate' ]);
   
   // Create a cron job to update the report next due dates nightly
-  SyncedCron.remove('status-report-due-date-updater');
-  SyncedCron.add({
-    name: 'status-report-due-date-updater',
-    schedule (parser) {
-      let parserText = 'at 12:01 am';
-      return parser.text(parserText);
-    },
-    job () {
-      console.log('==== Updating status report next due dates...');
-      StatusReportSettings.find({}).forEach((setting) => {
-        setting.updateNextDue();
-      });
-      console.log('==== Update complete');
-    }
-  });
+  if (Clustering.isMaster()) {
+    SyncedCron.remove('status-report-due-date-updater');
+    SyncedCron.add({
+      name: 'status-report-due-date-updater',
+      schedule (parser) {
+        let parserText = 'at 12:01 am';
+        return parser.text(parserText);
+      },
+      job () {
+        console.log('==== Updating status report next due dates...');
+        StatusReportSettings.find({}).forEach((setting) => {
+          setting.updateNextDue();
+        });
+        console.log('==== Update complete');
+      }
+    });
+  }
   
   console.log('===========================');
 });

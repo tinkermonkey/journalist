@@ -1,3 +1,4 @@
+import { Clustering }                 from 'meteor/austinsand:journalist-clustering';
 import { SyncedCron }                 from 'meteor/percolate:synced-cron';
 import { IntegrationServiceProvider } from './integration_service_provider';
 import { IntegrationServers }         from '../../api/integrations/integration_servers';
@@ -21,10 +22,6 @@ export const IntegrationService = {
     
     // Create a place to store the service providers
     self.providers = {};
-    
-    // Start Synced Cron
-    SyncedCron.stop(); // Clear everything out
-    SyncedCron.start();
     
     // Monitor the IntegrationServers collection to respond to additions, deletions, and modifications
     self.serverObserver = IntegrationServers.find({}).observe({
