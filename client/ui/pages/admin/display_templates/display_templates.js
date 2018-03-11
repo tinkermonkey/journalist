@@ -30,7 +30,7 @@ Template.DisplayTemplates.helpers({
     }
   },
   unplublishedTemplates () {
-    //return DisplayTemplates.find({ parentGroup: groupId }, { sort: { templateName: 1 } })
+    return DisplayTemplates.find({ $where : "this.currentVersion > this.publishedVersion" }, { sort: { templateName: 1 } })
   },
   orphanedTemplates () {
     return DisplayTemplates.find({ parentGroup: { $exists: false } }, { sort: { templateName: 1 } })
