@@ -76,13 +76,13 @@
               <tbody>
               <tr class="show-controls-on-hover">
                 <td>Teams</td>
-                <td>{{> EditableRecordChecklist teamSelectorContext dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams' cssClass='capacity-plan' }}</td>
+                <td>{{> EditableRecordChecklist teamSelectorContext query=availableTeamsQuery dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams' cssClass='capacity-plan' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>First Sprint Date</td>
+                <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan' }}</td>
               </tr>
               {{#with currentOption }}
-                <tr class="show-controls-on-hover">
-                  <td>First Sprint Date</td>
-                  <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan-option' }}</td>
-                </tr>
                 <tr class="show-controls-on-hover">
                   <td>Sprint Count</td>
                   <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"  cssClass='capacity-plan-option' }}</td>
@@ -97,7 +97,6 @@
           
           </div>
           <div class="col-md-9">
-            {{> CapacityPlanEfforts }}
             {{> CapacityPlanReleases }}
           </div>
         </div>
@@ -105,8 +104,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12">
-            <h1>Plan Summary</h1>
-            {{> CapacityPlanOptionSummary capacityPlan=this}}
+            {{> CapacityPlanEfforts }}
           </div>
         </div>
       </div>

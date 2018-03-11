@@ -13,7 +13,18 @@ Template.CapacityPlans.helpers({
   },
   archivedPlans () {
     return CapacityPlans.find({ isActive: false }, { sort: { title: 1 } })
-  }
+  },
+  startDatePickerConfig () {
+    return {
+      singleDatePicker: true,
+      showDropdowns   : true,
+      startDate       : this.startDate || new Date(),
+      isInvalidDate (testDate) {
+        // limit the selection to week starts
+        return moment(testDate).weekday() === 1
+      }
+    }
+  },
 });
 
 /**

@@ -24,7 +24,7 @@ export const CapacityPlan = new SimpleSchema({
     type    : Array, // String
     optional: true
   },
-  'teamIds.$': {
+  'teamIds.$' : {
     type: String
   },
   startDate   : {
@@ -108,6 +108,33 @@ CapacityPlans.helpers({
       return Teams.find({ _id: { $in: this.teamIds } }, { sort: { title: 1 } })
     } else {
       return []
+    }
+  },
+  
+  /**
+   * Get the list of teams that are not part of another plan and should be shown in the teams selector
+   */
+  availableTeamsIds () {
+    let plan          = this,
+        selectedTeams = plan.teamIds || [],
+        plannedTeams  = _.flatten(CapacityPlans.find({ isActive: true, _id: { $ne: plan._id } }).map((capacityPlan) => {
+          return capacityPlan.teamIds || []
+        })),
+        allTeams      = Teams.find({}).map((team) => {
+          return team._id
+        });
+    
+    return _.union(selectedTeams, _.difference(allTeams, plannedTeams))
+  },
+  
+  /**
+   * Handy helper for getting all of the teams
+   */
+  availableTeamsQuery () {
+    let plan = this;
+    
+    return {
+      _id: { $in: plan.availableTeamsIds() }
     }
   },
   
