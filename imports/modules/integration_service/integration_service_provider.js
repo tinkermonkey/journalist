@@ -1,6 +1,7 @@
 import { check }                                 from 'meteor/check';
 import { Ping }                                  from 'meteor/frpz:ping';
 import { SyncedCron }                            from 'meteor/percolate:synced-cron';
+import { Clustering }                            from 'meteor/austinsand:journalist-clustering';
 import { Contributors }                          from '../../api/contributors/contributors';
 import { ContributorTeamRoles }                  from '../../api/contributors/contributor_team_roles';
 import { ContributorProjectAssignments }         from '../../api/contributors/contributor_project_assignments';
@@ -153,19 +154,21 @@ export class IntegrationServiceProvider {
     debug && console.log('IntegrationServiceProvider.updateHealthCheckJob:', this.server._id, this.server.title);
     let self = this;
     
-    SyncedCron.remove(self.trackerKey);
-    
-    SyncedCron.add({
-      name: self.trackerKey,
-      schedule (parser) {
-        let parserText = self.server.healthCheckFrequency || 'every 5 minutes';
-        debug && console.log('IntegrationServiceProvider.updateHealthCheckJob setting schedule:', self.server._id, self.server.title, "'", parserText, "'");
-        return parser.text(parserText);
-      },
-      job () {
-        self.checkHealth();
-      }
-    });
+    if (Clustering.isMaster()) {
+      SyncedCron.remove(self.trackerKey);
+      
+      SyncedCron.add({
+        name: self.trackerKey,
+        schedule (parser) {
+          let parserText = self.server.healthCheckFrequency || 'every 5 minutes';
+          debug && console.log('IntegrationServiceProvider.updateHealthCheckJob setting schedule:', self.server._id, self.server.title, "'", parserText, "'");
+          return parser.text(parserText);
+        },
+        job () {
+          self.checkHealth();
+        }
+      });
+    }
   }
   
   /**
@@ -175,19 +178,21 @@ export class IntegrationServiceProvider {
     debug && console.log('IntegrationServiceProvider.updateCacheServiceJob:', this.server._id, this.server.title);
     let self = this;
     
-    SyncedCron.remove(self.trackerKey + '-cache');
-    
-    SyncedCron.add({
-      name: self.trackerKey + '-cache',
-      schedule (parser) {
-        let parserText = self.server.cacheUpdateFrequency || 'every 30 minutes';
-        debug && console.log('IntegrationServiceProvider.updateCacheServiceJob setting schedule:', self.server._id, self.server.title, "'", parserText, "'");
-        return parser.text(parserText);
-      },
-      job () {
-        self.updateCachedData();
-      }
-    });
+    if (Clustering.isMaster()) {
+      SyncedCron.remove(self.trackerKey + '-cache');
+      
+      SyncedCron.add({
+        name: self.trackerKey + '-cache',
+        schedule (parser) {
+          let parserText = self.server.cacheUpdateFrequency || 'every 30 minutes';
+          debug && console.log('IntegrationServiceProvider.updateCacheServiceJob setting schedule:', self.server._id, self.server.title, "'", parserText, "'");
+          return parser.text(parserText);
+        },
+        job () {
+          self.updateCachedData();
+        }
+      });
+    }
   }
   
   /**
@@ -201,7 +206,7 @@ export class IntegrationServiceProvider {
     
     // Make sure there's something to connect to
     if (self.url && self.url.hostname) {
-      if(self.server.isAuthenticated === true){
+      if (self.server.isAuthenticated === true) {
         // Ping the server
         debug && console.log('IntegrationServiceProvider.checkHealth pinging server:', self.url.hostname, self.url.port);
         try {
@@ -217,7 +222,7 @@ export class IntegrationServiceProvider {
           self.healthy = false;
           return;
         }
-  
+        
         // Check an authenticated end point to make sure the server is authenticated
         if (healthy) {
           let authResult = self.integrator.checkAuthentication();
@@ -229,7 +234,7 @@ export class IntegrationServiceProvider {
           }
         }
       } else {
-        healthy = false;
+        healthy         = false;
         details.message = 'Server is not authenticated';
         debug && console.log('IntegrationServiceProvider.checkHealth not authenticated:', self.url.hostname);
       }
@@ -771,7 +776,9 @@ export class IntegrationServiceProvider {
     HealthTracker.remove(self.trackerKey);
     
     // Remove the cron job to check status & cache
-    SyncedCron.remove(self.trackerKey);
-    SyncedCron.remove(self.trackerKey + '-cache');
+    if (Clustering.isMaster()) {
+      SyncedCron.remove(self.trackerKey);
+      SyncedCron.remove(self.trackerKey + '-cache');
+    }
   }
 }

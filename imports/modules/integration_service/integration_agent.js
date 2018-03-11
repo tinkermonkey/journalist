@@ -1,6 +1,7 @@
 //import { moment } from 'meteor/momentjs:moment';
-import { SyncedCron } from 'meteor/percolate:synced-cron';
-import { Integrations } from '../../api/integrations/integrations';
+import { SyncedCron }    from 'meteor/percolate:synced-cron';
+import { Clustering }    from 'meteor/austinsand:journalist-clustering';
+import { Integrations }  from '../../api/integrations/integrations';
 import { ImportedItems } from '../../api/imported_items/imported_items';
 import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
 
@@ -43,7 +44,7 @@ export class IntegrationAgent {
     
     // Schedule the job to run the query periodically
     self.updateQueryJobKeys = [];
-    self.syncQueryJobKeys = [];
+    self.syncQueryJobKeys   = [];
     self.updateQueryJobs();
   }
   
@@ -56,44 +57,46 @@ export class IntegrationAgent {
         queryDefinitions = self.serviceProvider.getQueryDefinitions();
     
     // Get the query definitions
-    if (queryDefinitions) {
-      // Create a basic update job for each query
-      _.keys(queryDefinitions).forEach((queryKey) => {
-        let jobKey = self.trackerKey + '-query-' + queryKey;
-        self.updateQueryJobKeys.push(queryKey);
-        SyncedCron.remove(jobKey);
+    if (Clustering.isMaster()) {
+      if (queryDefinitions) {
+        // Create a basic update job for each query
+        _.keys(queryDefinitions).forEach((queryKey) => {
+          let jobKey = self.trackerKey + '-query-' + queryKey;
+          self.updateQueryJobKeys.push(queryKey);
+          SyncedCron.remove(jobKey);
+          
+          SyncedCron.add({
+            name: jobKey,
+            schedule (parser) {
+              let parserText = self.integration.updateFrequency || 'every 10 minutes';
+              debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', jobKey, '"', parserText, '"');
+              return parser.text(parserText);
+            },
+            job () {
+              self.executeQuery(queryKey, false);
+            }
+          });
+        });
         
-        SyncedCron.add({
-          name: jobKey,
-          schedule (parser) {
-            let parserText = self.integration.updateFrequency || 'every 10 minutes';
-            debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', jobKey, '"', parserText, '"');
-            return parser.text(parserText);
-          },
-          job () {
-            self.executeQuery(queryKey, false);
-          }
+        // Create a deep sync job for each query
+        _.keys(queryDefinitions).forEach((queryKey) => {
+          let jobKey = self.trackerKey + '-sync-' + queryKey;
+          self.syncQueryJobKeys.push(queryKey);
+          SyncedCron.remove(jobKey);
+          
+          SyncedCron.add({
+            name: jobKey,
+            schedule (parser) {
+              let parserText = self.integration.deepSyncFrequency || 'at 1:00 am';
+              debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', jobKey, '"', parserText, '"');
+              return parser.text(parserText);
+            },
+            job () {
+              self.executeQuery(queryKey, true);
+            }
+          });
         });
-      });
-      
-      // Create a deep sync job for each query
-      _.keys(queryDefinitions).forEach((queryKey) => {
-        let jobKey = self.trackerKey + '-sync-' + queryKey;
-        self.syncQueryJobKeys.push(queryKey);
-        SyncedCron.remove(jobKey);
-    
-        SyncedCron.add({
-          name: jobKey,
-          schedule (parser) {
-            let parserText = self.integration.deepSyncFrequency || 'at 1:00 am';
-            debug && console.log('IntegrationAgent.updateQueryJobs setting schedule:', jobKey, '"', parserText, '"');
-            return parser.text(parserText);
-          },
-          job () {
-            self.executeQuery(queryKey, true);
-          }
-        });
-      });
+      }
     }
   }
   
@@ -113,7 +116,7 @@ export class IntegrationAgent {
       try {
         // Force deepSync to a boolean
         deepSync = deepSync === true;
-        if(deepSync){
+        if (deepSync) {
           console.log('IntegrationAgent.executeQuery running deep sync:', this.integration._id, queryKey);
         }
         
@@ -159,7 +162,7 @@ export class IntegrationAgent {
     } else {
       HealthTracker.update(self.trackerKey, false, { message: 'Service provider is not healthy' });
     }
-  
+    
     console.log('IntegrationAgent.executeQuery complete:', this.integration._id, queryKey, deepSync, Date.now() - startTime);
   }
   
@@ -224,9 +227,11 @@ export class IntegrationAgent {
     HealthTracker.remove(self.trackerKey);
     
     // Remove the cron job to check status & cache
-    SyncedCron.remove(self.trackerKey);
-    self.updateQueryJobKeys.forEach((jobKey) => {
-      SyncedCron.remove(jobKey);
-    });
+    if (Clustering.isMaster()) {
+      SyncedCron.remove(self.trackerKey);
+      self.updateQueryJobKeys.forEach((jobKey) => {
+        SyncedCron.remove(jobKey);
+      });
+    }
   }
 }
