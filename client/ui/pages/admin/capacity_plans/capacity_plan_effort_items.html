@@ -1,15 +1,5 @@
 <template name="CapacityPlanEffortItems">
-  <h3>Stories</h3>
   <table class="table data-table">
-    <thead>
-    <tr>
-      <th></th>
-      <th>Item</th>
-      <th>Title</th>
-      <th>Estimate</th>
-      <th></th>
-    </tr>
-    </thead>
     <tbody>
     {{#each items}}
       <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
@@ -43,12 +33,14 @@
     {{/each}}
     </tbody>
   </table>
-  <button class="btn btn-xs btn-primary btn-link-item">
-    <span class="glyphicon glyphicon-link"></span>
-    Link Item
-  </button>
-  <button class="btn btn-xs btn-primary btn-add-item">
-    <span class="glyphicon glyphicon-plus"></span>
-    Add Item
-  </button>
+  <div class="hidden-control">
+    <button class="btn btn-xs btn-primary btn-link-item">
+      <span class="glyphicon glyphicon-link"></span>
+      Link Item
+    </button>
+    <button class="btn btn-xs btn-primary btn-add-item">
+      <span class="glyphicon glyphicon-plus"></span>
+      Add Item
+    </button>
+  </div>
 </template>

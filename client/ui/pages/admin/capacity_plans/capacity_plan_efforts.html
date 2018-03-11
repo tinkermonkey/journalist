@@ -1,108 +1,68 @@
 <template name="CapacityPlanEfforts">
-  <div class="flex capacity-plan-efforts">
-    <div class="effort-list-container">
-      <h2>Efforts</h2>
-      <ul class="list-group">
-        {{#each efforts}}
-          <li class="list-group-item btn-select-effort show-controls-on-hover" data-effort-id="{{_id}}">
-            <div class="effort-color-swatch" style="background-color: {{color}};"></div>
-            {{#if isSelectedEffort}}
-              {{itemTitle}}
-            {{else}}
-              <a>
-                {{itemTitle}}
-              </a>
-            {{/if}}
-            <a class="pull-right hidden-control link-red btn-delete-effort">
-              <span class="glyphicon glyphicon-remove-circle"></span>
+  <h2>Efforts</h2>
+  <table class="table data-table full-width border-bottom">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Title</th>
+      <th>Linked Item</th>
+      <th>Color</th>
+      <th>Release Content</th>
+      <!--
+      <th>Items</th>
+      <th>Estimates</th>
+      -->
+      <th>Description</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each efforts}}
+      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+        <td class="open-link">
+          {{#if itemIdentifier}}
+            <a class="hidden-control" href="{{pathFor 'CapacityPlan' planId=_id}}">
+              <span class="glyphicon glyphicon-folder-open"></span>
             </a>
-          </li>
-        {{/each}}
-      </ul>
-      
-      <ul class="list-group">
-        <li class="list-group-item">
-          <a class="btn-link-epic">
-            <span class="glyphicon glyphicon-link"></span>
-            Link Item
-          </a>
-        </li>
-        <li class="list-group-item">
-          <a class="btn-add-effort">
-            <span class="glyphicon glyphicon-plus"></span>
-            Add Effort
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="effort-panel-container">
-      {{#with selectedEffort}}
-        <h2>{{itemTitle}}</h2>
-        
-        <table class="table data-table config-table" data-pk="{{_id}}">
-          <tbody>
+          {{/if}}
+        </td>
+        <td>
           {{#unless itemIdentifier}}
-            <tr class="show-controls-on-hover">
-              <td>Title</td>
-              <td></td>
-              <td>
-                {{> EditableTextField dataKey='title' value=title mode='popup' }}
-              </td>
-            </tr>
+            {{> EditableTextField dataKey='title' value=title mode='popup' }}
+          {{else}}
+            {{itemTitle}}
           {{/unless}}
-          <tr class="show-controls-on-hover">
-            <td>Item Link</td>
-            <td class="open-link">
-              {{#if itemIdentifier}}
-                <a href="">
-                  <span class="glyphicon glyphicon-folder-open"></span>
-                </a>
-              {{/if}}
-            </td>
-            <td>{{> EditableItemSelector dataKey='itemIdentifier' value=itemIdentifier valueField='identifier' emptyText="Select an item to link"}}</td>
-          </tr>
-          <tr class="show-controls-on-hover">
-            <td>Color</td>
-            <td></td>
-            <td>{{> EditableColorPicker dataKey='color' value=color debug=true }}</td>
-          </tr>
-          <tr class="show-controls-on-hover">
-            <td>Estimate</td>
-            <td></td>
-            <td>
-              {{#if totalEstimate}}
-                <div>{{totalEstimate}} points</div>
-              {{/if}}
-              <div>
-                {{itemsWithEstimates.count}} of {{items.count}} items estimated
-              </div>
-            </td>
-          </tr>
-          <tr class="show-controls-on-hover">
-            <td>Release Content</td>
-            <td></td>
-            <td>{{> EditableCheckbox dataKey='isReleaseContent' value=isReleaseContent }}</td>
-          </tr>
-          <tr class="show-controls-on-hover">
-            <td>Description</td>
-            <td></td>
-            <td>
-              {{> EditableCode dataKey='description' value=description emptyText="Item Description" language="markdown"}}
-              <!--
-              {{#unless itemIdentifier}}
-                {{> EditableTextArea dataKey='description' value=description emptyText="Item Description" }}
-              {{else}}
-                {{itemDescription}}
-              {{/unless}}
-              -->
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        
-        {{> CapacityPlanEffortItems }}
-      {{/with}}
-    </div>
-  </div>
-
+        </td>
+        <td>{{> EditableItemSelector dataKey='itemIdentifier' value=itemIdentifier valueField='identifier' emptyText="Select an item to link"}}</td>
+        <td>{{> EditableColorPicker dataKey='color' value=color debug=true }}</td>
+        <td>{{> EditableCheckbox dataKey='isReleaseContent' value=isReleaseContent }}</td>
+        <!--
+        <td>
+          {{#if totalEstimate}}
+            <div>{{totalEstimate}} points</div>
+          {{/if}}
+          <div>
+            {{itemsWithEstimates.count}} of {{items.count}} items estimated
+          </div>
+        </td>
+        <td>
+          {{> CapacityPlanEffortItems }}
+        </td>
+        -->
+        <td style="width:25%;">
+          {{#unless itemIdentifier}}
+            {{> EditableCode dataKey='description' value=description emptyText="Item Description" language="markdown"}}
+          {{else}}
+            {{itemDescription}}
+          {{/unless}}
+        </td>
+        <td class="open-link">
+          <a class="link-red hidden-control btn-delete-release">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+          </a>
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
 </template>

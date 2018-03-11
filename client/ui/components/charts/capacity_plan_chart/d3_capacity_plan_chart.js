@@ -549,12 +549,12 @@ export class D3CapacityPlanChart {
         let sprintNumber = self.data.sprints.length - 1;
         if (releaseBlock.targetLinks().count()) {
           sprintNumber = 0;
-          console.log('Found links for release:', releaseBlock._id, releaseBlock.targetLinks().fetch());
+          //console.log('Found links for release:', releaseBlock._id, releaseBlock.targetLinks().fetch());
           releaseBlock.targetLinks().forEach((link) => {
-            console.log('Release Content:', releaseBlock._id, link.sourceSprint);
+            //console.log('Release Content:', releaseBlock._id, link.sourceSprint);
             if (link.sourceSprint > sprintNumber) {
               sprintNumber = link.sourceSprint;
-              console.log('Found new maximum sprint number for release:', releaseBlock._id, sprintNumber, link.sourceSprint);
+              //console.log('Found new maximum sprint number for release:', releaseBlock._id, sprintNumber, link.sourceSprint);
             }
           })
         }
@@ -606,15 +606,6 @@ export class D3CapacityPlanChart {
         blockType: CapacityPlanBlockTypes.effort,
         dataId   : effort._id
       }).count();
-      
-      console.log('effort.usageCount:', effort.usageCount, effort.title)
-      /*
-      if (usageCount > 0) {
-        self.data.usedEfforts.push(effort)
-      } else {
-        self.data.unUsedEfforts.push(effort)
-      }
-      */
     });
     
     // Create synthetic links for all of the efforts

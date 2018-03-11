@@ -13,38 +13,42 @@ import { Teams }                        from '../teams/teams';
  * ============================================================================
  */
 export const CapacityPlan = new SimpleSchema({
-  title       : {
+  title           : {
     type: String
   },
-  isActive    : {
+  isActive        : {
     type        : Boolean,
     defaultValue: true
   },
-  teamIds     : {
+  teamIds         : {
     type    : Array, // String
     optional: true
   },
-  'teamIds.$' : {
+  'teamIds.$'     : {
     type: String
   },
-  startDate   : {
+  startDate       : {
     type    : Date,
     optional: true
   },
+  selectedOptionId: {
+    type    : String,
+    optional: true
+  },
   // Standard tracking fields
-  dateCreated : {
+  dateCreated     : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
+  createdBy       : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
+  dateModified    : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
+  modifiedBy      : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -76,6 +80,15 @@ CapacityPlans.helpers({
    */
   options () {
     return CapacityPlanOptions.find({ planId: this._id }, { sort: { title: 1 } })
+  },
+  
+  /**
+   * Get the option that has been selected for moving forward
+   */
+  selectedOption () {
+    if (this.selectedOptionId) {
+      return CapacityPlanOptions.findOne({ _id: this.selectedOptionId })
+    }
   },
   
   /**

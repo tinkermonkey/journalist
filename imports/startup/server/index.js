@@ -26,11 +26,11 @@ import { HealthTracker }                  from '../../api/system_health_metrics/
 import SimpleSchema                       from "simpl-schema";
 
 Meteor.startup(() => {
-  console.log('============================================================================================================');
+  console.log('==============================================================================');
   console.log('Journalist Server Start');
   console.log('Cluster node:', Clustering.workerId());
   console.log('Cluster master:', Clustering.isMaster());
-  console.log('============================================================================================================');
+  console.log('==============================================================================');
   
   if (Clustering.isMaster()) {
     SyncedCron.stop();
