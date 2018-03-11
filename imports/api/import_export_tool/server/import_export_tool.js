@@ -161,8 +161,14 @@ export const ImportExportTool = {
         let key   = importKeys[ collectionName ] || '_id',
             query = {};
         data.forEach((record) => {
-          console.info('ImportExportTool.insertDataIntoCollection inserting ' + collectionName);
           query[ key ] = record[ key ];
+          console.info('ImportExportTool.insertDataIntoCollection inserting ', collectionName, key, record[ key ]);
+          
+          // Updating the _id field will fail, so remove it
+          if (key !== '_id') {
+            delete record._id
+          }
+          
           collectionMap[ collectionName ].upsert(query, { $set: record }, { validate: false });
         });
       } catch (e) {
