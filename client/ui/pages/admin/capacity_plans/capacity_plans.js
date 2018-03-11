@@ -13,37 +13,13 @@ Template.CapacityPlans.helpers({
   },
   archivedPlans () {
     return CapacityPlans.find({ isActive: false }, { sort: { title: 1 } })
-  },
-  startDatePickerConfig () {
-    return {
-      singleDatePicker: true,
-      showDropdowns   : true,
-      startDate       : this.startDate || new Date(),
-      isInvalidDate (testDate) {
-        // limit the selection to week starts
-        return moment(testDate).weekday() === 1
-      }
-    }
-  },
+  }
 });
 
 /**
  * Template Event Handlers
  */
 Template.CapacityPlans.events({
-  'edited .editable' (e, instance, newValue) {
-    e.stopImmediatePropagation();
-    let planId  = $(e.target).closest('.data-table-row').attr('data-pk'),
-        dataKey = $(e.target).attr('data-key');
-    
-    if (planId && dataKey) {
-      Meteor.call('editCapacityPlan', planId, dataKey, newValue, (error, response) => {
-        if (error) {
-          RobaDialog.error('Update failed:' + error.toString());
-        }
-      });
-    }
-  },
   'click .btn-add-plan' (e, instance) {
     RobaDialog.show({
       contentTemplate: 'AddRecordForm',
@@ -83,19 +59,7 @@ Template.CapacityPlans.events({
         RobaDialog.hide();
       }.bind(this)
     });
-  },
-  'click .btn-delete-plan' (e, instance) {
-    let plan = this;
-    
-    RobaDialog.ask('Delete Plan?', 'Are you sure that you want to delete the capacity plan <span class="label label-primary"> ' + plan.title + '</span> ?', () => {
-      RobaDialog.hide();
-      Meteor.call('deleteCapacityPlan', plan._id, function (error, response) {
-        if (error) {
-          RobaDialog.error('Delete failed: ' + error.message);
-        }
-      });
-    });
-  },
+  }
 });
 
 /**
