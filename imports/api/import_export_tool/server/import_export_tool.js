@@ -36,15 +36,17 @@ import { Users }                            from '../../users/users';
 let AdmZip        = require('adm-zip'),
     fs            = require('fs'),
     path          = require('path'),
+    os            = require('os'),
     collectionMap = {
       CapacityPlans                   : CapacityPlans,
-      CapacityPlanOptions             : CapacityPlanOptions,
       CapacityPlanReleases            : CapacityPlanReleases,
       CapacityPlanSprintBlocks        : CapacityPlanSprintBlocks,
       CapacityPlanSprintLinks         : CapacityPlanSprintLinks,
       CapacityPlanSprints             : CapacityPlanSprints,
       CapacityPlanStrategicEffortItems: CapacityPlanStrategicEffortItems,
       CapacityPlanStrategicEfforts    : CapacityPlanStrategicEfforts,
+      // This needs to be after all of the blocks and sprints so that the after.insert handler doesn't create duplicate sprints
+      CapacityPlanOptions             : CapacityPlanOptions,
       Contributors                    : Contributors,
       ContributorProjectAssignments   : ContributorProjectAssignments,
       ContributorRoleDefinitions      : ContributorRoleDefinitions,
@@ -78,9 +80,9 @@ let AdmZip        = require('adm-zip'),
  */
 Picker.route('/export/:fileName', function (params, req, res, next) {
   if (params && params.fileName && !(params.fileName.includes('..') && params.fileName.includes('/'))) {
-    if (fs.existsSync('/tmp/', params.fileName)) {
-      let filePath = '/tmp/' + params.fileName,
-          name     = 'export.zip';
+    if (fs.existsSync(ImportExportTool.dataPath, params.fileName)) {
+      let filePath = path.join(ImportExportTool.dataPath, params.fileName),
+          name     = 'journalist_export_' + moment().format('YYYYMMDD_HHmmss') + '.zip';
       
       res.writeHead(200, {
         'Content-Type'       : 'application/zip',
@@ -95,8 +97,8 @@ Picker.route('/export/:fileName', function (params, req, res, next) {
 });
 
 export const ImportExportTool = {
-  dataPath : '/tmp/',
-  fileRegex: /\.json|\.json\.zip/,
+  dataPath : os.tmpdir(),
+  fileRegex: /journalist_export/i,
   encoding : 'utf8',
   
   /**
@@ -108,17 +110,23 @@ export const ImportExportTool = {
         filePath = path.join(handler.dataPath, fileName),
         data, collectionName;
     
-    console.info('ImportExportTool.importData importing ' + fileName);
+    console.info('ImportExportTool.importData importing file:', fileName);
     
     // unzip it if needed
     if (filePath.match(/\.zip$/)) {
-      let zipFile    = new AdmZip(filePath),
-          zipEntries = zipFile.getEntries();
+      let zipFile     = new AdmZip(filePath),
+          zipEntries  = zipFile.getEntries(),
+          sortedNames = zipEntries.map((zipEntry) => {
+            return zipEntry.entryName
+          }).sort();
       
-      if (zipEntries) {
-        zipEntries.forEach((zipEntry) => {
-          if (zipEntry.entryName && zipEntry.entryName.match(/\.json$/)) {
-            console.info('ImportExportTool.importData reading file ' + zipEntry.entryName);
+      //console.info('ImportExportTool.importData file list', sortedNames);
+      
+      if (sortedNames && sortedNames.length) {
+        sortedNames.forEach((entryName) => {
+          let zipEntry = zipFile.getEntry(entryName);
+          if (zipEntry.entryName && zipEntry.entryName.match(/^[0-9]+.+\.json$/)) {
+            //console.info('ImportExportTool.importData reading file ' + zipEntry.entryName);
             
             let input = zipFile.readAsText(zipEntry, handler.encoding);
             
@@ -159,24 +167,33 @@ export const ImportExportTool = {
     if (data && collectionName && collectionMap[ collectionName ]) {
       // if you have a partial duplicate, you should still be able to import the rest of the file.
       try {
-        let key   = importKeys[ collectionName ] || '_id',
-            query = {};
+        let key         = importKeys[ collectionName ] || '_id',
+            query       = {},
+            importCount = 0;
         data.forEach((record) => {
           query[ key ] = record[ key ];
-          console.info('ImportExportTool.insertDataIntoCollection inserting ', collectionName, key, record[ key ]);
+          importCount += 1;
+          //console.info('ImportExportTool.insertDataIntoCollection inserting', collectionName, key, record[ key ]);
           
           // Updating the _id field will fail, so remove it
           if (key !== '_id') {
             delete record._id
           }
           
-          collectionMap[ collectionName ].upsert(query, { $set: record }, { validate: false });
+          // Upsert triggers insert handler default values, so do an update or insert
+          let check = collectionMap[ collectionName ].findOne(query);
+          if (check) {
+            collectionMap[ collectionName ].update(query, { $set: record }, { validate: false });
+          } else {
+            collectionMap[ collectionName ].insert(record, { validate: false });
+          }
         });
+        console.info('ImportExportTool inserted', importCount, 'records into', collectionName);
       } catch (e) {
         console.error(e);
       }
     } else {
-      console.error('ImportExportTool.insertDataIntoCollection failed: collection [' + collectionName + '] not found');
+      console.error('ImportExportTool.insertDataIntoCollection failed: collection [', collectionName, '] not found');
     }
   },
   /**
@@ -186,7 +203,7 @@ export const ImportExportTool = {
   exportData (collectionNames) {
     console.info('ImportExportTool.exportData:', collectionNames);
     let handler = this,
-        dataDir = path.join(handler.dataPath, moment().format('YYYY_MM_DD_HH_mm_ss'));
+        dataDir = path.join(handler.dataPath, moment().format('YYYYMMDD_HHmmss'));
     
     collectionNames = _.isArray(collectionNames) ? collectionNames : _.keys(collectionMap);
     
@@ -205,10 +222,10 @@ export const ImportExportTool = {
     
     console.info('ImportExportTool.exportData exporting collections:', collectionNames);
     collectionNames.forEach((collectionName, i) => {
-      let cursor = collectionMap[ collectionName ].find({});
+      let cursor   = collectionMap[ collectionName ].find({}),
+          fileName = numeral(i).format('000') + '_' + collectionName + '.json';
       
-      zipFile.addFile(numeral(i)
-          .format('000') + '_' + collectionName + '.json', new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
+      zipFile.addFile(fileName, new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
     });
     
     dataDir = dataDir + '.zip';
@@ -217,11 +234,11 @@ export const ImportExportTool = {
     
     zipFile.writeZip(dataDir);
     
-    // delete the file after 5 minutes have passed
+    // delete the file after a bit, the download should start automatically
     Meteor.setTimeout(function () {
       fs.unlinkSync(dataDir);
       console.info('ImportExportTool.exportData deleted ' + dataDir);
-    }, 30000);
+    }, 25000);
     
     console.info('ImportExportTool.exportData complete');
     
