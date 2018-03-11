@@ -2,7 +2,7 @@ import { SyncedCron } from 'meteor/percolate:synced-cron';
 
 SyncedCron.config({
   // Log job run details to console
-  log: true,
+  log: false,
   
   // Use a custom logger function (defaults to Meteor's logging package)
   logger: null,
