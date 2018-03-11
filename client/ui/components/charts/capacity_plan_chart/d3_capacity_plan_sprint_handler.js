@@ -313,8 +313,8 @@ export class D3CapacityPlanSprintHandler {
     chart.unscaled.linkSectionWidth = chart.unscaled.sprintWidth - chart.unscaled.sprintBodyWidth;
     
     // Calculate the proposed scale
-    debug && console.log('D3CapacityPlanSprintHandler.calculateSprintWidth proposedScale:', chart.unscaled.linkSectionWidth, chart.unscaled.bodyWidth, chart.unscaled.sprintWidth, chart.unscaled.sprintBodyWidth);
     chart.proposedScale = Math.max(Math.min(chart.unscaled.linkSectionWidth / (chart.config.releases.width * 2), 1), chart.config.minScale);
+    debug && console.log('D3CapacityPlanSprintHandler.calculateSprintWidth unscaled:', chart.data.sprints.length, chart.unscaled, chart.proposedScale);
     
     // Calculate the size based on the current scale
     chart.bodyWidth        = (chart.scaleClientRect(chart.svg.node().getBoundingClientRect()).width) -
