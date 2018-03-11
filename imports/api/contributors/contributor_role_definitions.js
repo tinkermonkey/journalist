@@ -21,7 +21,7 @@ export const ContributorRoleDefinition = new SimpleSchema({
   },
   planCapacity   : {
     type        : Boolean,
-    defaultValue: true
+    defaultValue: false
   },
   countCapacityAs: {
     type    : String,
