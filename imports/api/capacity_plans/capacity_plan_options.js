@@ -19,10 +19,6 @@ export const CapacityPlanOption = new SimpleSchema({
   title       : {
     type: String
   },
-  startDate   : {
-    type    : Date,
-    optional: true
-  },
   sprintLength: {
     type        : SimpleSchema.Integer,
     defaultValue: 2 * 7 * 24 * 60 * 60 * 1000
