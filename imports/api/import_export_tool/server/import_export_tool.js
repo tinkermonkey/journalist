@@ -1,5 +1,6 @@
 import { Meteor }                           from 'meteor/meteor';
 import { moment }                           from 'meteor/momentjs:moment';
+import numeral                              from 'numeral';
 import { Picker }                           from 'meteor/meteorhacks:picker';
 import { CapacityPlans }                    from '../../capacity_plans/capacity_plans';
 import { CapacityPlanOptions }              from '../../capacity_plans/capacity_plan_options';
@@ -123,7 +124,7 @@ export const ImportExportTool = {
             
             try {
               data           = JSON.parse(input);
-              collectionName = zipEntry.entryName.replace(/\.json$/i, '');
+              collectionName = zipEntry.entryName.replace(/\.json$/i, '').replace(/^[0-9]+_/i, '');
               
               handler.insertDataIntoCollection(data, collectionName);
             } catch (e) {
@@ -139,7 +140,7 @@ export const ImportExportTool = {
       try {
         let input      = fs.readFileSync(filePath, handler.encoding);
         data           = JSON.parse(input);
-        collectionName = path.basename(filePath).replace(/\.json$/i, '');
+        collectionName = path.basename(filePath).replace(/\.json$/i, '').replace(/^[0-9]+_/i, '');
         
         handler.insertDataIntoCollection(data, collectionName);
       } catch (e) {
@@ -203,10 +204,11 @@ export const ImportExportTool = {
     let zipFile = new AdmZip();
     
     console.info('ImportExportTool.exportData exporting collections:', collectionNames);
-    collectionNames.forEach((collectionName) => {
+    collectionNames.forEach((collectionName, i) => {
       let cursor = collectionMap[ collectionName ].find({});
       
-      zipFile.addFile(collectionName + '.json', new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
+      zipFile.addFile(numeral(i)
+          .format('000') + '_' + collectionName + '.json', new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
     });
     
     dataDir = dataDir + '.zip';

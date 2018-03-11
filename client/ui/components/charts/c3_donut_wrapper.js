@@ -1,4 +1,4 @@
-import { numeral } from 'meteor/numeral:numeral';
+import numeral from 'numeral';
 import { Util }    from '../../../../imports/api/util';
 
 let c3         = require('c3'),
