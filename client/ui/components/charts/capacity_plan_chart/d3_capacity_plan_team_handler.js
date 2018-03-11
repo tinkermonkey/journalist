@@ -155,8 +155,6 @@ export class D3CapacityPlanTeamHandler {
     
     // Place the team envelope
     self.teamSelection
-        .transition()
-        .duration(500)
         .attr('transform', (team, i) => {
           return 'translate(0,' + team.envelope.y1 + ')'
         });
@@ -234,8 +232,6 @@ export class D3CapacityPlanTeamHandler {
     
     // Place the team envelope
     self.contributorTeamSelection
-        .transition()
-        .duration(500)
         .attr('transform', (team, i) => {
           return 'translate(0,' + team.envelope.y1 + ')'
         });
