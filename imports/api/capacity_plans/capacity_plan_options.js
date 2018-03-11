@@ -346,7 +346,7 @@ CapacityPlanOptions.helpers({
     let option = this;
     
     CapacityPlanSprints.remove({
-      optionId      : option._id,
+      optionId    : option._id,
       sprintNumber: { $gte: option.sprintCount }
     });
     
@@ -564,19 +564,21 @@ CapacityPlanOptions.helpers({
       let finalBlock              = CapacityPlanSprintBlocks.findOne(strictCriteria);
       
       // Validate any remaining links
-      finalBlock.sourceLinks().forEach((link, i) => {
-        if (link.targetId !== chosenReleaseBlockId || i > 0) {
-          CapacityPlanSprintLinks.remove(link._id)
-        }
-      });
-      
-      // Make sure there is a link from the final block
-      if (finalBlock.sourceLinks().count() === 0) {
-        // Insert a release link to replace the ones that were removed
-        //console.log('healReleaseLinks adding a link to the chosen block:', chosenReleaseBlockId);
-        let releaseBlock = CapacityPlanSprintBlocks.findOne(chosenReleaseBlockId);
-        releaseBlock.addLink(finalBlock._id, finalBlock.sprintNumber, CapacityPlanBlockTypes.effort);
+      if (finalBlock) {
+        finalBlock.sourceLinks().forEach((link, i) => {
+          if (link.targetId !== chosenReleaseBlockId || i > 0) {
+            CapacityPlanSprintLinks.remove(link._id)
+          }
+        });
         
+        // Make sure there is a link from the final block
+        if (finalBlock.sourceLinks().count() === 0) {
+          // Insert a release link to replace the ones that were removed
+          //console.log('healReleaseLinks adding a link to the chosen block:', chosenReleaseBlockId);
+          let releaseBlock = CapacityPlanSprintBlocks.findOne(chosenReleaseBlockId);
+          releaseBlock.addLink(finalBlock._id, finalBlock.sprintNumber, CapacityPlanBlockTypes.effort);
+          
+        }
       }
     }
   }
