@@ -2,7 +2,7 @@ import { Meteor }                         from 'meteor/meteor';
 import { ServiceConfiguration }           from 'meteor/service-configuration';
 import { UploadServer }                   from 'meteor/tomi:upload-server';
 import { SyncedCron }                     from 'meteor/percolate:synced-cron';
-import { Clustering }                 from 'meteor/austinsand:journalist-clustering';
+import { Clustering }                     from 'meteor/austinsand:journalist-clustering';
 import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
 //
@@ -25,6 +25,8 @@ import { IntegrationService }             from '../../modules/integration_servic
 import { HealthTracker }                  from '../../api/system_health_metrics/server/health_tracker';
 import SimpleSchema                       from "simpl-schema";
 
+let os = require('os');
+
 Meteor.startup(() => {
   console.log('==============================================================================');
   console.log('Journalist Server Start');
@@ -40,9 +42,10 @@ Meteor.startup(() => {
   }
   
   // Initialize the upload server
+  console.log('Upload server upload directory:', os.tmpdir());
   UploadServer.init({
-    tmpDir                : '/tmp/',
-    uploadDir             : '/tmp/',
+    tmpDir                : os.tmpdir(),
+    uploadDir             : os.tmpdir(),
     checkCreateDirectories: true
   });
   
