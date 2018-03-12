@@ -275,8 +275,8 @@ Template.CapacityPlan.onCreated(() => {
     
     //console.log('CapacityPlan option check autorun');
     if (!optionId && instance.subscriptionsReady()) {
-      //console.log('CapacityPlan option check autorun looking for first option');
-      let firstOption = CapacityPlanOptions.findOne({ planId: planId });
+      console.log('CapacityPlan option check autorun looking for first option');
+      let firstOption = CapacityPlanOptions.findOne({ planId: planId }, { sort: { title: 1 } });
       if (firstOption) {
         //console.log('CapacityPlan option check autorun found an option:', firstOption);
         FlowRouter.go(FlowRouter.path('CapacityPlanOption', { planId: planId, optionId: firstOption._id }));
