@@ -40,7 +40,7 @@ Template.CapacityPlanEfforts.events({
   'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
     
-    let effortId = $(e.target).closest('.data-table').attr('data-pk'),
+    let effortId = $(e.target).closest('.data-table-row').attr('data-pk'),
         dataKey  = $(e.target).attr('data-key');
     
     console.log('CapacityPlanEffortItems.edited:', effortId, dataKey, newValue);
