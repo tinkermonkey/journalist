@@ -27,7 +27,9 @@ export class IntegrationAgent {
     
     // Initialize the health tracker
     self.trackerKey = 'integration-agent-' + integration._id;
-    HealthTracker.add(self.trackerKey, self.integration.project().title + ' - ' + self.integration.itemTypeTitle(), 'integrationAgent');
+    if(self.integration.project()){
+      HealthTracker.add(self.trackerKey, self.integration.project().title + ' - ' + self.integration.itemTypeTitle(), 'integrationAgent');
+    }
     
     // Observe the Integrations collection for document updates
     // Needs to be deferred because you can't create observers in a call stack from another observer
