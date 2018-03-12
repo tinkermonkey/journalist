@@ -76,12 +76,19 @@ if (Meteor.isServer) {
     let option = CapacityPlanOptions.findOne(doc._id);
     if (option) {
       for (let i = 0; i < option.sprintCount; i++) {
-        CapacityPlanSprints.insert({
+        CapacityPlanSprints.upsert({
           planId      : option.planId,
           optionId    : option._id,
-          sprintNumber: i,
-          startDate   : moment(option.plan().startDate).add(i * option.sprintLength, 'ms').isoWeekday(1).toDate(),
-          endDate     : moment(option.plan().startDate).add((i + 1) * option.sprintLength, 'ms').isoWeekday(1).subtract(3, 'days').toDate()
+          sprintNumber: i
+        }, {
+          $set: {
+            planId      : option.planId,
+            optionId    : option._id,
+            sprintNumber: i,
+            startDate   : moment(option.plan().startDate).add(i * option.sprintLength, 'ms').isoWeekday(1).toDate(),
+            endDate     : moment(option.plan().startDate).add((i + 1) * option.sprintLength, 'ms').isoWeekday(1).subtract(3, 'days')
+                .toDate()
+          }
         });
       }
     }
@@ -343,13 +350,16 @@ CapacityPlanOptions.helpers({
    * Make sure the correct sprints exist
    */
   groomSprints () {
-    let option = this;
+    let option          = this,
+        maxSprintNumber = option.sprintCount - 1;
     
+    // Remove any un-needed sprints
     CapacityPlanSprints.remove({
       optionId    : option._id,
-      sprintNumber: { $gte: option.sprintCount }
+      sprintNumber: { $gt: maxSprintNumber }
     });
     
+    // Make sure there are records for each sprint
     for (let i = 0; i < option.sprintCount; i++) {
       CapacityPlanSprints.upsert({
         optionId    : option._id,
@@ -364,6 +374,14 @@ CapacityPlanOptions.helpers({
         }
       });
     }
+    
+    // Update all of the blocks
+    CapacityPlanSprintBlocks.find({
+      optionId    : option._id,
+      sprintNumber: { $gt: maxSprintNumber }
+    }).forEach((block) => {
+      block.updateSprintNumber(maxSprintNumber)
+    })
   },
   
   /**
