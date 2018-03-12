@@ -4,7 +4,15 @@ import { Template } from 'meteor/templating';
 /**
  * Template Helpers
  */
-Template.EditableColorPicker.helpers({});
+Template.EditableColorPicker.helpers({
+  textFieldContext () {
+    let context = this;
+    
+    context.cssClass = 'inline-block';
+    context.mode     = 'popup';
+    return context
+  }
+});
 
 /**
  * Template Event Handlers

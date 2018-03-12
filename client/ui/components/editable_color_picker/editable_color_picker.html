@@ -2,5 +2,6 @@
   <a class="editable editable-color-picker" data-key="{{dataKey}}">
     <div class="editable-color-picker-swatch" style="background-color: {{#if value}}{{value}}{{else}}#fff{{/if}};"
          data-color="{{value}}"></div>
+    {{> EditableTextField textFieldContext}}
   </a>
 </template>
