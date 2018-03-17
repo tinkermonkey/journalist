@@ -1,5 +1,6 @@
 import { Mongo }                    from 'meteor/mongo';
 import SimpleSchema                 from 'simpl-schema';
+import { logger }                   from 'meteor/austinsand:journalist-logger';
 import { SchemaHelpers }            from '../schema_helpers.js';
 import { CapacityPlans }            from './capacity_plans';
 import { CapacityPlanSprints }      from './capacity_plan_sprints';
@@ -72,7 +73,7 @@ CapacityPlanOptions.deny({
 // Auto-manage the sprint records for all options
 if (Meteor.isServer) {
   CapacityPlanOptions.after.insert((userId, doc) => {
-    //console.log('After Option Insert:', doc);
+    //logger.info('After Option Insert:', doc);
     let option = CapacityPlanOptions.findOne(doc._id);
     if (option) {
       for (let i = 0; i < option.sprintCount; i++) {
@@ -95,7 +96,7 @@ if (Meteor.isServer) {
   });
   CapacityPlanOptions.after.update((userId, doc, rawChangedFields) => {
     let sprintFieldsChanged = _.intersection(rawChangedFields, [ 'startDate', 'sprintLength', 'sprintCount' ]);
-    //console.log('After Plan Update grooming sprints:', sprintFieldsChanged);
+    //logger.info('After Plan Update grooming sprints:', sprintFieldsChanged);
     if (sprintFieldsChanged.length) {
       let option = CapacityPlanOptions.findOne(doc._id);
       if (option) {
@@ -104,7 +105,7 @@ if (Meteor.isServer) {
     }
   });
   CapacityPlanOptions.after.remove((userId, doc) => {
-    //console.log('After Option Remove:', doc);
+    //logger.info('After Option Remove:', doc);
     CapacityPlanOptions.remove({
       optionId: doc._id
     });
@@ -329,16 +330,16 @@ CapacityPlanOptions.helpers({
           targetType: CapacityPlanBlockTypes.release
         }, { sort: { targetSprint: 1 } })
         .map((link) => {
-          //console.log('CapacityPlanOptions.releases found a release link to block', link.targetId);
+          //logger.info('CapacityPlanOptions.releases found a release link to block', link.targetId);
           return link.targetId
         }))
         .map((blockId) => {
           let releaseBlock = CapacityPlanSprintBlocks.findOne(blockId);
           if (releaseBlock) {
-            //console.log('CapacityPlanOptions.releases loading release block:', blockId, releaseBlock.dataRecord());
+            //logger.info('CapacityPlanOptions.releases loading release block:', blockId, releaseBlock.dataRecord());
             return releaseBlock.dataRecord()
           } else {
-            console.error('CapacityPlanOptions.releases unable to load release block:', blockId);
+            logger.error('CapacityPlanOptions.releases unable to load release block:', blockId);
           }
         })
         .filter((release) => {
@@ -389,7 +390,7 @@ CapacityPlanOptions.helpers({
    * @param contributorId
    */
   healContributorLinks (contributorId) {
-    console.log('CapacityPlanOptions.healContributorLinks:', contributorId);
+    logger.info('CapacityPlanOptions.healContributorLinks:', contributorId);
     let option        = this,
         blockCriteria = { optionId: option._id, dataId: contributorId },
         sprints       = _.uniq(CapacityPlanSprintBlocks.find(blockCriteria, { sort: { sprintNumber: 1 } }).map((d) => {
@@ -459,7 +460,7 @@ CapacityPlanOptions.helpers({
           return a.parentOrder > b.parentOrder
         });
         
-        //console.log('healContributorLinks analyzing sprint:', thisSprint, nextSprint, sprintBlocks, nextSprintBlocks);
+        //logger.info('healContributorLinks analyzing sprint:', thisSprint, nextSprint, sprintBlocks, nextSprintBlocks);
         
         // Analyze each block in this sprint
         sprintBlocks.forEach((block, blockIndex) => {
@@ -470,7 +471,7 @@ CapacityPlanOptions.helpers({
           
           // Link to this 
           if (unlinkedTarget) {
-            //console.info('CapacityPlanOptions.healContributorLinks creating a link to an unlinked target in the next sprint:', block._id, unlinkedTarget._id, unlinkedTarget.sprintNumber);
+            //logger.info('CapacityPlanOptions.healContributorLinks creating a link to an unlinked target in the next sprint:', block._id, unlinkedTarget._id, unlinkedTarget.sprintNumber);
             CapacityPlanSprintLinks.insert({
               planId       : block.planId,
               optionId     : block.optionId,
@@ -484,7 +485,7 @@ CapacityPlanOptions.helpers({
             });
           } else {
             let nextSprintBlock = nextSprintBlocks.length < blockIndex ? nextSprintBlocks[ blockIndex ] : nextSprintBlocks[ nextSprintBlocks.length - 1 ];
-            //console.info('CapacityPlanOptions.healContributorLinks creating a link to the next sprint:', block._id, nextSprintBlock._id, nextSprintBlock.sprintNumber);
+            //logger.info('CapacityPlanOptions.healContributorLinks creating a link to the next sprint:', block._id, nextSprintBlock._id, nextSprintBlock.sprintNumber);
             CapacityPlanSprintLinks.insert({
               planId       : block.planId,
               optionId     : block.optionId,
@@ -501,11 +502,11 @@ CapacityPlanOptions.helpers({
         
         // Check the next sprint for any orphaned blocks
         nextSprintBlocks.forEach((block, blockIndex) => {
-          //console.log('healContributorLinks analyzing next sprint:', nextSprint, nextSprintBlocks);
+          //logger.info('healContributorLinks analyzing next sprint:', nextSprint, nextSprintBlocks);
           if (!block.targetLinks().count()) {
             // Pick a source link
             let sourceBlock = blockIndex < sprintBlocks.length ? sprintBlocks[ blockIndex ] : sprintBlocks[ sprintBlocks.length - 1 ];
-            //console.info('CapacityPlanOptions.healContributorLinks creating front the previous sprint:', sourceBlock._id, block._id, block.sprintNumber);
+            //logger.info('CapacityPlanOptions.healContributorLinks creating front the previous sprint:', sourceBlock._id, block._id, block.sprintNumber);
             
             // Create a link so it's not orphaned
             CapacityPlanSprintLinks.insert({
@@ -542,13 +543,13 @@ CapacityPlanOptions.helpers({
       return d.sprintNumber
     }));
     
-    //console.log('healReleaseLinks effortId, sprints:', effortId, sprints);
+    //logger.info('healReleaseLinks effortId, sprints:', effortId, sprints);
     // Get the maximum sprint number for this effort
     let effortBlocks = CapacityPlanSprintBlocks.find(blockCriteria).fetch(),
         strictBlocks = CapacityPlanSprintBlocks.find(strictCriteria).fetch(),
         finalSprint  = sprints[ sprints.length - 1 ];
     
-    //console.log('healReleaseLinks finalSprint, effortBlocks', finalSprint, effortBlocks, strictBlocks);
+    //logger.info('healReleaseLinks finalSprint, effortBlocks', finalSprint, effortBlocks, strictBlocks);
     
     // Determine the correct release target
     let targetReleaseLinks = _.uniq(_.flatten(effortBlocks.map((block) => {
@@ -556,12 +557,12 @@ CapacityPlanOptions.helpers({
     })), (link) => {
       return link.targetId
     });
-    //console.log('healReleaseLinks targetReleaseLinks:', targetReleaseLinks);
+    //logger.info('healReleaseLinks targetReleaseLinks:', targetReleaseLinks);
     
     // If there are no target releases, nothing to heal
     if (targetReleaseLinks.length) {
       let chosenReleaseBlockId = targetReleaseLinks[ 0 ].targetId;
-      //console.log('healReleaseLinks chosenReleaseBlockId:', chosenReleaseBlockId);
+      //logger.info('healReleaseLinks chosenReleaseBlockId:', chosenReleaseBlockId);
       
       // Go through the non-final blocks and remove any release links
       blockCriteria.sprintNumber = { $lt: finalSprint };
@@ -592,7 +593,7 @@ CapacityPlanOptions.helpers({
         // Make sure there is a link from the final block
         if (finalBlock.sourceLinks().count() === 0) {
           // Insert a release link to replace the ones that were removed
-          //console.log('healReleaseLinks adding a link to the chosen block:', chosenReleaseBlockId);
+          //logger.info('healReleaseLinks adding a link to the chosen block:', chosenReleaseBlockId);
           let releaseBlock = CapacityPlanSprintBlocks.findOne(chosenReleaseBlockId);
           releaseBlock.addLink(finalBlock._id, finalBlock.sprintNumber, CapacityPlanBlockTypes.effort);
           

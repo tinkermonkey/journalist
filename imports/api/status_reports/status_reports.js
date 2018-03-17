@@ -1,8 +1,9 @@
-import { Mongo } from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }              from 'meteor/mongo';
+import SimpleSchema           from 'simpl-schema';
+import { logger }             from 'meteor/austinsand:journalist-logger';
+import { SchemaHelpers }      from '../schema_helpers.js';
 import { StatusReportStates } from './status_report_states.js';
-import { CollectionDetails } from '../collection_details';
+import { CollectionDetails }  from '../collection_details';
 
 /**
  * ============================================================================
@@ -87,7 +88,7 @@ StatusReports.helpers({
     if (details) {
       return details.collection.findOne(report.sourceId);
     } else {
-      console.error('StatusReports.sourceDocument failed to find collection:', report.sourceCollection)
+      logger.error('StatusReports.sourceDocument failed to find collection:', report.sourceCollection)
     }
   },
   /**
@@ -99,7 +100,7 @@ StatusReports.helpers({
     if (sourceDocument) {
       return sourceDocument.title || sourceDocument.name
     } else {
-      console.error('StatusReports.sourceLabel failed to find source document:', report.sourceCollection, report.sourceId)
+      logger.error('StatusReports.sourceLabel failed to find source document:', report.sourceCollection, report.sourceId)
     }
   },
   /**
@@ -121,7 +122,7 @@ StatusReports.helpers({
       hash[ details.routeParam ] = report.sourceId;
       return { hash: hash }
     } else {
-      console.error('StatusReports.sourceCollectionRouteParam failed to find collection:', report.sourceCollection)
+      logger.error('StatusReports.sourceCollectionRouteParam failed to find collection:', report.sourceCollection)
     }
   },
   

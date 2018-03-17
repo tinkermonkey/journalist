@@ -1,5 +1,6 @@
 import { Meteor }                    from 'meteor/meteor';
 import { check, Match }              from 'meteor/check';
+import { logger }                    from 'meteor/austinsand:journalist-logger';
 import { Auth }                      from '../../auth';
 import { DisplayTemplates }          from '../display_templates';
 import { DisplayTemplateGroups }     from '../display_template_groups';
@@ -12,7 +13,7 @@ Meteor.methods({
    * @param parentGroup (optional)
    */
   addDisplayTemplate (templateName, parentGroup) {
-    console.log('addDisplayTemplate:', templateName, parentGroup);
+    logger.info('addDisplayTemplate:', templateName, parentGroup);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -32,7 +33,7 @@ Meteor.methods({
       // Insert the project percent
       DisplayTemplates.insert(payload);
     } else {
-      console.error('Non-admin user tried to add an integration display template:', user.username, templateName);
+      logger.error('Non-admin user tried to add an integration display template:', user.username, templateName);
       throw new Meteor.Error(403);
     }
   },
@@ -42,7 +43,7 @@ Meteor.methods({
    * @param templateId
    */
   deleteDisplayTemplate (templateId) {
-    console.log('deleteDisplayTemplate:', templateId);
+    logger.info('deleteDisplayTemplate:', templateId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -52,7 +53,7 @@ Meteor.methods({
     if (user.isAdmin()) {
       DisplayTemplates.remove(templateId);
     } else {
-      console.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
+      logger.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
       throw new Meteor.Error(403);
     }
   },
@@ -64,7 +65,7 @@ Meteor.methods({
    * @param value
    */
   editDisplayTemplate (templateId, key, value) {
-    console.log('editDisplayTemplate:', templateId, key);
+    logger.info('editDisplayTemplate:', templateId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -87,7 +88,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration display template:', user.username, key, templateId);
+      logger.error('Non-admin user tried to edit an integration display template:', user.username, key, templateId);
       throw new Meteor.Error(403);
     }
   },
@@ -97,7 +98,7 @@ Meteor.methods({
    * @param {*} templateId
    */
   publishIntegrationDisplayTemplate (templateId) {
-    console.log('publishIntegrationDisplayTemplate:', templateId);
+    logger.info('publishIntegrationDisplayTemplate:', templateId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -119,7 +120,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
+      logger.error('Non-admin user tried to delete an integration display template:', user.username, templateId);
       throw new Meteor.Error(403);
     }
   },
@@ -130,7 +131,7 @@ Meteor.methods({
    * @param parentGroup (optional)
    */
   addDisplayTemplateGroup (title, parentGroup) {
-    console.log('addDisplayTemplateGroup:', title, parentGroup);
+    logger.info('addDisplayTemplateGroup:', title, parentGroup);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -149,7 +150,7 @@ Meteor.methods({
       // Insert the project percent
       DisplayTemplateGroups.insert(payload);
     } else {
-      console.error('Non-admin user tried to add an integration display template group:', user.username, title);
+      logger.error('Non-admin user tried to add an integration display template group:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -159,7 +160,7 @@ Meteor.methods({
    * @param groupId
    */
   deleteDisplayTemplateGroup (groupId) {
-    console.log('deleteDisplayTemplateGroup:', groupId);
+    logger.info('deleteDisplayTemplateGroup:', groupId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -173,7 +174,7 @@ Meteor.methods({
       DisplayTemplates.update({ parentGroup: groupId }, { $unset: { parentGroup: true } });
       DisplayTemplateGroups.update({ parentGroup: groupId }, { $unset: { parentGroup: true } });
     } else {
-      console.error('Non-admin user tried to delete an integration display template group:', user.username, groupId);
+      logger.error('Non-admin user tried to delete an integration display template group:', user.username, groupId);
       throw new Meteor.Error(403);
     }
   },
@@ -185,7 +186,7 @@ Meteor.methods({
    * @param value
    */
   editDisplayTemplateGroup (groupId, key, value) {
-    console.log('editDisplayTemplateGroup:', groupId, key);
+    logger.info('editDisplayTemplateGroup:', groupId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -208,7 +209,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration display template group:', user.username, key, groupId);
+      logger.error('Non-admin user tried to edit an integration display template group:', user.username, key, groupId);
       throw new Meteor.Error(403);
     }
   },

@@ -1,5 +1,6 @@
 import { Meteor }                           from 'meteor/meteor';
 import { check, Match }                     from 'meteor/check';
+import { logger }                           from 'meteor/austinsand:journalist-logger';
 import { CapacityPlans }                    from '../capacity_plans';
 import { CapacityPlanOptions }              from '../capacity_plan_options';
 import { CapacityPlanReleases }             from '../capacity_plan_releases';
@@ -15,7 +16,7 @@ Meteor.methods({
    * @param title
    */
   addCapacityPlan (title) {
-    console.log('addCapacityPlan:', title);
+    logger.info('addCapacityPlan:', title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -32,7 +33,7 @@ Meteor.methods({
         title : 'Option A'
       })
     } else {
-      console.error('Non-admin user tried to add a capacity plan:', user.username, title);
+      logger.error('Non-admin user tried to add a capacity plan:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -42,7 +43,7 @@ Meteor.methods({
    * @param planId
    */
   deleteCapacityPlan (planId) {
-    console.log('deleteCapacityPlan:', planId);
+    logger.info('deleteCapacityPlan:', planId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -57,7 +58,7 @@ Meteor.methods({
       
       CapacityPlans.remove(planId);
     } else {
-      console.error('Non-admin user tried to delete a capacity plan:', user.username, planId);
+      logger.error('Non-admin user tried to delete a capacity plan:', user.username, planId);
       throw new Meteor.Error(403);
     }
   },
@@ -69,7 +70,7 @@ Meteor.methods({
    * @param value
    */
   editCapacityPlan (planId, key, value) {
-    console.log('editCapacityPlan:', planId, key);
+    logger.info('editCapacityPlan:', planId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -92,7 +93,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan:', user.username, key, planId);
+      logger.error('Non-admin user tried to edit a capacity plan:', user.username, key, planId);
       throw new Meteor.Error(403);
     }
   },
@@ -103,7 +104,7 @@ Meteor.methods({
    * @param title
    */
   addCapacityPlanOption (planId, title) {
-    console.log('addCapacityPlanOption:', planId, title);
+    logger.info('addCapacityPlanOption:', planId, title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -131,7 +132,7 @@ Meteor.methods({
         });
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan option:', user.username, title);
+      logger.error('Non-admin user tried to add a capacity plan option:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -141,7 +142,7 @@ Meteor.methods({
    * @param optionId
    */
   deleteCapacityPlanOption (optionId) {
-    console.log('deleteCapacityPlanOption:', optionId);
+    logger.info('deleteCapacityPlanOption:', optionId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -154,7 +155,7 @@ Meteor.methods({
       // Remove all blocks for this plan
       CapacityPlanSprintBlocks.remove({ optionId: optionId });
     } else {
-      console.error('Non-admin user tried to delete a capacity plan option:', user.username, optionId);
+      logger.error('Non-admin user tried to delete a capacity plan option:', user.username, optionId);
       throw new Meteor.Error(403);
     }
   },
@@ -166,7 +167,7 @@ Meteor.methods({
    * @param value
    */
   editCapacityPlanOption (optionId, key, value) {
-    console.log('editCapacityPlanOption:', optionId, key);
+    logger.info('editCapacityPlanOption:', optionId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -189,7 +190,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan option:', user.username, key, optionId);
+      logger.error('Non-admin user tried to edit a capacity plan option:', user.username, key, optionId);
       throw new Meteor.Error(403);
     }
   },
@@ -201,7 +202,7 @@ Meteor.methods({
    * @param color
    */
   addCapacityPlanStrategicEffort (planId, title, color) {
-    console.log('addCapacityPlanStrategicEffort:', planId, title, color);
+    logger.info('addCapacityPlanStrategicEffort:', planId, title, color);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -217,7 +218,7 @@ Meteor.methods({
         color : color
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan strategic effort:', user.username, title);
+      logger.error('Non-admin user tried to add a capacity plan strategic effort:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -227,7 +228,7 @@ Meteor.methods({
    * @param effortId
    */
   deleteCapacityPlanStrategicEffort (effortId) {
-    console.log('deleteCapacityPlanStrategicEffort:', effortId);
+    logger.info('deleteCapacityPlanStrategicEffort:', effortId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -244,7 +245,7 @@ Meteor.methods({
       // Remove the effort itself
       CapacityPlanStrategicEfforts.remove(effortId);
     } else {
-      console.error('Non-admin user tried to delete a capacity plan strategic effort:', user.username, effortId);
+      logger.error('Non-admin user tried to delete a capacity plan strategic effort:', user.username, effortId);
       throw new Meteor.Error(403);
     }
   },
@@ -256,7 +257,7 @@ Meteor.methods({
    * @param value
    */
   editCapacityPlanStrategicEffort (effortId, key, value) {
-    console.log('editCapacityPlanStrategicEffort:', effortId, key);
+    logger.info('editCapacityPlanStrategicEffort:', effortId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -279,7 +280,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan strategic effort:', user.username, key, effortId);
+      logger.error('Non-admin user tried to edit a capacity plan strategic effort:', user.username, key, effortId);
       throw new Meteor.Error(403);
     }
   },
@@ -291,7 +292,7 @@ Meteor.methods({
    * @param title
    */
   addCapacityPlanStrategicEffortItem (planId, effortId, title) {
-    console.log('addCapacityPlanStrategicEffortItem:', planId, effortId, title);
+    logger.info('addCapacityPlanStrategicEffortItem:', planId, effortId, title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -307,7 +308,7 @@ Meteor.methods({
         title   : title
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan strategic effort item:', user.username, title);
+      logger.error('Non-admin user tried to add a capacity plan strategic effort item:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -317,7 +318,7 @@ Meteor.methods({
    * @param itemId
    */
   deleteCapacityPlanStrategicEffortItem (itemId) {
-    console.log('deleteCapacityPlanStrategicEffortItem:', itemId);
+    logger.info('deleteCapacityPlanStrategicEffortItem:', itemId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -327,7 +328,7 @@ Meteor.methods({
     if (user.isAdmin()) {
       CapacityPlanStrategicEffortItems.remove(itemId);
     } else {
-      console.error('Non-admin user tried to delete a capacity plan strategic effort item:', user.username, itemId);
+      logger.error('Non-admin user tried to delete a capacity plan strategic effort item:', user.username, itemId);
       throw new Meteor.Error(403);
     }
   },
@@ -339,7 +340,7 @@ Meteor.methods({
    * @param value
    */
   editCapacityPlanStrategicEffortItem (itemId, key, value) {
-    console.log('editCapacityPlanStrategicEffortItem:', itemId, key);
+    logger.info('editCapacityPlanStrategicEffortItem:', itemId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -362,7 +363,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan strategic effort item:', user.username, key, itemId);
+      logger.error('Non-admin user tried to edit a capacity plan strategic effort item:', user.username, key, itemId);
       throw new Meteor.Error(403);
     }
   },
@@ -373,7 +374,7 @@ Meteor.methods({
    * @param title
    */
   addCapacityPlanRelease (planId, title) {
-    console.log('addCapacityPlanRelease:', planId, title);
+    logger.info('addCapacityPlanRelease:', planId, title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -402,7 +403,7 @@ Meteor.methods({
         });
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan release:', user.username, title);
+      logger.error('Non-admin user tried to add a capacity plan release:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -412,7 +413,7 @@ Meteor.methods({
    * @param releaseId
    */
   deleteCapacityPlanRelease (releaseId) {
-    console.log('deleteCapacityPlanRelease:', releaseId);
+    logger.info('deleteCapacityPlanRelease:', releaseId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -425,7 +426,7 @@ Meteor.methods({
       
       CapacityPlanReleases.remove(releaseId);
     } else {
-      console.error('Non-admin user tried to delete a capacity plan release:', user.username, releaseId);
+      logger.error('Non-admin user tried to delete a capacity plan release:', user.username, releaseId);
       throw new Meteor.Error(403);
     }
   },
@@ -437,7 +438,7 @@ Meteor.methods({
    * @param value
    */
   editCapacityPlanRelease (releaseId, key, value) {
-    console.log('editCapacityPlanRelease:', releaseId, key);
+    logger.info('editCapacityPlanRelease:', releaseId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -460,7 +461,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan release:', user.username, key, releaseId);
+      logger.error('Non-admin user tried to edit a capacity plan release:', user.username, key, releaseId);
       throw new Meteor.Error(403);
     }
   },

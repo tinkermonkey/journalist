@@ -1,10 +1,11 @@
-import { Integrator }             from './integrator';
-import { IntegrationTypes }       from '../../../api/integrations/integration_types';
 import { Meteor }                 from 'meteor/meteor';
+import { logger }                 from 'meteor/austinsand:journalist-logger';
 import { MongoCookieStore }       from './mongo_cookie_store';
-import { Util }                   from '../../../api/util';
 import { ImportedItemWorkPhases } from '../../../api/imported_items/imported_item_work_phases';
 import { ImportedItemWorkStates } from '../../../api/imported_items/imported_item_work_states';
+import { Integrator }             from './integrator';
+import { IntegrationTypes }       from '../../../api/integrations/integration_types';
+import { Util }                   from '../../../api/util';
 
 // Pull in the jira connector
 const JiraConnector    = require('jira-connector'),
@@ -35,7 +36,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
  */
 export class JiraIntegrator extends Integrator {
   constructor () {
-    console.log('Creating new JiraIntegrator');
+    logger.info('Creating new JiraIntegrator');
     super(...arguments);
     this.type = IntegrationTypes.jira;
     
@@ -58,7 +59,7 @@ export class JiraIntegrator extends Integrator {
    * Fetch the map of integration calls that can be made for this integration
    */
   integrationCallMap () {
-    debug && console.log('JiraIntegrator.integrationCallMap:', this.provider.server.title);
+    debug && logger.info('JiraIntegrator.integrationCallMap:', this.provider.server.title);
     let self = this;
     
     if (self.client) {
@@ -86,7 +87,7 @@ export class JiraIntegrator extends Integrator {
    * Retrieve a normalized list of statuses from the cache for this server
    */
   getCachedStatusList () {
-    debug && console.log('JiraIntegrator.getCachedStatusList:', this.provider.server.title);
+    debug && logger.info('JiraIntegrator.getCachedStatusList:', this.provider.server.title);
     let self        = this,
         statusCache = self.provider.getCachedData('statusList');
     
@@ -103,7 +104,7 @@ export class JiraIntegrator extends Integrator {
    * @param password
    */
   authenticate (username, password) {
-    debug && console.log('JiraIntegrator.authenticate:', this.provider.server.title);
+    debug && logger.info('JiraIntegrator.authenticate:', this.provider.server.title);
     let self = this;
     
     // Create the Jira client
@@ -137,7 +138,7 @@ export class JiraIntegrator extends Integrator {
    * @param authData
    */
   reAuthenticate (authData) {
-    console.log('JiraIntegrator.reAuthenticate:', this.provider.server.title);
+    logger.info('JiraIntegrator.reAuthenticate:', this.provider.server.title);
     let self           = this,
         connectionInfo = {
           host      : self.provider.url.hostname,
@@ -169,7 +170,7 @@ export class JiraIntegrator extends Integrator {
    * Verify that the client is still authenticated
    */
   checkAuthentication () {
-    debug && console.log('JiraIntegrator.checkAuthentication:', this.provider.server.title);
+    debug && logger.info('JiraIntegrator.checkAuthentication:', this.provider.server.title);
     let self = this;
     
     return self.fetchData('myself', 'getMyself');
@@ -179,7 +180,7 @@ export class JiraIntegrator extends Integrator {
    * Update all of the cached data for this server
    */
   updateCachedData () {
-    debug && console.log('JiraIntegrator.updateCachedData:', this.provider.server.title);
+    debug && logger.info('JiraIntegrator.updateCachedData:', this.provider.server.title);
     let self = this;
     
     // If connected, otherwise the cached values would be wiped
@@ -238,7 +239,7 @@ export class JiraIntegrator extends Integrator {
       });
       self.provider.storeCachedItem('fieldList', fields);
     } else {
-      console.warn('JiraIntegrator.updateCachedData: ignoring request, server not connected');
+      logger.warn('JiraIntegrator.updateCachedData: ignoring request, server not connected');
     }
   }
   
@@ -247,7 +248,7 @@ export class JiraIntegrator extends Integrator {
    * @param identifier
    */
   fetchItem (identifier) {
-    debug && console.log('JiraIntegrator.fetchItem:', this.provider.server.title, identifier);
+    debug && logger.info('JiraIntegrator.fetchItem:', this.provider.server.title, identifier);
     let self = this;
     
     return self.fetchData('issue', 'getIssue', { issueKey: identifier, expand: defaultExpand }).response;
@@ -259,7 +260,7 @@ export class JiraIntegrator extends Integrator {
    * @param identifier
    */
   testImportFunction (importFunction, identifier) {
-    debug && console.log('JiraIntegrator.testImportFunction:', this.provider.server.title);
+    debug && logger.info('JiraIntegrator.testImportFunction:', this.provider.server.title);
     let self              = this,
         rawItem           = self.fetchItem(identifier).response,
         postProcessedItem = self.postProcessItem(rawItem);
@@ -277,7 +278,7 @@ export class JiraIntegrator extends Integrator {
    * @param details
    */
   testIntegration (integration, details) {
-    debug && console.log('JiraIntegrator.testIntegration:', this.provider.server.title, integration._id);
+    debug && logger.info('JiraIntegrator.testIntegration:', this.provider.server.title, integration._id);
     let self      = this,
         query     = integration.details[ details.queryKey ],
         rawResult = self.executeQuery(query, 0, details.limit || 5);
@@ -322,7 +323,7 @@ export class JiraIntegrator extends Integrator {
    * @param expand
    */
   executeQuery (jql, startAt, maxResults, fields, expand) {
-    debug && console.log('JiraIntegrator.executeQuery:', this.provider.server.title, jql, startAt);
+    debug && logger.info('JiraIntegrator.executeQuery:', this.provider.server.title, jql, startAt);
     let self             = this,
         result           = self.fetchData('search', 'search', {
           jql       : jql,
@@ -338,7 +339,7 @@ export class JiraIntegrator extends Integrator {
       if ((maxResults && result.response.maxResults >= maxResults) || (result.response.maxResults >= result.response.total)) {
         return result
       } else {
-        debug && console.log('JiraIntegrator.executeQuery paging further results:', result.response.maxResults, 'of', result.response.total, 'loaded');
+        debug && logger.info('JiraIntegrator.executeQuery paging further results:', result.response.maxResults, 'of', result.response.total, 'loaded');
         
         // Stash the results from the initial request
         cumulativeIssues = cumulativeIssues.concat(result.response.issues);
@@ -348,7 +349,7 @@ export class JiraIntegrator extends Integrator {
             pageCount = Math.ceil(result.response.total / pageSize),
             i;
         for (i = 2; i <= pageCount; i++) {
-          debug && console.log('JiraIntegrator.executeQuery loading page:', i, 'of', pageCount, ', ', cumulativeIssues.length, 'issues loaded');
+          debug && logger.info('JiraIntegrator.executeQuery loading page:', i, 'of', pageCount, ', ', cumulativeIssues.length, 'issues loaded');
           result = self.fetchData('search', 'search', {
             jql       : jql,
             startAt   : (i - 1) * pageSize,
@@ -359,7 +360,7 @@ export class JiraIntegrator extends Integrator {
           
           // append the results
           if (result.success === true && result.response) {
-            debug && console.log('JiraIntegrator.executeQuery paging result starting at:', (i - 1) * pageSize, 'of', result.response.total, 'loaded');
+            debug && logger.info('JiraIntegrator.executeQuery paging result starting at:', (i - 1) * pageSize, 'of', result.response.total, 'loaded');
             cumulativeIssues = cumulativeIssues.concat(result.response.issues);
           } else {
             return result
@@ -384,7 +385,7 @@ export class JiraIntegrator extends Integrator {
    * @param expand
    */
   executeAndProcessQuery (jql, startAt, maxResults, fields, expand) {
-    debug && console.log('JiraIntegrator.executeAndProcessQuery:', this.provider.server.title);
+    debug && logger.info('JiraIntegrator.executeAndProcessQuery:', this.provider.server.title);
     let self      = this,
         rawResult = self.executeQuery(jql, startAt, maxResults, fields, expand);
     
@@ -393,7 +394,7 @@ export class JiraIntegrator extends Integrator {
         return self.provider.postProcessItem(rawItem)
       });
     } else {
-      console.error('JiraIntegrator.executeAndProcessQuery encountered error:', rawResult);
+      logger.error('JiraIntegrator.executeAndProcessQuery encountered error:', rawResult);
       throw new Meteor.Error(500, 'JiraIntegrator.executeAndProcessQuery failed');
     }
   }
@@ -403,7 +404,7 @@ export class JiraIntegrator extends Integrator {
    * @param rawItem
    */
   postProcessItem (rawItem) {
-    trace && console.log('JiraIntegrator.postProcessItem:', this.provider.server.title);
+    trace && logger.info('JiraIntegrator.postProcessItem:', this.provider.server.title);
     let self           = this,
         processedIssue = {};
     
@@ -442,13 +443,13 @@ export class JiraIntegrator extends Integrator {
    * @param level Recursion level
    */
   processItemForContributors (processedData, level) {
-    trace && console.log('JiraIntegrator.processItemForContributors:', this.provider.server.title, level || 0);
+    trace && logger.info('JiraIntegrator.processItemForContributors:', this.provider.server.title, level || 0);
     let self = this;
     
     // Guard against out of control recursion
     level = level || 0;
     if (level > 25) {
-      console.error('JiraIntegrator.processItemForContributors deep recursion:', level);
+      logger.error('JiraIntegrator.processItemForContributors deep recursion:', level);
       return;
     }
     
@@ -474,7 +475,7 @@ export class JiraIntegrator extends Integrator {
    * @param statusMap
    */
   processItemForStatus (processedItem, statusMap) {
-    trace && console.log('IntegrationServiceProvider.processItemForStatus:', this.server._id, this.server.title);
+    trace && logger.info('IntegrationServiceProvider.processItemForStatus:', this.server._id, this.server.title);
     let self = this;
     
     // Check to see if there is
@@ -545,7 +546,7 @@ export class JiraIntegrator extends Integrator {
    * @param {*} payload
    */
   fetchData (module, method, payload) {
-    debug && console.log('JiraIntegrator.fetchData:', this.provider.server.title, module, method);
+    debug && logger.info('JiraIntegrator.fetchData:', this.provider.server.title, module, method);
     let self = this;
     
     if (_.isObject(module)) {
@@ -560,23 +561,23 @@ export class JiraIntegrator extends Integrator {
       try {
         let result = self.client[ module ][ method ](payload)
             .then((response) => {
-              //debug && console.log('JiraIntegrator.fetchData success result:', module, method, response);
+              //debug && logger.info('JiraIntegrator.fetchData success result:', module, method, response);
               return { success: true, response: response };
             }, (response) => {
-              //debug && console.log('JiraIntegrator.fetchData failure result:', module, method, response);
+              //debug && logger.info('JiraIntegrator.fetchData failure result:', module, method, response);
               try {
                 response = JSON.parse(response);
                 
                 // The error response body is typically the HTML for a webpage, so ditch it
                 delete response.body;
               } catch (e) {
-                debug && console.log('JiraIntegrator.fetchData failure response parse error:', module, method, response, e);
+                debug && logger.info('JiraIntegrator.fetchData failure response parse error:', module, method, response, e);
               }
               return { success: false, response: response, error: response.statusCode };
             })
             .await();
         
-        trace && console.log('JiraIntegrator.fetchData result:', module, method, result);
+        trace && logger.info('JiraIntegrator.fetchData result:', module, method, result);
         
         if (result.response && result.response.values && result.response.maxResults && !payload.startAt && !result.response.isLast) {
           let pageSize          = result.response.maxResults,
@@ -586,11 +587,11 @@ export class JiraIntegrator extends Integrator {
           while (!result.response.isLast && i < 1000) {
             i += 1;
             payload.startAt = i * pageSize;
-            trace && console.log('JiraIntegrator.fetchData paging more results:', i, payload.startAt, pageSize);
+            trace && logger.info('JiraIntegrator.fetchData paging more results:', i, payload.startAt, pageSize);
             result            = self.fetchData(module, method, payload);
             accumulatedValues = accumulatedValues.concat(result.response.values);
           }
-          debug && console.log('JiraIntegrator.fetchPagedData paged data complete:', accumulatedValues.length);
+          debug && logger.info('JiraIntegrator.fetchPagedData paged data complete:', accumulatedValues.length);
           result.response.isLast     = true;
           result.response.startAt    = 0;
           result.response.maxResults = accumulatedValues.length;
@@ -599,7 +600,7 @@ export class JiraIntegrator extends Integrator {
         
         return result
       } catch (e) {
-        console.error('JiraIntegrator.fetchData error:', e);
+        logger.error('JiraIntegrator.fetchData error:', e);
         return { success: false, error: e.toString() };
       }
     } else {
@@ -611,7 +612,7 @@ export class JiraIntegrator extends Integrator {
    * Fetch data that could return more than one page and automatically page if that is the case
    */
   fetchPagedData (module, method, payload) {
-    debug && console.log('JiraIntegrator.fetchPagedData:', this.provider.server.title, module, method);
+    debug && logger.info('JiraIntegrator.fetchPagedData:', this.provider.server.title, module, method);
     let self = this;
     
     if (_.isObject(module)) {
@@ -633,7 +634,7 @@ export class JiraIntegrator extends Integrator {
         result             = self.fetchData(module, method, payload);
         accumulatedResults = accumulatedResults.concat(result.response.values)
       }
-      debug && console.log('JiraIntegrator.fetchPagedData getting page:', module, method);
+      debug && logger.info('JiraIntegrator.fetchPagedData getting page:', module, method);
     }
     
     return result;
@@ -643,7 +644,7 @@ export class JiraIntegrator extends Integrator {
    * Log out from this integration
    */
   unAuthenticate () {
-    console.log('JiraIntegrator.unAuthenticate:', this.provider.server.title);
+    logger.info('JiraIntegrator.unAuthenticate:', this.provider.server.title);
     let self = this;
     
     try {

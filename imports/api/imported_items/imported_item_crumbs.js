@@ -1,4 +1,5 @@
 import { Mongo }         from 'meteor/mongo';
+import { logger }        from 'meteor/austinsand:journalist-logger';
 import { ImportedItems } from './imported_items';
 
 const omitFields = [
@@ -28,21 +29,21 @@ ImportedItems.after.insert((userId, document) => {
   try {
     ImportedItemCrumbs.insert(_.omit(document, omitFields));
   } catch (e) {
-    console.error('ImportedItemCrumbs.after.insert failed:', _.omit(document, omitFields), e);
+    logger.error('ImportedItemCrumbs.after.insert failed:', _.omit(document, omitFields), e);
   }
 });
 ImportedItems.after.update((userId, document, rawChangedFields) => {
   try {
     ImportedItemCrumbs.update({ _id: document._id }, { $set: _.omit(document, omitFields) });
   } catch (e) {
-    console.error('ImportedItemCrumbs.after.update failed:', document._id, _.omit(document, omitFields), e);
+    logger.error('ImportedItemCrumbs.after.update failed:', document._id, _.omit(document, omitFields), e);
   }
 });
 ImportedItems.after.remove((userId, document) => {
   try {
     ImportedItemCrumbs.remove({ _id: document._id });
   } catch (e) {
-    console.error('ImportedItemCrumbs.after.remove failed:', document._id, e);
+    logger.error('ImportedItemCrumbs.after.remove failed:', document._id, e);
   }
 });
 

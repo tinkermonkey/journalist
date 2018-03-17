@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo }  from 'meteor/mongo';
+import { logger } from 'meteor/austinsand:journalist-logger';
 
 const MemoryCookieStore = require('tough-cookie').MemoryCookieStore,
       Future            = require('fibers/future'),
@@ -9,7 +10,7 @@ const MemoryCookieStore = require('tough-cookie').MemoryCookieStore,
 
 export class MongoCookieStore extends MemoryCookieStore {
   constructor (key) {
-    console.log('Creating new MongoCookieStore:', key);
+    logger.info('Creating new MongoCookieStore:', key);
     super(...arguments);
     
     // Must be sync to work with Meteor
@@ -23,7 +24,7 @@ export class MongoCookieStore extends MemoryCookieStore {
     
     // Bind the persist function to the Meteor environment so the data can be stored
     this.persistCookies = Meteor.bindEnvironment(function () {
-      debug && console.log('MongoCookieStore persistCookies:', this.key);
+      debug && logger.info('MongoCookieStore persistCookies:', this.key);
       let self = this;
       
       // If in the middle of a restore operation hold off
@@ -46,7 +47,7 @@ export class MongoCookieStore extends MemoryCookieStore {
    * @param callback
    */
   putCookie (cookie, callback) {
-    debug && console.log('MongoCookieStore putCookie:', this.key, cookie);
+    debug && logger.info('MongoCookieStore putCookie:', this.key, cookie);
     
     super.putCookie(cookie, () => {
     });
@@ -64,7 +65,7 @@ export class MongoCookieStore extends MemoryCookieStore {
    * @param callback
    */
   removeCookie (domain, path, key, callback) {
-    debug && console.log('MongoCookieStore removeCookie:', this.key, domain, path, key);
+    debug && logger.info('MongoCookieStore removeCookie:', this.key, domain, path, key);
     
     super.removeCookie(domain, path, key, () => {
     });
@@ -81,7 +82,7 @@ export class MongoCookieStore extends MemoryCookieStore {
    * @param callback
    */
   removeCookies (domain, path, callback) {
-    debug && console.log('MongoCookieStore removeCookies:', this.key, domain, path);
+    debug && logger.info('MongoCookieStore removeCookies:', this.key, domain, path);
     
     super.removeCookies(domain, path, () => {
     });
@@ -95,17 +96,17 @@ export class MongoCookieStore extends MemoryCookieStore {
    * Get all of the cookies in a synchronous manner
    */
   getAllCookiesSync () {
-    debug && console.log('MongoCookieStore getAllCookiesSync:', this.key);
+    debug && logger.info('MongoCookieStore getAllCookiesSync:', this.key);
     let self   = this,
         future = new Future();
     
     let result = self.getAllCookies((error, cookies) => {
-      console.error('getAllCookies callback:', cookies);
+      logger.error('getAllCookies callback:', cookies);
       future.return(cookies);
     });
     
     let cookies = future.wait();
-    console.error('getAllCookiesSync cookies:', cookies);
+    logger.error('getAllCookiesSync cookies:', cookies);
     
     return cookies || [];
   }
@@ -114,12 +115,12 @@ export class MongoCookieStore extends MemoryCookieStore {
    * Restore any stored cookies from the datastore
    */
   restoreCookies () {
-    debug && console.log('MongoCookieStore restoreCookies:', this.key);
+    debug && logger.info('MongoCookieStore restoreCookies:', this.key);
     let self       = this,
         storedData = CookieStores.findOne({ key: self.key });
     
     if (storedData && storedData.cookies && storedData.cookies.length) {
-      debug && console.log('MongoCookieStore restoreCookies loading data:', self.key, storedData);
+      debug && logger.info('MongoCookieStore restoreCookies loading data:', self.key, storedData);
       
       // Set the inRestore flag to prevent DB writes as we re-hydrate the cookies
       self.inRestore = true;
@@ -142,14 +143,14 @@ export class MongoCookieStore extends MemoryCookieStore {
           self.putCookie(cookie, () => {
           });
         } catch (e) {
-          console.error('MongoCookieStore failed to restore cookie:', cookieData, e);
+          logger.error('MongoCookieStore failed to restore cookie:', cookieData, e);
         }
       });
       
       // Clear the inRestore flag so further changes will be persisted
       self.inRestore = false;
     } else {
-      debug && console.log('MongoCookieStore restoreCookies didn`t find stored cookies:', self.key, storedData);
+      debug && logger.info('MongoCookieStore restoreCookies didn`t find stored cookies:', self.key, storedData);
     }
   }
   

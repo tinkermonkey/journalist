@@ -1,5 +1,6 @@
 import { Meteor }       from 'meteor/meteor';
 import { Accounts }     from 'meteor/accounts-base';
+import { logger }       from 'meteor/austinsand:journalist-logger';
 import { UserTypes }    from '../../api/users/user_types.js';
 import { Contributors } from '../../api/contributors/contributors.js';
 
@@ -8,8 +9,8 @@ import { Contributors } from '../../api/contributors/contributors.js';
  */
 Meteor.startup(() => {
   if (Meteor.users.find().count() === 0) {
-    console.info('=====================================');
-    console.info('No users found, executing data fixture...');
+    logger.info('=====================================');
+    logger.info('No users found, executing data fixture...');
     let adminId = Accounts.createUser({
       username: 'admin@demo.com',
       email   : 'admin@demo.com',
@@ -19,7 +20,7 @@ Meteor.startup(() => {
       }
     });
     
-    console.info('Created admin account:', adminId);
+    logger.info('Created admin account:', adminId);
     Meteor.users.update(adminId, {
       $set: {
         usertype: UserTypes.administrator,
@@ -28,7 +29,7 @@ Meteor.startup(() => {
     
     // Create a contributor record for this user
     let admin = Meteor.users.findOne(adminId);
-    console.log('Inserting contributor record for user:', admin);
+    logger.info('Inserting contributor record for user:', admin);
     Contributors.insert({
       email   : admin.emails[ 0 ].address,
       name    : admin.profile.name,
@@ -58,7 +59,7 @@ Meteor.startup(() => {
     });
     */
     
-    console.info('...Fixture complete');
-    console.info('=====================================');
+    logger.info('...Fixture complete');
+    logger.info('=====================================');
   }
 });

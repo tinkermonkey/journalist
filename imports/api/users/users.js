@@ -46,7 +46,7 @@ Users.helpers({
     let user        = this,
         contributor = Contributors.findOne({ userId: user._id });
     if (!contributor && Meteor.isServer && (Meteor.userId() === user._id || Meteor.user().isAdmin())) {
-      //console.log('Users creating contributor:', user);
+      //logger.info('Users creating contributor:', user);
       // Create a contributor record if the circumstances are correct:
       // 1) A record doesn't exist
       // 2) This is running on the server
@@ -62,7 +62,7 @@ Users.helpers({
       
       // Grab the new record
       contributor = Contributors.findOne({ userId: user._id });
-      //console.log('Users contributor created:', contributor);
+      //logger.info('Users contributor created:', contributor);
     }
     return contributor
   },

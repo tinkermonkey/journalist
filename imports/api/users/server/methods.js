@@ -1,6 +1,7 @@
 import { Meteor }       from 'meteor/meteor';
 import { Accounts }     from 'meteor/accounts-base';
 import { check, Match } from 'meteor/check';
+import { logger }       from 'meteor/austinsand:journalist-logger';
 import { Auth }         from '../../auth.js';
 import { Contributors } from '../../contributors/contributors.js';
 import { Users }        from '../users.js';
@@ -11,7 +12,7 @@ Meteor.methods({
    * @param userData
    */
   addUser (userData) {
-    console.log('addUser:', userData && userData.email);
+    logger.info('addUser:', userData && userData.email);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -39,11 +40,11 @@ Meteor.methods({
       // Check for a contributor record to link up
       let contributor = Contributors.findOne({ 'email': userData.email });
       if (contributor) {
-        console.log('addUser linking contributor:', userData.email);
+        logger.info('addUser linking contributor:', userData.email);
         Contributors.update(contributor._id, { $set: { userId: newUserId, usertype: userData.usertype } })
       }
     } else {
-      console.error('Non-admin user tried to add a user:', user, userData);
+      logger.error('Non-admin user tried to add a user:', user, userData);
       throw new Meteor.Error(403);
     }
   },
@@ -54,7 +55,7 @@ Meteor.methods({
    * @param value
    */
   editUser (userId, key, value) {
-    console.log('editUser:', userId, key, value);
+    logger.info('editUser:', userId, key, value);
     let user = Auth.requireAuthentication();
     
     // Validate
@@ -83,27 +84,27 @@ Meteor.methods({
             if (user.isAdmin()) {
               update.usertype = parseInt(value);
             } else {
-              console.error('editUser failed, unauthorized:', key, userId, user.username);
+              logger.error('editUser failed, unauthorized:', key, userId, user.username);
             }
             break;
         }
         
-        console.log('editUser update:', userId, key, value, update);
+        logger.info('editUser update:', userId, key, value, update);
         Meteor.users.update(userId, { $set: update });
         
         // If the usertype field was edited, sync up the contributor record
         if (update.usertype !== null) {
           let contributor = Contributors.findOne({ userId: userId });
           if (contributor) {
-            console.log('editUser syncing contributor usertype:', contributor.email, update.usertype);
+            logger.info('editUser syncing contributor usertype:', contributor.email, update.usertype);
             Contributors.update(contributor._id, { $set: { usertype: update.usertype } })
           }
         }
       } else {
-        console.error('editUser failed, unauthorized:', key, userId, user.username);
+        logger.error('editUser failed, unauthorized:', key, userId, user.username);
       }
     } else {
-      console.error('editUser failed, invalid key:', key);
+      logger.error('editUser failed, invalid key:', key);
       throw new Meteor.Error(403);
     }
   },
@@ -112,7 +113,7 @@ Meteor.methods({
    * @param userId
    */
   deleteUser (userId) {
-    console.log('deleteUser:', userId);
+    logger.info('deleteUser:', userId);
     let user = Auth.requireAuthentication();
     
     // Validate
@@ -122,7 +123,7 @@ Meteor.methods({
     if (user.isAdmin() && userId !== user._id) {
       Meteor.users.remove(userId);
     } else {
-      console.error('deleteUser failed, unauthorized:', user.username, userId);
+      logger.error('deleteUser failed, unauthorized:', user.username, userId);
       throw new Meteor.Error(403);
     }
   },
@@ -131,7 +132,7 @@ Meteor.methods({
    * @param userId
    */
   checkUserContributor (userId) {
-    console.log('checkUserContributor:', userId);
+    logger.info('checkUserContributor:', userId);
     let user = Auth.requireAuthentication();
     
     // Validate

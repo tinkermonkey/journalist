@@ -1,4 +1,5 @@
 import { check }               from 'meteor/check';
+import { logger }              from 'meteor/austinsand:journalist-logger';
 import { SystemHealthMetrics } from '../system_health_metrics';
 
 let debug = false;
@@ -8,7 +9,7 @@ export const HealthTracker = {
    * Clear out all existing health metrics
    */
   init () {
-    console.log('HealthTracker.init');
+    logger.info('HealthTracker.init');
     SystemHealthMetrics.remove({});
   },
   
@@ -18,7 +19,7 @@ export const HealthTracker = {
    * @param title
    */
   add (key, title, type) {
-    console.log('Adding HealthTracker:', key, title, type);
+    logger.info('Adding HealthTracker:', key, title, type);
     check(key, String);
     check(title, String);
     
@@ -42,7 +43,7 @@ export const HealthTracker = {
    * @param {*} detail
    */
   update (key, isHealthy, detail) {
-    debug && console.log('Updating HealthTracker:', key, isHealthy, detail);
+    debug && logger.info('Updating HealthTracker:', key, isHealthy, detail);
     
     // Update the row
     SystemHealthMetrics.update({

@@ -1,4 +1,5 @@
 import { Meteor }                           from 'meteor/meteor';
+import { logger }                           from 'meteor/austinsand:journalist-logger';
 import { CapacityPlans }                    from '../capacity_plans';
 import { CapacityPlanOptions }              from '../capacity_plan_options';
 import { CapacityPlanSprints }              from '../capacity_plan_sprints';
@@ -9,7 +10,7 @@ import { CapacityPlanStrategicEfforts }     from '../capacity_plan_strategic_eff
 import { CapacityPlanStrategicEffortItems } from '../capacity_plan_strategic_effort_items';
 
 Meteor.publish('capacity_plans', function () {
-  console.info('Publish: capacity_plans');
+  logger.info('Publish: capacity_plans');
   if (this.userId) {
     return CapacityPlans.find({});
   } else {
@@ -19,7 +20,7 @@ Meteor.publish('capacity_plans', function () {
 });
 
 Meteor.publish('capacity_plan_options', function () {
-  console.info('Publish: capacity_plan_options');
+  logger.info('Publish: capacity_plan_options');
   if (this.userId) {
     return CapacityPlanOptions.find({});
   } else {
@@ -29,7 +30,7 @@ Meteor.publish('capacity_plan_options', function () {
 });
 
 Meteor.publish('capacity_plan_releases', function () {
-  console.info('Publish: capacity_plan_releases');
+  logger.info('Publish: capacity_plan_releases');
   if (this.userId) {
     return CapacityPlanReleases.find({});
   } else {
@@ -39,7 +40,7 @@ Meteor.publish('capacity_plan_releases', function () {
 });
 
 Meteor.publish('capacity_plan_sprints', function (planId) {
-  console.info('Publish: capacity_plan_sprints');
+  logger.info('Publish: capacity_plan_sprints');
   if (this.userId) {
     return CapacityPlanSprints.find({ planId: planId });
   } else {
@@ -49,7 +50,7 @@ Meteor.publish('capacity_plan_sprints', function (planId) {
 });
 
 Meteor.publish('capacity_plan_sprint_blocks', function (planId) {
-  console.info('Publish: capacity_plan_sprint_blocks');
+  logger.info('Publish: capacity_plan_sprint_blocks');
   if (this.userId) {
     return CapacityPlanSprintBlocks.find({ planId: planId });
   } else {
@@ -59,7 +60,7 @@ Meteor.publish('capacity_plan_sprint_blocks', function (planId) {
 });
 
 Meteor.publish('capacity_plan_sprint_links', function (planId) {
-  console.info('Publish: capacity_plan_sprint_links');
+  logger.info('Publish: capacity_plan_sprint_links');
   if (this.userId) {
     return CapacityPlanSprintLinks.find({ planId: planId });
   } else {
@@ -69,7 +70,7 @@ Meteor.publish('capacity_plan_sprint_links', function (planId) {
 });
 
 Meteor.publish('capacity_plan_strategic_efforts', function (planId) {
-  console.info('Publish: capacity_plan_strategic_efforts');
+  logger.info('Publish: capacity_plan_strategic_efforts');
   if (this.userId) {
     return CapacityPlanStrategicEfforts.find({ planId: planId });
   } else {
@@ -79,7 +80,7 @@ Meteor.publish('capacity_plan_strategic_efforts', function (planId) {
 });
 
 Meteor.publish('capacity_plan_strategic_effort_items', function (planId) {
-  console.info('Publish: capacity_plan_strategic_effort_items');
+  logger.info('Publish: capacity_plan_strategic_effort_items');
   if (this.userId) {
     return CapacityPlanStrategicEffortItems.find({ planId: planId });
   } else {

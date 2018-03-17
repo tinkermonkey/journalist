@@ -1,5 +1,6 @@
 import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { logger }       from 'meteor/austinsand:journalist-logger';
 import { Tasks }        from '../tasks.js';
 import { Auth }         from '../../auth.js';
 
@@ -10,7 +11,7 @@ Meteor.methods({
    * @param title
    */
   addTask (contributorId, title) {
-    console.log('addTask:', contributorId, title);
+    logger.info('addTask:', contributorId, title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -25,7 +26,7 @@ Meteor.methods({
         title        : title
       });
     } else {
-      console.error('Non-authorized user tried to add an task:', user.username, title);
+      logger.error('Non-authorized user tried to add an task:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -37,7 +38,7 @@ Meteor.methods({
    * @param value
    */
   editTask (taskId, key, value) {
-    console.log('editTask:', taskId, key);
+    logger.info('editTask:', taskId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -56,7 +57,7 @@ Meteor.methods({
       // Update the task
       Tasks.update(taskId, { $set: update });
     } else {
-      console.error('Non-admin user tried to edit an task:', user.username, key, value);
+      logger.error('Non-admin user tried to edit an task:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -66,7 +67,7 @@ Meteor.methods({
    * @param taskId
    */
   deleteTask (taskId) {
-    console.log('deleteTask:', taskId);
+    logger.info('deleteTask:', taskId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -80,7 +81,7 @@ Meteor.methods({
       // Delete the task
       Tasks.remove(taskId);
     } else {
-      console.error('Non-authorized user tried to delete an task:', user.username, taskId);
+      logger.error('Non-authorized user tried to delete an task:', user.username, taskId);
       throw new Meteor.Error(403);
     }
   }

@@ -1,5 +1,6 @@
 import { Mongo }                         from 'meteor/mongo';
 import SimpleSchema                      from 'simpl-schema';
+import { logger }                        from 'meteor/austinsand:journalist-logger';
 import { ChangeTracker }                 from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers }                 from '../schema_helpers.js';
 import { ContributorTeamRoles }          from './contributor_team_roles';
@@ -146,7 +147,8 @@ Contributors.helpers({
    * Get the roles for this contributor on a specific team
    */
   rolesOnTeam (teamId) {
-    console.log('rolesOnTeam:', this._id, this.name, teamId, ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId }).count());
+    logger.info('rolesOnTeam:', this._id, this.name, teamId, ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId })
+        .count());
     return ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId });
   },
   /**
@@ -297,7 +299,7 @@ Contributors.helpers({
     
     // Filter for the unique keys
     projectIds = _.uniq(projectIds);
-    //console.log('participatingProjects:', Meteor.user().contributor()._id, contributor._id, projectIds);
+    //logger.info('participatingProjects:', Meteor.user().contributor()._id, contributor._id, projectIds);
     
     return Projects.find({ _id: { $in: projectIds } }, { sort: sortBy })
   },
@@ -333,7 +335,7 @@ Contributors.helpers({
       
       return _.contains(managesStaffIds, contributorId);
     } catch (e) {
-      console.error('User.managesContributor failed:', e);
+      logger.error('User.managesContributor failed:', e);
       return false
     }
   },

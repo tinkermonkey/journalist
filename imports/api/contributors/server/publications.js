@@ -1,11 +1,12 @@
 import { Meteor }                        from 'meteor/meteor';
+import { logger }                        from 'meteor/austinsand:journalist-logger';
 import { Contributors }                  from '../contributors';
 import { ContributorTeamRoles }          from '../contributor_team_roles';
 import { ContributorRoleDefinitions }    from '../contributor_role_definitions';
 import { ContributorProjectAssignments } from '../contributor_project_assignments';
 
 Meteor.publish('contributors', function () {
-  console.info('Publish: contributors');
+  logger.info('Publish: contributors');
   if (this.userId) {
     return Contributors.find({});
   } else {
@@ -15,7 +16,7 @@ Meteor.publish('contributors', function () {
 });
 
 Meteor.publish('contributor_team_roles', function () {
-  console.info('Publish: contributor_team_roles');
+  logger.info('Publish: contributor_team_roles');
   if (this.userId) {
     return ContributorTeamRoles.find({});
   } else {
@@ -25,7 +26,7 @@ Meteor.publish('contributor_team_roles', function () {
 });
 
 Meteor.publish('contributor_project_assignments', function () {
-  console.info('Publish: contributor_project_assignments');
+  logger.info('Publish: contributor_project_assignments');
   if (this.userId) {
     return ContributorProjectAssignments.find({});
   } else {
@@ -35,7 +36,7 @@ Meteor.publish('contributor_project_assignments', function () {
 });
 
 Meteor.publish('contributor_role_definitions', function () {
-  console.info('Publish: contributor_role_definitions');
+  logger.info('Publish: contributor_role_definitions');
   if (this.userId) {
     return ContributorRoleDefinitions.find({});
   } else {

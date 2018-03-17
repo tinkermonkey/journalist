@@ -1,6 +1,7 @@
 import { Meteor }               from 'meteor/meteor';
 import { check, Match }         from 'meteor/check';
 import { later }                from 'meteor/mrt:later';
+import { logger }               from 'meteor/austinsand:journalist-logger';
 import { StatusReports }        from '../status_reports.js';
 import { StatusReportSettings } from '../status_report_settings.js';
 import { StatusReportStates }   from '../status_report_states.js';
@@ -16,7 +17,7 @@ Meteor.methods({
    * @param dueDate {Date} (optional)
    */
   addStatusReport (contributorId, sourceCollection, sourceId, state, dueDate) {
-    console.log('addStatusReport:', contributorId, sourceCollection, sourceId, state, dueDate);
+    logger.info('addStatusReport:', contributorId, sourceCollection, sourceId, state, dueDate);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -49,12 +50,12 @@ Meteor.methods({
           StatusReportSettings.update({ _id: reportSetting._id }, { $set: { nextDue: nextDue } });
         }
       } catch (e) {
-        console.error('addStatusReport failed to calculate the nextDue data:', contributorId, sourceCollection, sourceId, e);
+        logger.error('addStatusReport failed to calculate the nextDue data:', contributorId, sourceCollection, sourceId, e);
       }
       
       return { reportId: reportId }
     } else {
-      console.error('Non-authorized user tried to add a statusReport:', user.contributorId(), contributorId, user.username, sourceCollection, sourceId);
+      logger.error('Non-authorized user tried to add a statusReport:', user.contributorId(), contributorId, user.username, sourceCollection, sourceId);
       throw new Meteor.Error(403);
     }
   },
@@ -66,7 +67,7 @@ Meteor.methods({
    * @param value
    */
   editStatusReport (statusReportId, key, value) {
-    console.log('editStatusReport:', statusReportId, key);
+    logger.info('editStatusReport:', statusReportId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -87,11 +88,11 @@ Meteor.methods({
         // Update the statusReport
         StatusReports.update(statusReportId, { $set: update });
       } else {
-        console.error('User tried to edit a terminal state statusReport:', user.username, key, value);
+        logger.error('User tried to edit a terminal state statusReport:', user.username, key, value);
         throw new Meteor.Error(403);
       }
     } else {
-      console.error('Non-authorized user tried to edit a statusReport:', user.username, key, value);
+      logger.error('Non-authorized user tried to edit a statusReport:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -101,7 +102,7 @@ Meteor.methods({
    * @param statusReportId
    */
   deleteStatusReport (statusReportId) {
-    console.log('deleteStatusReport:', statusReportId);
+    logger.info('deleteStatusReport:', statusReportId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -115,7 +116,7 @@ Meteor.methods({
       // Delete the statusReport
       StatusReports.remove(statusReportId);
     } else {
-      console.error('Non-authorized user tried to delete a statusReport:', user.username, statusReportId);
+      logger.error('Non-authorized user tried to delete a statusReport:', user.username, statusReportId);
       throw new Meteor.Error(403);
     }
   },
@@ -125,7 +126,7 @@ Meteor.methods({
    * @param statusReportId
    */
   submitStatusReport (statusReportId) {
-    console.log('submitStatusReport:', statusReportId);
+    logger.info('submitStatusReport:', statusReportId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -146,11 +147,11 @@ Meteor.methods({
       
       // Find any settings for this context and make sure they get updated
       let setting = StatusReportSettings.findOne({});
-      if(setting){
+      if (setting) {
       
       }
     } else {
-      console.error('Non-authorized user tried to submit a statusReport:', user.username, statusReportId);
+      logger.error('Non-authorized user tried to submit a statusReport:', user.username, statusReportId);
       throw new Meteor.Error(403);
     }
   },
@@ -160,7 +161,7 @@ Meteor.methods({
    * @param statusReportId
    */
   reopenStatusReport (statusReportId) {
-    console.log('reopenStatusReport:', statusReportId);
+    logger.info('reopenStatusReport:', statusReportId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -181,7 +182,7 @@ Meteor.methods({
         }
       });
     } else {
-      console.error('Non-authorized user tried to reopen a statusReport:', user.username, statusReportId);
+      logger.error('Non-authorized user tried to reopen a statusReport:', user.username, statusReportId);
       throw new Meteor.Error(403);
     }
   },
@@ -193,7 +194,7 @@ Meteor.methods({
    * @param sourceId
    */
   addStatusReportSetting (contributorId, sourceCollection, sourceId) {
-    console.log('addStatusReportSetting:', contributorId, sourceCollection, sourceId);
+    logger.info('addStatusReportSetting:', contributorId, sourceCollection, sourceId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -215,7 +216,7 @@ Meteor.methods({
       let setting = StatusReportSettings.findOne(settingId);
       setting.updateNextDue();
     } else {
-      console.error('Non-authorized user tried to add a statusReportSetting:', user.username, sourceCollection, sourceId);
+      logger.error('Non-authorized user tried to add a statusReportSetting:', user.username, sourceCollection, sourceId);
       throw new Meteor.Error(403);
     }
   },
@@ -227,7 +228,7 @@ Meteor.methods({
    * @param value
    */
   editStatusReportSetting (statusReportSettingId, key, value) {
-    console.log('editStatusReportSetting:', statusReportSettingId, key);
+    logger.info('editStatusReportSetting:', statusReportSettingId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -246,7 +247,7 @@ Meteor.methods({
       // Update the statusReportSetting
       StatusReportSettings.update(statusReportSettingId, { $set: update });
     } else {
-      console.error('Non-admin user tried to edit a statusReportSetting:', user.username, key, value);
+      logger.error('Non-admin user tried to edit a statusReportSetting:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -256,7 +257,7 @@ Meteor.methods({
    * @param statusReportSettingId
    */
   deleteStatusReportSetting (statusReportSettingId) {
-    console.log('deleteStatusReportSetting:', statusReportSettingId);
+    logger.info('deleteStatusReportSetting:', statusReportSettingId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -270,7 +271,7 @@ Meteor.methods({
       // Delete the statusReportSetting
       StatusReportSettings.remove(statusReportSettingId);
     } else {
-      console.error('Non-authorized user tried to delete a statusReportSetting:', user.username, statusReportSettingId);
+      logger.error('Non-authorized user tried to delete a statusReportSetting:', user.username, statusReportSettingId);
       throw new Meteor.Error(403);
     }
   },

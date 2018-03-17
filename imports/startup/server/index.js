@@ -6,6 +6,16 @@ import { Clustering }                     from 'meteor/austinsand:journalist-clu
 import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
 //
+// Logging
+import { logger }                         from 'meteor/austinsand:journalist-logger';
+
+logger.info('==============================================================================');
+logger.info('Journalist Server Start');
+logger.info('Cluster node:', Clustering.workerId());
+logger.info('Cluster master:', Clustering.isMaster());
+logger.info('==============================================================================');
+
+//
 // include the base layer functionality
 import './register-api';
 import './fixture';
@@ -28,11 +38,7 @@ import SimpleSchema                       from "simpl-schema";
 let os = require('os');
 
 Meteor.startup(() => {
-  console.log('==============================================================================');
-  console.log('Journalist Server Start');
-  console.log('Cluster node:', Clustering.workerId());
-  console.log('Cluster master:', Clustering.isMaster());
-  console.log('==============================================================================');
+  logger.info('Meteor.startup');
   
   if (Clustering.isMaster()) {
     SyncedCron.stop();
@@ -42,7 +48,7 @@ Meteor.startup(() => {
   }
   
   // Initialize the upload server
-  console.log('Upload server upload directory:', os.tmpdir());
+  logger.info('Upload server upload directory:', os.tmpdir());
   UploadServer.init({
     tmpDir                : os.tmpdir(),
     uploadDir             : os.tmpdir(),
@@ -53,13 +59,13 @@ Meteor.startup(() => {
   IntegrationServerAuthProviders.find({ isEnabled: true }).forEach((provider) => {
     try {
       let update = { $set: provider.compileAuthConfig() };
-      console.log('Initializing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+      logger.info('Initializing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
       
       ServiceConfiguration.configurations.upsert({
         service: provider.authServiceKey
       }, update);
     } catch (e) {
-      console.error('Failed to initialize auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName, e);
+      logger.error('Failed to initialize auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName, e);
     }
   });
   
@@ -76,14 +82,14 @@ Meteor.startup(() => {
         return parser.text(parserText);
       },
       job () {
-        console.log('==== Updating status report next due dates...');
+        logger.info('==== Updating status report next due dates...');
         StatusReportSettings.find({}).forEach((setting) => {
           setting.updateNextDue();
         });
-        console.log('==== Update complete');
+        logger.info('==== Update complete');
       }
     });
   }
   
-  console.log('===========================');
+  logger.info('==============================================================================');
 });

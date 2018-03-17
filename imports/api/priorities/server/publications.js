@@ -1,8 +1,9 @@
 import { Meteor }     from 'meteor/meteor';
+import { logger }     from 'meteor/austinsand:journalist-logger';
 import { Priorities } from '../priorities.js';
 
 Meteor.publish('priorities', function () {
-  console.log('Publish: priorities');
+  logger.info('Publish: priorities');
   if (this.userId) {
     let user            = Meteor.user(),
         contributorList = user.contributor().allStaffIds();

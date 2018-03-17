@@ -114,7 +114,7 @@ IntegrationServers.helpers({
       })
     }
     
-    //console.log('IntegrationServers.mappedPhaseStatuses:', statusMap, workPhaseKey, workStateKey);
+    //logger.info('IntegrationServers.mappedPhaseStatuses:', statusMap, workPhaseKey, workStateKey);
     
     return phaseStatuses
   },

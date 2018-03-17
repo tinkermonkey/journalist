@@ -1,5 +1,6 @@
 import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { logger }       from 'meteor/austinsand:journalist-logger';
 import { Efforts }      from '../efforts.js';
 import { Auth }         from '../../auth.js';
 
@@ -10,7 +11,7 @@ Meteor.methods({
    * @param title
    */
   addEffort (contributorId, title) {
-    console.log('addEffort:', contributorId, title);
+    logger.info('addEffort:', contributorId, title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -25,7 +26,7 @@ Meteor.methods({
         title        : title
       });
     } else {
-      console.error('Non-authorized user tried to add an effort:', user.username, title);
+      logger.error('Non-authorized user tried to add an effort:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -37,7 +38,7 @@ Meteor.methods({
    * @param value
    */
   editEffort (effortId, key, value) {
-    console.log('editEffort:', effortId, key);
+    logger.info('editEffort:', effortId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -56,7 +57,7 @@ Meteor.methods({
       // Update the effort
       Efforts.update(effortId, { $set: update });
     } else {
-      console.error('Non-admin user tried to edit an effort:', user.username, key, value);
+      logger.error('Non-admin user tried to edit an effort:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -66,7 +67,7 @@ Meteor.methods({
    * @param effortId
    */
   deleteEffort (effortId) {
-    console.log('deleteEffort:', effortId);
+    logger.info('deleteEffort:', effortId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -80,7 +81,7 @@ Meteor.methods({
       // Delete the effort
       Efforts.remove(effortId);
     } else {
-      console.error('Non-authorized user tried to delete an effort:', user.username, effortId);
+      logger.error('Non-authorized user tried to delete an effort:', user.username, effortId);
       throw new Meteor.Error(403);
     }
   }

@@ -1,3 +1,4 @@
+import { logger }                     from 'meteor/austinsand:journalist-logger';
 import { SyncedCron }                 from 'meteor/percolate:synced-cron';
 import { Clustering }                 from 'meteor/austinsand:journalist-clustering';
 import { IntegrationServiceProvider } from './integration_service_provider';
@@ -14,7 +15,7 @@ export const IntegrationService = {
    * Start the service to monitor integrations
    */
   start () {
-    console.log('IntegrationService.start');
+    logger.info('IntegrationService.start');
     let self = this;
     
     // Initialize the IntegrationService health tracker
@@ -26,19 +27,19 @@ export const IntegrationService = {
     // Monitor the IntegrationServers collection to respond to additions, deletions, and modifications
     self.serverObserver = IntegrationServers.find({}).observe({
       added (server) {
-        debug && console.log('IntegrationService.serverObserver.added:', server._id, server.title);
+        debug && logger.info('IntegrationService.serverObserver.added:', server._id, server.title);
         Meteor.defer(() => {
           self.createServiceProvider(server);
         });
       },
       changed (newDoc, oldDoc) {
-        debug && console.log('IntegrationService.serverObserver.changed:', newDoc._id, newDoc.title);
+        debug && logger.info('IntegrationService.serverObserver.changed:', newDoc._id, newDoc.title);
         Meteor.defer(() => {
           self.updateServiceProvider(newDoc, oldDoc);
         });
       },
       removed (server) {
-        console.log('IntegrationService.serverObserver.removed:', server._id, server.title);
+        logger.info('IntegrationService.serverObserver.removed:', server._id, server.title);
         Meteor.defer(() => {
           self.destroyServiceProvider(server);
         });
@@ -61,7 +62,7 @@ export const IntegrationService = {
    * @param {*} server
    */
   createServiceProvider (server) {
-    console.log('IntegrationService.createServiceProvider:', server._id, server.title);
+    logger.info('IntegrationService.createServiceProvider:', server._id, server.title);
     let self = this;
     
     // Create the service if the server is active
@@ -71,10 +72,10 @@ export const IntegrationService = {
         // Create the service provider record
         self.setServiceProvider(server, new IntegrationServiceProvider(server));
       } else {
-        console.error('IntegrationService.createServiceProvider provider already exists:', server._id, server.title);
+        logger.error('IntegrationService.createServiceProvider provider already exists:', server._id, server.title);
       }
     } else {
-      console.log('IntegrationService.createServiceProvider ignored because server is not active:', server._id, server.title);
+      logger.info('IntegrationService.createServiceProvider ignored because server is not active:', server._id, server.title);
     }
   },
   
@@ -84,7 +85,7 @@ export const IntegrationService = {
    * @param provider {IntegrationServiceProvider}
    */
   setServiceProvider (server, provider) {
-    debug && console.log('IntegrationService.setServiceProvider:', server._id, server.title);
+    debug && logger.info('IntegrationService.setServiceProvider:', server._id, server.title);
     
     this.providers[ server._id ] = provider;
   },
@@ -94,7 +95,7 @@ export const IntegrationService = {
    * @param server {IntegrationServer}
    */
   getServiceProvider (server) {
-    debug && console.log('IntegrationService.getServiceProvider:', server._id, server.title);
+    debug && logger.info('IntegrationService.getServiceProvider:', server._id, server.title);
     
     return this.providers && this.providers[ server._id ];
   },
@@ -106,7 +107,7 @@ export const IntegrationService = {
    * @param {*} oldDoc
    */
   updateServiceProvider (newDoc, oldDoc) {
-    console.log('IntegrationService.updateServiceProvider:', newDoc._id, newDoc.title, newDoc.isActive);
+    logger.info('IntegrationService.updateServiceProvider:', newDoc._id, newDoc.title, newDoc.isActive);
     let self = this;
     
     // Respond to server active flag changes
@@ -124,7 +125,7 @@ export const IntegrationService = {
    * @param {*} server
    */
   destroyServiceProvider (server) {
-    console.log('IntegrationService.destroyServiceProvider:', server._id, server.title);
+    logger.info('IntegrationService.destroyServiceProvider:', server._id, server.title);
     let self     = this,
         provider = self.getServiceProvider(server);
     
@@ -141,7 +142,7 @@ export const IntegrationService = {
    * @param password
    */
   authenticateServiceProvider (server, username, password) {
-    console.log('IntegrationService.authenticateServiceProvider:', server._id, server.title, username);
+    logger.info('IntegrationService.authenticateServiceProvider:', server._id, server.title, username);
     let self     = this,
         provider = self.getServiceProvider(server);
     
@@ -157,7 +158,7 @@ export const IntegrationService = {
    * @param server
    */
   unAuthenticateServiceProvider (server) {
-    console.log('IntegrationService.authenticateServiceProvider:', server._id, server.title);
+    logger.info('IntegrationService.authenticateServiceProvider:', server._id, server.title);
     let self     = this,
         provider = self.getServiceProvider(server);
     
@@ -173,7 +174,7 @@ export const IntegrationService = {
    * @param server
    */
   checkServiceProviderHealth (server) {
-    console.log('IntegrationService.checkServiceProviderHealth:', server._id, server.title);
+    logger.info('IntegrationService.checkServiceProviderHealth:', server._id, server.title);
     let self     = this,
         provider = self.getServiceProvider(server);
     
@@ -190,7 +191,7 @@ export const IntegrationService = {
    * @param request
    */
   fetchData (server, request) {
-    debug && console.log('IntegrationService.fetchData:', server._id, server.title);
+    debug && logger.info('IntegrationService.fetchData:', server._id, server.title);
     let self     = this,
         provider = self.getServiceProvider(server);
     
@@ -207,7 +208,7 @@ export const IntegrationService = {
    * @param details {Object}
    */
   testIntegration (integration, details) {
-    console.log('IntegrationService.testIntegration:', integration._id);
+    logger.info('IntegrationService.testIntegration:', integration._id);
     let self     = this,
         provider = self.getServiceProvider(integration.server());
     
@@ -218,7 +219,7 @@ export const IntegrationService = {
    * Stop all integrations
    */
   stop () {
-    console.log('IntegrationService.stop');
+    logger.info('IntegrationService.stop');
     let self = this;
     
     // Update the IntegrationService health tracker

@@ -1,6 +1,7 @@
 import { Meteor }                         from 'meteor/meteor';
 import { check, Match }                   from 'meteor/check';
 import { ServiceConfiguration }           from 'meteor/service-configuration';
+import { logger }                         from 'meteor/austinsand:journalist-logger';
 import { Auth }                           from '../../auth';
 import { Integrations }                   from '../integrations';
 import { IntegrationCalculatedFields }    from '../integration_calculated_fields';
@@ -17,7 +18,7 @@ Meteor.methods({
    * @param itemType
    */
   addIntegration (projectId, serverId, itemType) {
-    console.log('addIntegration:', projectId, serverId, itemType);
+    logger.info('addIntegration:', projectId, serverId, itemType);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -34,7 +35,7 @@ Meteor.methods({
         itemType : itemType
       });
     } else {
-      console.error('Non-admin user tried to add an integration:', user.username, projectId);
+      logger.error('Non-admin user tried to add an integration:', user.username, projectId);
       throw new Meteor.Error(403);
     }
   },
@@ -44,7 +45,7 @@ Meteor.methods({
    * @param integrationId
    */
   deleteIntegration (integrationId) {
-    console.log('deleteIntegration:', integrationId);
+    logger.info('deleteIntegration:', integrationId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -54,7 +55,7 @@ Meteor.methods({
     if (user.isAdmin()) {
       Integrations.remove(integrationId);
     } else {
-      console.error('Non-admin user tried to delete an integration:', user.username, integrationId);
+      logger.error('Non-admin user tried to delete an integration:', user.username, integrationId);
       throw new Meteor.Error(403);
     }
   },
@@ -66,7 +67,7 @@ Meteor.methods({
    * @param value
    */
   editIntegration (integrationId, key, value) {
-    console.log('editIntegration:', integrationId, key);
+    logger.info('editIntegration:', integrationId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -89,7 +90,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration:', user.username, key, value, integrationId);
+      logger.error('Non-admin user tried to edit an integration:', user.username, key, value, integrationId);
       throw new Meteor.Error(403);
     }
   },
@@ -99,7 +100,7 @@ Meteor.methods({
    * @param integrationId
    */
   getIntegrationQueryDefinitions (integrationId) {
-    console.log('getIntegrationQueryDefinitions:', integrationId);
+    logger.info('getIntegrationQueryDefinitions:', integrationId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -120,7 +121,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to test an integration:', user.username, integrationId);
+      logger.error('Non-admin user tried to test an integration:', user.username, integrationId);
       throw new Meteor.Error(403);
     }
   },
@@ -131,7 +132,7 @@ Meteor.methods({
    * @param details
    */
   testIntegration (integrationId, details) {
-    console.log('testIntegration:', integrationId, details);
+    logger.info('testIntegration:', integrationId, details);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -149,7 +150,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to test an integration:', user.username, key, integrationId);
+      logger.error('Non-admin user tried to test an integration:', user.username, key, integrationId);
       throw new Meteor.Error(403);
     }
   },
@@ -161,7 +162,7 @@ Meteor.methods({
    * @param baseUrl
    */
   addIntegrationServer (title, integrationType, baseUrl) {
-    console.log('addIntegrationServer:', title, integrationType, baseUrl);
+    logger.info('addIntegrationServer:', title, integrationType, baseUrl);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -178,7 +179,7 @@ Meteor.methods({
         baseUrl        : baseUrl
       });
     } else {
-      console.error('Non-admin user tried to add an integration server:', user.username, title);
+      logger.error('Non-admin user tried to add an integration server:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -188,7 +189,7 @@ Meteor.methods({
    * @param serverId
    */
   deleteIntegrationServer (serverId) {
-    console.log('deleteIntegrationServer:', serverId);
+    logger.info('deleteIntegrationServer:', serverId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -198,7 +199,7 @@ Meteor.methods({
     if (user.isAdmin()) {
       IntegrationServers.remove(serverId);
     } else {
-      console.error('Non-admin user tried to delete an integration server:', user.username, serverId);
+      logger.error('Non-admin user tried to delete an integration server:', user.username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -210,7 +211,7 @@ Meteor.methods({
    * @param value
    */
   editIntegrationServer (serverId, key, value) {
-    console.log('editIntegrationServer:', serverId, key);
+    logger.info('editIntegrationServer:', serverId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -233,7 +234,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration server:', user.username, key, value, serverId);
+      logger.error('Non-admin user tried to edit an integration server:', user.username, key, value, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -243,7 +244,7 @@ Meteor.methods({
    * @param serverId
    */
   getIntegrationServerCallMap (serverId) {
-    console.log('getIntegrationCallMap:', serverId);
+    logger.info('getIntegrationCallMap:', serverId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -260,7 +261,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to get a server call map:', user.username, serverId);
+      logger.error('Non-admin user tried to get a server call map:', user.username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -270,7 +271,7 @@ Meteor.methods({
    * @param serverId
    */
   getIntegrationServerStatusList (serverId) {
-    console.log('getIntegrationServerStatusList:', serverId);
+    logger.info('getIntegrationServerStatusList:', serverId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -287,7 +288,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to test an server:', user.username, serverId);
+      logger.error('Non-admin user tried to test an server:', user.username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -297,7 +298,7 @@ Meteor.methods({
    * @param serverId
    */
   updateIntegrationServerCache (serverId) {
-    console.log('updateIntegrationServerCache:', serverId);
+    logger.info('updateIntegrationServerCache:', serverId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -314,7 +315,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to update the cache of an integration server:', user.username, key, value, serverId);
+      logger.error('Non-admin user tried to update the cache of an integration server:', user.username, key, value, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -325,7 +326,7 @@ Meteor.methods({
    * @param integrationType
    */
   addIntegrationImportFunction (title, integrationType) {
-    console.log('addIntegrationImportFunction:', title, integrationType);
+    logger.info('addIntegrationImportFunction:', title, integrationType);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -340,7 +341,7 @@ Meteor.methods({
         integrationType: integrationType
       });
     } else {
-      console.error('Non-admin user tried to add an integration import function:', user.username, title);
+      logger.error('Non-admin user tried to add an integration import function:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -350,7 +351,7 @@ Meteor.methods({
    * @param functionId
    */
   deleteIntegrationImportFunction (functionId) {
-    console.log('deleteIntegrationImportFunction:', functionId);
+    logger.info('deleteIntegrationImportFunction:', functionId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -360,7 +361,7 @@ Meteor.methods({
     if (user.isAdmin()) {
       IntegrationImportFunctions.remove(functionId);
     } else {
-      console.error('Non-admin user tried to delete an integration import function:', user.username, functionId);
+      logger.error('Non-admin user tried to delete an integration import function:', user.username, functionId);
       throw new Meteor.Error(403);
     }
   },
@@ -372,7 +373,7 @@ Meteor.methods({
    * @param value
    */
   editIntegrationImportFunction (functionId, key, value) {
-    console.log('editIntegrationImportFunction:', functionId, key);
+    logger.info('editIntegrationImportFunction:', functionId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -395,7 +396,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
+      logger.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
       throw new Meteor.Error(403);
     }
   },
@@ -405,7 +406,7 @@ Meteor.methods({
    * @param title
    */
   addIntegrationCalculatedField (title) {
-    console.log('addIntegrationCalculatedField:', title);
+    logger.info('addIntegrationCalculatedField:', title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -418,7 +419,7 @@ Meteor.methods({
         title: title
       });
     } else {
-      console.error('Non-admin user tried to add an integration calculated field:', user.username, title);
+      logger.error('Non-admin user tried to add an integration calculated field:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -428,7 +429,7 @@ Meteor.methods({
    * @param fieldId
    */
   deleteIntegrationCalculatedField (fieldId) {
-    console.log('deleteIntegrationCalculatedField:', fieldId);
+    logger.info('deleteIntegrationCalculatedField:', fieldId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -438,7 +439,7 @@ Meteor.methods({
     if (user.isAdmin()) {
       IntegrationCalculatedFields.remove(fieldId);
     } else {
-      console.error('Non-admin user tried to delete an integration calculated field:', user.username, fieldId);
+      logger.error('Non-admin user tried to delete an integration calculated field:', user.username, fieldId);
       throw new Meteor.Error(403);
     }
   },
@@ -450,7 +451,7 @@ Meteor.methods({
    * @param value
    */
   editIntegrationCalculatedField (fieldId, key, value) {
-    console.log('editIntegrationCalculatedField:', fieldId, key);
+    logger.info('editIntegrationCalculatedField:', fieldId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -473,7 +474,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration calculated field:', user.username, key, fieldId);
+      logger.error('Non-admin user tried to edit an integration calculated field:', user.username, key, fieldId);
       throw new Meteor.Error(403);
     }
   },
@@ -485,7 +486,7 @@ Meteor.methods({
    * @param identifier
    */
   testIntegrationImportFunction (functionId, serverId, identifier) {
-    console.log('editIntegrationImportFunction:', functionId, serverId, identifier);
+    logger.info('editIntegrationImportFunction:', functionId, serverId, identifier);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -506,13 +507,13 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
+      logger.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
       throw new Meteor.Error(403);
     }
   },
   
   importItemAndStore (integrationId, identifier) {
-    console.log('editIntegrationImportFunction:', integrationId, identifier);
+    logger.info('editIntegrationImportFunction:', integrationId, identifier);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -536,7 +537,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
+      logger.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
       throw new Meteor.Error(403);
     }
   },
@@ -548,7 +549,7 @@ Meteor.methods({
    * @param password
    */
   authenticateIntegrationServer (serverId, username, password) {
-    console.log('authenticateIntegrationServer:', serverId, username);
+    logger.info('authenticateIntegrationServer:', serverId, username);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -580,7 +581,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to authenticate an integration server:', user.username, username, serverId);
+      logger.error('Non-admin user tried to authenticate an integration server:', user.username, username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -590,7 +591,7 @@ Meteor.methods({
    * @param serverId
    */
   unAuthenticateIntegrationServer (serverId) {
-    console.log('unAuthenticateIntegrationServer:', serverId);
+    logger.info('unAuthenticateIntegrationServer:', serverId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -613,7 +614,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to authenticate an integration server:', user.username, username, serverId);
+      logger.error('Non-admin user tried to authenticate an integration server:', user.username, username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -624,7 +625,7 @@ Meteor.methods({
    * @param request
    */
   fetchIntegrationServerData (serverId, request) {
-    console.log('fetchIntegrationServerData:', serverId);
+    logger.info('fetchIntegrationServerData:', serverId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -647,7 +648,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to authenticate an integration server:', user.username, username, serverId);
+      logger.error('Non-admin user tried to authenticate an integration server:', user.username, username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -657,7 +658,7 @@ Meteor.methods({
    * @param integrationId
    */
   reprocessIntegrationItems (integrationId) {
-    console.log('reprocessIntegrationItems:', integrationId);
+    logger.info('reprocessIntegrationItems:', integrationId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -670,7 +671,7 @@ Meteor.methods({
       
       return IntegrationService.getServiceProvider(integration.server()).getIntegrationAgent(integration).reprocessItems();
     } else {
-      console.error('Non-admin user tried to reprocess issues:', user.username, integrationId);
+      logger.error('Non-admin user tried to reprocess issues:', user.username, integrationId);
       throw new Meteor.Error(403);
     }
     
@@ -681,7 +682,7 @@ Meteor.methods({
    * @param integrationId
    */
   deepSyncIntegration (integrationId) {
-    console.log('deepSyncIntegration:', integrationId);
+    logger.info('deepSyncIntegration:', integrationId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -695,9 +696,9 @@ Meteor.methods({
           result      = IntegrationService.getServiceProvider(integration.server()).getIntegrationAgent(integration)
               .executeAllQueries(true);
       
-      console.log('deepSyncIntegration complete:', integrationId, Date.now() - startTime);
+      logger.info('deepSyncIntegration complete:', integrationId, Date.now() - startTime);
     } else {
-      console.error('Non-admin user tried to deep sync an integration:', user.username, integrationId);
+      logger.error('Non-admin user tried to deep sync an integration:', user.username, integrationId);
       throw new Meteor.Error(403);
     }
     
@@ -708,7 +709,7 @@ Meteor.methods({
    * @param serverId
    */
   addIntegrationServerAuthProvider (serverId) {
-    console.log('addIntegrationServerAuthProvider:', serverId);
+    logger.info('addIntegrationServerAuthProvider:', serverId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -726,7 +727,7 @@ Meteor.methods({
         throw new Meteor.Error(500)
       }
     } else {
-      console.error('Non-admin user tried to add an integration server auth provider:', user.username, serverId);
+      logger.error('Non-admin user tried to add an integration server auth provider:', user.username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -736,7 +737,7 @@ Meteor.methods({
    * @param providerId
    */
   deleteIntegrationServerAuthProvider (providerId) {
-    console.log('deleteIntegrationServerAuthProvider:', providerId);
+    logger.info('deleteIntegrationServerAuthProvider:', providerId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -751,12 +752,12 @@ Meteor.methods({
       IntegrationServerAuthProviders.remove(providerId);
       
       // Remove the Service Configuration
-      console.log('deleteIntegrationServerAuthProvider removing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+      logger.info('deleteIntegrationServerAuthProvider removing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
       ServiceConfiguration.configurations.remove({
         service: provider.authServiceKey
       });
     } else {
-      console.error('Non-admin user tried to delete an integration server auth provider:', user.username, providerId);
+      logger.error('Non-admin user tried to delete an integration server auth provider:', user.username, providerId);
       throw new Meteor.Error(403);
     }
   },
@@ -768,7 +769,7 @@ Meteor.methods({
    * @param value
    */
   editIntegrationServerAuthProvider (providerId, key, value) {
-    console.log('editIntegrationServerAuthProvider:', providerId, key);
+    logger.info('editIntegrationServerAuthProvider:', providerId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -793,7 +794,7 @@ Meteor.methods({
         
         // Update the serviceConfiguration if it's enabled
         if (provider.isEnabled) {
-          console.log('editIntegrationServerAuthProvider updating auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+          logger.info('editIntegrationServerAuthProvider updating auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
           try {
             let update = { $set: provider.compileAuthConfig() };
             
@@ -801,10 +802,10 @@ Meteor.methods({
               service: provider.authServiceKey
             }, update);
           } catch (e) {
-            console.error('editIntegrationServerAuthProvider failed to update provider:', provider._id, provider.authServiceKey, provider.loginFunctionName, e);
+            logger.error('editIntegrationServerAuthProvider failed to update provider:', provider._id, provider.authServiceKey, provider.loginFunctionName, e);
           }
         } else if (key === 'isEnabled' && value === false) {
-          console.log('editIntegrationServerAuthProvider removing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
+          logger.info('editIntegrationServerAuthProvider removing auth provider:', provider._id, provider.authServiceKey, provider.loginFunctionName);
           ServiceConfiguration.configurations.remove({
             service: provider.authServiceKey
           });
@@ -813,7 +814,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration server auth provider:', user.username, key, value, providerId);
+      logger.error('Non-admin user tried to edit an integration server auth provider:', user.username, key, value, providerId);
       throw new Meteor.Error(403);
     }
   }

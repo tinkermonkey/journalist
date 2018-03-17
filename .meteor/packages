@@ -60,3 +60,4 @@ aldeed:schema-deny
 service-configuration
 meteorhacks:cluster
 austinsand:journalist-clustering
+austinsand:journalist-logger

@@ -21,5 +21,5 @@ import '../moment_config';
 
 Meteor.startup(() => {
   // Make sure simpleSchema is configured correctly
-  SimpleSchema.extendOptions(['autoform', 'denyUpdate']);
+  SimpleSchema.extendOptions([ 'autoform', 'denyUpdate' ]);
 });

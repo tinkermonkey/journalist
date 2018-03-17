@@ -1,5 +1,6 @@
 import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { logger }       from 'meteor/austinsand:journalist-logger';
 import { Priorities }   from '../priorities.js';
 import { Auth }         from '../../auth.js';
 
@@ -10,7 +11,7 @@ Meteor.methods({
    * @param title
    */
   addPriority (contributorId, title) {
-    console.log('addPriority:', contributorId, title);
+    logger.info('addPriority:', contributorId, title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -28,7 +29,7 @@ Meteor.methods({
         order        : nextOrder
       });
     } else {
-      console.error('Non-authorized user tried to add a priority:', user.username, title);
+      logger.error('Non-authorized user tried to add a priority:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -40,7 +41,7 @@ Meteor.methods({
    * @param value
    */
   editPriority (priorityId, key, value) {
-    console.log('editPriority:', priorityId, key);
+    logger.info('editPriority:', priorityId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -59,7 +60,7 @@ Meteor.methods({
       // Update the priority
       Priorities.update(priorityId, { $set: update });
     } else {
-      console.error('Non-admin user tried to edit a priority:', user.username, key, value);
+      logger.error('Non-admin user tried to edit a priority:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -69,7 +70,7 @@ Meteor.methods({
    * @param priorityId
    */
   deletePriority (priorityId) {
-    console.log('deletePriority:', priorityId);
+    logger.info('deletePriority:', priorityId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -83,7 +84,7 @@ Meteor.methods({
       // Delete the priority
       Priorities.remove(priorityId);
     } else {
-      console.error('Non-authorized user tried to delete a priority:', user.username, priorityId);
+      logger.error('Non-authorized user tried to delete a priority:', user.username, priorityId);
       throw new Meteor.Error(403);
     }
   }

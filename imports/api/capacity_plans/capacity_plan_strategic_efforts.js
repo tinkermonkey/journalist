@@ -149,20 +149,20 @@ CapacityPlanStrategicEfforts.helpers({
     
     return _.uniq(_.flatten(CapacityPlanSprintBlocks.find({ optionId: optionId, dataId: effort._id })
         .map((effortBlock) => {
-          //console.log('Found an effort block:', effortBlock);
+          //logger.info('Found an effort block:', effortBlock);
           // Return a list of all of the contributorIds for this effort block
           return effortBlock.children().fetch()
               .filter((block) => {
-                //console.log('Filtering child blocks:', block.blockType);
+                //logger.info('Filtering child blocks:', block.blockType);
                 return block.blockType === CapacityPlanBlockTypes.contributor
               })
               .map((contributorBlock) => {
-                //console.log('Found a contributor block:', contributorBlock.dataId);
+                //logger.info('Found a contributor block:', contributorBlock.dataId);
                 return contributorBlock.dataId
               })
         })))
         .map((contributorId) => {
-          //console.log('Getting contributor:', contributorId);
+          //logger.info('Getting contributor:', contributorId);
           return Contributors.findOne(contributorId)
         })
   },

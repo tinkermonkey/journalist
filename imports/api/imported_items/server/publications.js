@@ -1,10 +1,11 @@
 import { Meteor }             from 'meteor/meteor';
 import { check }              from 'meteor/check';
+import { logger }             from 'meteor/austinsand:journalist-logger';
 import { ImportedItems }      from '../imported_items';
 import { ImportedItemCrumbs } from '../imported_item_crumbs';
 
 Meteor.publish('integration_imported_items', function (integrationId, start, limit) {
-  console.log('Publish: integration_imported_items', integrationId, start, limit);
+  logger.info('Publish: integration_imported_items', integrationId, start, limit);
   if (this.userId) {
     check(integrationId, String);
     start = start || 0;
@@ -20,7 +21,7 @@ Meteor.publish('integration_imported_items', function (integrationId, start, lim
 });
 
 Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
-  console.log('Publish: integration_imported_item_crumbs', integrationId);
+  logger.info('Publish: integration_imported_item_crumbs', integrationId);
   if (this.userId && integrationId) {
     return ImportedItemCrumbs.find({ integrationId: integrationId });
   } else {
@@ -30,7 +31,7 @@ Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
 });
 
 Meteor.publish('imported_item_query', function (query, options) {
-  console.log('Publish: imported_item_query');
+  logger.info('Publish: imported_item_query');
   if (this.userId && query && _.isObject(query)) {
     return ImportedItems.find(query, options);
   } else {
@@ -40,7 +41,7 @@ Meteor.publish('imported_item_query', function (query, options) {
 });
 
 Meteor.publish('imported_item_crumb_query', function (query) {
-  console.log('Publish: imported_item_crumb_query');
+  logger.info('Publish: imported_item_crumb_query');
   if (this.userId && query && _.isObject(query)) {
     return ImportedItemCrumbs.find(query);
   } else {
@@ -50,7 +51,7 @@ Meteor.publish('imported_item_crumb_query', function (query) {
 });
 
 Meteor.publish('team_imported_item_crumbs', function (teamId) {
-  console.log('Publish: team_imported_item_crumbs', teamId);
+  logger.info('Publish: team_imported_item_crumbs', teamId);
   if (this.userId && teamId) {
     return ImportedItemCrumbs.find({ teamId: teamId });
   } else {
@@ -60,7 +61,7 @@ Meteor.publish('team_imported_item_crumbs', function (teamId) {
 });
 
 Meteor.publish('integration_imported_item_count', function (integrationId) {
-  console.log('Publish: integration_imported_item_count', integrationId);
+  logger.info('Publish: integration_imported_item_count', integrationId);
   
   if (!this.userId) {
     this.ready();

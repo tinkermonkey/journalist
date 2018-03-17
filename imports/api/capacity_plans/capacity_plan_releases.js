@@ -130,7 +130,7 @@ CapacityPlanReleases.helpers({
           })
           // The source of the links to this release's block are the contents of this release
           .map((link) => {
-            //console.log('CapacityPlanOptions.releases found a release link to block', link.targetId);
+            //logger.info('CapacityPlanOptions.releases found a release link to block', link.targetId);
             let source = link.source();
             if (source) {
               // The data record for the source links will be the strategic effort record

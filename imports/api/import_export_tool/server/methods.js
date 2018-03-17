@@ -1,13 +1,14 @@
 import { Meteor }           from 'meteor/meteor';
+import { logger }           from 'meteor/austinsand:journalist-logger';
 import { ImportExportTool } from './import_export_tool.js';
 
 Meteor.methods({
   exportData (collectionNames) {
-    console.log('ImportExport.exportData:', collectionNames);
+    logger.info('ImportExport.exportData:', collectionNames);
     return ImportExportTool.exportData(collectionNames);
   },
   importData (fileName) {
-    console.log('ImportExport.importData:', fileName);
+    logger.info('ImportExport.importData:', fileName);
     ImportExportTool.importData(fileName);
   }
 });

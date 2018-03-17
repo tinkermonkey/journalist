@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
+import { logger } from 'meteor/austinsand:journalist-logger';
 import { Tasks }  from '../tasks.js';
 
 Meteor.publish('tasks', function () {
-  console.log('Publish: tasks');
+  logger.info('Publish: tasks');
   if (this.userId) {
     let user            = Meteor.user(),
         contributorList = user.contributor().allStaffIds();

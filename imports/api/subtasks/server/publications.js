@@ -1,8 +1,9 @@
 import { Meteor }   from 'meteor/meteor';
+import { logger }   from 'meteor/austinsand:journalist-logger';
 import { Subtasks } from '../subtasks';
 
 Meteor.publish('my_subtasks', function () {
-  console.log('Publish: my_subtasks');
+  logger.info('Publish: my_subtasks');
   if (this.userId) {
     let user = Meteor.user();
     return Subtasks.find({ contributorId: user.contributor()._id });
@@ -13,7 +14,7 @@ Meteor.publish('my_subtasks', function () {
 });
 
 Meteor.publish('subtasks', function (sourceCollection, sourceId) {
-  console.log('Publish: subtasks', sourceCollection, sourceId);
+  logger.info('Publish: subtasks', sourceCollection, sourceId);
   if (this.userId) {
     let user            = Meteor.user(),
         contributorList = user.contributor().allStaffIds();

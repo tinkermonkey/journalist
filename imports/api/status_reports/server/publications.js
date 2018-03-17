@@ -1,10 +1,11 @@
-import { Meteor } from 'meteor/meteor';
-import { StatusReports } from '../status_reports';
+import { Meteor }               from 'meteor/meteor';
+import { logger }               from 'meteor/austinsand:journalist-logger';
+import { StatusReports }        from '../status_reports';
 import { StatusReportSettings } from '../status_report_settings';
-import { StatusReportStates } from '../status_report_states';
+import { StatusReportStates }   from '../status_report_states';
 
 Meteor.publish('status_report_settings', function () {
-  console.log('Publish: status_report_settings');
+  logger.info('Publish: status_report_settings');
   if (this.userId) {
     let user            = Meteor.user(),
         contributorList = user.contributor().allStaffIds();
@@ -17,7 +18,7 @@ Meteor.publish('status_report_settings', function () {
 });
 
 Meteor.publish('status_report', function (reportId) {
-  console.log('Publish: status_report');
+  logger.info('Publish: status_report');
   if (this.userId) {
     let user            = Meteor.user(),
         contributorList = user.contributor().allStaffIds();
@@ -33,7 +34,7 @@ Meteor.publish('status_report', function (reportId) {
 });
 
 Meteor.publish('recent_reports', function (sourceCollection, sourceId) {
-  console.log('Publish: recent_reports');
+  logger.info('Publish: recent_reports');
   if (this.userId) {
     let user            = Meteor.user(),
         contributorList = user.contributor().allStaffIds();
@@ -51,7 +52,7 @@ Meteor.publish('recent_reports', function (sourceCollection, sourceId) {
 });
 
 Meteor.publish('incomplete_reports', function (sourceCollection, sourceId) {
-  console.log('Publish: incomplete_reports');
+  logger.info('Publish: incomplete_reports');
   if (this.userId) {
     let user            = Meteor.user(),
         contributorList = user.contributor().allStaffIds();
@@ -69,7 +70,7 @@ Meteor.publish('incomplete_reports', function (sourceCollection, sourceId) {
 });
 
 Meteor.publish('contributor_incomplete_reports', function (contributorId) {
-  console.log('Publish: contributor_incomplete_reports', contributorId);
+  logger.info('Publish: contributor_incomplete_reports', contributorId);
   if (this.userId) {
     let user = Meteor.user();
     if (user.managesContributor(contributorId) || user.contributor()._id === contributorId) {
@@ -88,7 +89,7 @@ Meteor.publish('contributor_incomplete_reports', function (contributorId) {
 });
 
 Meteor.publish('contributor_recent_reports', function (contributorId) {
-  console.log('Publish: contributor_incomplete_reports', contributorId);
+  logger.info('Publish: contributor_incomplete_reports', contributorId);
   if (this.userId) {
     let user = Meteor.user();
     if (user.managesContributor(contributorId) || user.contributor()._id === contributorId) {

@@ -1,5 +1,6 @@
 import { Mongo }                         from 'meteor/mongo';
 import SimpleSchema                      from 'simpl-schema';
+import { logger }                        from 'meteor/austinsand:journalist-logger';
 import { ChangeTracker }                 from 'meteor/austinsand:roba-change-tracker';
 import { SchemaHelpers }                 from '../schema_helpers.js';
 import { Contributors }                  from '../contributors/contributors.js';
@@ -150,7 +151,7 @@ Teams.helpers({
       query.isManager = isManager;
     }
     
-    //console.log('rolesInProject', projectId, isManager, query, ContributorRoleDefinitions.find(query, { sort: { order: 1 } }).count());
+    //logger.info('rolesInProject', projectId, isManager, query, ContributorRoleDefinitions.find(query, { sort: { order: 1 } }).count());
     
     return ContributorRoleDefinitions.find(query, { sort: { order: 1 } })
   },
@@ -230,13 +231,13 @@ Teams.helpers({
   /**
    * Get the active capacity plan for this team (if there is one)
    */
-  activeCapacityPlan(){
+  activeCapacityPlan () {
   
   },
   /**
    * Get the chosen capacity plan option for this team (if there is one)
    */
-  chosenCapacityPlanbOption(){
+  chosenCapacityPlanbOption () {
   
   }
 });

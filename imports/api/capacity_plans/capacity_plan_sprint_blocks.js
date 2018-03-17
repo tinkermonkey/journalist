@@ -1,5 +1,6 @@
 import { Mongo }                            from 'meteor/mongo';
 import SimpleSchema                         from 'simpl-schema';
+import { logger }                           from 'meteor/austinsand:journalist-logger';
 import { Auth }                             from '../auth';
 import { CapacityPlanBlockTypes }           from './capacity_plan_block_types';
 import { Contributors }                     from '../contributors/contributors';
@@ -199,7 +200,7 @@ CapacityPlanSprintBlocks.helpers({
       CapacityPlanSprintBlocks.update(block._id, { $set: { order: previous.order } });
       this.reIndexSiblingOrder();
     } else {
-      console.error('CapacityPlanSprintBlocks.moveUp failed, no previous block found:', CapacityPlanSprintBlocks.find({
+      logger.error('CapacityPlanSprintBlocks.moveUp failed, no previous block found:', CapacityPlanSprintBlocks.find({
         optionId    : block.optionId,
         sprintNumber: block.sprintNumber,
         parentId    : block.parentId,
@@ -227,7 +228,7 @@ CapacityPlanSprintBlocks.helpers({
       CapacityPlanSprintBlocks.update(block._id, { $set: { order: next.order } });
       this.reIndexSiblingOrder();
     } else {
-      console.error('CapacityPlanSprintBlocks.moveDown failed, no next block found:', CapacityPlanSprintBlocks.find({
+      logger.error('CapacityPlanSprintBlocks.moveDown failed, no next block found:', CapacityPlanSprintBlocks.find({
         optionId    : block.optionId,
         sprintNumber: block.sprintNumber,
         parentId    : block.parentId,
@@ -242,7 +243,7 @@ CapacityPlanSprintBlocks.helpers({
    * @param sprintNumber
    */
   updateSprintNumber (sprintNumber) {
-    //console.log('CapacityPlanSprintBlocks.updateSprintNumber:', this._id, this.parentId, sprintNumber);
+    //logger.info('CapacityPlanSprintBlocks.updateSprintNumber:', this._id, this.parentId, sprintNumber);
     let block = this;
     
     CapacityPlanSprintBlocks.update(block._id, { $set: { sprintNumber: sprintNumber } });

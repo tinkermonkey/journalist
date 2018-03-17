@@ -1,5 +1,6 @@
 import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { logger }       from 'meteor/austinsand:journalist-logger';
 import { Projects }     from '../projects.js';
 import { Auth }         from '../../auth.js';
 
@@ -9,7 +10,7 @@ Meteor.methods({
    * @param title
    */
   addProject (title) {
-    console.log('addProject:', title);
+    logger.info('addProject:', title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -22,7 +23,7 @@ Meteor.methods({
         title: title
       });
     } else {
-      console.error('Non-admin user tried to add a project:', user.username, title);
+      logger.error('Non-admin user tried to add a project:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -34,7 +35,7 @@ Meteor.methods({
    * @param value
    */
   editProject (projectId, key, value) {
-    console.log('editProject:', projectId, key);
+    logger.info('editProject:', projectId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -50,7 +51,7 @@ Meteor.methods({
       // Update the project
       Projects.update(projectId, { $set: update });
     } else {
-      console.error('Non-admin user tried to edit a project:', user.username, key, value);
+      logger.error('Non-admin user tried to edit a project:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -60,7 +61,7 @@ Meteor.methods({
    * @param projectId
    */
   deleteProject (projectId) {
-    console.log('deleteProject:', projectId);
+    logger.info('deleteProject:', projectId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -71,7 +72,7 @@ Meteor.methods({
       // Delete the project
       Projects.remove(projectId);
     } else {
-      console.error('Non-admin user tried to delete a project:', user.username, projectId);
+      logger.error('Non-admin user tried to delete a project:', user.username, projectId);
       throw new Meteor.Error(403);
     }
   }

@@ -1,5 +1,6 @@
 import { Mongo }             from 'meteor/mongo';
 import SimpleSchema          from 'simpl-schema';
+import { logger }            from 'meteor/austinsand:journalist-logger';
 import { SchemaHelpers }     from '../schema_helpers.js';
 import { CollectionDetails } from '../collection_details';
 
@@ -93,7 +94,7 @@ Subtasks.helpers({
     if (details) {
       return details.collection.findOne(subtask.sourceId);
     } else {
-      console.error('Subtasks.sourceDocument failed to find collection:', subtask.sourceCollection)
+      logger.error('Subtasks.sourceDocument failed to find collection:', subtask.sourceCollection)
     }
   }
 });

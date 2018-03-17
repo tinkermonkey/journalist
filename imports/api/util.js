@@ -115,7 +115,7 @@ export const Util = {
         'Template.' + displayTemplate.templateName + '.onDestroyed(() => { ' + (displayTemplate.templateDestroyed || '') + '});' + "\n" +
         '})()';
     
-    //console.log('compileTemplate:', displayTemplate.templateName, code);
+    //logger.info('compileTemplate:', displayTemplate.templateName, code);
     Template[ displayTemplate.templateName ] = new Template(displayTemplate.templateName, eval(SpacebarsCompiler.compile(displayTemplate.templateLayout, { isTemplate: true })));
     try {
       eval(code);

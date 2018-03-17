@@ -1,8 +1,9 @@
 import { Meteor }   from 'meteor/meteor';
+import { logger }   from 'meteor/austinsand:journalist-logger';
 import { Projects } from '../projects.js';
 
 Meteor.publish('projects', function () {
-  console.log('Publish: projects');
+  logger.info('Publish: projects');
   if (this.userId) {
     return Projects.find({});
   } else {

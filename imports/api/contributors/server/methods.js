@@ -1,5 +1,6 @@
 import { Meteor }                        from 'meteor/meteor';
 import { check, Match }                  from 'meteor/check';
+import { logger }                        from 'meteor/austinsand:journalist-logger';
 import { Contributors }                  from '../contributors.js';
 import { ContributorTeamRoles }          from '../contributor_team_roles.js';
 import { ContributorProjectAssignments } from '../contributor_project_assignments.js';
@@ -14,7 +15,7 @@ Meteor.methods({
    * @param roleId
    */
   addContributor (email, name, roleId) {
-    console.log('addContributor:', email, name, roleId);
+    logger.info('addContributor:', email, name, roleId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -38,15 +39,15 @@ Meteor.methods({
         // Look for users to sync up
         let user = Meteor.users.findOne({ 'emails.address': email });
         if (user) {
-          console.log('addContributor linking user:', email);
+          logger.info('addContributor linking user:', email);
           Contributors.update(contributorId, { $set: { userId: user._id, usertype: user.usertype } })
         }
       } else {
-        console.error('Contributor already exists:', email);
+        logger.error('Contributor already exists:', email);
         throw new Meteor.Error(500);
       }
     } else {
-      console.error('Non-admin user tried to add a contributor:', user.username);
+      logger.error('Non-admin user tried to add a contributor:', user.username);
       throw new Meteor.Error(403);
     }
   },
@@ -58,7 +59,7 @@ Meteor.methods({
    * @param value
    */
   editContributor (contributorId, key, value) {
-    console.log('editContributor:', contributorId, key);
+    logger.info('editContributor:', contributorId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -89,7 +90,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a contributor:', user.username, key, value);
+      logger.error('Non-admin user tried to edit a contributor:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -99,7 +100,7 @@ Meteor.methods({
    * @param contributorId
    */
   deleteContributor (contributorId) {
-    console.log('deleteContributor:', contributorId);
+    logger.info('deleteContributor:', contributorId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -123,7 +124,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to delete a contributor:', user.username, contributorId);
+      logger.error('Non-admin user tried to delete a contributor:', user.username, contributorId);
       throw new Meteor.Error(403);
     }
   },
@@ -135,7 +136,7 @@ Meteor.methods({
    * @param roleId
    */
   addContributorTeamRole (contributorId, teamId, roleId) {
-    console.log('addContributorTeamRole:', contributorId, teamId, roleId);
+    logger.info('addContributorTeamRole:', contributorId, teamId, roleId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -152,7 +153,7 @@ Meteor.methods({
         roleId       : roleId
       });
     } else {
-      console.error('Non-admin user tried to add a contributor:', user.username);
+      logger.error('Non-admin user tried to add a contributor:', user.username);
       throw new Meteor.Error(403);
     }
   },
@@ -162,7 +163,7 @@ Meteor.methods({
    * @param teamRoleId
    */
   deleteContributorTeamRole (teamRoleId) {
-    console.log('deleteContributorTeamRole:', teamRoleId);
+    logger.info('deleteContributorTeamRole:', teamRoleId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -183,7 +184,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to delete a contributor team role:', user.username, teamRoleId);
+      logger.error('Non-admin user tried to delete a contributor team role:', user.username, teamRoleId);
       throw new Meteor.Error(403);
     }
   },
@@ -195,7 +196,7 @@ Meteor.methods({
    * @param value
    */
   editContributorTeamRole (teamRoleId, key, value) {
-    console.log('editContributorTeamRole:', teamRoleId, key);
+    logger.info('editContributorTeamRole:', teamRoleId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -218,7 +219,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a contributor team role:', user.username, key, value);
+      logger.error('Non-admin user tried to edit a contributor team role:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -231,7 +232,7 @@ Meteor.methods({
    * @param percent
    */
   addContributorProjectAssignment (contributorId, teamRoleId, projectId, percent) {
-    console.log('addContributorProjectAssignment:', contributorId, teamRoleId, projectId, percent);
+    logger.info('addContributorProjectAssignment:', contributorId, teamRoleId, projectId, percent);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -253,7 +254,7 @@ Meteor.methods({
       // Balance the contributor's assignments
       ContributorProjectAssignments.findOne(assignmentId).balanceOtherAssignments();
     } else {
-      console.error('Non-admin user tried to add a project assignment:', user.username);
+      logger.error('Non-admin user tried to add a project assignment:', user.username);
       throw new Meteor.Error(403);
     }
   },
@@ -263,7 +264,7 @@ Meteor.methods({
    * @param assignmentId
    */
   deleteContributorProjectAssignment (assignmentId) {
-    console.log('deleteContributorProjectAssignment:', assignmentId);
+    logger.info('deleteContributorProjectAssignment:', assignmentId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -281,7 +282,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to delete a project assignment:', user.username, assignmentId);
+      logger.error('Non-admin user tried to delete a project assignment:', user.username, assignmentId);
       throw new Meteor.Error(403);
     }
   },
@@ -293,7 +294,7 @@ Meteor.methods({
    * @param value
    */
   editContributorProjectAssignment (assignmentId, key, value) {
-    console.log('editContributorProjectAssignment:', assignmentId, key);
+    logger.info('editContributorProjectAssignment:', assignmentId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -321,7 +322,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a project assignment:', user.username, key, value, assignmentId);
+      logger.error('Non-admin user tried to edit a project assignment:', user.username, key, value, assignmentId);
       throw new Meteor.Error(403);
     }
   },
@@ -331,7 +332,7 @@ Meteor.methods({
    * @param title
    */
   addContributorRoleDefinition (title) {
-    console.log('addContributorRoleDefinition:', title);
+    logger.info('addContributorRoleDefinition:', title);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -344,7 +345,7 @@ Meteor.methods({
         title: title
       });
     } else {
-      console.error('Non-admin user tried to add a role definition:', user.username, title);
+      logger.error('Non-admin user tried to add a role definition:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -354,7 +355,7 @@ Meteor.methods({
    * @param definitionId
    */
   deleteContributorRoleDefinition (definitionId) {
-    console.log('deleteContributorRoleDefinition:', definitionId);
+    logger.info('deleteContributorRoleDefinition:', definitionId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -365,7 +366,7 @@ Meteor.methods({
       // Delete the contributor
       ContributorRoleDefinitions.remove(definitionId);
     } else {
-      console.error('Non-admin user tried to delete a role definition:', user.username, definitionId);
+      logger.error('Non-admin user tried to delete a role definition:', user.username, definitionId);
       throw new Meteor.Error(403);
     }
   },
@@ -377,7 +378,7 @@ Meteor.methods({
    * @param value
    */
   editContributorRoleDefinition (definitionId, key, value) {
-    console.log('editContributorRoleDefinition:', definitionId, key);
+    logger.info('editContributorRoleDefinition:', definitionId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -400,7 +401,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a role definition:', user.username, key, value, definitionId);
+      logger.error('Non-admin user tried to edit a role definition:', user.username, key, value, definitionId);
       throw new Meteor.Error(403);
     }
   }

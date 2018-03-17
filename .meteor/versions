@@ -17,6 +17,7 @@ austinsand:editable-text-area@1.0.1
 austinsand:editable-text-array@1.1.0
 austinsand:editable-text-field@1.1.0
 austinsand:journalist-clustering@1.0.0
+austinsand:journalist-logger@0.5.1
 austinsand:roba-change-tracker@1.1.2
 austinsand:roba-dialog@1.0.3
 austinsand:roba-popover@1.0.1

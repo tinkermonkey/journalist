@@ -1,5 +1,6 @@
 import { Meteor }       from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { logger }       from 'meteor/austinsand:journalist-logger';
 import { Auth }         from '../../auth';
 import { Subtasks }     from '../subtasks';
 
@@ -13,7 +14,7 @@ Meteor.methods({
    * @param order {Number} Optional
    */
   addSubtask (contributorId, sourceCollection, sourceId, title, order) {
-    console.log('addSubtask:', contributorId, sourceCollection, sourceId);
+    logger.info('addSubtask:', contributorId, sourceCollection, sourceId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -43,7 +44,7 @@ Meteor.methods({
       });
       return { subtaskId: subtaskId }
     } else {
-      console.error('Non-authorized user tried to add a subtask:', user.contributorId(), contributorId, user.username, sourceCollection, sourceId);
+      logger.error('Non-authorized user tried to add a subtask:', user.contributorId(), contributorId, user.username, sourceCollection, sourceId);
       throw new Meteor.Error(403);
     }
   },
@@ -55,7 +56,7 @@ Meteor.methods({
    * @param value
    */
   editSubtask (subtaskId, key, value) {
-    console.log('editSubtask:', subtaskId, key);
+    logger.info('editSubtask:', subtaskId, key);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -83,7 +84,7 @@ Meteor.methods({
         Subtasks.update(subtaskId, { $unset: { dateCompleted: true } });
       }
     } else {
-      console.error('Non-authorized user tried to edit a subtask:', user.username, key, value);
+      logger.error('Non-authorized user tried to edit a subtask:', user.username, key, value);
       throw new Meteor.Error(403);
     }
   },
@@ -93,7 +94,7 @@ Meteor.methods({
    * @param subtaskId
    */
   deleteSubtask (subtaskId) {
-    console.log('deleteSubtask:', subtaskId);
+    logger.info('deleteSubtask:', subtaskId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -107,7 +108,7 @@ Meteor.methods({
       // Delete the subtask
       Subtasks.remove(subtaskId);
     } else {
-      console.error('Non-authorized user tried to delete a subtask:', user.username, subtaskId);
+      logger.error('Non-authorized user tried to delete a subtask:', user.username, subtaskId);
       throw new Meteor.Error(403);
     }
   },

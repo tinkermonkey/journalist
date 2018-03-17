@@ -2,6 +2,7 @@ import { Meteor }                           from 'meteor/meteor';
 import { moment }                           from 'meteor/momentjs:moment';
 import numeral                              from 'numeral';
 import { Picker }                           from 'meteor/meteorhacks:picker';
+import { logger }                           from 'meteor/austinsand:journalist-logger';
 import { CapacityPlans }                    from '../../capacity_plans/capacity_plans';
 import { CapacityPlanOptions }              from '../../capacity_plans/capacity_plan_options';
 import { CapacityPlanReleases }             from '../../capacity_plans/capacity_plan_releases';
@@ -110,7 +111,7 @@ export const ImportExportTool = {
         filePath = path.join(handler.dataPath, fileName),
         data, collectionName;
     
-    console.info('ImportExportTool.importData importing file:', fileName);
+    logger.info('ImportExportTool.importData importing file:', fileName);
     
     // unzip it if needed
     if (filePath.match(/\.zip$/)) {
@@ -120,13 +121,13 @@ export const ImportExportTool = {
             return zipEntry.entryName
           }).sort();
       
-      //console.info('ImportExportTool.importData file list', sortedNames);
+      //logger.info('ImportExportTool.importData file list', sortedNames);
       
       if (sortedNames && sortedNames.length) {
         sortedNames.forEach((entryName) => {
           let zipEntry = zipFile.getEntry(entryName);
           if (zipEntry.entryName && zipEntry.entryName.match(/^[0-9]+.+\.json$/)) {
-            //console.info('ImportExportTool.importData reading file ' + zipEntry.entryName);
+            //logger.info('ImportExportTool.importData reading file ' + zipEntry.entryName);
             
             let input = zipFile.readAsText(zipEntry, handler.encoding);
             
@@ -136,10 +137,10 @@ export const ImportExportTool = {
               
               handler.insertDataIntoCollection(data, collectionName);
             } catch (e) {
-              console.error('ImportExportTool.importData JSON parse failed: ' + e.toString());
+              logger.error('ImportExportTool.importData JSON parse failed: ' + e.toString());
             }
           } else {
-            console.error('Zip file did not contain any zip entries: ' + filePath);
+            logger.error('Zip file did not contain any zip entries: ' + filePath);
           }
         });
       }
@@ -152,7 +153,7 @@ export const ImportExportTool = {
         
         handler.insertDataIntoCollection(data, collectionName);
       } catch (e) {
-        console.error('JSON file did not contain any entries: ' + filePath);
+        logger.error('JSON file did not contain any entries: ' + filePath);
       }
     }
     
@@ -173,7 +174,7 @@ export const ImportExportTool = {
         data.forEach((record) => {
           query[ key ] = record[ key ];
           importCount += 1;
-          //console.info('ImportExportTool.insertDataIntoCollection inserting', collectionName, key, record[ key ]);
+          //logger.info('ImportExportTool.insertDataIntoCollection inserting', collectionName, key, record[ key ]);
           
           // Updating the _id field will fail, so remove it
           if (key !== '_id') {
@@ -188,12 +189,12 @@ export const ImportExportTool = {
             collectionMap[ collectionName ].insert(record, { validate: false });
           }
         });
-        console.info('ImportExportTool inserted', importCount, 'records into', collectionName);
+        logger.info('ImportExportTool inserted', importCount, 'records into', collectionName);
       } catch (e) {
-        console.error(e);
+        logger.error(e);
       }
     } else {
-      console.error('ImportExportTool.insertDataIntoCollection failed: collection [', collectionName, '] not found');
+      logger.error('ImportExportTool.insertDataIntoCollection failed: collection [', collectionName, '] not found');
     }
   },
   /**
@@ -201,18 +202,18 @@ export const ImportExportTool = {
    * @param collectionNames (optional) A list of collection names
    */
   exportData (collectionNames) {
-    console.info('ImportExportTool.exportData:', collectionNames);
+    logger.info('ImportExportTool.exportData:', collectionNames);
     let handler = this,
         dataDir = path.join(handler.dataPath, moment().format('YYYYMMDD_HHmmss'));
     
     collectionNames = _.isArray(collectionNames) ? collectionNames : _.keys(collectionMap);
     
     if (fs.existsSync(dataDir)) {
-      console.info('ImportExportTool.exportData removing existing files');
+      logger.info('ImportExportTool.exportData removing existing files');
       fs.readdirSync(dataDir).filter((filepath) => {
         return path.basename(filepath).match(handler.fileRegex) != null
       }).forEach((filepath) => {
-        console.info('Removing file: ' + filepath);
+        logger.info('Removing file: ' + filepath);
         
         fs.unlinkSync(path.join(dataDir, filepath));
       });
@@ -220,7 +221,7 @@ export const ImportExportTool = {
     
     let zipFile = new AdmZip();
     
-    console.info('ImportExportTool.exportData exporting collections:', collectionNames);
+    logger.info('ImportExportTool.exportData exporting collections:', collectionNames);
     collectionNames.forEach((collectionName, i) => {
       let cursor   = collectionMap[ collectionName ].find({}),
           fileName = numeral(i).format('000') + '_' + collectionName + '.json';
@@ -230,17 +231,17 @@ export const ImportExportTool = {
     
     dataDir = dataDir + '.zip';
     
-    console.info('ImportExportTool.exportData creating data directory: ' + dataDir);
+    logger.info('ImportExportTool.exportData creating data directory: ' + dataDir);
     
     zipFile.writeZip(dataDir);
     
     // delete the file after a bit, the download should start automatically
     Meteor.setTimeout(function () {
       fs.unlinkSync(dataDir);
-      console.info('ImportExportTool.exportData deleted ' + dataDir);
+      logger.info('ImportExportTool.exportData deleted ' + dataDir);
     }, 25000);
     
-    console.info('ImportExportTool.exportData complete');
+    logger.info('ImportExportTool.exportData complete');
     
     return path.basename(dataDir);
   },
@@ -254,7 +255,7 @@ export const ImportExportTool = {
         output      = '',
         recordCount = cursor.count();
     
-    console.info('ImportExportTool.getPayload exporting ' + collectionName + ' (' + recordCount + ' records)');
+    logger.info('ImportExportTool.getPayload exporting ' + collectionName + ' (' + recordCount + ' records)');
     
     output += "[\n";
     cursor.forEach((record, i) => {
@@ -262,7 +263,7 @@ export const ImportExportTool = {
     });
     output += "]\n";
     
-    console.info('ImportExportTool.getPayload done Exporting ' + collectionName);
+    logger.info('ImportExportTool.getPayload done Exporting ' + collectionName);
     
     return output;
   }
