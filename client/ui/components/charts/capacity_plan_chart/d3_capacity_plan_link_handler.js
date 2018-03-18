@@ -12,8 +12,9 @@ export class D3CapacityPlanLinkHandler {
    */
   update () {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.update');
-    let self  = this,
-        chart = this.chart;
+    let self      = this,
+        chart     = this.chart,
+        startTime = Date.now();
     
     chart.bodyBounds = chart.scaleClientRect(chart.chartBody.node().getBoundingClientRect());
     
@@ -31,6 +32,8 @@ export class D3CapacityPlanLinkHandler {
     self.insertReleaseLinks();
     self.updateReleaseLinks();
     self.removeReleaseLinks();
+    
+    chart.debug() && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.update complete:', Date.now() - startTime);
   }
   
   /**
@@ -99,14 +102,17 @@ export class D3CapacityPlanLinkHandler {
   
   /**
    * Update existing links
+   * @param skipSelection Skip updating the selection, for increasing performance in animations
    */
-  updateContributorLinks () {
+  updateContributorLinks (skipSelection) {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.updateContributorLinks');
     let self      = this,
         chart     = this.chart,
         startTime = Date.now();
     
-    self.updateContributorLinkSelection();
+    if(skipSelection !== true){
+      self.updateContributorLinkSelection();
+    }
     
     // Initialize the position caches
     self.linkSourceCache = {};
@@ -115,7 +121,8 @@ export class D3CapacityPlanLinkHandler {
     self.contributorLinkSelection.attr('d', self.calculateLinkWithCache.bind(self));
     self.contributorBackgroundLinkSelection.attr('d', self.calculateLinkWithCache.bind(self));
     self.contributorHighlightLinkSelection.attr('d', self.calculateLinkWithCache.bind(self));
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.updateContributorLinks completed:', Date.now() - startTime);
+    
+    chart.debug() && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.updateContributorLinks completed:', Date.now() - startTime, skipSelection);
   }
   
   /**
@@ -239,14 +246,17 @@ export class D3CapacityPlanLinkHandler {
   
   /**
    * Update existing links
+   * @param skipSelection Skip updating the selection, for increasing performance in animations
    */
-  updateReleaseLinks () {
+  updateReleaseLinks (skipSelection) {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.updateReleaseLinks');
     let self      = this,
         chart     = this.chart,
         startTime = Date.now();
     
-    self.updateReleaseLinkSelection();
+    if(skipSelection !== true){
+      self.updateReleaseLinkSelection();
+    }
     
     self.releaseLinkSelection.attr('d', (d) => {
       try {
@@ -271,7 +281,8 @@ export class D3CapacityPlanLinkHandler {
         console.error('D3CapacityPlanChart.updateReleaseLinks failed to construct link:', e);
       }
     });
-    debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.updateReleaseLinks completed:', Date.now() - startTime);
+  
+    chart.debug() && console.log(Util.timestamp(), 'D3CapacityPlanLinkHandler.updateReleaseLinks completed:', Date.now() - startTime, skipSelection);
   }
   
   /**

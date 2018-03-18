@@ -45,6 +45,8 @@ export class D3CapacityPlanLinkDragHandler {
     };
     
     chart.drag.dragHandle.classed('in-drag', true);
+    chart.drag.dragHandle.closest('.controls-group').classed('in-drag', true);
+    chart.drag.dragHandle.closest('.controls-group-2').classed('in-drag', true);
     chart.inContributorDrag = true;
     
     trace && console.log('D3CapacityPlanLinkDragHandler.dragStart drag:', chart.drag)
@@ -75,8 +77,10 @@ export class D3CapacityPlanLinkDragHandler {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanLinkDragHandler.dragEnd:', d);
     let self  = this,
         chart = this.chart;
-    
+
     chart.drag.dragHandle.classed('in-drag', false);
+    chart.drag.dragHandle.closest('.controls-group').classed('in-drag', false);
+    chart.drag.dragHandle.closest('.controls-group-2').classed('in-drag', false);
     chart.inContributorDrag = false;
     
     chart.drag.dragLink.remove();

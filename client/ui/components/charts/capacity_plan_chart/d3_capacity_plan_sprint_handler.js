@@ -17,8 +17,9 @@ export class D3CapacityPlanSprintHandler {
    */
   update () {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanSprintHandler.update');
-    let self  = this,
-        chart = this.chart;
+    let self      = this,
+        chart     = this.chart,
+        startTime = Date.now();
     
     self.calculateSprintWidth();
     
@@ -36,6 +37,8 @@ export class D3CapacityPlanSprintHandler {
     self.insertSprintBodies();
     self.updateSprintBodies();
     self.removeSprintBodies();
+    
+    chart.debug() && console.log(Util.timestamp(), 'D3CapacityPlanSprintHandler.update complete:', Date.now() - startTime);
   }
   
   /**
@@ -305,8 +308,8 @@ export class D3CapacityPlanSprintHandler {
         chart = this.chart;
     
     // Calculate an unscaled sizing
-    chart.unscaled           = {};
-    chart.unscaled.bodyWidth = chart.svg.node()
+    chart.unscaled                  = {};
+    chart.unscaled.bodyWidth        = chart.svg.node()
         .getBoundingClientRect().width - chart.config.margin.left - chart.config.margin.right - chart.config.sprints.padding - chart.bodyLeft;
     chart.unscaled.sprintWidth      = parseInt(chart.unscaled.bodyWidth / (chart.data.sprints.length + 0.2));
     chart.unscaled.sprintBodyWidth  = parseInt(chart.unscaled.sprintWidth * 0.75);

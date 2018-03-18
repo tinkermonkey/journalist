@@ -19,8 +19,9 @@ export class D3CapacityPlanTeamHandler {
   
   update () {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.update');
-    let self  = this,
-        chart = this.chart;
+    let self      = this,
+        chart     = this.chart,
+        startTime = Date.now();
     
     self.calculateEnvelopes();
     
@@ -38,6 +39,8 @@ export class D3CapacityPlanTeamHandler {
     self.insertContributors();
     self.updateContributors();
     self.removeContributors();
+    
+    chart.debug() && console.log(Util.timestamp(), 'D3CapacityPlanTeamHandler.update complete:', Date.now() - startTime);
   }
   
   /**

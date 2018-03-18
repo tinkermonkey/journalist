@@ -41,8 +41,9 @@ export class D3CapacityPlanBlockHandler {
    */
   update () {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.update');
-    let self  = this,
-        chart = this.chart;
+    let self      = this,
+        chart     = this.chart,
+        startTime = Date.now();
     
     // update the block clip path with the latest width
     chart.contributorClipPath.select('rect')
@@ -64,6 +65,8 @@ export class D3CapacityPlanBlockHandler {
     self.insertReleaseBlocks();
     self.updateReleaseBlocks();
     self.removeReleaseBlocks();
+    
+    chart.debug() && console.log(Util.timestamp(), 'D3CapacityPlanBlockHandler.update complete:', Date.now() - startTime);
   }
   
   /**
@@ -102,8 +105,11 @@ export class D3CapacityPlanBlockHandler {
         })
         .attr('data-effort-id', (d) => {
           return d.dataId
-        })
-        .call(self.effortDrag);
+        });
+    
+    if(!chart.readOnly){
+      effortBlockEnter.call(self.effortDrag);
+    }
     
     let effortDragEnter = effortBlockEnter.append('g')
         .attr('class', 'effort-drag-group');
@@ -130,7 +136,7 @@ export class D3CapacityPlanBlockHandler {
             chart.sprintBodyLayer.selectAll('.effort-block-group').classed('effort-highlight', false);
             chart.highlightLinkLayer.selectAll('.effort-link').classed('highlight', false);
             chart.highlightLinkLayer.selectAll('.release-highlight').classed('highlight', false);
-  
+            
             // show the release links if any
             chart.highlightLinkLayer.selectAll('.release-link[data-effort-id="' + d.dataId + '"]').classed('highlight', true);
             
@@ -378,21 +384,18 @@ export class D3CapacityPlanBlockHandler {
     // Animate the repositioning
     self.effortListSelection.transition()
         .duration(500)
-        .on('end', () => {
-          chart.linkHandler.update();
-        })
         .attr('transform', self.positionEffortBlock.bind(self));
     
     // Update the links in sync with the transition
     let startTime          = Date.now();
     let linkUpdateInterval = setInterval(() => {
       if (Date.now() - startTime < 500) {
-        chart.linkHandler.updateContributorLinks();
-        chart.linkHandler.updateReleaseLinks();
+        chart.linkHandler.updateContributorLinks(true);
+        chart.linkHandler.updateReleaseLinks(true);
       } else {
         clearInterval(linkUpdateInterval);
       }
-    }, 30);
+    }, 120);
   }
   
   /**
@@ -529,7 +532,6 @@ export class D3CapacityPlanBlockHandler {
         .attr('x', controlTextX)
         .attr('y', controlTextY)
         .text('\u00D7');
-    
   }
   
   /**
@@ -723,10 +725,12 @@ export class D3CapacityPlanBlockHandler {
     // Animate the repositioning
     self.releaseBlockselection.transition()
         .duration(500)
-        .on('end', () => {
-          chart.linkHandler.update();
-        })
         .attr('transform', self.positionReleaseBlock.bind(self));
+    
+    // Run this once for the set
+    setTimeout(() => {
+      chart.linkHandler.update();
+    }, 550);
   }
   
   /**

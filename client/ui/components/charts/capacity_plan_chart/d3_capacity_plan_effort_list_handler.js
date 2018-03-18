@@ -28,8 +28,9 @@ export class D3CapacityPlanEffortListHandler {
    */
   update () {
     debug && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.update');
-    let self  = this,
-        chart = this.chart;
+    let self      = this,
+        chart     = this.chart,
+        startTime = Date.now();
     
     self.filterBlockList();
     self.positionBlocks();
@@ -43,6 +44,8 @@ export class D3CapacityPlanEffortListHandler {
     self.insertPlannedEffortListItems();
     self.updatePlannedEffortListItems();
     self.removePlannedEffortListItems();
+    
+    chart.debug() && console.log(Util.timestamp(), 'D3CapacityPlanEffortListHandler.update complete:', Date.now() - startTime);
   }
   
   /**

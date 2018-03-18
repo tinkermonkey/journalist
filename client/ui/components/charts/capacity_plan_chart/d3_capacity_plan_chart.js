@@ -23,41 +23,42 @@ export class D3CapacityPlanChart {
     
     // Merge the passed config with the default config
     this.config = _.extend({
-      minScale    : 0.33,
-      contributors: {
+      minScale     : 0.33,
+      minUpdateTime: 1000,
+      contributors : {
         height: 26,
         width : 120
       },
-      teams       : {
+      teams        : {
         padding     : 8,
         titleHeight : 30,
         titlePadding: 6
       },
-      header      : {
+      header       : {
         height: 75
       },
-      sprints     : {
+      sprints      : {
         width  : 400,
         padding: 5
       },
-      efforts     : {
+      efforts      : {
         minHeight  : 20,
         padding    : 5,
         margin     : 10,
         titleHeight: 30
       },
-      releases    : {
+      releases     : {
         width  : 35,
         height : 200,
         padding: 10
       },
-      margin      : {
+      margin       : {
         top   : 15,
         right : 45,
         bottom: 25,
         left  : 5
       },
-      shadow      : {
+      shadow       : {
         height: 20
       }
     }, config);
@@ -93,6 +94,12 @@ export class D3CapacityPlanChart {
         .attr('class', 'capacity-plan-chart')
         .style('width', '100%')
         .style('height', parseInt(containerWidth * 0.3333) + 'px');
+    
+    if (!Meteor.user().isAdmin()) {
+      // This flag is used to disable draggers
+      self.readOnly = true;
+      self.svg.classed('read-only', true)
+    }
     
     // Create a section for defining clip paths
     self.svgDefs = self.svg.append('defs');
@@ -331,11 +338,11 @@ export class D3CapacityPlanChart {
         startTime = Date.now();
     
     // Throttle the updates
-    if (Date.now() - self.lastUpdateTime < 500) {
+    if (Date.now() - self.lastUpdateTime < self.config.minUpdateTime) {
       clearTimeout(self.updateTimeout);
       self.updateTimeout = setTimeout(() => {
         self.update(data);
-      }, 500);
+      }, self.config.minUpdateTime);
       return;
     }
     self.lastUpdateTime = Date.now();
@@ -349,7 +356,7 @@ export class D3CapacityPlanChart {
       self.sprintHandler.update();
       
       // Scale down if needed and loop through again short circuiting the throttling
-      console.log(Util.timestamp(), 'D3CapacityPlanChart.update:', self.proposedScale, self.scale);
+      trace && console.log(Util.timestamp(), 'D3CapacityPlanChart.update:', self.proposedScale, self.scale);
       if (Math.abs(self.proposedScale - self.scale) > 0.05) {
         self.scale          = self.proposedScale;
         self.lastUpdateTime = 0;
@@ -407,7 +414,8 @@ export class D3CapacityPlanChart {
   parseData (data) {
     trace && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData:', this.containerId);
     let self      = this,
-        startTime = Date.now();
+        startTime = Date.now(),
+        splitTime;
     
     if (!_.isObject(data)) {
       console.error(Util.timestamp(), 'D3CapacityPlanChart.parseData passed empty data object:', this.containerId);
@@ -418,6 +426,7 @@ export class D3CapacityPlanChart {
     self.data = data;
     
     // Capture the teams
+    splitTime                       = Date.now();
     let contributorIndex            = 0;
     self.data.contributorOrder      = {};
     self.data.contributorVisibility = {};
@@ -460,10 +469,12 @@ export class D3CapacityPlanChart {
         .sort((a, b) => {
           return a.order > b.order ? 1 : -1
         });
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData teams parse:', Date.now() - splitTime);
     
     self.data.contributorIdList = _.keys(self.data.contributorOrder);
     
     // Capture the sprints
+    splitTime = Date.now();
     self.data.sprints.forEach((sprint) => {
       // Pull in the effort blocks and the data within them
       sprint.effortBlocks = self.data.option.sprintBlocks(sprint.sprintNumber, CapacityPlanBlockTypes.effort)
@@ -536,8 +547,10 @@ export class D3CapacityPlanChart {
       // Figure out the sprint title
       sprint.title = _.isString(sprint.title) && sprint.title.length ? sprint.title : 'Sprint ' + (sprint.sprintNumber + 1);
     });
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData sprints parse:', Date.now() - splitTime);
     
     // Groom the releases
+    splitTime = Date.now();
     self.data.releases.forEach((releaseBlock, i) => {
       try {
         let release        = releaseBlock.dataRecord();
@@ -569,10 +582,10 @@ export class D3CapacityPlanChart {
         console.error('D3CapacityPlanChart.parseData failed to groom release data:', e, releaseBlock);
       }
     });
-    
-    trace && console.log('D3CapacityPlanChart.parseData releaseLinks:', self.data.releaseLinks);
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData releases parse:', Date.now() - splitTime);
     
     // Groom the contributor links
+    splitTime = Date.now();
     self.data.contributorLinks.forEach((link) => {
       let sourceBlock = link.source();
       if (sourceBlock && sourceBlock.dataId) {
@@ -581,8 +594,10 @@ export class D3CapacityPlanChart {
         link.contributorId = link.sourceId
       }
     });
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData contributorLinks parse:', Date.now() - splitTime);
     
     // Groom the release links
+    splitTime = Date.now();
     self.data.releaseLinks.forEach((link) => {
       let sourceBlock = link.source(),
           targetBlock = link.target();
@@ -590,14 +605,18 @@ export class D3CapacityPlanChart {
       link.effortId  = sourceBlock && sourceBlock.dataId;
       link.releaseId = targetBlock && targetBlock.dataId;
     });
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData releaseLinks parse:', Date.now() - splitTime);
     
     // Groom the effort list
+    splitTime = Date.now();
     self.data.efforts.forEach((effort) => {
       // Replace the title with a linked item title if one exists
       effort.title = effort.itemTitle();
     });
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData effort title parse:', Date.now() - splitTime);
     
     // Sort the efforts into those in a plan and those not used yet
+    splitTime               = Date.now();
     self.data.usedEfforts   = [];
     self.data.unUsedEfforts = [];
     self.data.efforts.forEach((effort) => {
@@ -607,8 +626,10 @@ export class D3CapacityPlanChart {
         dataId   : effort._id
       }).count();
     });
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData effort usage count:', Date.now() - splitTime);
     
     // Create synthetic links for all of the efforts
+    splitTime             = Date.now();
     self.data.effortLinks = [];
     self.data.efforts.forEach((effort) => {
       // Get all of the blocks
@@ -628,6 +649,7 @@ export class D3CapacityPlanChart {
         previousBlock = _.clone(block);
       });
     });
+    debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData sythetic effort links:', Date.now() - splitTime);
     
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData completed:', Date.now() - startTime);
     return true
@@ -645,5 +667,9 @@ export class D3CapacityPlanChart {
       width : rect.width / self.scale,
       height: rect.height / self.scale
     }
+  }
+  
+  debug () {
+    return debug
   }
 }

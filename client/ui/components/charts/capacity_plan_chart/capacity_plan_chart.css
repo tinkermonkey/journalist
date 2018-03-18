@@ -107,6 +107,7 @@
 }
 
 .link-drag-handle-container.in-drag .link-drag-handle {
+  opacity : 1;
   pointer-events : none;
   stroke         : #ff009d;
   stroke-width   : 2px;
@@ -397,7 +398,9 @@ path.release-highlight.highlight {
 }
 
 .controls-hover:hover .controls-group,
-.controls-hover-2:hover .controls-group-2 {
+.controls-hover-2:hover .controls-group-2,
+.controls-group.in-drag,
+.controls-group-2.in-drag {
   opacity : 1;
 }
 
@@ -473,7 +476,7 @@ path.release-highlight.highlight {
 }
 
 .printable .team-title {
-  font-weight: bold;
+  font-weight : bold;
 }
 
 .printable .contributor-link {
@@ -509,4 +512,16 @@ path.release-highlight.highlight {
 .printable .shadow-gradient-stop-3 {
   stop-color   : #fff;
   stop-opacity : 0;
+}
+
+/**
+ * Read-only version of the chart
+ */
+.capacity-plan-chart.read-only .controls-group,
+.capacity-plan-chart.read-only .controls-group-2,
+.capacity-plan-chart.read-only .link-drag-group,
+.capacity-plan-chart.read-only .sprint-background-group,
+.capacity-plan-chart.read-only .effort-list-layer {
+  opacity : 0;
+  pointer-events: none;
 }

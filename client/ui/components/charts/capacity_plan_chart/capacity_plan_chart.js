@@ -44,7 +44,8 @@ Template.CapacityPlanChart.onRendered(() => {
   instance.$('.chart').attr('id', instance.elementId);
   
   instance.autorun(() => {
-    let context   = Template.currentData(),
+    let startTime = Date.now(),
+        context   = Template.currentData(),
         resize    = instance.resize.get(),
         option    = context.option,
         chartData = {
@@ -69,6 +70,7 @@ Template.CapacityPlanChart.onRendered(() => {
       instance.chart.generate(chartData);
     }
     
+    console.log('CapacityPlanChart data gather time:', Date.now() - startTime);
     instance.chart.update(chartData);
     return resize;
   });
