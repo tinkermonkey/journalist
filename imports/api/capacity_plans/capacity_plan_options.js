@@ -125,6 +125,7 @@ CapacityPlanOptions.helpers({
     
     return userSettings[ Meteor.userId() ] || {}
   },
+  
   /**
    * Update the all of the team settings for a user
    * @param settings
@@ -146,6 +147,7 @@ CapacityPlanOptions.helpers({
       })
     }
   },
+  
   /**
    * Get the team settings for the current user
    * @param teamId
@@ -166,6 +168,7 @@ CapacityPlanOptions.helpers({
       }
     }
   },
+  
   /**
    * Get all of the team settings for the current user sorted by display order
    */
@@ -182,6 +185,7 @@ CapacityPlanOptions.helpers({
           return a.order > b.order ? 1 : -1
         });
   },
+  
   /**
    * Update the settings for a team for a user
    * @param teamId
@@ -196,6 +200,7 @@ CapacityPlanOptions.helpers({
     
     option.updateUserSettings(userSettings);
   },
+  
   /**
    * Update the team order for this option
    * @param teamId
@@ -235,6 +240,7 @@ CapacityPlanOptions.helpers({
     
     option.updateUserSettings(userSettings);
   },
+  
   /**
    * Move a team up in the order
    * @param teamId
@@ -245,6 +251,7 @@ CapacityPlanOptions.helpers({
     
     option.updateTeamOrder(teamId, teamSettings.order - 1)
   },
+  
   /**
    * Move a team down in the order
    * @param teamId
@@ -255,6 +262,7 @@ CapacityPlanOptions.helpers({
     
     option.updateTeamOrder(teamId, teamSettings.order + 1)
   },
+  
   /**
    * Toggle team visibility for this option
    * @param teamId
@@ -269,11 +277,19 @@ CapacityPlanOptions.helpers({
     // Store the user settings
     option.updateTeamSettings(teamId, teamSettings);
   },
+  
   /**
    * Get the plan this option belongs to
    */
   plan () {
     return CapacityPlans.findOne(this.planId)
+  },
+  
+  /**
+   * Determine if this option has been selected for the plan
+   */
+  isSelectedOption () {
+    return this.plan().selectedOptionId === this._id
   },
   
   /**
