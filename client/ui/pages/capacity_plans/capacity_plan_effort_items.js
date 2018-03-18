@@ -2,7 +2,7 @@ import './capacity_plan_effort_items.html';
 import { Template }   from 'meteor/templating';
 import SimpleSchema   from 'simpl-schema';
 import { RobaDialog } from 'meteor/austinsand:roba-dialog';
-import '../../../components/editable_item_selector/editable_item_selector';
+import '../../components/editable_item_selector/editable_item_selector';
 
 /**
  * Template Helpers

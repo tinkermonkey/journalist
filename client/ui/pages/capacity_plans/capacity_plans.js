@@ -2,7 +2,7 @@ import './capacity_plans.html';
 import { Template }      from 'meteor/templating';
 import SimpleSchema      from 'simpl-schema';
 import { RobaDialog }    from 'meteor/austinsand:roba-dialog';
-import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
+import { CapacityPlans } from '../../../../imports/api/capacity_plans/capacity_plans';
 
 /**
  * Template Helpers

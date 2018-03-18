@@ -1,8 +1,8 @@
 import './capacity_plan_option_summary.html';
 import { Template }                 from 'meteor/templating';
-import '../../../components/height_limited_content/height_limited_content';
-import { CapacityPlanSprintBlocks } from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
-import { CapacityPlanBlockTypes }   from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { CapacityPlanSprintBlocks } from '../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes }   from '../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import '../../components/height_limited_content/height_limited_content';
 
 /**
  * Template Helpers

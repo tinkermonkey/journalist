@@ -4,14 +4,14 @@ import { Template }            from 'meteor/templating';
 import SimpleSchema            from 'simpl-schema';
 import { moment }              from 'meteor/momentjs:moment';
 import { RobaDialog }          from 'meteor/austinsand:roba-dialog';
-import { CapacityPlans }       from '../../../../../imports/api/capacity_plans/capacity_plans';
-import { CapacityPlanOptions } from '../../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlans }       from '../../../../imports/api/capacity_plans/capacity_plans';
+import { CapacityPlanOptions } from '../../../../imports/api/capacity_plans/capacity_plan_options';
+import { Teams }               from '../../../../imports/api/teams/teams';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
 import './capacity_plan_option_summary';
-import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
-import '../../../components/editable_date_range/editable_date_range';
-import { Teams }               from '../../../../../imports/api/teams/teams';
+import '../../components/charts/capacity_plan_chart/capacity_plan_chart';
+import '../../components/editable_date_range/editable_date_range';
 
 /**
  * Template Helpers
@@ -259,8 +259,9 @@ Template.CapacityPlan.onCreated(() => {
   instance.subscribe('imported_item_crumb_query', {});
   
   instance.autorun(() => {
-    let planId = FlowRouter.getParam('planId');
+    let planId   = FlowRouter.getParam('planId');
     
+    instance.subscribe('capacity_plan_options', planId);
     instance.subscribe('capacity_plan_releases', planId);
     instance.subscribe('capacity_plan_sprints', planId);
     instance.subscribe('capacity_plan_sprint_blocks', planId);

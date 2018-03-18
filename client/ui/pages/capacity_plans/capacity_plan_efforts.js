@@ -3,14 +3,14 @@ import { Session }                      from 'meteor/session';
 import SimpleSchema                     from 'simpl-schema';
 import { Template }                     from 'meteor/templating';
 import { RobaDialog }                   from 'meteor/austinsand:roba-dialog';
-import { CapacityPlanOptions }          from '../../../../../imports/api/capacity_plans/capacity_plan_options';
-import { CapacityPlanSprintBlocks }     from '../../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
-import { CapacityPlanBlockTypes }       from '../../../../../imports/api/capacity_plans/capacity_plan_block_types';
-import { CapacityPlanStrategicEfforts } from '../../../../../imports/api/capacity_plans/capacity_plan_strategic_efforts';
+import { CapacityPlanOptions }          from '../../../../imports/api/capacity_plans/capacity_plan_options';
+import { CapacityPlanSprintBlocks }     from '../../../../imports/api/capacity_plans/capacity_plan_sprint_blocks';
+import { CapacityPlanBlockTypes }       from '../../../../imports/api/capacity_plans/capacity_plan_block_types';
+import { CapacityPlanStrategicEfforts } from '../../../../imports/api/capacity_plans/capacity_plan_strategic_efforts';
 import './capacity_plan_effort_items';
-import '../../../components/editable_color_picker/editable_color_picker';
-import '../../../components/editable_item_selector/editable_item_selector';
-import '../../../components/editable_item_selector/editable_item_search';
+import '../../components/editable_color_picker/editable_color_picker';
+import '../../components/editable_item_selector/editable_item_selector';
+import '../../components/editable_item_selector/editable_item_search';
 
 let d3 = require('d3');
 

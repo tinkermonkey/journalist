@@ -1,12 +1,12 @@
 import './capacity_plan_summary_report.html';
 import { Template }      from 'meteor/templating';
-import { CapacityPlans } from '../../../../../imports/api/capacity_plans/capacity_plans';
+import { CapacityPlans } from '../../../../imports/api/capacity_plans/capacity_plans';
 import './capacity_plan.css';
 import './capacity_plan_releases';
 import './capacity_plan_efforts';
 import './capacity_plan_option_summary';
-import '../../../components/charts/capacity_plan_chart/capacity_plan_chart';
-import '../../../components/editable_date_range/editable_date_range';
+import '../../components/charts/capacity_plan_chart/capacity_plan_chart';
+import '../../components/editable_date_range/editable_date_range';
 
 /**
  * Template Helpers
@@ -58,12 +58,12 @@ Template.CapacityPlanSummaryReport.onCreated(() => {
   instance.currentPlanningRole = new ReactiveVar();
   
   instance.subscribe('imported_item_crumbs', {});
-  instance.subscribe('capacity_plans');
-  instance.subscribe('capacity_plan_options');
   
   instance.autorun(() => {
     let planId = FlowRouter.getParam('planId');
-    
+  
+    instance.subscribe('capacity_plan', planId);
+    instance.subscribe('capacity_plan_options', planId);
     instance.subscribe('capacity_plan_releases', planId);
     instance.subscribe('capacity_plan_sprints', planId);
     instance.subscribe('capacity_plan_sprint_blocks', planId);
