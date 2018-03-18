@@ -50,9 +50,9 @@ ChangeTracker.trackChanges(CapacityPlanSprintLinks, 'CapacityPlanSprintLinks');
 
 // Server side only for now
 CapacityPlanSprintLinks.deny({
-  remove: Auth.denyIfNotAdmin,
-  insert: Auth.denyIfNotAdmin,
-  update: Auth.denyIfNotAdmin
+  remove: Auth.denyIfNotManager,
+  insert: Auth.denyIfNotManager,
+  update: Auth.denyIfNotManager
 });
 
 /**

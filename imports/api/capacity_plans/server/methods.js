@@ -81,7 +81,7 @@ Meteor.methods({
     let capacityPlan = CapacityPlans.findOne(planId);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       if (capacityPlan) {
         let update    = {};
         update[ key ] = value;
@@ -92,7 +92,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan:', user.username, key, planId);
+      console.error('Non-manager tried to edit a capacity plan:', user.username, key, planId);
       throw new Meteor.Error(403);
     }
   },
@@ -111,7 +111,7 @@ Meteor.methods({
     check(title, String);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       let optionId = CapacityPlanOptions.insert({
         planId: planId,
         title : title
@@ -131,7 +131,7 @@ Meteor.methods({
         });
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan option:', user.username, title);
+      console.error('Non-manager tried to add a capacity plan option:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -154,7 +154,7 @@ Meteor.methods({
       // Remove all blocks for this plan
       CapacityPlanSprintBlocks.remove({ optionId: optionId });
     } else {
-      console.error('Non-admin user tried to delete a capacity plan option:', user.username, optionId);
+      console.error('Non-manager tried to delete a capacity plan option:', user.username, optionId);
       throw new Meteor.Error(403);
     }
   },
@@ -178,7 +178,7 @@ Meteor.methods({
     let capacityPlanOption = CapacityPlanOptions.findOne(optionId);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       if (capacityPlanOption) {
         let update    = {};
         update[ key ] = value;
@@ -189,7 +189,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan option:', user.username, key, optionId);
+      console.error('Non-manager tried to edit a capacity plan option:', user.username, key, optionId);
       throw new Meteor.Error(403);
     }
   },
@@ -210,14 +210,14 @@ Meteor.methods({
     check(color, String);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       CapacityPlanStrategicEfforts.insert({
         planId: planId,
         title : title,
         color : color
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan strategic effort:', user.username, title);
+      console.error('Non-manager tried to add a capacity plan strategic effort:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -234,7 +234,7 @@ Meteor.methods({
     check(effortId, String);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       // Remove all of the items mapped to this effort
       CapacityPlanStrategicEffortItems.remove({ effortId: effortId });
       
@@ -244,7 +244,7 @@ Meteor.methods({
       // Remove the effort itself
       CapacityPlanStrategicEfforts.remove(effortId);
     } else {
-      console.error('Non-admin user tried to delete a capacity plan strategic effort:', user.username, effortId);
+      console.error('Non-manager tried to delete a capacity plan strategic effort:', user.username, effortId);
       throw new Meteor.Error(403);
     }
   },
@@ -268,7 +268,7 @@ Meteor.methods({
     let capacityPlanStrategicEffort = CapacityPlanStrategicEfforts.findOne(effortId);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       if (capacityPlanStrategicEffort) {
         let update    = {};
         update[ key ] = value;
@@ -279,7 +279,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan strategic effort:', user.username, key, effortId);
+      console.error('Non-manager tried to edit a capacity plan strategic effort:', user.username, key, effortId);
       throw new Meteor.Error(403);
     }
   },
@@ -300,14 +300,14 @@ Meteor.methods({
     check(title, String);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       CapacityPlanStrategicEffortItems.insert({
         planId  : planId,
         effortId: effortId,
         title   : title
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan strategic effort item:', user.username, title);
+      console.error('Non-manager tried to add a capacity plan strategic effort item:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -324,10 +324,10 @@ Meteor.methods({
     check(itemId, String);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       CapacityPlanStrategicEffortItems.remove(itemId);
     } else {
-      console.error('Non-admin user tried to delete a capacity plan strategic effort item:', user.username, itemId);
+      console.error('Non-manager tried to delete a capacity plan strategic effort item:', user.username, itemId);
       throw new Meteor.Error(403);
     }
   },
@@ -351,7 +351,7 @@ Meteor.methods({
     let capacityPlanStrategicEffortItem = CapacityPlanStrategicEffortItems.findOne(itemId);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       if (capacityPlanStrategicEffortItem) {
         let update    = {};
         update[ key ] = value;
@@ -362,7 +362,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan strategic effort item:', user.username, key, itemId);
+      console.error('Non-manager tried to edit a capacity plan strategic effort item:', user.username, key, itemId);
       throw new Meteor.Error(403);
     }
   },
@@ -381,7 +381,7 @@ Meteor.methods({
     check(title, String);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       let releaseId = CapacityPlanReleases.insert({
         planId: planId,
         title : title
@@ -402,7 +402,7 @@ Meteor.methods({
         });
       });
     } else {
-      console.error('Non-admin user tried to add a capacity plan release:', user.username, title);
+      console.error('Non-manager tried to add a capacity plan release:', user.username, title);
       throw new Meteor.Error(403);
     }
   },
@@ -419,13 +419,13 @@ Meteor.methods({
     check(releaseId, String);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       // Remove all of the blocks for this release
       CapacityPlanSprintBlocks.remove({ dataId: releaseId });
       
       CapacityPlanReleases.remove(releaseId);
     } else {
-      console.error('Non-admin user tried to delete a capacity plan release:', user.username, releaseId);
+      console.error('Non-manager tried to delete a capacity plan release:', user.username, releaseId);
       throw new Meteor.Error(403);
     }
   },
@@ -449,7 +449,7 @@ Meteor.methods({
     let capacityPlanRelease = CapacityPlanReleases.findOne(releaseId);
     
     // Validate that the current user is an administrator
-    if (user.isAdmin()) {
+    if (user.isManager()) {
       if (capacityPlanRelease) {
         let update    = {};
         update[ key ] = value;
@@ -460,7 +460,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit a capacity plan release:', user.username, key, releaseId);
+      console.error('Non-manager tried to edit a capacity plan release:', user.username, key, releaseId);
       throw new Meteor.Error(403);
     }
   },

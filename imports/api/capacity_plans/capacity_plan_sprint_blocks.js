@@ -69,9 +69,9 @@ if (Meteor.isServer) {
 
 // Server side only for now
 CapacityPlanSprintBlocks.deny({
-  remove: Auth.denyIfNotAdmin,
-  insert: Auth.denyIfNotAdmin,
-  update: Auth.denyIfNotAdmin
+  remove: Auth.denyIfNotManager,
+  insert: Auth.denyIfNotManager,
+  update: Auth.denyIfNotManager
 });
 
 /**

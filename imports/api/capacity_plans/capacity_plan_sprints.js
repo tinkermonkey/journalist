@@ -1,5 +1,6 @@
 import { Mongo }    from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { Auth }     from '../auth';
 
 /**
  * ============================================================================
@@ -39,9 +40,7 @@ CapacityPlanSprints.deny({
   insert () {
     return true;
   },
-  update () {
-    return false;
-  }
+  update: Auth.denyIfNotManager
 });
 
 /**
