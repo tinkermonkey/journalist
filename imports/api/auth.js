@@ -17,6 +17,20 @@ export const Auth = {
   },
   
   /**
+   * Deny any user without manager privileges
+   * @param userId
+   * @param doc
+   * @returns {*|boolean}
+   */
+  denyIfNotManager (userId, doc) {
+    let user = Users.findOne(userId);
+    if (userId && user) {
+      return !user.isManager();
+    }
+    return true;
+  },
+  
+  /**
    * Deny any user without admin privileges
    * @param userId
    * @param doc
