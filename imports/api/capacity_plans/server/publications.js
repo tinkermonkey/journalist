@@ -8,6 +8,26 @@ import { CapacityPlanSprintLinks }          from '../capacity_plan_sprint_links'
 import { CapacityPlanStrategicEfforts }     from '../capacity_plan_strategic_efforts';
 import { CapacityPlanStrategicEffortItems } from '../capacity_plan_strategic_effort_items';
 
+Meteor.publish('active_capacity_plans', function () {
+  console.info('Publish: active_capacity_plans');
+  if (this.userId) {
+    return CapacityPlans.find({ isActive: true });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('capacity_plan', function (planId) {
+  console.info('Publish: capacity_plan');
+  if (this.userId) {
+    return CapacityPlans.find({ _id: planId });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
 Meteor.publish('capacity_plans', function () {
   console.info('Publish: capacity_plans');
   if (this.userId) {
@@ -18,8 +38,18 @@ Meteor.publish('capacity_plans', function () {
   }
 });
 
-Meteor.publish('capacity_plan_options', function () {
+Meteor.publish('capacity_plan_options', function (planId) {
   console.info('Publish: capacity_plan_options');
+  if (this.userId) {
+    return CapacityPlanOptions.find({ planId: planId });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
+Meteor.publish('all_capacity_plan_options', function () {
+  console.info('Publish: all_capacity_plan_options');
   if (this.userId) {
     return CapacityPlanOptions.find({});
   } else {

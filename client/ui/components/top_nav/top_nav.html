@@ -56,6 +56,20 @@
               </ul>
             </li>
             
+            {{#if capacityPlans.count }}
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                  Capacity Plans
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  {{#each capacityPlans}}
+                    <li><a href="{{pathFor 'CapacityPlanOption' planId=_id optionId=selectedOptionId}}">{{title}}</a></li>
+                  {{/each}}
+                </ul>
+              </li>
+            {{/if}}
+            
             {{#if userIsManager}}
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button">
@@ -102,11 +116,13 @@
             {{/if}}
           </ul>
           
-          <form class="navbar-form navbar-left">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Search">
-            </div>
-          </form>
+          {{#if 0}}
+            <form class="navbar-form navbar-left">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+              </div>
+            </form>
+          {{/if}}
           
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -140,7 +156,7 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="{{pathFor 'UserProfile'}}">{{userName}}</a></li>
+                <li><a href="{{pathFor 'UserProfile'}}">User Profile - {{userName}}</a></li>
                 <li class="divider" role="separator"></li>
                 <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
               </ul>

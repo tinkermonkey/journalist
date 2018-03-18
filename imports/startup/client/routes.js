@@ -11,10 +11,6 @@ import '../../../client/ui/pages/admin/contributors/admin_contributors';
 import '../../../client/ui/pages/admin/admin_home/admin_home';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields';
-import '../../../client/ui/pages/admin/capacity_plans/capacity_plan';
-import '../../../client/ui/pages/admin/capacity_plans/capacity_plans';
-import '../../../client/ui/pages/admin/capacity_plans/capacity_plan_report';
-import '../../../client/ui/pages/admin/capacity_plans/capacity_plan_summary_report';
 import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions';
 import '../../../client/ui/pages/admin/display_templates/display_templates';
 import '../../../client/ui/pages/admin/import_export/import_export';
@@ -27,6 +23,10 @@ import '../../../client/ui/pages/admin/projects/admin_project_integration';
 import '../../../client/ui/pages/admin/teams/admin_team';
 import '../../../client/ui/pages/admin/teams/admin_teams';
 import '../../../client/ui/pages/admin/users/admin_users';
+import '../../../client/ui/pages/capacity_plans/capacity_plan';
+import '../../../client/ui/pages/capacity_plans/capacity_plans';
+import '../../../client/ui/pages/capacity_plans/capacity_plan_report';
+import '../../../client/ui/pages/capacity_plans/capacity_plan_summary_report';
 import '../../../client/ui/pages/contributor/contributor_home';
 import '../../../client/ui/pages/effort/effort';
 import '../../../client/ui/pages/project/project_home';
@@ -118,6 +118,41 @@ FlowRouter.route('/user_profile', {
   }
 });
 
+FlowRouter.route('/admin/capacity_plans', {
+  name: 'CapacityPlans',
+  action () {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'CapacityPlans' });
+  }
+});
+
+FlowRouter.route('/admin/capacity_plan/:planId', {
+  name: 'CapacityPlan',
+  action () {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'CapacityPlan' });
+  }
+});
+
+FlowRouter.route('/admin/capacity_plan/:planId/:optionId', {
+  name: 'CapacityPlanOption',
+  action () {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'CapacityPlan' });
+  }
+});
+
+FlowRouter.route('/admin/capacity_plan_report/:planId', {
+  name: 'CapacityPlanReport',
+  action () {
+    BlazeLayout.render('ReportLayout', { main: 'CapacityPlanReport' });
+  }
+});
+
+FlowRouter.route('/admin/capacity_plan_summary_report/:planId', {
+  name: 'CapacityPlanSummaryReport',
+  action () {
+    BlazeLayout.render('ReportLayout', { main: 'CapacityPlanSummaryReport' });
+  }
+});
+
 /**
  *
  * Report Routes
@@ -167,41 +202,6 @@ FlowRouter.route('/admin/integration_server/:serverId', {
   name: 'IntegrationServer',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'IntegrationServer' });
-  }
-});
-
-FlowRouter.route('/admin/capacity_plans', {
-  name: 'CapacityPlans',
-  action () {
-    BlazeLayout.render('AdminLayout', { main: 'CapacityPlans' });
-  }
-});
-
-FlowRouter.route('/admin/capacity_plan/:planId', {
-  name: 'CapacityPlan',
-  action () {
-    BlazeLayout.render('AdminLayout', { main: 'CapacityPlan' });
-  }
-});
-
-FlowRouter.route('/admin/capacity_plan/:planId/:optionId', {
-  name: 'CapacityPlanOption',
-  action () {
-    BlazeLayout.render('AdminLayout', { main: 'CapacityPlan' });
-  }
-});
-
-FlowRouter.route('/admin/capacity_plan_report/:planId', {
-  name: 'CapacityPlanReport',
-  action () {
-    BlazeLayout.render('ReportLayout', { main: 'CapacityPlanReport' });
-  }
-});
-
-FlowRouter.route('/admin/capacity_plan_summary_report/:planId', {
-  name: 'CapacityPlanSummaryReport',
-  action () {
-    BlazeLayout.render('ReportLayout', { main: 'CapacityPlanSummaryReport' });
   }
 });
 

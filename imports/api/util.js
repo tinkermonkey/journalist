@@ -88,6 +88,7 @@ export const Util = {
    * @param instance
    */
   standardSubscriptions (instance) {
+    instance.subscribe('active_capacity_plans');
     instance.subscribe('contributors');
     instance.subscribe('contributor_role_definitions');
     instance.subscribe('contributor_team_roles');

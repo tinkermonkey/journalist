@@ -122,6 +122,10 @@ table.table .table {
   width : 100%;
 }
 
+.auto-width {
+  width: auto;
+}
+
 .center-content-banner {
   font-size   : 84pt;
   font-weight : bold;

@@ -4,6 +4,7 @@ import { Meteor }              from 'meteor/meteor';
 import { Template }            from 'meteor/templating';
 import { SystemHealthMetrics } from '../../../../imports/api/system_health_metrics/system_health_metrics';
 import './status_menu_item'
+import { CapacityPlans }       from '../../../../imports/api/capacity_plans/capacity_plans';
 
 /**
  * Template Helpers
@@ -19,13 +20,13 @@ Template.TopNav.helpers({
   meteorServerStatus () {
     let status = Meteor.status();
     return {
-      title: 'Journalist Server',
+      title    : 'Journalist Server',
       isHealthy: status.connected
     }
   },
   statusSummary () {
     let serverStatus = Meteor.status(),
-        status = SystemHealthMetrics.find({}).map((metric) => {
+        status       = SystemHealthMetrics.find({}).map((metric) => {
           return metric.isHealthy
         }).reduce((acc, val) => {
           return acc && val
@@ -34,6 +35,9 @@ Template.TopNav.helpers({
       title    : status === true ? 'System Healthy' : 'System Unhealthy',
       isHealthy: status
     }
+  },
+  capacityPlans () {
+    return CapacityPlans.find({ isActive: true, selectedOptionId: { $exists: true } }, { sort: { title: 1 } })
   }
 });
 
