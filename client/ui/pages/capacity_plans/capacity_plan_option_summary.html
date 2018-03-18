@@ -5,6 +5,9 @@
         <tr>
           <td class="option-summary-title">
             <h2>{{title}}</h2>
+            {{#if isSelectedOption }}
+              <label class="label label-large label-success">Selected Option</label>
+            {{/if}}
           </td>
           <td class="option-summary-body">
             {{#each releases}}
