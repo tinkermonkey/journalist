@@ -1,5 +1,6 @@
 import './add_record_form.html';
 import { Template } from 'meteor/templating';
+import { AutoForm } from 'meteor/aldeed:autoform';
 
 /**
  * Template Helpers

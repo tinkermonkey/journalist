@@ -3,9 +3,31 @@
     {{#with currentUser}}
       {{setPageTitle 'Journalist - User Profile' }}
       <h1>{{profile.name}}</h1>
-      {{#each emails}}
-        {{address}}
-      {{/each}}
+      
+      <h2>Emails</h2>
+      <table class="table data-table auto-width">
+        {{#each emails}}
+          <tr class="data-table-row">
+            <td>
+              {{address}}
+            </td>
+            <td>
+              {{#unless 1}}
+                <button class="btn btn-xs btn-success btn-verify-email">
+                  <span class="glyphicon glyphicon-send"></span>
+                  Verify
+                </button>
+              {{/unless}}
+            </td>
+          </tr>
+        {{/each}}
+      </table>
+      
+      <h2>Password</h2>
+      <button class="btn btn-primary btn-change-password">
+        <span class="glyphicon glyphicon-refresh"></span>
+        Change Password
+      </button>
     {{/with}}
   </div>
 </template>

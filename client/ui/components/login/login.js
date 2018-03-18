@@ -20,10 +20,12 @@ Template.Login.events({
     
     if (username && password && e.target.checkValidity()) {
       // Try logging in locally
-      //console.log('Logging in with password');
+      console.log('Logging in with password');
       Meteor.loginWithPassword(username, password, function (error, response) {
         if (error && error.error === 403) {
           // Try logging in via one of the auth providers
+          console.log('Login failed');
+          instance.$('.login-error').text('Please enter a valid email address and password');
         } else if (error) {
           console.error('Login error: ', error);
           instance.$('.login-error').text(error.message);
@@ -51,7 +53,7 @@ Template.Login.events({
         password = instance.$('.login-password').val();
     
     if (username && password) {
-      console.log('Signing-up in with password');
+      console.log('Signing-up with password');
       /*
       Accounts.createUser({
         username: username,
