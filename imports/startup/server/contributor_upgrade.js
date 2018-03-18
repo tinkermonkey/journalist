@@ -4,6 +4,7 @@ import { CapacityPlanSprintBlocks }      from '../../api/capacity_plans/capacity
 import { CapacityPlanBlockTypes }        from '../../api/capacity_plans/capacity_plan_block_types';
 import { ContributorProjectAssignments } from '../../api/contributors/contributor_project_assignments';
 import { ContributorTeamRoles }          from '../../api/contributors/contributor_team_roles';
+import { Contributors }                  from '../../api/contributors/contributors';
 
 let upgradeCollections = [
   {
@@ -40,3 +41,10 @@ let upgradeCollections = [
     }
   }
 ];
+
+// Algorithm to convert all contributors to users
+function convertContributors () {
+  Contributors.find({ converted: { $ne: true } }).forEach((contributor) => {
+  
+  })
+}
