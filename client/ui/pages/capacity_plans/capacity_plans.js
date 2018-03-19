@@ -66,7 +66,9 @@ Template.CapacityPlans.events({
  * Template Created
  */
 Template.CapacityPlans.onCreated(() => {
-
+  let instance = Template.instance();
+  
+  instance.subscribe('capacity_plans')
 });
 
 /**
