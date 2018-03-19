@@ -74,6 +74,7 @@
                     {{/each}}
                   </ul>
                 {{/if}}
+                
                 <ul class="nav nav-pills pull-right">
                   {{#each capacityPlanRoles}}
                     <li role="presentation" class="{{#if isCurrentPlanningRole this._id}}active{{/if}} capacity-plan-role-nav">
@@ -95,50 +96,61 @@
           </div>
         {{/with}}
       </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-3">
-            <h2>Context</h2>
-            <table class="table data-table table-striped">
-              <tbody>
-              <tr>
-                <td>Teams</td>
-                <td>{{> EditableRecordChecklist teamSelectorContext query=availableTeamsQuery dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams' cssClass='capacity-plan' }}</td>
-              </tr>
-              <tr>
-                <td>First Sprint Date</td>
-                <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan' }}</td>
-              </tr>
-              {{#with currentOption }}
+      
+      {{#if userIsManager}}
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3">
+              <h2>Context</h2>
+              <table class="table data-table table-striped">
+                <tbody>
                 <tr>
-                  <td>Sprint Count</td>
-                  <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"  cssClass='capacity-plan-option' }}</td>
+                  <td>Teams</td>
+                  <td>{{> EditableRecordChecklist teamSelectorContext query=availableTeamsQuery dataKey='teamIds' value=teamIdsSorted emptyText='Select Teams' cssClass='capacity-plan' }}</td>
                 </tr>
                 <tr>
-                  <td>Sprint Length</td>
-                  <td>{{> EditableEnumSelector enum=sprintLengthOptions dataKey='sprintLength' value=sprintLength emptyText='Sprint Length' mode='popup'  cssClass='capacity-plan-option'}}</td>
+                  <td>First Sprint Date</td>
+                  <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan' }}</td>
                 </tr>
-              {{/with}}
-              </tbody>
-              <tr>
-                <td>Selected Option</td>
-                <td>{{> EditableRecordSelector selectedOptionContext }}</td>
-              </tr>
-            </table>
-          
-          </div>
-          <div class="col-md-9">
-            {{> CapacityPlanReleases }}
+                {{#with currentOption }}
+                  <tr>
+                    <td>Sprint Count</td>
+                    <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"  cssClass='capacity-plan-option' }}</td>
+                  </tr>
+                  <tr>
+                    <td>Sprint Length</td>
+                    <td>{{> EditableEnumSelector enum=sprintLengthOptions dataKey='sprintLength' value=sprintLength emptyText='Sprint Length' mode='popup'  cssClass='capacity-plan-option'}}</td>
+                  </tr>
+                {{/with}}
+                </tbody>
+                <tr>
+                  <td>Selected Option</td>
+                  <td>{{> EditableRecordSelector selectedOptionContext }}</td>
+                </tr>
+              </table>
+            
+            </div>
+            <div class="col-md-9">
+              {{> CapacityPlanReleases }}
+            </div>
           </div>
         </div>
-      </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 capacity-plan-efforts-container">
-            {{> CapacityPlanEfforts }}
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12 capacity-plan-efforts-container">
+              {{> CapacityPlanEfforts }}
+            </div>
           </div>
         </div>
-      </div>
+      {{else}}
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              {{> CapacityPlanOptionSummary capacityPlan=this showCharts=false }}
+            </div>
+          </div>
+        </div>
+      {{/if}}
     {{else}}
       {{> NotFound}}
     {{/with}}
