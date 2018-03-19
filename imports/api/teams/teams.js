@@ -226,17 +226,5 @@ Teams.helpers({
     } else if (team.owner) {
       return team.owner
     }
-  },
-  /**
-   * Get the active capacity plan for this team (if there is one)
-   */
-  activeCapacityPlan(){
-  
-  },
-  /**
-   * Get the chosen capacity plan option for this team (if there is one)
-   */
-  chosenCapacityPlanbOption(){
-  
   }
 });
