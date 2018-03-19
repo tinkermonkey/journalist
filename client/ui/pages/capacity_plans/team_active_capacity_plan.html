@@ -1,0 +1,21 @@
+<template name="TeamActiveCapacityPlan">
+  {{#if Template.subscriptionsReady }}
+    {{#with chosenCapacityPlanOption}}
+      {{#if teamHasContributions .. this}}
+        <h2>{{plan.title}}</h2>
+        <div>
+          {{> CapacityPlanChart option=this roleIds=planRoles teamId=../_id cssClass='printable' }}
+        </div>
+      {{/if}}
+    {{else}}
+      <div class="flex-vertical full-height" style="justify-content: center;">
+        <div class="center-content-banner">404</div>
+        <div>
+          There is no active plan for this team
+        </div>
+      </div>
+    {{/with}}
+  {{else}}
+    {{> RobaSpinner rainbow=true}}
+  {{/if}}
+</template>
