@@ -582,6 +582,21 @@ export class D3CapacityPlanChart {
         console.error('D3CapacityPlanChart.parseData failed to groom release data:', e, releaseBlock);
       }
     });
+    
+    // If this is for a single team, show only the released they care about
+    if (self.data.teamId) {
+      let blockIds       = _.flatten(self.data.sprints.map((sprint) => {
+        return sprint.effortBlocks.map((block) => {
+          return block._id
+        })
+      }));
+
+      self.data.releases = self.data.releases.filter((releaseBlock) => {
+        return releaseBlock.targetLinks().fetch().filter((link) => {
+          return _.contains(blockIds, link.sourceId)
+        }).length > 0
+      });
+    }
     debug && console.log(Util.timestamp(), 'D3CapacityPlanChart.parseData releases parse:', Date.now() - splitTime);
     
     // Groom the contributor links
