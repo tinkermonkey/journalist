@@ -86,8 +86,15 @@ Meteor.methods({
         let update    = {};
         update[ key ] = value;
         
-        // Update the contributor
+        // Update the record
         CapacityPlans.update(planId, { $set: update });
+        
+        // If the start date was edited, update the sprints
+        if(key === 'startDate'){
+          capacityPlan.options().forEach((option) => {
+            option.groomSprints();
+          })
+        }
       } else {
         throw new Meteor.Error(404);
       }
@@ -183,7 +190,7 @@ Meteor.methods({
         let update    = {};
         update[ key ] = value;
         
-        // Update the contributor
+        // update the record
         CapacityPlanOptions.update(optionId, { $set: update });
       } else {
         throw new Meteor.Error(404);
@@ -273,7 +280,7 @@ Meteor.methods({
         let update    = {};
         update[ key ] = value;
         
-        // Update the contributor
+        // update the record
         CapacityPlanStrategicEfforts.update(effortId, { $set: update });
       } else {
         throw new Meteor.Error(404);
@@ -356,7 +363,7 @@ Meteor.methods({
         let update    = {};
         update[ key ] = value;
         
-        // Update the contributor
+        // update the record
         CapacityPlanStrategicEffortItems.update(itemId, { $set: update });
       } else {
         throw new Meteor.Error(404);
@@ -454,7 +461,7 @@ Meteor.methods({
         let update    = {};
         update[ key ] = value;
         
-        // Update the contributor
+        // update the record
         CapacityPlanReleases.update(releaseId, { $set: update });
       } else {
         throw new Meteor.Error(404);
