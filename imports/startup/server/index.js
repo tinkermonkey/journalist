@@ -34,12 +34,15 @@ Meteor.startup(() => {
   console.log('Cluster master:', Clustering.isMaster());
   console.log('==============================================================================');
   
+  // Only run these on the cluster master
   if (Clustering.isMaster()) {
     SyncedCron.stop();
     SyncedCron.start();
     HealthTracker.init();
-    IntegrationService.start();
   }
+  
+  // This needs to be running on all servers for the admin UI to work
+  IntegrationService.start();
   
   // Initialize the upload server
   console.log('Upload server upload directory:', os.tmpdir());
@@ -85,5 +88,5 @@ Meteor.startup(() => {
     });
   }
   
-  console.log('===========================');
+  console.log('==============================================================================');
 });
