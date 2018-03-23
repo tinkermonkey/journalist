@@ -3,6 +3,7 @@ import { Template }           from 'meteor/templating';
 import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
 import { ImportedItems }      from '../../../../../imports/api/imported_items/imported_items';
 import { ImportedItemCounts } from './imported_item_counts';
+import '../../../components/imported_items/imported_item_preview_link';
 
 let pageSize = 50;
 

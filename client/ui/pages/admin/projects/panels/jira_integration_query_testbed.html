@@ -114,11 +114,11 @@
                     <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
                       <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right' }}</td>
                       <td>{{identifier}}</td>
-                      <td class="force-wrap">{{title}}</td>
+                      <td class="no-word-break">{{title}}</td>
                       <td class="force-wrap">{{{description}}}</td>
-                      <td class="force-wrap">{{contributorName owner}}</td>
+                      <td class="no-word-break">{{contributorName owner}}</td>
                       <td>{{dateFormat dateModified}}</td>
-                      <td>{{contributorName createdBy}}</td>
+                      <td class="no-word-break">{{contributorName createdBy}}</td>
                       <td>{{dateFormat dateCreated}}</td>
                     </tr>
                   {{/each}}
