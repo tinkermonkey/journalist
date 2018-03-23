@@ -1,0 +1,16 @@
+<template name="ImportedItemPreview">
+  {{#if Template.subscriptionsReady}}
+    {{#with item}}
+      {{> Template.dynamic template=itemTemplate }}
+    {{else}}
+      <div>
+        <div class="center-content-banner">404</div>
+        <div>
+          I am not picking up what you are putting down
+        </div>
+      </div>
+    {{/with}}
+  {{else}}
+    {{> RobaSpinner rainbow=true }}
+  {{/if}}
+</template>

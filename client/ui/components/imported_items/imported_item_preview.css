@@ -1,0 +1,24 @@
+.imported-item-preview {
+
+}
+
+.imported-item-id {
+  color: #298cff;
+  font-weight: bold;
+  font-size: 2em;
+  margin-right: 1em;
+}
+
+.imported-item-title {
+  color: #666666;
+  font-size: 2em;
+}
+
+.imported-item-description-container {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.imported-item-description {
+
+}

@@ -1,0 +1,5 @@
+<template name="ImportedItemPreviewLink">
+  {{#with itemCrumb}}
+    {{> QuickPopover contentTemplate=previewTemplate data=_id text=identifier }}
+  {{/with}}
+</template>

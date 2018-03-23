@@ -1,0 +1,20 @@
+<template name="DefaultImportedItemPreview">
+  <div class="container-fluid imported-item-preview">
+    <div class="flex">
+      <div class="imported-item-id no-wrap">
+        {{identifier}}
+      </div>
+      <div class="imported-item-title">
+        {{title}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 imported-item-description-container">
+        <label>Description</label>
+        <div class="imported-item-description">
+          {{#markdown}}{{{description}}}{{/markdown}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
