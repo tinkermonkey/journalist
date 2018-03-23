@@ -21,6 +21,7 @@ const JiraConnector    = require('jira-connector'),
         'cookie_jar'
       ],
       defaultExpand    = [
+        'renderedFields',
         'attachment',
         'changelog',
         'comments',
