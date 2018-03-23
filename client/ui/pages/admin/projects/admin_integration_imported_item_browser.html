@@ -15,7 +15,7 @@
   </div>
   
   {{#if reprocessing}}
-    {{> RobaSpinner rainbow=true scale=0.5 }}
+    {{> RobaSpinner rainbow=true }}
   {{/if}}
   
   <div>
@@ -59,18 +59,20 @@
     </tr>
     </thead>
     <tbody>
-    {{#if Template.subscriptionsReady}} {{#each importedItems}}
-      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
-        <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right'}}</td>
-        <td>{{identifier}}</td>
-        <td class="force-wrap">{{title}}</td>
-        <td class="force-wrap">{{{description}}}</td>
-        <td class="force-wrap">{{contributorName owner}}</td>
-        <td>{{dateFormat dateModified}}</td>
-        <td>{{contributorName createdBy}}</td>
-        <td>{{dateFormat dateCreated}}</td>
-      </tr>
-    {{/each}} {{/if}}
+    {{#if Template.subscriptionsReady}}
+      {{#each importedItems}}
+        <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
+          <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right'}}</td>
+          <td>{{> ImportedItemPreviewLink _id }}</td>
+          <td class="force-wrap no-word-break" style="min-width: 100px;">{{title}}</td>
+          <td class="force-wrap">{{{description}}}</td>
+          <td class="no-word-break">{{contributorName owner}}</td>
+          <td>{{dateFormat dateModified}}</td>
+          <td class="no-word-break">{{contributorName createdBy}}</td>
+          <td>{{dateFormat dateCreated}}</td>
+        </tr>
+      {{/each}}
+    {{/if}}
     </tbody>
   </table>
   {{#unless Template.subscriptionsReady}} {{> RobaSpinner rainbow=true}} {{/unless}}
