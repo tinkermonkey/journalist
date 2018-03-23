@@ -29,7 +29,12 @@ Template.EditablePopover.events({
         let popoverContents = $('.editable-popover-contents');
         
         // Render the search form into the popover
-        instance.childView = Blaze.renderWithData(context.contentTemplate, context, popoverContents.get(0));
+        try {
+          instance.childView = Blaze.renderWithData(context.contentTemplate, context, popoverContents.get(0));
+        } catch (e) {
+          console.error('QuickPopover rendering content template failed:', e);
+          RobaDialog.error('QuickPopover rendering content template failed:' + e.toString());
+        }
         
         // Add a custom class
         popoverContents.closest('.popover').addClass('editable-popover');
