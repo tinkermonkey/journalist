@@ -15,7 +15,7 @@ Meteor.publish('integration_imported_items', function (integrationId, start, lim
     });
   } else {
     this.ready();
-    return [];
+    return []
   }
 });
 
@@ -25,7 +25,17 @@ Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
     return ImportedItemCrumbs.find({ integrationId: integrationId });
   } else {
     this.ready();
-    return [];
+    return []
+  }
+});
+
+Meteor.publish('imported_item', function (itemId) {
+  console.log('Publish: imported_item', itemId);
+  if (this.userId && itemId) {
+    return ImportedItems.find({ _id: itemId })
+  } else {
+    this.ready();
+    return []
   }
 });
 
@@ -35,7 +45,7 @@ Meteor.publish('imported_item_query', function (query, options) {
     return ImportedItems.find(query, options);
   } else {
     this.ready();
-    return [];
+    return []
   }
 });
 
@@ -45,7 +55,7 @@ Meteor.publish('imported_item_crumb_query', function (query) {
     return ImportedItemCrumbs.find(query);
   } else {
     this.ready();
-    return [];
+    return []
   }
 });
 
@@ -55,7 +65,7 @@ Meteor.publish('team_imported_item_crumbs', function (teamId) {
     return ImportedItemCrumbs.find({ teamId: teamId });
   } else {
     this.ready();
-    return [];
+    return []
   }
 });
 
@@ -64,7 +74,7 @@ Meteor.publish('integration_imported_item_count', function (integrationId) {
   
   if (!this.userId) {
     this.ready();
-    return [];
+    return []
   }
   
   let self         = this,
