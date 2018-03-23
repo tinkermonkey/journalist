@@ -33,13 +33,13 @@ export const Integration = new SimpleSchema({
     type: String,
     optional: true
   },
-  // The _id of the integration display template to use for previewing items
-  previewDisplayTemplateId: {
+  // The templateName of the integration display template to use for previewing items
+  previewDisplayTemplate: {
     type: String,
     optional: true
   },
-  // The _id of the integration display template to use for details views of items
-  detailDisplayTemplateId: {
+  // The templateName of the integration display template to use for details views of items
+  detailDisplayTemplate: {
     type: String,
     optional: true
   },
