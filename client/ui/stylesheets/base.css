@@ -83,6 +83,19 @@ table.table .table {
   white-space     : pre-wrap;
 }
 
+.no-word-break {
+  word-break : keep-all;
+}
+
+.codeContent pre,
+.panelContent pre {
+  word-break      : break-all;
+  overflow-wrap   : break-word;
+  word-wrap       : break-word;
+  word-break-wrap : all;
+  white-space     : pre-wrap;
+}
+
 .full-page {
   margin   : 0;
   padding  : 0;
@@ -123,7 +136,7 @@ table.table .table {
 }
 
 .auto-width {
-  width: auto;
+  width : auto;
 }
 
 .center-content-banner {
