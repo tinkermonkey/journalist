@@ -47,20 +47,20 @@
               <tr class="show-controls-on-hover">
                 <td>Preview Template</td>
                 <td>
-                  <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=previewDisplayTemplateId }}">
+                  <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateName=previewDisplayTemplate }}">
                     <span class="glyphicon glyphicon-folder-open"></span>
                   </a>
                 </td>
-                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'previewDisplayTemplateId' }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="previewDisplayTemplate" value=previewDisplayTemplate templateType=DisplayTemplateTypes.itemPreview }}</td>
               </tr>
               <tr class="show-controls-on-hover">
                 <td>Detail Template</td>
                 <td>
-                  <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateId=detailDisplayTemplateId }}">
+                  <a class="hidden-control" href="{{pathFor 'DisplayTemplate' templateName=detailDisplayTemplate }}">
                     <span class="glyphicon glyphicon-folder-open"></span>
                   </a>
                 </td>
-                <td>{{> EditableRecordSelector displayTemplateSelectorContext 'detailDisplayTemplateId' }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="detailDisplayTemplate" value=detailDisplayTemplate templateType=DisplayTemplateTypes.itemView }}</td>
               </tr>
               <tr class="show-controls-on-hover">
                 <td>Calculated Fields</td>

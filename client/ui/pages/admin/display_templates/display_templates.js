@@ -30,7 +30,7 @@ Template.DisplayTemplates.helpers({
     }
   },
   unplublishedTemplates () {
-    return DisplayTemplates.find({ $where : "this.currentVersion > this.publishedVersion" }, { sort: { templateName: 1 } })
+    return DisplayTemplates.find({ $where: "this.currentVersion > this.publishedVersion" }, { sort: { templateName: 1 } })
   },
   orphanedTemplates () {
     return DisplayTemplates.find({ parentGroup: { $exists: false } }, { sort: { templateName: 1 } })
@@ -312,7 +312,15 @@ Template.DisplayTemplates.onRendered(() => {
           }
         })),
         groupId       = FlowRouter.getParam('groupId'),
-        templateId    = FlowRouter.getParam('templateId');
+        templateId    = FlowRouter.getParam('templateId'),
+        templateName  = FlowRouter.getParam('templateName');
+    
+    if (templateName) {
+      let template = DisplayTemplates.findOne({ templateName: templateName });
+      if (template) {
+        FlowRouter.go(FlowRouter.path('DisplayTemplate', { templateId: template._id }));
+      }
+    }
     
     console.log('DisplayTemplates treeData:', treeData);
     
