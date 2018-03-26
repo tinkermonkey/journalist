@@ -1,5 +1,7 @@
 import './default_imported_item_preview.html';
 import { Template } from 'meteor/templating';
+import './imported_item_status_summary';
+import './imported_item_timeline';
 
 /**
  * Template Helpers

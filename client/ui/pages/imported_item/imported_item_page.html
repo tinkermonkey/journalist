@@ -1,0 +1,11 @@
+<template name="ImportedItemPage">
+  {{#if Template.subscriptionsReady }}
+    {{#with item}}
+      <div class="container">
+        {{> ImportedItem _id }}
+      </div>
+    {{else}}
+      {{> NotFound }}
+    {{/with}}
+  {{/if}}
+</template>
