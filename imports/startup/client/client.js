@@ -115,6 +115,10 @@ Template.registerHelper('contributorName', function (contributorId) {
     return contributor.name;
   }
 });
+
+/**
+ * General helpers
+ */
 Template.registerHelper('renderJson', function (data) {
   if (data) {
     return JSON.stringify(data, null, '\t')
@@ -125,6 +129,10 @@ Template.registerHelper('camelToTitle', function (value) {
     return Util.camelToTitle(value);
   }
 });
+
+/**
+ * Renderers
+ */
 Template.registerHelper('renderUserType', function () {
   let usertype = (this && this.usertype) || this;
   if (usertype !== null) {
@@ -146,6 +154,10 @@ Template.registerHelper('renderIntegrationType', function (type) {
     return Util.capitalize(_.invert(IntegrationTypes)[ type ]);
   }
 });
+
+/**
+ * Selector helpers
+ */
 Template.registerHelper('contributorSelectorContext', function (params) {
   let record  = this,
       context = {
