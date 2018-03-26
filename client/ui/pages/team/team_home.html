@@ -12,17 +12,15 @@
       </div>
       <div class="container">
         <div class="row">
-          <div class="col-md-9">
-            
-            {{#if 0}}
-              {{> Template.dynamic template=homeTemplate }}
-            {{else}}
+          {{#if homeTemplate}}
+            {{> Template.dynamic template=homeTemplate }}
+          {{else}}
+            <div class="col-md-9">
               <h2>Team Members</h2>
-              {{> TeamHeader }}
-            {{/if}}
-          
-          </div>
-          <div class="col-md-3">{{> TeamSidebar }}</div>
+              {{> TeamRoster }}
+            </div>
+            <div class="col-md-3">{{> TeamSidebar }}</div>
+          {{/if}}
         </div>
       </div>
     {{else}}

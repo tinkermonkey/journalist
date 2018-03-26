@@ -2,7 +2,7 @@ import './team_home.html';
 import { Template } from 'meteor/templating';
 import { Teams }    from '../../../../imports/api/teams/teams';
 import './team_banner.js';
-import './team_header.js';
+import './team_roster.js';
 import './team_sidebar.js';
 
 /**
