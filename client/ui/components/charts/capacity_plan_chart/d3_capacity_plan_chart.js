@@ -95,7 +95,7 @@ export class D3CapacityPlanChart {
         .style('width', '100%')
         .style('height', parseInt(containerWidth * 0.3333) + 'px');
     
-    if (!Meteor.user().isAdmin()) {
+    if (!Meteor.user().isManager()) {
       // This flag is used to disable draggers
       self.readOnly = true;
       self.svg.classed('read-only', true)
@@ -554,7 +554,7 @@ export class D3CapacityPlanChart {
     self.data.releases.forEach((releaseBlock, i) => {
       try {
         let release        = releaseBlock.dataRecord();
-        releaseBlock.title = release.title;
+        releaseBlock.title = release.title();
         releaseBlock.index = i;
         
         // Determine the correct sprint number
@@ -585,12 +585,12 @@ export class D3CapacityPlanChart {
     
     // If this is for a single team, show only the released they care about
     if (self.data.teamId) {
-      let blockIds       = _.flatten(self.data.sprints.map((sprint) => {
+      let blockIds = _.flatten(self.data.sprints.map((sprint) => {
         return sprint.effortBlocks.map((block) => {
           return block._id
         })
       }));
-
+      
       self.data.releases = self.data.releases.filter((releaseBlock) => {
         return releaseBlock.targetLinks().fetch().filter((link) => {
           return _.contains(blockIds, link.sourceId)
