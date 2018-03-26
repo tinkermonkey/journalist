@@ -1,0 +1,41 @@
+<template name="ImportedItemStatusSummary">
+  <div class="imported-item-summary-container">
+    <label class="field-label">Status</label>
+    <table class="table status-table">
+      <tr>
+        <td>
+          <label>State</label>
+        </td>
+        <td>
+          <label class="label label-{{workStateColor}}">{{camelToTitle workStateLabel}}</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label>Phase</label>
+        </td>
+        <td>
+          <label class="label label-{{workPhaseColor}}">{{camelToTitle workPhaseLabel}}</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label>Owner</label>
+        </td>
+        <td>
+          {{> ContributorLink owner }}
+        </td>
+      </tr>
+      {{#if isOpen }}
+        <tr>
+          <td>
+            <label>Updated</label>
+          </td>
+          <td>
+          
+          </td>
+        </tr>
+      {{/if}}
+    </table>
+  </div>
+</template>

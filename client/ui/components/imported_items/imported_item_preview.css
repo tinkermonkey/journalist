@@ -1,3 +1,20 @@
+.imported-item-container {
+
+}
+
+.imported-item-container a,
+.imported-item-container a:visited {
+  color : #298cff;
+}
+
+.imported-item-container .field-label {
+  color : #298cff;
+  border-bottom: 2px solid #cecece;
+  border-bottom-right-radius: 10px;
+  width: 100%;
+  font-size: 1.2em;
+}
+
 .imported-item-preview {
 
 }
@@ -14,6 +31,7 @@
   font-size: 2em;
 }
 
+.imported-item-sidebar,
 .imported-item-description-container {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -21,4 +39,13 @@
 
 .imported-item-description {
 
+}
+
+.imported-item-summary-container,
+.imported-item-timeline-container {
+  margin-bottom: 1em;
+}
+
+.imported-item-sidebar .status-table td {
+  vertical-align: baseline;
 }

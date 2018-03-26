@@ -1,0 +1,37 @@
+<template name="ImportedItemTimeline">
+  <div class="imported-item-timeline-container">
+    <label class="field-label">Timeline</label>
+    {{#each timelineEntries}}
+      <div class="flex timeline-row">
+        <div class="timeline-left">{{dateFormat date 'MMM Do'}}</div>
+        <div class="timeline-center">
+          <span class="timeline-outer-dot">
+            <span class="timeline-inner-dot"></span>
+          </span>
+        </div>
+        <div class="timeline-right">
+          <div class="timeline-content">
+            <span class="timeline-title">
+              {{ data.title }}
+            </span>
+            <span class="timeline-actor">
+              {{> ContributorLink data.actor }}
+            </span>
+            <span class="timeline-time">
+              {{ dateFormat date 'hh:mm A' }}
+            </span>
+          </div>
+        </div>
+      </div>
+      {{#if delta}}
+        <div class="flex timeline-row">
+          <div class="timeline-left"></div>
+          <div class="timeline-center"></div>
+          <div class="timeline-right">
+            {{delta.workDays}} work days
+          </div>
+        </div>
+      {{/if}}
+    {{/each}}
+  </div>
+</template>

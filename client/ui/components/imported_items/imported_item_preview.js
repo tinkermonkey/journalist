@@ -36,7 +36,6 @@ Template.ImportedItemPreview.onCreated(() => {
   
   instance.autorun(() => {
     let itemId = Template.currentData();
-  
     instance.subscribe('imported_item', itemId);
   });
 });
