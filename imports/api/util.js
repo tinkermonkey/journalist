@@ -89,6 +89,7 @@ export const Util = {
    */
   standardSubscriptions (instance) {
     instance.subscribe('active_capacity_plans');
+    instance.subscribe('basic_integrations');
     instance.subscribe('contributors');
     instance.subscribe('contributor_role_definitions');
     instance.subscribe('contributor_team_roles');
@@ -96,6 +97,8 @@ export const Util = {
     instance.subscribe('efforts');
     instance.subscribe('priorities');
     instance.subscribe('projects');
+    instance.subscribe('releases');
+    instance.subscribe('release_integration_links');
     instance.subscribe('status_report_settings');
     instance.subscribe('system_health_metrics');
     instance.subscribe('user_level');
@@ -160,5 +163,28 @@ export const Util = {
         }
       }
     });
+  },
+  
+  /**
+   * Compute the number of work days between two dates
+   * @param dateA
+   * @param dateB
+   */
+  workDaysDiff (dateA, dateB) {
+    let momentA    = moment(dateA),
+        momentB    = moment(dateB),
+        momentZero = moment(dateA).startOf('week'),
+        deltaA     = momentA.diff(momentZero, 'days'),
+        deltaB     = momentB.diff(momentZero, 'days');
+    
+    return Util.workDaysSinceWeekStart(deltaB) - Util.workDaysSinceWeekStart(deltaA)
+  },
+  
+  /**
+   * Calculate the number of work days in a day count since a week start
+   * @param dayCount
+   */
+  workDaysSinceWeekStart (dayCount) {
+    return dayCount - Math.ceil(dayCount / 7) - Math.ceil((dayCount + 1) / 7)
   }
 };
