@@ -4,6 +4,8 @@ import { SchemaHelpers }            from '../schema_helpers';
 import { CapacityPlans }            from './capacity_plans';
 import { CapacityPlanSprintLinks }  from './capacity_plan_sprint_links';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
+import { Releases }                 from '../releases/releases';
+import { CapacityPlanOptions }      from './capacity_plan_options';
 
 /**
  * ============================================================================
@@ -11,10 +13,10 @@ import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
  * ============================================================================
  */
 export const CapacityPlanRelease = new SimpleSchema({
-  planId      : {
+  optionId    : {
     type: String
   },
-  title       : {
+  releaseId   : {
     type: String
   },
   // Standard tracking fields
@@ -60,16 +62,43 @@ CapacityPlanReleases.helpers({
   /**
    * Get the plan this release belongs to
    */
-  plan () {
-    return CapacityPlans.findOne(this.planId)
+  option () {
+    return CapacityPlanOptions.findOne(this.optionId)
   },
+  
+  /**
+   * Get the release this is mapped to
+   */
+  release () {
+    return Releases.findOne(this.releaseId)
+  },
+  
+  /**
+   * Get the title of the release this maps to
+   */
+  title () {
+    let release = this.release();
+    if (release) {
+      return release.title
+    }
+  },
+  
+  /**
+   * Get the version number of the release this maps to
+   */
+  versionNumber () {
+    let release = this.release();
+    if (release) {
+      return release.versionNumber
+    }
+  },
+  
   /**
    * Determine the release date for an option
-   * @param optionId
    */
-  releaseDate (optionId) {
+  releaseDate () {
     let release      = this,
-        releaseBlock = CapacityPlanSprintBlocks.findOne({ optionId: optionId, dataId: release._id });
+        releaseBlock = CapacityPlanSprintBlocks.findOne({ optionId: release.optionId, dataId: release._id });
     
     if (releaseBlock) {
       let lastSprint = releaseBlock.targetLinks()
@@ -84,48 +113,49 @@ CapacityPlanReleases.helpers({
           }, 0);
       
       if (lastSprint !== undefined) {
-        lastSprint = Math.min(this.plan().option(optionId).sprints().count() - 1, lastSprint);
-        return this.plan().option(optionId).sprint(lastSprint).endDate
+        lastSprint = Math.min(this.option().sprints().count() - 1, lastSprint);
+        return this.option().sprint(lastSprint).endDate
       }
     }
   },
   
   /**
    * Get the sprint records for a given option
-   * @param optionId
    */
-  sprints (optionId) {
+  sprints () {
     let release = this;
     
-    return _.uniq(_.flatten(release.efforts(optionId).map((effort) => {
-          return CapacityPlanSprintBlocks.find({ optionId: optionId, dataId: effort._id }).map((effortBlock) => {
+    return _.uniq(_.flatten(release.efforts(release.optionId).map((effort) => {
+          return CapacityPlanSprintBlocks.find({
+            optionId: release.optionId,
+            dataId  : effort._id
+          }).map((effortBlock) => {
             return effortBlock.sprintNumber
           });
         })))
         .sort()
         .map((sprintNumber) => {
-          return release.plan().option(optionId).sprint(sprintNumber)
+          return release.option().sprint(sprintNumber)
         });
   },
   
   /**
    * Get the number of sprints that have work for this release
-   * @param optionId
    */
-  sprintCount (optionId) {
-    return this.sprints(optionId).length;
+  sprintCount () {
+    return this.sprints().length;
   },
+  
   /**
    * Determine the contents of a release for a given option
-   * @param optionId
    */
-  efforts (optionId) {
+  efforts () {
     let release      = this,
-        releaseBlock = CapacityPlanSprintBlocks.findOne({ optionId: optionId, dataId: release._id });
+        releaseBlock = CapacityPlanSprintBlocks.findOne({ optionId: release.optionId, dataId: release._id });
     
     if (releaseBlock) {
       return CapacityPlanSprintLinks.find({
-            optionId: optionId,
+            optionId: release.optionId,
             targetId: releaseBlock._id
           })
           // The source of the links to this release's block are the contents of this release
@@ -152,10 +182,9 @@ CapacityPlanReleases.helpers({
   
   /**
    * Determine the release content for this release for a given option
-   * @param optionId
    */
-  contentEfforts (optionId) {
-    return this.efforts(optionId).filter((effort) => {
+  contentEfforts () {
+    return this.efforts().filter((effort) => {
       return effort.isReleaseContent
     })
   }

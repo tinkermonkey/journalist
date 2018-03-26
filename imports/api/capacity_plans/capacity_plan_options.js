@@ -6,6 +6,7 @@ import { CapacityPlanSprints }      from './capacity_plan_sprints';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
 import { CapacityPlanBlockTypes }   from './capacity_plan_block_types';
 import { CapacityPlanSprintLinks }  from './capacity_plan_sprint_links';
+import { CapacityPlanReleases }     from './capacity_plan_releases';
 
 /**
  * ============================================================================
@@ -283,6 +284,15 @@ CapacityPlanOptions.helpers({
    */
   plan () {
     return CapacityPlans.findOne(this.planId)
+  },
+  
+  /**
+   * Determine if a release is part of a plan
+   * @param releaseId
+   */
+  isPlannedRelease (releaseId) {
+    let option = this;
+    return CapacityPlanReleases.find({ releaseId: releaseId, optionId: option._id }).count() > 0
   },
   
   /**

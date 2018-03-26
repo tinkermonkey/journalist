@@ -90,7 +90,7 @@ Meteor.methods({
         CapacityPlans.update(planId, { $set: update });
         
         // If the start date was edited, update the sprints
-        if(key === 'startDate'){
+        if (key === 'startDate') {
           capacityPlan.options().forEach((option) => {
             option.groomSprints();
           })
@@ -119,23 +119,9 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isManager()) {
-      let optionId = CapacityPlanOptions.insert({
+      CapacityPlanOptions.insert({
         planId: planId,
         title : title
-      });
-      
-      // Add blocks for all of the releases
-      let plan = CapacityPlans.findOne(planId);
-      plan.releases().forEach((release, i) => {
-        CapacityPlanSprintBlocks.insert({
-          planId      : release.planId,
-          optionId    : optionId,
-          sprintNumber: plan.sprintCount,
-          order       : i,
-          dataId      : release._id,
-          blockType   : CapacityPlanBlockTypes.release,
-          chartData   : {}
-        });
       });
     } else {
       console.error('Non-manager tried to add a capacity plan option:', user.username, title);
@@ -375,101 +361,87 @@ Meteor.methods({
   },
   
   /**
-   * Add a capacity plan release
-   * @param planId
-   * @param title
+   * Create a link between a release and a capacity plan option so that the release appears in the plan option
+   * @param optionId
+   * @param releaseId
    */
-  addCapacityPlanRelease (planId, title) {
-    console.log('addCapacityPlanRelease:', planId, title);
+  linkReleaseToOption (optionId, releaseId) {
+    console.log('linkReleaseToOption:', optionId, releaseId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
-    check(planId, String);
-    check(title, String);
+    check(optionId, String);
+    check(releaseId, String);
     
     // Validate that the current user is an administrator
     if (user.isManager()) {
-      let releaseId = CapacityPlanReleases.insert({
-        planId: planId,
-        title : title
-      });
-      
-      // Create a block for each option for the chart
-      let plan         = CapacityPlans.findOne(planId),
-          releaseCount = CapacityPlanReleases.find({ planId: planId }).count();
-      plan.options().forEach((option) => {
-        CapacityPlanSprintBlocks.insert({
-          planId      : option.planId,
-          optionId    : option._id,
-          sprintNumber: plan.sprintCount,
-          order       : releaseCount,
-          dataId      : releaseId,
-          blockType   : CapacityPlanBlockTypes.release,
-          chartData   : {}
-        });
-      });
+      // check to see if a link already exists
+      if (!CapacityPlanReleases.find({ optionId: optionId, releaseId: releaseId }).count()) {
+        let option = CapacityPlanOptions.findOne(optionId);
+        if (optionId) {
+          // Insert the record
+          let planReleaseId = CapacityPlanReleases.insert({ optionId: optionId, releaseId: releaseId }),
+              blockCheck    = CapacityPlanSprintBlocks.find({
+                planId   : option.planId,
+                optionId : optionId,
+                dataId   : planReleaseId,
+                blockType: CapacityPlanBlockTypes.release
+              }).count();
+          
+          if (!blockCheck) {
+            // Insert a block for this release
+            CapacityPlanSprintBlocks.insert({
+              planId      : option.planId,
+              optionId    : optionId,
+              sprintNumber: option.sprintCount,
+              dataId      : planReleaseId,
+              blockType   : CapacityPlanBlockTypes.release,
+              order       : 0,
+              chartData   : {}
+            });
+          } else {
+            console.log('linkReleaseToOption sprint block already exists:', optionId, releaseId, blockCheck)
+          }
+        } else {
+          throw new Meteor.Error(404);
+        }
+      } else {
+        throw new Meteor.Error(500);
+      }
     } else {
-      console.error('Non-manager tried to add a capacity plan release:', user.username, title);
+      console.error('Non-manager tried to add a capacity plan option release link:', user.username, optionId, releaseId);
       throw new Meteor.Error(403);
     }
   },
   
   /**
-   * Remove a capacity plan release
+   * Create a link between a release and a capacity plan option so that the release appears in the plan option
+   * @param optionId
    * @param releaseId
    */
-  deleteCapacityPlanRelease (releaseId) {
-    console.log('deleteCapacityPlanRelease:', releaseId);
+  unlinkReleaseFromPlan (optionId, releaseId) {
+    console.log('linkReleaseToPlan:', optionId, releaseId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
+    check(optionId, String);
     check(releaseId, String);
     
     // Validate that the current user is an administrator
     if (user.isManager()) {
-      // Remove all of the blocks for this release
-      CapacityPlanSprintBlocks.remove({ dataId: releaseId });
+      let planRelease = CapacityPlanReleases.findOne({ optionId: optionId, releaseId: releaseId });
       
-      CapacityPlanReleases.remove(releaseId);
-    } else {
-      console.error('Non-manager tried to delete a capacity plan release:', user.username, releaseId);
-      throw new Meteor.Error(403);
-    }
-  },
-  
-  /**
-   * Edit a capacity plan release record
-   * @param releaseId
-   * @param key
-   * @param value
-   */
-  editCapacityPlanRelease (releaseId, key, value) {
-    console.log('editCapacityPlanRelease:', releaseId, key);
-    let user = Auth.requireAuthentication();
-    
-    // Validate the data is complete
-    check(releaseId, String);
-    check(key, String);
-    check(value, Match.Any);
-    
-    // Get the capacity plan release record to make sure this is authorized
-    let capacityPlanRelease = CapacityPlanReleases.findOne(releaseId);
-    
-    // Validate that the current user is an administrator
-    if (user.isManager()) {
-      if (capacityPlanRelease) {
-        let update    = {};
-        update[ key ] = value;
+      // check to see if a link already exists
+      if (planRelease) {
+        CapacityPlanSprintBlocks.remove({ dataId: planRelease._id });
         
-        // update the record
-        CapacityPlanReleases.update(releaseId, { $set: update });
+        CapacityPlanReleases.remove(planRelease._id);
       } else {
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-manager tried to edit a capacity plan release:', user.username, key, releaseId);
+      console.error('Non-manager tried to add a capacity plan release link:', user.username, optionId, releaseId);
       throw new Meteor.Error(403);
     }
-  },
-  
+  }
 });

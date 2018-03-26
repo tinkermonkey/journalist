@@ -1,0 +1,138 @@
+<template name="AdminRelease">
+  {{#with release}}
+    {{#if Template.subscriptionsReady}}
+      <div class="container release-container" data-pk="{{_id}}">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'AdminReleases' }}">Releases</a></li>
+              <li class="active">{{title}}</li>
+            </ol>
+            
+            <h1>{{title}}</h1>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Configuration</h2>
+            <table class="table data-table table-striped config-table narrow-width">
+              <tbody>
+              <tr class="show-controls-on-hover">
+                <td>Release Title</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableTextField dataKey='title' value=title mode='inline' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Release Owner</td>
+                <td class="open-link">
+                  {{#if owner}}
+                    <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=owner }}">
+                      <span class="glyphicon glyphicon-folder-open"></span>
+                    </a>
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Default Reporter</td>
+                <td class="open-link">
+                  {{#if reportingContributorId}}
+                    <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=reportingContributorId }}">
+                      <span class="glyphicon glyphicon-folder-open"></span>
+                    </a>
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector reporterSelectorContext }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Banner Template</td>
+                <td class="open-link hidden-control">
+                  {{#if bannerTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=bannerTemplate}}
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Home Template</td>
+                <td class="open-link hidden-control">
+                  {{#if homeTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=homeTemplate}}
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Reports</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports"}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Release Composition</h2>
+            
+            <table class="table data-table table-striped">
+              <thead>
+              <tr>
+                <th></th>
+                <th></th>
+                <th>Name</th>
+                <th>Default Role</th>
+                <th>Release Roles</th>
+                <th>Other Releases</th>
+              </tr>
+              </thead>
+              <tbody>
+              {{#each contributors}}
+                <tr class="data-table-row show-controls-on-hover">
+                  <td class="open-link">
+                    <a class="hidden-control" href="{{pathFor 'AdminContributor' contributorId=_id}}">
+                      <span class="glyphicon glyphicon-folder-open"></span>
+                    </a>
+                  </td>
+                  <td class="open-link">
+                    <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=_id}}">
+                      <span class="glyphicon glyphicon-home"></span>
+                    </a>
+                  </td>
+                  <td>{{name}}</td>
+                  <td>{{renderReleaseRole roleId}}</td>
+                  <td>
+                    <table class="table data-table">
+                      {{#each rolesOnRelease ../_id}}
+                        {{> EditableContributorRole }}
+                      {{/each}}
+                    </table>
+                  </td>
+                  <td>
+                    {{#each contributorOtherReleases}}
+                      <table class="table data-table">
+                        {{#each ../rolesOnRelease _id}}
+                          {{> EditableContributorRole }}
+                        {{/each}}
+                      </table>
+                    {{/each}}
+                  </td>
+                </tr>
+              {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {{else}}
+      {{> AppLoading }}
+    {{/if}}
+  {{else}}
+    {{> NotFound}}
+  {{/with}}
+</template>

@@ -8,9 +8,9 @@ import '../../components/height_limited_content/height_limited_content';
  * Template Helpers
  */
 Template.CapacityPlanOptionSummary.helpers({
-  optionReleaseDate (optionId) {
+  optionReleaseDate () {
     let release = this;
-    return moment(release.releaseDate(optionId)).format('dddd, MMM Do')
+    return moment(release.releaseDate()).format('dddd, MMM Do')
   },
   multipleSprints (optionId) {
     let release = this;

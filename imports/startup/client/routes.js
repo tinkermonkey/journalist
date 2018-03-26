@@ -20,6 +20,8 @@ import '../../../client/ui/pages/admin/integration_servers/integration_servers';
 import '../../../client/ui/pages/admin/integration_servers/integration_server';
 import '../../../client/ui/pages/admin/projects/admin_projects';
 import '../../../client/ui/pages/admin/projects/admin_project_integration';
+import '../../../client/ui/pages/admin/releases/admin_release';
+import '../../../client/ui/pages/admin/releases/admin_releases';
 import '../../../client/ui/pages/admin/teams/admin_team';
 import '../../../client/ui/pages/admin/teams/admin_teams';
 import '../../../client/ui/pages/admin/users/admin_users';
@@ -29,7 +31,7 @@ import '../../../client/ui/pages/capacity_plans/capacity_plan_report';
 import '../../../client/ui/pages/capacity_plans/capacity_plan_summary_report';
 import '../../../client/ui/pages/contributor/contributor_home';
 import '../../../client/ui/pages/effort/effort';
-import '../../../client/ui/pages/imported_item/imported_item';
+import '../../../client/ui/pages/imported_item/imported_item_page';
 import '../../../client/ui/pages/project/project_home';
 import '../../../client/ui/pages/report/report_container';
 import '../../../client/ui/pages/report/support/weekly_support_report';
@@ -85,7 +87,7 @@ FlowRouter.route('/effort/:effortId', {
 FlowRouter.route('/imported_item/:itemId', {
   name: 'ImportedItem',
   action () {
-    BlazeLayout.render('AuthenticatedLayout', { main: 'ImportedItem' });
+    BlazeLayout.render('AuthenticatedLayout', { main: 'ImportedItemPage' });
   }
 });
 FlowRouter.route('/project/:projectId', {
@@ -125,35 +127,35 @@ FlowRouter.route('/user_profile', {
   }
 });
 
-FlowRouter.route('/admin/capacity_plans', {
+FlowRouter.route('/capacity_plans', {
   name: 'CapacityPlans',
   action () {
     BlazeLayout.render('AuthenticatedLayout', { main: 'CapacityPlans' });
   }
 });
 
-FlowRouter.route('/admin/capacity_plan/:planId', {
+FlowRouter.route('/capacity_plan/:planId', {
   name: 'CapacityPlan',
   action () {
     BlazeLayout.render('AuthenticatedLayout', { main: 'CapacityPlan' });
   }
 });
 
-FlowRouter.route('/admin/capacity_plan/:planId/:optionId', {
+FlowRouter.route('/capacity_plan/:planId/:optionId', {
   name: 'CapacityPlanOption',
   action () {
     BlazeLayout.render('AuthenticatedLayout', { main: 'CapacityPlan' });
   }
 });
 
-FlowRouter.route('/admin/capacity_plan_report/:planId', {
+FlowRouter.route('/capacity_plan_report/:planId', {
   name: 'CapacityPlanReport',
   action () {
     BlazeLayout.render('ReportLayout', { main: 'CapacityPlanReport' });
   }
 });
 
-FlowRouter.route('/admin/capacity_plan_summary_report/:planId', {
+FlowRouter.route('/capacity_plan_summary_report/:planId', {
   name: 'CapacityPlanSummaryReport',
   action () {
     BlazeLayout.render('ReportLayout', { main: 'CapacityPlanSummaryReport' });
@@ -300,6 +302,20 @@ FlowRouter.route('/admin/project_integration/:integrationId', {
   name: 'AdminProjectIntegration',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'AdminProjectIntegration' });
+  }
+});
+
+FlowRouter.route('/admin/releases', {
+  name: 'AdminReleases',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminReleases' });
+  }
+});
+
+FlowRouter.route('/admin/release/:releaseId', {
+  name: 'AdminRelease',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminRelease' });
   }
 });
 

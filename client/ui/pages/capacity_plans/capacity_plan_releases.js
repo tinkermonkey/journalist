@@ -2,6 +2,7 @@ import './capacity_plan_releases.html';
 import { Template }             from 'meteor/templating';
 import SimpleSchema             from 'simpl-schema';
 import { RobaDialog }           from 'meteor/austinsand:roba-dialog';
+import { Releases }             from '../../../../imports/api/releases/releases';
 import { CapacityPlanReleases } from '../../../../imports/api/capacity_plans/capacity_plan_releases';
 
 /**
@@ -9,8 +10,14 @@ import { CapacityPlanReleases } from '../../../../imports/api/capacity_plans/cap
  */
 Template.CapacityPlanReleases.helpers({
   releases () {
-    let plan = this;
-    return CapacityPlanReleases.find({ planId: this._id }, { sort: { title: 1 } })
+    return Releases.find({ isReleased: false }, { sort: { title: 1 } })
+  },
+  isPlannedRelease () {
+    let release = this,
+        option  = Template.parentData();
+    
+    //console.log('isPlannedRelease:', release, option);
+    return option.isPlannedRelease(release._id)
   }
 });
 
@@ -20,15 +27,30 @@ Template.CapacityPlanReleases.helpers({
 Template.CapacityPlanReleases.events({
   'edited .editable' (e, instance, newValue) {
     e.stopImmediatePropagation();
-    let releaseId = $(e.target).closest('.data-table-row').attr('data-pk'),
+    let option    = Template.currentData(),
+        releaseId = $(e.target).closest('.data-table-row').attr('data-pk'),
         dataKey   = $(e.target).attr('data-key');
     
-    if (releaseId && dataKey) {
-      Meteor.call('editCapacityPlanRelease', releaseId, dataKey, newValue, (error, response) => {
-        if (error) {
-          RobaDialog.error('Update failed:' + error.toString());
-        }
-      });
+    //console.log('CapacityPlanReleases.edited:', releaseId, dataKey, newValue, option);
+    if (releaseId && dataKey && dataKey === 'isPlannedRelease') {
+      if (newValue === true && !option.isPlannedRelease(releaseId)) {
+        // Check to make sure it's not already planned
+        //console.log('Add this release to this option:', releaseId, option);
+        Meteor.call('linkReleaseToOption', option._id, releaseId, (error, response) => {
+          if (error) {
+            RobaDialog.error('Adding release failed:' + error.toString());
+          }
+        });
+      } else if (newValue === false && option.isPlannedRelease(releaseId)) {
+        //console.log('Remote this release from this option:', releaseId, option);
+        Meteor.call('unlinkReleaseFromPlan', option._id, releaseId, (error, response) => {
+          if (error) {
+            RobaDialog.error('Removing release failed:' + error.toString());
+          }
+        });
+      }
+      /*
+      */
     }
   },
   'click .btn-add-release' (e, instance) {

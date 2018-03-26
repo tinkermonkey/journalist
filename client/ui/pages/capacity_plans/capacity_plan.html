@@ -112,7 +112,18 @@
                   <td>First Sprint Date</td>
                   <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan' }}</td>
                 </tr>
-                {{#with currentOption }}
+                <tr>
+                  <td>Selected Option</td>
+                  <td>{{> EditableRecordSelector selectedOptionContext }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-3">
+              {{#with currentOption}}
+                <h2>{{title}}</h2>
+                <table class="table data-table table-striped">
+                  <tbody>
                   <tr>
                     <td>Sprint Count</td>
                     <td>{{> EditableTextField dataKey='sprintCount' value=sprintCount emptyText='Sprint Count' dataType='number' mode="popup"  cssClass='capacity-plan-option' }}</td>
@@ -121,17 +132,14 @@
                     <td>Sprint Length</td>
                     <td>{{> EditableEnumSelector enum=sprintLengthOptions dataKey='sprintLength' value=sprintLength emptyText='Sprint Length' mode='popup'  cssClass='capacity-plan-option'}}</td>
                   </tr>
-                {{/with}}
-                </tbody>
-                <tr>
-                  <td>Selected Option</td>
-                  <td>{{> EditableRecordSelector selectedOptionContext }}</td>
-                </tr>
-              </table>
-            
+                  </tbody>
+                </table>
+              {{/with}}
             </div>
-            <div class="col-md-9">
-              {{> CapacityPlanReleases }}
+            <div class="col-md-6">
+              {{#with currentOption}}
+                {{> CapacityPlanReleases }}
+              {{/with}}
             </div>
           </div>
         </div>

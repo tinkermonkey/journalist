@@ -21,6 +21,16 @@ Meteor.publish('integrations', function (projectId) {
   }
 });
 
+Meteor.publish('basic_integrations', function () {
+  console.info('Publish: basic_integrations');
+  if (this.userId) {
+    return Integrations.find({}, { fields: { projectId: 1, serverId: 1, previewDisplayTemplate: 1, detailDisplayTemplate: 1 } });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
 Meteor.publish('integration', function (integrationId) {
   console.info('Publish: integration', integrationId);
   if (this.userId && integrationId) {

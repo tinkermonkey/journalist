@@ -12,109 +12,109 @@ import { Projects }               from '../projects/projects';
  */
 export const ImportedItem = new SimpleSchema({
   // The source of this item
-  integrationId: {
+  integrationId    : {
     type: String
   },
   // The home project of this item
-  projectId    : {
+  projectId        : {
     type: String
   },
   // The team(s) that may own this, plural because it can be indeterminate if an owner is on multiple teams for the same project
-  teamId       : {
+  teamId           : {
     type    : Array, // String
     optional: true
   },
-  'teamId.$': {
+  'teamId.$'       : {
     type: String
   },
   // Overall type of this item:
-  itemType     : {
+  itemType         : {
     type         : SimpleSchema.Integer,
     allowedValues: _.values(ItemTypes)
   },
   // Primary identifier in the originating system
-  identifier   : {
+  identifier       : {
     type : String,
     label: 'Primary identifier for this item in the reference system (issue key, etc)'
   },
-  title        : {
+  title            : {
     type : String,
     label: 'Summary title for this item'
   },
-  description  : {
+  description      : {
     type    : String,
     label   : 'Long form description of this item, typically an issue body or such',
     optional: true
   },
   // The imported item document object
-  document     : {
+  document         : {
     type    : Object,
     blackbox: true
   },
-  owner        : {
+  owner            : {
     type    : String,
     optional: true,
     label   : 'The _id of the Contributor who owns this item'
   },
   // The descriptive label of the status of this issue (Assigned, Closed, etc)
-  statusLabel  : {
+  statusLabel      : {
     type    : String,
     optional: true
   },
   // The ID that identifies this status in the server`s status map
-  statusId     : {
+  statusId         : {
     type    : String,
     optional: true
   },
-  statusHistory: {
+  statusHistory    : {
     type    : Array, // Object
     optional: true
   },
   'statusHistory.$': {
-    type: Object,
+    type    : Object,
     blackbox: true
   },
-  workPhase    : {
+  workPhase        : {
     type         : SimpleSchema.Integer,
     allowedValues: _.values(ImportedItemWorkPhases),
     optional     : true
   },
-  workState    : {
+  workState        : {
     type         : SimpleSchema.Integer,
     allowedValues: _.values(ImportedItemWorkStates),
     optional     : true
   },
   // Date the item was created in the originating system
-  dateCreated  : {
+  dateCreated      : {
     type    : Date,
     optional: true,
     label   : 'The date this item was created'
   },
   // Contributor who created the item in the originating system
-  createdBy    : {
+  createdBy        : {
     type    : String,
     optional: true,
     label   : 'The _id of the Contributor who created this item'
   },
   // Date the item was last modified in the originating system
-  dateModified : {
+  dateModified     : {
     type    : Date,
     optional: true,
     label   : 'The date this item was last modified'
   },
   // Contributor who last modified the item in the originating system
-  modifiedBy   : {
+  modifiedBy       : {
     type    : String,
     optional: true,
     label   : 'The _id of the Contributor who last modified this item'
   },
   // Date this item was last imported from the originating system
-  lastImported : {
+  lastImported     : {
     type    : Date,
     optional: true
   },
   // Date this item was first imported from the originating system
-  firstImported: {
+  firstImported    : {
     type    : Date,
     optional: true
   }
@@ -149,5 +149,9 @@ ImportedItems.helpers({
    */
   project () {
     return Projects.findOne(this.projectId)
+  },
+  
+  isOpen () {
+    return this.workState !== ImportedItemWorkStates.workCompleted
   }
 });

@@ -31,8 +31,8 @@ import '../../api/priorities/server/publications';
 import '../../api/projects/server/methods';
 import '../../api/projects/server/publications';
 // Releases
-//import '../../api/releases/server/methods';
-//import '../../api/releases/server/publications';
+import '../../api/releases/server/methods';
+import '../../api/releases/server/publications';
 // Roadmap Items
 //import '../../api/roadmap_items/server/methods';
 //import '../../api/roadmap_items/server/publications';
