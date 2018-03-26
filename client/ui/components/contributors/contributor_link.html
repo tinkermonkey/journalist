@@ -1,0 +1,7 @@
+<template name="ContributorLink">
+  {{#with contributor}}
+    <a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a>
+  {{else}}
+  
+  {{/with}}
+</template>
