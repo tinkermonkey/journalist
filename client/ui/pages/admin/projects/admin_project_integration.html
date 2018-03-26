@@ -1,7 +1,7 @@
 <template name="AdminProjectIntegration">
   {{#if Template.subscriptionsReady }}
     {{#with integration}}
-      {{setPageTitle 'Journalist - Admin Integration - ' project.title }}
+      {{setPageTitle 'Journalist - ' project.title ' Integration - ' server.title}}
       <div class="container">
         <div class="row">
           <div class="col-md-12">
@@ -90,13 +90,17 @@
                 {{> AdminProjectIntegrationDetails }}
               {{/RobaTab}}
               {{#RobaTab name="cache" title="Import Testbed"}}
-                {{> IntegrationServerImportTestbed context=this}}
+                {{> IntegrationServerImportTestbed context=this }}
               {{/RobaTab}}
               {{#RobaTab name="preview" title="Preview Template"}}
-              
+                {{#with randomImportedItem }}
+                  {{> ImportedItemPreview _id }}
+                {{/with}}
               {{/RobaTab}}
               {{#RobaTab name="testbed" title="Display Template"}}
-              
+                {{#with randomImportedItem _id}}
+                  {{> ImportedItem _id }}
+                {{/with}}
               {{/RobaTab}}
               {{#RobaTab name="imported-issues" title="Imported Issue Browser"}}
                 {{> AdminIntegrationImportedItemBrowser }}
