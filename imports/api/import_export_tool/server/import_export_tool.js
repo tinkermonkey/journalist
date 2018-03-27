@@ -183,10 +183,9 @@ export const ImportExportTool = {
           // Upsert triggers insert handler default values, so do an update or insert
           let check = collectionMap[ collectionName ].findOne(query);
           if (check) {
-            collectionMap[ collectionName ].update(query, { $set: record }, { validate: false });
-          } else {
-            collectionMap[ collectionName ].insert(record, { validate: false });
+            collectionMap[ collectionName ].remove(query);
           }
+          collectionMap[ collectionName ].insert(record, { bypassCollection2: true });
         });
         console.info('ImportExportTool inserted', importCount, 'records into', collectionName);
       } catch (e) {
