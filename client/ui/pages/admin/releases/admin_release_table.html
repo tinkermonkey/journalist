@@ -1,0 +1,48 @@
+<template name="AdminReleaseTable">
+  <table class="table data-table full-width border-bottom">
+    <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Title</th>
+      <th>Version Number</th>
+      <th>Linked Releases</th>
+      <th>Released</th>
+      <th>Banner Template</th>
+      <th>Home Template</th>
+      <th>Reports</th>
+      <th>Modified</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each this}}
+      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+        <td class="open-link">
+          <a class="hidden-control" href="{{pathFor 'AdminRelease' releaseId=_id}}">
+            <span class="glyphicon glyphicon-folder-open"></span>
+          </a>
+        </td>
+        <td class="open-link">
+          <a class="hidden-control" href="{{pathFor 'Release' releaseId=_id}}">
+            <span class="glyphicon glyphicon-home"></span>
+          </a>
+        </td>
+        <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" mode="popup"}}</td>
+        <td>{{> EditableTextField dataKey="versionNumber" value=versionNumber emptyText="Version Number" mode="popup" }}</td>
+        <td></td>
+        <td>{{> EditableCheckbox  dataKey="isReleased" value=isReleased }}</td>
+        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner mode="popup" }}</td>
+        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
+        <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" mode="popup" }}</td>
+        <td>{{dateFormat dateModified}}</td>
+        <td>
+          <a class="link-red hidden-control btn-delete-release">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+          </a>
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>

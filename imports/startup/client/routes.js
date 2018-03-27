@@ -33,6 +33,8 @@ import '../../../client/ui/pages/contributor/contributor_home';
 import '../../../client/ui/pages/effort/effort';
 import '../../../client/ui/pages/imported_item/imported_item_page';
 import '../../../client/ui/pages/project/project_home';
+import '../../../client/ui/pages/releases/releases';
+import '../../../client/ui/pages/releases/release';
 import '../../../client/ui/pages/report/report_container';
 import '../../../client/ui/pages/report/support/weekly_support_report';
 import '../../../client/ui/pages/status_report/status_report';
@@ -100,6 +102,18 @@ FlowRouter.route('/report/:templateName/:contextId', {
   name: 'Report',
   action () {
     BlazeLayout.render('ReportLayout', { main: 'ReportContainer' });
+  }
+});
+FlowRouter.route('/release/:releaseId', {
+  name: 'Release',
+  action () {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'Release' });
+  }
+});
+FlowRouter.route('/releases', {
+  name: 'Releases',
+  action () {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'Releases' });
   }
 });
 FlowRouter.route('/status_report/:reportId', {

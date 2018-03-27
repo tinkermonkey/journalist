@@ -1,11 +1,11 @@
-import './admin_release.html';
+import './release.html';
 import { Template } from 'meteor/templating';
-import { Releases}  from '../../../../../imports/api/releases/releases';
+import { Releases } from '../../../../imports/api/releases/releases';
 
 /**
  * Template Helpers
  */
-Template.AdminRelease.helpers({
+Template.Release.helpers({
   release(){
     let releaseId = FlowRouter.getParam('releaseId');
     return Releases.findOne(releaseId)
@@ -15,25 +15,25 @@ Template.AdminRelease.helpers({
 /**
  * Template Event Handlers
  */
-Template.AdminRelease.events({});
+Template.Release.events({});
 
 /**
  * Template Created
  */
-Template.AdminRelease.onCreated(() => {
+Template.Release.onCreated(() => {
   
 });
 
 /**
  * Template Rendered
  */
-Template.AdminRelease.onRendered(() => {
+Template.Release.onRendered(() => {
   
 });
 
 /**
  * Template Destroyed
  */
-Template.AdminRelease.onDestroyed(() => {
+Template.Release.onDestroyed(() => {
   
 });

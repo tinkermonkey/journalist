@@ -1,0 +1,17 @@
+<template name="Release">
+  {{#with release}}
+    {{#if Template.subscriptionsReady}}
+      <div class="container release-container" data-pk="{{_id}}">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>{{title}}</h1>
+          </div>
+        </div>
+      </div>
+    {{else}}
+      {{> AppLoading }}
+    {{/if}}
+  {{else}}
+    {{> NotFound}}
+  {{/with}}
+</template>
