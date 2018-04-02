@@ -1,3 +1,5 @@
+const numeral = require('numeral');
+
 /**
  * Determine the greatest common divisor of two numbers
  * @param {*} a
@@ -186,5 +188,19 @@ export const Util = {
    */
   workDaysSinceWeekStart (dayCount) {
     return dayCount - Math.ceil(dayCount / 7) - Math.ceil((dayCount + 1) / 7)
+  },
+  
+  /**
+   * Convert a version number into a sortable string
+   * @param versionString
+   */
+  versionNumberToSortString (versionString){
+    return versionString.toLowerCase().split('.').map((segment) => {
+      if(!_.isNaN(parseInt(segment))){
+        return numeral(segment).format('0000')
+      } else {
+        return segment
+      }
+    }).join('')
   }
 };

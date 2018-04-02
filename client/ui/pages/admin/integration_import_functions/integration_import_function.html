@@ -20,8 +20,8 @@
             <h2>Execution Context</h2>
             <p>
               This code will be executed as a function with the variable <code>processedItem</code> passed in containing the post-processed
-              Javascript
-              Object pulled from the integration server and run through the integrator's postProcessItem function.
+              Javascript Object pulled from the integration server and run through the integrator's postProcessItem function, along with a variable
+              <code>importContext</code> that will contain the import context (<code>server</code>, <code>projectId</code>, and <code>collections</code>).
             </p>
             <p>
               Whatever is returned from this function will be stored as the imported item and needs to be an object to be valid.

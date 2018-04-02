@@ -2,6 +2,7 @@ import './jira_import_testbed.html';
 import { Template }                   from 'meteor/templating';
 import { IntegrationImportFunctions } from '../../../../../../../imports/api/integrations/integration_import_functions';
 import { IntegrationServers }         from '../../../../../../../imports/api/integrations/integration_servers';
+import { Projects }                   from '../../../../../../../imports/api/projects/projects';
 
 /**
  * Template Helpers
@@ -37,6 +38,20 @@ Template.JiraImportTestbed.helpers({
       }
     }
   },
+  projects () {
+    return Projects.find({}, { sort: { title: 1 } })
+  },
+  project () {
+    let projectId = Template.instance().projectId.get();
+    if (projectId) {
+      return Projects.findOne(projectId)
+    } else {
+      let project = Projects.findOne({}, { sort: { title: 1 } });
+      if (project) {
+        Template.instance().projectId.set(project._id)
+      }
+    }
+  },
   functionId () {
     return Template.instance().functionId.get();
   },
@@ -60,6 +75,12 @@ Template.JiraImportTestbed.events({
     
     console.log('Selected:', server);
     instance.serverId.set(server._id);
+  },
+  'click .project-dropdown li' (e, instance) {
+    let project = this;
+    
+    console.log('Selected:', project);
+    instance.projectId.set(project._id);
   },
   'click .btn-load' (e, instance) {
     let showLoading = instance.showLoading.get();
@@ -87,6 +108,7 @@ Template.JiraImportTestbed.onCreated(() => {
   instance.error       = new ReactiveVar();
   instance.functionId  = new ReactiveVar();
   instance.serverId    = new ReactiveVar();
+  instance.projectId   = new ReactiveVar();
   instance.showLoading = new ReactiveVar(false);
   
   instance.autorun(() => {
@@ -117,14 +139,15 @@ Template.JiraImportTestbed.onCreated(() => {
   instance.autorun(() => {
     let functionId = instance.functionId.get(),
         doorBell   = instance.doorbell.get(),
-        serverId   = instance.serverId.get();
+        serverId   = instance.serverId.get(),
+        projectId  = instance.projectId.get();
     
     if (serverId && functionId && instance.isRendered) {
       let itemKey = instance.$('.input-item-key').val();
       if (itemKey) {
-        console.log('JiraImportTestbed fetching results for', serverId, doorBell, itemKey);
+        console.log('JiraImportTestbed fetching results for', serverId, doorBell, itemKey, projectId);
         instance.showLoading.set(true);
-        Meteor.call('testIntegrationImportFunction', functionId, serverId, itemKey, (error, response) => {
+        Meteor.call('testIntegrationImportFunction', functionId, serverId, itemKey, projectId, (error, response) => {
           instance.showLoading.set(false);
           if (error) {
             console.error('JiraImportTestbed fetchData failed:', error);

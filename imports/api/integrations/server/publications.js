@@ -86,6 +86,16 @@ Meteor.publish('integration_server_cache', function (serverId) {
   }
 });
 
+Meteor.publish('integration_server_caches', function (key) {
+  console.info('Publish: integration_server_caches', key);
+  if (this.userId && key) {
+    return IntegrationServerCaches.find({ key: key });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
 Meteor.publish('integration_import_functions', function () {
   console.info('Publish: integration_import_functions');
   if (this.userId) {

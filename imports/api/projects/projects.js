@@ -15,50 +15,55 @@ import { Teams }                         from '../teams/teams';
  */
 export const Project = new SimpleSchema({
   // Project Title
-  title         : {
+  title              : {
     type: String
   },
   // Project Description
-  description   : {
+  description        : {
     type    : String,
     optional: true
   },
   // Banner Template
-  bannerTemplate: {
+  bannerTemplate     : {
     type    : String,
     optional: true
   },
   // Home page template
-  homeTemplate: {
+  homeTemplate       : {
     type    : String,
     optional: true
   },
-  reports       : {
+  reports            : {
     type    : Array, // String
     optional: true
   },
-  'reports.$': {
+  'reports.$'        : {
     type: String
   },
+  integrationProjects: {
+    type    : Object,
+    blackbox: true,
+    optional: true
+  },
   // Contributor that is the primary owner of this project
-  owner         : {
+  owner              : {
     type    : String,
     optional: true
   },
   // Standard tracking fields
-  dateCreated   : {
+  dateCreated        : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy     : {
+  createdBy          : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified  : {
+  dateModified       : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy    : {
+  modifiedBy         : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }

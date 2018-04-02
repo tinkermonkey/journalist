@@ -49,10 +49,10 @@ Meteor.publish('imported_item_query', function (query, options) {
   }
 });
 
-Meteor.publish('imported_item_crumb_query', function (query) {
+Meteor.publish('imported_item_crumb_query', function (query, options) {
   console.log('Publish: imported_item_crumb_query');
   if (this.userId && query && _.isObject(query)) {
-    return ImportedItemCrumbs.find(query);
+    return ImportedItemCrumbs.find(query, options);
   } else {
     this.ready();
     return []
@@ -80,7 +80,7 @@ Meteor.publish('integration_imported_item_count', function (integrationId) {
   let self         = this,
       count        = 0,
       initializing = true,
-      handle       = ImportedItems.find({ integrationId: integrationId }).observeChanges({
+      handle       = ImportedItemCrumbs.find({ integrationId: integrationId }).observeChanges({
         added  : function (id) {
           count++;
           if (!initializing) {
@@ -95,6 +95,39 @@ Meteor.publish('integration_imported_item_count', function (integrationId) {
   
   initializing = false;
   self.added('imported_item_counts', integrationId, { count: count });
+  self.ready();
+  
+  self.onStop(function () {
+    handle.stop();
+  });
+});
+
+Meteor.publish('imported_item_query_count', function (query, queryId) {
+  console.log('Publish: imported_item_query_count', queryId);
+  
+  if (!this.userId) {
+    this.ready();
+    return []
+  }
+  
+  let self         = this,
+      count        = 0,
+      initializing = true,
+      handle       = ImportedItems.find(query).observeChanges({
+        added  : function (id) {
+          count++;
+          if (!initializing) {
+            self.changed('imported_item_counts', queryId, { count: count });
+          }
+        },
+        removed: function (id) {
+          count--;
+          self.changed('imported_item_counts', queryId, { count: count });
+        }
+      });
+  
+  initializing = false;
+  self.added('imported_item_counts', queryId, { count: count });
   self.ready();
   
   self.onStop(function () {

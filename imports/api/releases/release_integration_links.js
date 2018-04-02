@@ -9,13 +9,19 @@ import { SchemaHelpers } from '../schema_helpers.js';
  * ============================================================================
  */
 export const ReleaseIntegrationLink = new SimpleSchema({
-  releaseId: {
+  releaseId               : {
     type: String
   },
-  serverId: {
+  serverId                : {
     type: String
   },
-  serverReleaseId: {
+  projectId                : {
+    type: String
+  },
+  integrationReleaseId    : {
+    type: Array
+  },
+  'integrationReleaseId.$': {
     type: String
   }
 });

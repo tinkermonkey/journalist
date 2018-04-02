@@ -48,6 +48,7 @@ Meteor.methods({
       update[ key ] = value;
       
       // Update the project
+      console.log('editProject:', projectId, key, value);
       Projects.update(projectId, { $set: update });
     } else {
       console.error('Non-admin user tried to edit a project:', user.username, key, value);

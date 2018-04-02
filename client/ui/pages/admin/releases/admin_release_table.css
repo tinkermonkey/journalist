@@ -1,0 +1,4 @@
+.linked-release-table > tbody > tr:first-child > td,
+.linked-release-table > tbody > tr:first-child > th {
+  border-top: none;
+}

@@ -30,7 +30,22 @@
         </td>
         <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" mode="popup"}}</td>
         <td>{{> EditableTextField dataKey="versionNumber" value=versionNumber emptyText="Version Number" mode="popup" }}</td>
-        <td></td>
+        <td>
+          <table class="table linked-release-table">
+            <tbody>
+            {{#each linkedReleases}}
+              <tr>
+                <th class="no-wrap">{{project.title}}</th>
+                <td class="no-wrap">
+                  {{#each releases}}
+                    <div>{{name}}</div>
+                  {{/each}}
+                </td>
+              </tr>
+            {{/each}}
+            </tbody>
+          </table>
+        </td>
         <td>{{> EditableCheckbox  dataKey="isReleased" value=isReleased }}</td>
         <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner mode="popup" }}</td>
         <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>

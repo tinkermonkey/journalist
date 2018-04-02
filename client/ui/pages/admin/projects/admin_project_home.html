@@ -66,6 +66,21 @@
                 </td>
                 <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports"}}</td>
               </tr>
+              <tr class="show-controls-on-hover">
+                <td>Linked Projects</td>
+                <td class="open-link">
+                </td>
+                <td>
+                  {{#each integrationServers}}
+                    <div class="server-container" data-pk="{{_id}}">
+                      <div>
+                        <label>{{title}}</label>
+                      </div>
+                      {{> EditableRecordSelector integrationProjectSelectorContext this .. }}
+                    </div>
+                  {{/each}}
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -73,8 +88,16 @@
         
         <div class="row">
           <div class="col-md-12">
-            <h2>Project Integrations</h2>
-            {{> AdminProjectIntegrations }}
+            {{#RobaTabGroup name="admin-project-tabs" navClass="nav-tabs"}}
+              {{#RobaTab name="project-integrations" title="Integrations"}}
+                <h2>Integrations</h2>
+                {{> AdminProjectIntegrations }}
+              {{/RobaTab}}
+              {{#RobaTab name="project-integration-releases" title="Integration Releases"}}
+                <h2>Integration Releases</h2>
+                {{> AdminProjectReleases }}
+              {{/RobaTab}}
+            {{/RobaTabGroup}}
           </div>
         </div>
       </div>

@@ -178,6 +178,7 @@ a.editable-click:hover {
 
 .roba-dialog {
   border-color : #007AC9;
+  overflow: visible;
 }
 
 .roba-dialog .title {

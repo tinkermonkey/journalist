@@ -28,6 +28,28 @@
           </ul>
         {{/if}}
         {{#if server.isAuthenticated}}
+          {{#if projects.count}}
+            <ul class="nav navbar-nav">
+              <li class="dropdown {{#if context.projectId}}disabled{{/if}}">
+                <a class="dropdown-toggle {{#if context.projectId}}disabled{{/if}}" data-toggle="dropdown" role="button"
+                   aria-haspopup="true"
+                   aria-expanded="false">
+                  {{#if project}}
+                    {{project.title}}
+                  {{else}}
+                    Server
+                  {{/if}}
+
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu project-dropdown">
+                  {{#each projects}}
+                    <li><a>{{title}}</a></li>
+                  {{/each}}
+                </ul>
+              </li>
+            </ul>
+          {{/if}}
           <form class="navbar-form navbar-left">
             <div class="form-group">
               <input type="text" class="form-control input-item-key" placeholder="Jira Issue Key">

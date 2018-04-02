@@ -137,7 +137,7 @@ export class IntegrationAgent {
         query = self.serviceProvider.integrator.appendUpdateLimitToQuery(query, lastUpdate);
         
         // Fetch the data from the service provider
-        let importResult = self.serviceProvider.importItemsFromQuery(self.integration.importFunction(), query);
+        let importResult = self.serviceProvider.importItemsFromQuery(self.integration.importFunction(), query, self.integration.projectId);
         
         if (importResult.items && importResult.items.length) {
           debug && console.log('IntegrationAgent.executeQuery returned:', self.integration._id, queryKey, importResult.items.length);

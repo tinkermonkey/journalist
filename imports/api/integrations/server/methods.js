@@ -129,14 +129,16 @@ Meteor.methods({
    * Test out an integration to see what comes back and how it's processed
    * @param integrationId
    * @param details
+   * @param projectId
    */
-  testIntegration (integrationId, details) {
-    console.log('testIntegration:', integrationId, details);
+  testIntegration (integrationId, details, projectId) {
+    console.log('testIntegration:', integrationId, details, projectId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
     check(integrationId, String);
     check(details, Object);
+    check(projectId, String);
     
     // Get the import function record to make sure this is authorized
     let integration = Integrations.findOne(integrationId);
@@ -144,7 +146,7 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (integration) {
-        return IntegrationService.testIntegration(integration, details);
+        return IntegrationService.testIntegration(integration, details, projectId);
       } else {
         throw new Meteor.Error(404);
       }
@@ -287,7 +289,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to test an server:', user.username, serverId);
+      console.error('Non-admin user tried to get integration server status list:', user.username, serverId);
       throw new Meteor.Error(403);
     }
   },
@@ -483,9 +485,10 @@ Meteor.methods({
    * @param functionId
    * @param serverId
    * @param identifier
+   * @param projectId
    */
-  testIntegrationImportFunction (functionId, serverId, identifier) {
-    console.log('editIntegrationImportFunction:', functionId, serverId, identifier);
+  testIntegrationImportFunction (functionId, serverId, identifier, projectId) {
+    console.log('editIntegrationImportFunction:', functionId, serverId, identifier, projectId);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -501,7 +504,7 @@ Meteor.methods({
       if (importFunction) {
         let server = IntegrationServers.findOne(serverId);
         
-        return IntegrationService.getServiceProvider(server).testImportFunction(importFunction, identifier);
+        return IntegrationService.getServiceProvider(server).testImportFunction(importFunction, identifier, projectId);
       } else {
         throw new Meteor.Error(404);
       }

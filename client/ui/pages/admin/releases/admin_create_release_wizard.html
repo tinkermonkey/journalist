@@ -1,0 +1,48 @@
+<template name="AdminCreateReleaseWizard">
+  <div class="admin-create-release-wizard-container">
+    <table class="table data-table table-striped">
+      <tbody>
+      <tr>
+        <td class="no-wrap">Release Title</td>
+        <td>
+          {{> EditableTextField value=context.title dataKey='title' emptyText='Enter a release title' }}
+        </td>
+      </tr>
+      <tr>
+        <td class="no-wrap">Version Number</td>
+        <td>
+          {{> EditableTextField value=context.versionNumber dataKey='versionNumber' emptyText='Enter a version number' }}
+        </td>
+      </tr>
+      <tr>
+        <td class="no-wrap">Release Exists?</td>
+        <td>
+          {{#with existingRelease }}
+            <span>
+              An existing release, <label class="label label-primary">{{title}}</label>, was found.
+              Any selected releases below will be linked to this existing release record.
+            </span>
+          {{else}}
+            <span>
+              No releases titled <label class="label label-primary">{{context.title}}</label> were found.
+              A new release will be created an any selected releases below will be linked.
+            </span>
+          {{/with}}
+        </td>
+      </tr>
+      {{#unless existingRelease }}
+        <tr>
+          <td class="no-wrap">Is Released?</td>
+          <td>
+            {{> EditableCheckbox value=context.isReleased dataKey='isReleased'  }}
+          </td>
+        </tr>
+      {{/unless}}
+      <tr>
+        <td class="no-wrap">Auto-link Releases</td>
+        <td>{{> EditableRecordChecklist importReleasesSelectorContext }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</template>

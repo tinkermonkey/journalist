@@ -84,6 +84,22 @@ export const ImportedItem = new SimpleSchema({
     allowedValues: _.values(ImportedItemWorkStates),
     optional     : true
   },
+  // An array of [_id]s of the release(s) that this item was identified in
+  versionsFound: {
+    type    : Array,
+    optional: true
+  },
+  'versionsFound.$': {
+    type    : String
+  },
+  // An array of [_id]s of the release(s) that this item was completed in
+  versionsFixed: {
+    type    : Array,
+    optional: true
+  },
+  'versionsFixed.$': {
+    type    : String
+  },
   // Date the item was created in the originating system
   dateCreated      : {
     type    : Date,

@@ -4,6 +4,11 @@
       <div class="container release-container" data-pk="{{_id}}">
         <div class="row">
           <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'AdminReleases' }}">Releases</a></li>
+              <li class="active">{{title}}</li>
+            </ol>
             <h1>{{title}}</h1>
             
             <h2>Configuration</h2>
@@ -16,18 +21,101 @@
                 <td>{{> EditableTextField dataKey='title' value=title mode='inline' }}</td>
               </tr>
               <tr class="show-controls-on-hover">
-                <td>Release Owner</td>
+                <td>Version Number</td>
                 <td class="open-link">
-                  {{#if owner}}
-                    <a class="hidden-control" href="{{pathFor 'ContributorHome' contributorId=owner }}">
-                      <span class="glyphicon glyphicon-folder-open"></span>
-                    </a>
+                </td>
+                <td>{{> EditableTextField dataKey="versionNumber" value=versionNumber emptyText="Version Number" mode="popup" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Has Been Released</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableCheckbox  dataKey="isReleased" value=isReleased }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Banner Template</td>
+                <td class="open-link">
+                  {{#if bannerTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=bannerTemplate}}
                   {{/if}}
                 </td>
-                <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner mode="popup" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Page Template</td>
+                <td class="open-link">
+                  {{#if homeTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=homeTemplate}}
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Available Reports</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" mode="popup" }}</td>
               </tr>
               </tbody>
             </table>
+            
+            <h2>Mapped Integration Releases</h2>
+            {{#each servers}}
+              <div class="inline-block server-container" data-pk="{{_id}}">
+                <h3>{{title}}</h3>
+                
+                <table class="table data-table table-striped narrow-width">
+                  <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th></th>
+                    <th>Linked Versions</th>
+                    <th>Suggested Links</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {{#each integrationProjects ..}}
+                    <tr class="show-controls-on-hover project-container" data-pk="{{_id}}">
+                      <td>{{title}}</td>
+                      <td class="open-link">
+                        <a href="{{pathFor 'AdminProjectHome' projectId=_id}}" class="hidden-control">
+                          <span class="glyphicon glyphicon-folder-open"></span>
+                        </a>
+                      </td>
+                      <td>
+                        {{> EditableRecordChecklist integrationVersionSelectorContext .. }}
+                      </td>
+                      <td>
+                        {{#each suggestedLinks .. ../..}}
+                          <div>
+                            <a class="add-suggested-release">
+                              <span class="glyphicon glyphicon-unchecked"></span>
+                              {{name}}
+                            </a>
+                          </div>
+                        {{/each}}
+                      </td>
+                    </tr>
+                  {{/each}}
+                  </tbody>
+                </table>
+              </div>
+            {{/each}}
+
+            <h2>Release Contents</h2>
+            {{#RobaTabGroup name="release-project-tabs" navClass="nav-tabs"}}
+              {{#each releaseProjects }}
+                {{#RobaTab name=_id title=title }}
+                  {{#RobaTabGroup name="release-contents-project-tabs" navClass="nav-pills"}}
+                    {{#each workPhases}}
+                      {{#RobaTab name=key title=title }}
+                        {{> ImportedItemTable workPhaseItemTableContext .. ../..}}
+                      {{/RobaTab}}
+                    {{/each}}
+                  {{/RobaTabGroup}}
+                {{/RobaTab}}
+              {{/each}}
+            {{/RobaTabGroup}}
           </div>
         </div>
       </div>

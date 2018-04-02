@@ -35,9 +35,9 @@ Template.QuickPopover.events({
           instance.childInstance = Blaze.getView(popoverContents.get(0)).templateInstance();
           if (instance.childInstance) {
             instance.childInstance.autorun(() => {
-              console.log('QuickPopover child instance autorun');
+              //console.log('QuickPopover child instance autorun');
               if (instance.childInstance.subscriptionsReady()) {
-                console.log('QuickPopover child instance subscriptions ready!');
+                //console.log('QuickPopover child instance subscriptions ready!');
                 setTimeout(() => {
                   instance.popover.popover('reposition');
                 }, 30);

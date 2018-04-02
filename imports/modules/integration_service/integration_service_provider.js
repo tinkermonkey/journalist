@@ -11,10 +11,12 @@ import { Integrations }                          from '../../api/integrations/in
 import { IntegrationServerCaches }               from '../../api/integrations/integration_server_caches';
 import { IntegrationServers }                    from '../../api/integrations/integration_servers';
 import { IntegrationTypes }                      from '../../api/integrations/integration_types';
+import { ReleaseIntegrationLinks }               from '../../api/releases/release_integration_links';
 import { UserTypes }                             from '../../api/users/user_types';
 import { ConfluenceIntegrator }                  from './integrators/confluence_integrator';
 import { JiraIntegrator }                        from './integrators/jira_integrator';
 import { IntegrationAgent }                      from './integration_agent';
+import { CollectionMap }                         from '../../api/import_export_tool/server/import_export_tool';
 
 const { URL } = require('url');
 
@@ -407,13 +409,18 @@ export class IntegrationServiceProvider {
    * @param projectId
    */
   importItem (importFunction, processedItem, projectId) {
-    trace && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title);
+    trace && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title, projectId);
     let self = this;
     
     // Attempt to process the item through the import function
+    // Needs to be able to access ReleaseIntegrationLinks
     try {
-      let importFn     = new Function('processedItem', importFunction.code),
-          importedItem = importFn(processedItem);
+      let importFn     = new Function('processedItem', 'importContext', importFunction.code),
+          importedItem = importFn(processedItem, {
+            projectId  : projectId,
+            server     : self.server,
+            collections: CollectionMap
+          });
       
       // Store the full processedItem as the document field
       importedItem.document = processedItem;
@@ -499,21 +506,23 @@ export class IntegrationServiceProvider {
    * @param importFunction {IntegrationImportFunction}
    * @param query {String}
    * @param limit {Number} optional
+   * @param projectId {String}
    */
-  importItemsFromQuery (importFunction, query, limit) {
+  importItemsFromQuery (importFunction, query, limit, projectId) {
     debug && console.log('IntegrationServiceProvider.importItemsFromQuery:', this.server._id, this.server.title);
     let self           = this,
         processedItems = self.integrator.executeAndProcessQuery(query, 0, limit);
     
-    return self.importItems(importFunction, processedItems)
+    return self.importItems(importFunction, processedItems, projectId)
   }
   
   /**
    * Test an import function by fetching an issue and running it through the pipeline
    * @param importFunction
    * @param identifier
+   * @param projectId
    */
-  testImportFunction (importFunction, identifier) {
+  testImportFunction (importFunction, identifier, projectId) {
     debug && console.log('IntegrationServiceProvider.testImportFunction:', this.server._id, this.server.title);
     let self          = this,
         rawItem       = self.integrator.fetchItem(identifier),
@@ -522,7 +531,7 @@ export class IntegrationServiceProvider {
     return {
       rawItem      : rawItem,
       processedItem: processedItem,
-      importResult : self.importItem(importFunction, processedItem)
+      importResult : self.importItem(importFunction, processedItem, projectId)
     }
   }
   
@@ -530,12 +539,13 @@ export class IntegrationServiceProvider {
    * Test an integration by executing the query to fetch some issues and returning the imported (but not stored) results
    * @param integration
    * @param details
+   * @param projectId
    */
-  testIntegration (integration, details) {
+  testIntegration (integration, details, projectId) {
     debug && console.log('IntegrationServiceProvider.testIntegration:', this.server._id, this.server.title, integration._id);
     let self = this;
     
-    return self.integrator.testIntegration(integration, details)
+    return self.integrator.testIntegration(integration, details, projectId)
   }
   
   /**

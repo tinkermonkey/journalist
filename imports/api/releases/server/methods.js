@@ -1,16 +1,19 @@
-import { Meteor }               from 'meteor/meteor';
-import { check, Match }         from 'meteor/check';
-import { Releases }             from '../releases';
-import { Auth }                 from '../../auth';
-import { CapacityPlanReleases } from '../../capacity_plans/capacity_plan_releases';
+import { Meteor }                  from 'meteor/meteor';
+import { check, Match }            from 'meteor/check';
+import { Auth }                    from '../../auth';
+import { CapacityPlanReleases }    from '../../capacity_plans/capacity_plan_releases';
+import { Releases }                from '../releases';
+import { ReleaseIntegrationLinks } from '../release_integration_links';
 
 Meteor.methods({
   /**
    * Add a capacity plan release
    * @param title
+   * @param versionNumber (optional)
+   * @param isReleased (optional)
    */
-  addRelease (title) {
-    console.log('addRelease:', title);
+  addRelease (title, versionNumber, isReleased) {
+    console.log('addRelease:', title, versionNumber, isReleased);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -18,9 +21,11 @@ Meteor.methods({
     
     // Validate that the current user is an administrator
     if (user.isManager()) {
-      let releaseId = Releases.insert({
-        title: title
-      });
+      return Releases.insert({
+        title        : title,
+        versionNumber: versionNumber,
+        isReleased   : isReleased
+      })
     } else {
       console.error('Non-manager tried to add a release:', user.username, title);
       throw new Meteor.Error(403);
@@ -88,4 +93,50 @@ Meteor.methods({
     }
   },
   
+  /**
+   * Link an integration release to a release
+   * @param releaseId
+   * @param serverId
+   * @param projectId
+   * @param integrationReleaseId (optional)
+   */
+  linkIntegrationRelease (releaseId, serverId, projectId, integrationReleaseId) {
+    console.log('linkIntegrationRelease:', releaseId, serverId, projectId, integrationReleaseId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(releaseId, String);
+    check(serverId, String);
+    check(projectId, String);
+    
+    // Validate that the current user is an administrator
+    if (user.isManager()) {
+      // Create/update the link
+      if (integrationReleaseId != null) {
+        // update the record
+        ReleaseIntegrationLinks.upsert({
+          releaseId: releaseId,
+          serverId : serverId,
+          projectId: projectId
+        }, {
+          $set: {
+            releaseId           : releaseId,
+            serverId            : serverId,
+            projectId           : projectId,
+            integrationReleaseId: integrationReleaseId
+          }
+        });
+      } else {
+        // Remove the link
+        ReleaseIntegrationLinks.remove({
+          releaseId: releaseId,
+          serverId : serverId,
+          projectId: projectId
+        });
+      }
+    } else {
+      console.error('Non-manager tried to edit a release:', user.username, releaseId, serverId, projectId, integrationReleaseId);
+      throw new Meteor.Error(403);
+    }
+  }
 });

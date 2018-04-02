@@ -186,7 +186,17 @@ export class JiraIntegrator extends Integrator {
     // If connected, otherwise the cached values would be wiped
     if (self.client) {
       // Cache the list of projects
-      self.provider.storeCachedItem('projectList', self.fetchData('project', 'getAllProjects').response);
+      let projectList = self.fetchData('project', 'getAllProjects').response;
+      self.provider.storeCachedItem('projectList', projectList);
+      
+      // Cache the list of releases for each project
+      let versionList = [],
+          startTime   = Date.now();
+      projectList.forEach((project) => {
+        versionList = versionList.concat(self.fetchData('project', 'getVersions', { projectIdOrKey: project.id }).response);
+      });
+      self.provider.storeCachedItem('versionList', versionList);
+      console.log('JiraIntegrator.updateCachedData updated version list:', this.provider.server.title, Date.now() - startTime);
       
       // Cache the list of statuses
       self.provider.storeCachedItem('statusList', self.fetchData('status', 'getAllStatuses').response);
@@ -200,6 +210,7 @@ export class JiraIntegrator extends Integrator {
       // Cache the list of agile boards
       let boardList = self.fetchData('board', 'getAllBoards').response,
           sprints   = {};
+      startTime   = Date.now();
       if (boardList && boardList.values) {
         self.provider.storeCachedItem('boardList', boardList.values);
         
@@ -219,6 +230,7 @@ export class JiraIntegrator extends Integrator {
         });
       }
       self.provider.storeCachedItem('sprintList', _.values(sprints));
+      console.log('JiraIntegrator.updateCachedData updated sprint list:', this.provider.server.title, Date.now() - startTime);
       
       // Cache the list of fields and create synthetic keys based on the field name for custom fields
       let fields = self.fetchData('field', 'getAllFields').response;
@@ -258,8 +270,9 @@ export class JiraIntegrator extends Integrator {
    * Test out an import function
    * @param importFunction
    * @param identifier
+   * @param projectId
    */
-  testImportFunction (importFunction, identifier) {
+  testImportFunction (importFunction, identifier, projectId) {
     debug && console.log('JiraIntegrator.testImportFunction:', this.provider.server.title);
     let self              = this,
         rawItem           = self.fetchItem(identifier).response,
@@ -268,7 +281,7 @@ export class JiraIntegrator extends Integrator {
     return {
       rawItem      : rawItem,
       postProcessed: postProcessedItem,
-      importResult : self.provider.importItem(importFunction, postProcessedItem)
+      importResult : self.provider.importItem(importFunction, postProcessedItem, projectId)
     }
   }
   
@@ -276,8 +289,9 @@ export class JiraIntegrator extends Integrator {
    * Test out an integration pipeline
    * @param integration
    * @param details
+   * @param projectId
    */
-  testIntegration (integration, details) {
+  testIntegration (integration, details, projectId) {
     debug && console.log('JiraIntegrator.testIntegration:', this.provider.server.title, integration._id);
     let self      = this,
         query     = integration.details[ details.queryKey ],
@@ -292,7 +306,7 @@ export class JiraIntegrator extends Integrator {
           success       : true,
           rawResult     : rawResult,
           processedItems: postProcessedItems,
-          importResult  : self.provider.importItems(integration.importFunction(), postProcessedItems)
+          importResult  : self.provider.importItems(integration.importFunction(), postProcessedItems, projectId)
         }
       } catch (e) {
         return {

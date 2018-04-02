@@ -1,0 +1,58 @@
+<template name="AdminProjectReleases">
+  {{#if Template.subscriptionsReady}}
+    {{#each integrationServers}}
+      <div class="server-container" data-pk="{{_id}}">
+        <h3>{{title}}</h3>
+
+        <div class="inline-block">
+          <h4>Linked Release</h4>
+          <table class="table table-striped">
+            <tbody>
+            {{#each linkedReleases ..}}
+              <tr>
+                <td class="open-link">
+                  <a class="hidden-control" href="{{pathFor 'AdminRelease' releaseId=releaseId}}">
+                    <span class="glyphicon glyphicon-folder-open"></span>
+                  </a>
+                </td>
+                <td class="open-link">
+                  <a class="hidden-control" href="{{pathFor 'Release' releaseId=releaseId}}">
+                    <span class="glyphicon glyphicon-home"></span>
+                  </a>
+                </td>
+                <td>{{name}}</td>
+              </tr>
+            {{/each}}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="inline-block">
+          <h4>Unlinked Releases</h4>
+          <table class="table table-striped">
+            <tbody>
+            {{#each unlinkedReleases ..}}
+              <tr>
+                <td class="open-link">
+                  <a class="create-release">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </a>
+                </td>
+                <td class="open-link">
+                  <a class="link-release">
+                    <span class="glyphicon glyphicon-link"></span>
+                  </a>
+                </td>
+                <td>{{name}}</td>
+              </tr>
+            {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <div>Loading....</div>
+    {{> RobaSpinner rainbow=true }}
+  {{/if}}
+</template>

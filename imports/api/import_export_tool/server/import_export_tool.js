@@ -16,8 +16,8 @@ import { ContributorRoleDefinitions }       from '../../contributors/contributor
 import { ContributorTeamRoles }             from '../../contributors/contributor_team_roles';
 import { DisplayTemplates }                 from '../../display_templates/display_templates';
 import { DisplayTemplateGroups }            from '../../display_templates/display_template_groups';
-import { Efforts }                          from '../../efforts/efforts';
 import { PublishedDisplayTemplates }        from '../../display_templates/published_display_templates';
+import { Efforts }                          from '../../efforts/efforts';
 import { IntegrationCalculatedFields }      from '../../integrations/integration_calculated_fields';
 import { IntegrationImportFunctions }       from '../../integrations/integration_import_functions';
 import { IntegrationServerAuthProviders }   from '../../integrations/integration_server_auth_providers';
@@ -26,54 +26,61 @@ import { IntegrationServers }               from '../../integrations/integration
 import { Integrations }                     from '../../integrations/integrations';
 import { Priorities }                       from '../../priorities/priorities';
 import { Projects }                         from '../../projects/projects';
+import { Releases }                         from '../../releases/releases';
+import { ReleaseIntegrationLinks }          from '../../releases/release_integration_links';
 import { StatusReportSettings }             from '../../status_reports/status_report_settings';
 import { StatusReports }                    from '../../status_reports/status_reports';
 import { Subtasks }                         from '../../subtasks/subtasks';
 import { Tasks }                            from '../../tasks/tasks';
+//import { TaskStates }                       from '../../tasks/task_states';
 import { Teams }                            from '../../teams/teams';
 import { Users }                            from '../../users/users';
 
-let AdmZip        = require('adm-zip'),
-    fs            = require('fs'),
-    path          = require('path'),
-    os            = require('os'),
-    collectionMap = {
-      CapacityPlans                   : CapacityPlans,
-      CapacityPlanReleases            : CapacityPlanReleases,
-      CapacityPlanSprintBlocks        : CapacityPlanSprintBlocks,
-      CapacityPlanSprintLinks         : CapacityPlanSprintLinks,
-      CapacityPlanSprints             : CapacityPlanSprints,
-      CapacityPlanStrategicEffortItems: CapacityPlanStrategicEffortItems,
-      CapacityPlanStrategicEfforts    : CapacityPlanStrategicEfforts,
-      // This needs to be after all of the blocks and sprints so that the after.insert handler doesn't create duplicate sprints
-      CapacityPlanOptions             : CapacityPlanOptions,
-      Contributors                    : Contributors,
-      ContributorProjectAssignments   : ContributorProjectAssignments,
-      ContributorRoleDefinitions      : ContributorRoleDefinitions,
-      ContributorTeamRoles            : ContributorTeamRoles,
-      DisplayTemplates                : DisplayTemplates,
-      DisplayTemplateGroups           : DisplayTemplateGroups,
-      Efforts                         : Efforts,
-      PublishedDisplayTemplates       : PublishedDisplayTemplates,
-      IntegrationCalculatedFields     : IntegrationCalculatedFields,
-      IntegrationImportFunctions      : IntegrationImportFunctions,
-      IntegrationServerAuthProviders  : IntegrationServerAuthProviders,
-      IntegrationServerCaches         : IntegrationServerCaches,
-      IntegrationServers              : IntegrationServers,
-      Integrations                    : Integrations,
-      Projects                        : Projects,
-      Priorities                      : Priorities,
-      StatusReportSettings            : StatusReportSettings,
-      StatusReports                   : StatusReports,
-      Subtasks                        : Subtasks,
-      Tasks                           : Tasks,
-      Teams                           : Teams,
-      Users                           : Users
-    },
-    importKeys    = {
+let AdmZip     = require('adm-zip'),
+    fs         = require('fs'),
+    path       = require('path'),
+    os         = require('os'),
+    importKeys = {
       DisplayTemplates         : 'templateName',
       PublishedDisplayTemplates: 'templateName'
     };
+
+export const CollectionMap = {
+  CapacityPlans                   : CapacityPlans,
+  CapacityPlanReleases            : CapacityPlanReleases,
+  CapacityPlanSprintBlocks        : CapacityPlanSprintBlocks,
+  CapacityPlanSprintLinks         : CapacityPlanSprintLinks,
+  CapacityPlanSprints             : CapacityPlanSprints,
+  CapacityPlanStrategicEffortItems: CapacityPlanStrategicEffortItems,
+  CapacityPlanStrategicEfforts    : CapacityPlanStrategicEfforts,
+  // This needs to be after all of the blocks and sprints so that the after.insert handler doesn't create duplicate sprints
+  CapacityPlanOptions             : CapacityPlanOptions,
+  Contributors                    : Contributors,
+  ContributorProjectAssignments   : ContributorProjectAssignments,
+  ContributorRoleDefinitions      : ContributorRoleDefinitions,
+  ContributorTeamRoles            : ContributorTeamRoles,
+  DisplayTemplates                : DisplayTemplates,
+  DisplayTemplateGroups           : DisplayTemplateGroups,
+  Efforts                         : Efforts,
+  PublishedDisplayTemplates       : PublishedDisplayTemplates,
+  IntegrationCalculatedFields     : IntegrationCalculatedFields,
+  IntegrationImportFunctions      : IntegrationImportFunctions,
+  IntegrationServerAuthProviders  : IntegrationServerAuthProviders,
+  IntegrationServerCaches         : IntegrationServerCaches,
+  IntegrationServers              : IntegrationServers,
+  Integrations                    : Integrations,
+  Projects                        : Projects,
+  Priorities                      : Priorities,
+  Releases                        : Releases,
+  ReleaseIntegrationLinks         : ReleaseIntegrationLinks,
+  StatusReportSettings            : StatusReportSettings,
+  StatusReports                   : StatusReports,
+  Subtasks                        : Subtasks,
+  Tasks                           : Tasks,
+  //TaskStates                      : TaskStates,
+  Teams                           : Teams,
+  Users                           : Users
+};
 
 /**
  * Setup the server side route for downloading the files
@@ -164,7 +171,7 @@ export const ImportExportTool = {
    * @param collectionName The name of the collection we will insert
    */
   insertDataIntoCollection (data, collectionName) {
-    if (data && collectionName && collectionMap[ collectionName ]) {
+    if (data && collectionName && CollectionMap[ collectionName ]) {
       // if you have a partial duplicate, you should still be able to import the rest of the file.
       try {
         let key         = importKeys[ collectionName ] || '_id',
@@ -181,11 +188,11 @@ export const ImportExportTool = {
           }
           
           // Upsert triggers insert handler default values, so do an update or insert
-          let check = collectionMap[ collectionName ].findOne(query);
+          let check = CollectionMap[ collectionName ].findOne(query);
           if (check) {
-            collectionMap[ collectionName ].remove(query);
+            CollectionMap[ collectionName ].remove(query);
           }
-          collectionMap[ collectionName ].insert(record, { bypassCollection2: true });
+          CollectionMap[ collectionName ].insert(record, { bypassCollection2: true });
         });
         console.info('ImportExportTool inserted', importCount, 'records into', collectionName);
       } catch (e) {
@@ -204,7 +211,7 @@ export const ImportExportTool = {
     let handler = this,
         dataDir = path.join(handler.dataPath, moment().format('YYYYMMDD_HHmmss'));
     
-    collectionNames = _.isArray(collectionNames) ? collectionNames : _.keys(collectionMap);
+    collectionNames = _.isArray(collectionNames) ? collectionNames : _.keys(CollectionMap);
     
     if (fs.existsSync(dataDir)) {
       console.info('ImportExportTool.exportData removing existing files');
@@ -221,7 +228,7 @@ export const ImportExportTool = {
     
     console.info('ImportExportTool.exportData exporting collections:', collectionNames);
     collectionNames.forEach((collectionName, i) => {
-      let cursor   = collectionMap[ collectionName ].find({}),
+      let cursor   = CollectionMap[ collectionName ].find({}),
           fileName = numeral(i).format('000') + '_' + collectionName + '.json';
       
       zipFile.addFile(fileName, new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);

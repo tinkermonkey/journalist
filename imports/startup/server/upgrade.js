@@ -8,9 +8,27 @@ import { CapacityPlanReleases }     from '../../api/capacity_plans/capacity_plan
 import { Releases }                 from '../../api/releases/releases';
 import { CapacityPlanSprintBlocks } from '../../api/capacity_plans/capacity_plan_sprint_blocks';
 import { CapacityPlanBlockTypes }   from '../../api/capacity_plans/capacity_plan_block_types';
+import { Util }                     from '../../api/util';
 
 // Only run on the cluster master node
 if (Clustering.isMaster()) {
+  /**
+   * Update the sort version for any releases without one
+   */
+  if (Releases.find({ sortVersion: { $exists: false } }).count()) {
+    console.log("UPGRADE: Updating sortVersion for Releases");
+    
+    Releases.find({ sortVersion: { $exists: false } }).forEach((release) => {
+      if (release.versionNumber && release.versionNumber.length) {
+        console.log("UPGRADE: setting sort version:", release._id, release.title, release.versionNumber, Util.versionNumberToSortString(release.versionNumber));
+        Releases.update(release._id, { $set: { sortVersion: Util.versionNumberToSortString(release.versionNumber) } })
+      } else {
+        console.log("UPGRADE: setting sort version:", release._id, release.title, release.versionNumber, Util.versionNumberToSortString(release.title));
+        Releases.update(release._id, { $set: { sortVersion: Util.versionNumberToSortString(release.title) } })
+      }
+    });
+  }
+  
   /**
    * Moving releases to a separate collection and keeping the CapacityPlanReleases collection as a link collection
    */
