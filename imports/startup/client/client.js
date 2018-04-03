@@ -455,3 +455,9 @@ Template.registerHelper('daysOld', function (date) {
     return moment().diff(moment(date), 'days')
   }
 });
+
+Template.registerHelper('weekDaysOld', function (date) {
+  if (date) {
+    return Util.workDaysDiff(new Date(), date)
+  }
+});
