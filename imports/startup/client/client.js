@@ -458,6 +458,6 @@ Template.registerHelper('daysOld', function (date) {
 
 Template.registerHelper('weekDaysOld', function (date) {
   if (date) {
-    return Util.workDaysDiff(new Date(), date)
+    return Util.workDaysDiff(date, new Date())
   }
 });
