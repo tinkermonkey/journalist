@@ -757,32 +757,36 @@ export class D3CapacityPlanBlockHandler {
       // Groom the effort blocks
       let dy = 0;
       sprint.effortBlocks.forEach((effortBlock) => {
-        // Size the title so the height can be accurate
-        let titleTemp = chart.offscreenLayer.append('text')
-            .attr('class', 'effort-title')
-            .attr('data-effort-id', effortBlock._id)
-            .text(effortBlock.title);
-        
-        titleTemp.call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
-        
-        let lineCount = chart.offscreenLayer.select('.effort-title[data-effort-id="' + effortBlock._id + '"]').selectAll('tspan')
-            .nodes().length;
-        
-        if (lineCount > 1) {
-          effortBlock.headerHeight = (chart.config.contributors.height * 0.8) * lineCount + chart.config.efforts.padding;
-        } else {
-          effortBlock.headerHeight = chart.config.efforts.padding * 2 + chart.config.contributors.height;
+        try {
+          // Size the title so the height can be accurate
+          let titleTemp = chart.offscreenLayer.append('text')
+              .attr('class', 'effort-title')
+              .attr('data-effort-id', effortBlock._id)
+              .text(effortBlock.title);
+  
+          titleTemp.call(Util.wrapSvgText, d3, chart.sprintBodyWidth - (2 * chart.config.efforts.padding));
+  
+          let lineCount = chart.offscreenLayer.select('.effort-title[data-effort-id="' + effortBlock._id + '"]').selectAll('tspan')
+              .nodes().length;
+  
+          if (lineCount > 1) {
+            effortBlock.headerHeight = (chart.config.contributors.height * 0.8) * lineCount + chart.config.efforts.padding;
+          } else {
+            effortBlock.headerHeight = chart.config.efforts.padding * 2 + chart.config.contributors.height;
+          }
+  
+          // Calculate the height
+          effortBlock.bodyHeight = effortBlock.contributorBlocks.length * (chart.config.contributors.height + chart.config.efforts.padding) + chart.config.efforts.padding;
+          effortBlock.height     = effortBlock.headerHeight + effortBlock.bodyHeight;
+  
+          // Position the block
+          effortBlock.y = dy;
+          dy += effortBlock.height + chart.config.efforts.margin;
+  
+          return effortBlock
+        } catch (e) {
+          console.error('D3CapacityPlanBlockHandler.calculateBlockSizes failed on an effort block:', effortBlock, e);
         }
-        
-        // Calculate the height
-        effortBlock.bodyHeight = effortBlock.contributorBlocks.length * (chart.config.contributors.height + chart.config.efforts.padding) + chart.config.efforts.padding;
-        effortBlock.height     = effortBlock.headerHeight + effortBlock.bodyHeight;
-        
-        // Position the block
-        effortBlock.y = dy;
-        dy += effortBlock.height + chart.config.efforts.margin;
-        
-        return effortBlock
       });
       
       if (dy > chart.maxSprintHeight) {
@@ -803,29 +807,33 @@ export class D3CapacityPlanBlockHandler {
     
     // Position the release blocks
     chart.data.sprints.forEach((sprint) => {
-      let sprintReleases = chart.data.releases.filter((releaseBlock) => {
-        return releaseBlock.sprintNumber === sprint.sprintNumber
-      });
-      
-      // Make sure the blocks are ordered correctly
-      sprintReleases.sort((a, b) => {
-        return (a.order || 0) > (b.order || 0) ? 1 : -1
-      }).forEach((releaseBlock, i) => {
-        if (releaseBlock.order !== i) {
-          // Fix the order
-          chart.data.sprints[ releaseBlock.index ].order = releaseBlock.order = i;
-          releaseBlock.updateOrder(i);
-        }
-      });
-      
-      // position the blocks
-      let dy = 0;
-      sprintReleases.sort((a, b) => {
-        return (a.order || 0) > (b.order || 0) ? 1 : -1
-      }).forEach((releaseBlock, i) => {
-        chart.data.sprints[ releaseBlock.index ].y = releaseBlock.y = dy;
-        dy += Math.max(releaseBlock.titleLength, chart.config.releases.height) + 2 * chart.config.releases.padding + chart.config.efforts.margin;
-      })
+      try {
+        let sprintReleases = chart.data.releases.filter((releaseBlock) => {
+          return releaseBlock.sprintNumber === sprint.sprintNumber
+        });
+  
+        // Make sure the blocks are ordered correctly
+        sprintReleases.sort((a, b) => {
+          return (a.order || 0) > (b.order || 0) ? 1 : -1
+        }).forEach((releaseBlock, i) => {
+          if (releaseBlock.order !== i) {
+            // Fix the order
+            chart.data.sprints[ releaseBlock.index ].order = releaseBlock.order = i;
+            releaseBlock.updateOrder(i);
+          }
+        });
+  
+        // position the blocks
+        let dy = 0;
+        sprintReleases.sort((a, b) => {
+          return (a.order || 0) > (b.order || 0) ? 1 : -1
+        }).forEach((releaseBlock, i) => {
+          chart.data.sprints[ releaseBlock.index ].y = releaseBlock.y = dy;
+          dy += Math.max(releaseBlock.titleLength, chart.config.releases.height) + 2 * chart.config.releases.padding + chart.config.efforts.margin;
+        });
+      } catch (e) {
+        console.error('D3CapacityPlanBlockHandler.calculateBlockSizes failed on an sprint block:', sprint, e);
+      }
     });
     
     // Cleanup the offscreen layer
