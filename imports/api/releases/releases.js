@@ -37,21 +37,34 @@ export const Release = new SimpleSchema({
     type        : Boolean,
     defaultValue: false
   },
+  // Template for the admin view for a custom form
+  adminTemplate       : {
+    type    : String,
+    optional: true
+  },
+  // The banner template to show to users
   bannerTemplate       : {
     type    : String,
     optional: true
   },
+  // The main page content to show to users
   homeTemplate         : {
     type    : String,
     optional: true
   },
-  // Reports to show for this team
+  // Reports to show for this release
   reports              : {
     type    : Array, // String
     optional: true
   },
   'reports.$'          : {
     type: String
+  },
+  // Generic Meta-data field
+  metadata: {
+    type: Object,
+    blackbox: true,
+    optional: true
   },
   // Standard tracking fields
   dateCreated          : {
