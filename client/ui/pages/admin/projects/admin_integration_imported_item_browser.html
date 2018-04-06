@@ -65,7 +65,7 @@
           <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right'}}</td>
           <td>{{> ImportedItemPreviewLink _id }}</td>
           <td class="force-wrap no-word-break" style="min-width: 100px;">{{title}}</td>
-          <td class="force-wrap">{{{description}}}</td>
+          <td class="force-wrap">{{#HeightLimitedContent}}{{{description}}}{{/HeightLimitedContent}}</td>
           <td class="no-word-break">{{contributorName owner}}</td>
           <td>{{dateFormat dateModified}}</td>
           <td class="no-word-break">{{contributorName createdBy}}</td>
