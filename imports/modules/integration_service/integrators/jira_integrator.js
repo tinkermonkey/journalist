@@ -21,6 +21,7 @@ const JiraConnector    = require('jira-connector'),
         'cookie_jar'
       ],
       defaultExpand    = [
+        'renderedFields',
         'attachment',
         'changelog',
         'comments',
@@ -209,7 +210,7 @@ export class JiraIntegrator extends Integrator {
       // Cache the list of agile boards
       let boardList = self.fetchData('board', 'getAllBoards').response,
           sprints   = {};
-      startTime   = Date.now();
+      startTime     = Date.now();
       if (boardList && boardList.values) {
         self.provider.storeCachedItem('boardList', boardList.values);
         
