@@ -33,6 +33,15 @@
                 <td>{{> EditableCheckbox  dataKey="isReleased" value=isReleased }}</td>
               </tr>
               <tr class="show-controls-on-hover">
+                <td>Admin Template</td>
+                <td class="open-link">
+                  {{#if bannerTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=adminTemplate}}
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTemplate" value=adminTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
                 <td>Banner Template</td>
                 <td class="open-link">
                   {{#if bannerTemplate}}
@@ -58,6 +67,10 @@
               </tr>
               </tbody>
             </table>
+            
+            {{#if adminTemplate}}
+              {{> MetadataForm templateName=adminTemplate record=this editFn='editRelease' }}
+            {{/if}}
             
             <h2>Mapped Integration Releases</h2>
             {{#each servers}}

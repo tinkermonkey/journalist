@@ -7,6 +7,7 @@ import { Projects }                from '../../../../../imports/api/projects/pro
 import { Releases }                from '../../../../../imports/api/releases/releases';
 import { ReleaseIntegrationLinks } from '../../../../../imports/api/releases/release_integration_links';
 import { Util }                    from '../../../../../imports/api/util';
+import '../../../components/metadata_form/metadata_form';
 import '../../releases/release_items_fixed';
 import '../../releases/release_items_found';
 

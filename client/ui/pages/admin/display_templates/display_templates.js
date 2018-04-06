@@ -93,9 +93,9 @@ Template.DisplayTemplates.events({
             
             AutoForm.resetForm(formId)
           }
-          return;
+        } else {
+          RobaDialog.hide();
         }
-        RobaDialog.hide();
       }.bind(this)
     });
   },

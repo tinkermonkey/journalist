@@ -8,10 +8,10 @@
       <th>Version Number</th>
       <th>Linked Releases</th>
       <th>Released</th>
+      <th>Admin Template</th>
       <th>Banner Template</th>
       <th>Home Template</th>
       <th>Reports</th>
-      <th>Modified</th>
       <th></th>
     </tr>
     </thead>
@@ -47,10 +47,10 @@
           </table>
         </td>
         <td>{{> EditableCheckbox  dataKey="isReleased" value=isReleased }}</td>
+        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTemplate" value=adminTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
         <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner mode="popup" }}</td>
         <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
         <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" mode="popup" }}</td>
-        <td>{{dateFormat dateModified}}</td>
         <td>
           <a class="link-red hidden-control btn-delete-release">
             <span class="glyphicon glyphicon-minus-sign"></span>
