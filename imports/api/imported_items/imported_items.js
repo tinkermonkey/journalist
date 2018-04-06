@@ -100,6 +100,12 @@ export const ImportedItem = new SimpleSchema({
   'versionsFixed.$': {
     type    : String
   },
+  // Generic Meta-data field
+  metadata: {
+    type: Object,
+    blackbox: true,
+    optional: true
+  },
   // Date the item was created in the originating system
   dateCreated      : {
     type    : Date,
