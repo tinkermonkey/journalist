@@ -27,11 +27,11 @@
         <td>{{> EditableTextField dataKey="name" value=name emptyText="Name" mode="popup" }}</td>
         <td>{{> EditableRecordSelector roleSelectorContext }}</td>
         <td>
-          {{#with user}}
+          {{#if userId}}
             <span class="label label-success">Yes</span>
           {{else}}
-            <span class="label label-warning">No</span>
-          {{/with}}
+            <span class="label label-warning btn-add-user" style="cursor: pointer;">No</span>
+          {{/if}}
         </td>
         <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes emptyText="Select" mode="popup" }}</td>
         <td>{{> EditableRecordSelector managerSelectorContext }}</td>
