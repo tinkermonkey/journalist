@@ -29,7 +29,7 @@
             <div><a href="{{pathFor 'CapacityPlanOption' planId=planId optionId=_id}}">{{title}}</a></div>
           {{/each}}
         </td>
-        <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date'  cssClass='capacity-plan' }}</td>
+        <td>{{> EditableDateRange dataKey='startDate' value=startDate config=startDatePickerConfig emptyText='Select a start date' cssClass='capacity-plan' }}</td>
         <td>{{ userName modifiedBy }}</td>
         <td>{{ dateFormat dateModified }}</td>
         <td>{{> EditableCheckbox dataKey="isActive" value=isActive }}</td>
