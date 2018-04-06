@@ -1,5 +1,5 @@
 .imported-item-container {
-
+  min-width: 1000px;
 }
 
 .imported-item-container a,
@@ -44,6 +44,7 @@
 .imported-item-summary-container,
 .imported-item-timeline-container {
   margin-bottom: 1em;
+  min-width: 255px;
 }
 
 .imported-item-sidebar .status-table td {
