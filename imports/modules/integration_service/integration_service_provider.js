@@ -503,13 +503,13 @@ export class IntegrationServiceProvider {
   
   /**
    * Import the results of a query
+   * @param projectId {String}
    * @param importFunction {IntegrationImportFunction}
    * @param query {String}
    * @param limit {Number} optional
-   * @param projectId {String}
    */
-  importItemsFromQuery (importFunction, query, limit, projectId) {
-    debug && console.log('IntegrationServiceProvider.importItemsFromQuery:', this.server._id, this.server.title);
+  importItemsFromQuery (projectId, importFunction, query, limit) {
+    debug && console.log('IntegrationServiceProvider.importItemsFromQuery:', projectId, this.server._id, this.server.title);
     let self           = this,
         processedItems = self.integrator.executeAndProcessQuery(query, 0, limit);
     

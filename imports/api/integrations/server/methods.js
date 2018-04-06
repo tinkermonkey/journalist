@@ -129,16 +129,14 @@ Meteor.methods({
    * Test out an integration to see what comes back and how it's processed
    * @param integrationId
    * @param details
-   * @param projectId
    */
-  testIntegration (integrationId, details, projectId) {
-    console.log('testIntegration:', integrationId, details, projectId);
+  testIntegration (integrationId, details) {
+    console.log('testIntegration:', integrationId, details);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
     check(integrationId, String);
     check(details, Object);
-    check(projectId, String);
     
     // Get the import function record to make sure this is authorized
     let integration = Integrations.findOne(integrationId);
@@ -146,7 +144,7 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (integration) {
-        return IntegrationService.testIntegration(integration, details, projectId);
+        return IntegrationService.testIntegration(integration, details, integration.projectId);
       } else {
         throw new Meteor.Error(404);
       }

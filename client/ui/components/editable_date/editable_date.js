@@ -1,5 +1,6 @@
 import './editable_date.html';
 import { Template } from 'meteor/templating';
+import '../editable_date_range/editable_date_range';
 
 /**
  * Template Helpers

@@ -21,7 +21,6 @@ const JiraConnector    = require('jira-connector'),
         'cookie_jar'
       ],
       defaultExpand    = [
-        'renderedFields',
         'attachment',
         'changelog',
         'comments',
@@ -377,6 +376,13 @@ export class JiraIntegrator extends Integrator {
             debug && console.log('JiraIntegrator.executeQuery paging result starting at:', (i - 1) * pageSize, 'of', result.response.total, 'loaded');
             cumulativeIssues = cumulativeIssues.concat(result.response.issues);
           } else {
+            console.error("JiraIntegrator.executeQuery failed recursive get:", {
+              jql       : jql,
+              startAt   : (i - 1) * pageSize,
+              maxResults: maxResults,
+              fields    : fields,
+              expand    : expand || defaultExpand
+            });
             return result
           }
         }
@@ -386,6 +392,13 @@ export class JiraIntegrator extends Integrator {
         return result
       }
     } else {
+      console.error("JiraIntegrator.executeQuery failed:", {
+        jql       : jql,
+        startAt   : startAt || 0,
+        maxResults: maxResults,
+        fields    : fields,
+        expand    : expand || defaultExpand
+      });
       return result
     }
   }
