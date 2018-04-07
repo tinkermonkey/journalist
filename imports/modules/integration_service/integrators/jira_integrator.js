@@ -193,6 +193,7 @@ export class JiraIntegrator extends Integrator {
       let versionList = [],
           startTime   = Date.now();
       projectList.forEach((project) => {
+        debug && console.log('JiraIntegrator.updateCachedData getting version list for project:', project.id, project.name);
         versionList = versionList.concat(self.fetchData('project', 'getVersions', { projectIdOrKey: project.id }).response);
       });
       self.provider.storeCachedItem('versionList', versionList);
