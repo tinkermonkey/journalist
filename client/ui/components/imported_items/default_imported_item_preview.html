@@ -1,5 +1,5 @@
 <template name="DefaultImportedItemPreview">
-  <div class="container-fluid imported-item-container imported-item-preview">
+  <div class="imported-item-container imported-item-preview">
     <div class="flex">
       <div class="imported-item-id no-wrap show-controls-on-hover">
         <a class="" href="{{pathFor 'ImportedItem' itemId=_id}}">
@@ -13,8 +13,8 @@
         {{title}}
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-3 imported-item-sidebar">
+    <div class="flex">
+      <div class="imported-item-sidebar">
         <div>
           {{> ImportedItemStatusSummary }}
         </div>
@@ -22,7 +22,7 @@
           {{> ImportedItemTimeline }}
         </div>
       </div>
-      <div class="col-md-9 imported-item-description-container">
+      <div class="imported-item-description-container">
         <label class="field-label">Description</label>
         <div class="imported-item-description">
           {{{description}}}

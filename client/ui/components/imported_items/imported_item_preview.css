@@ -1,5 +1,14 @@
 .imported-item-container {
   min-width: 1000px;
+  max-width: 1200px;
+}
+
+.imported-item-container > .flex > div {
+  margin-right: 1em;
+}
+
+.imported-item-container > .flex > div:last-child {
+  margin-right: 0;
 }
 
 .imported-item-container a,
@@ -31,6 +40,11 @@
   font-size: 2em;
 }
 
+.imported-item-sidebar {
+  flex-basis: 260px;
+  flex-shrink: 0;
+}
+
 .imported-item-sidebar,
 .imported-item-description-container {
   margin-top: 1em;
@@ -44,7 +58,6 @@
 .imported-item-summary-container,
 .imported-item-timeline-container {
   margin-bottom: 1em;
-  min-width: 255px;
 }
 
 .imported-item-sidebar .status-table td {
