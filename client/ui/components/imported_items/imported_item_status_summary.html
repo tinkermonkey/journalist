@@ -4,6 +4,14 @@
     <table class="table status-table">
       <tr>
         <td>
+          <label>Status</label>
+        </td>
+        <td>
+          <label class="label label-default">{{statusLabel}}</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
           <label>State</label>
         </td>
         <td>
@@ -26,16 +34,14 @@
           {{> ContributorLink owner }}
         </td>
       </tr>
-      {{#if isOpen }}
-        <tr>
-          <td>
-            <label>Updated</label>
-          </td>
-          <td>
-            {{ fromNow dateModified }}
-          </td>
-        </tr>
-      {{/if}}
+      <tr>
+        <td>
+          <label>Updated</label>
+        </td>
+        <td>
+          {{ fromNow dateModified }}
+        </td>
+      </tr>
     </table>
   </div>
 </template>

@@ -20,6 +20,8 @@ import { Teams }                       from '../../api/teams/teams';
 import { Users }                       from '../../api/users/users';
 import { UserTypes }                   from '../../api/users/user_types.js';
 import '../../../node_modules/c3/c3.css';
+import { ImportedItemWorkPhases }      from '../../api/imported_items/imported_item_work_phases';
+import { ImportedItemWorkStates }      from '../../api/imported_items/imported_item_work_states';
 
 /**
  * Custom autoform hooks to prevent client side inserts
@@ -410,6 +412,51 @@ Template.registerHelper('getElementId', function () {
     }
   }
   return instance.elementId;
+});
+
+/**
+ * Imported Item helpers
+ */
+let workPhaseLookup = _.invert(ImportedItemWorkPhases),
+    workStateLookup = _.invert(ImportedItemWorkStates);
+Template.registerHelper('workPhaseLabel', function () {
+  return workPhaseLookup[ this.workPhase ]
+});
+
+Template.registerHelper('workStateLabel', function () {
+  return workStateLookup[ this.workState ]
+});
+
+Template.registerHelper('workPhaseColor', function () {
+  let item = this;
+  
+  switch (item.workPhase) {
+    case ImportedItemWorkPhases.documentation:
+      return 'danger';
+    case ImportedItemWorkPhases.implementation:
+      return 'warning';
+    case ImportedItemWorkPhases.planning:
+      return 'primary';
+    case ImportedItemWorkPhases.verification:
+      return 'success';
+    default:
+      return 'default'
+  }
+});
+
+Template.registerHelper('workStateColor', function () {
+  let item = this;
+  
+  switch (item.workState) {
+    case ImportedItemWorkStates.beingWorkedOn:
+      return 'warning';
+    case ImportedItemWorkStates.needsToBeWorked:
+      return 'danger';
+    case ImportedItemWorkStates.workCompleted:
+      return 'success';
+    default:
+      return 'default'
+  }
 });
 
 /**
