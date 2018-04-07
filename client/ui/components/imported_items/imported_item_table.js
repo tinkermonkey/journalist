@@ -2,7 +2,7 @@ import './imported_item_table.html';
 import { Template }           from 'meteor/templating';
 import { Random }             from 'meteor/random';
 import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
-import { ImportedItems }      from '../../../../imports/api/imported_items/imported_items';
+import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
 import { ImportedItemCounts } from '../../pages/admin/projects/imported_item_counts';
 import './imported_item_preview_link';
 
@@ -13,8 +13,12 @@ let pageSize = 50;
  */
 Template.ImportedItemTable.helpers({
   importedItems () {
-    let context = this;
-    return ImportedItems.find(context.query, { sort: { identifier: 1 } });
+    let context = this,
+        page    = Template.instance().page.get(),
+        skip    = (page - 1) * pageSize;
+    
+    console.log('ImportedItemTable.importedItems:', context, { sort: { identifier: 1 }, skip: skip, limit: pageSize });
+    return ImportedItemCrumbs.find(context.query, { sort: { identifier: 1 }, skip: skip, limit: pageSize });
   },
   importedItemsCount () {
     let countRow = ImportedItemCounts.findOne(Template.instance().queryId);

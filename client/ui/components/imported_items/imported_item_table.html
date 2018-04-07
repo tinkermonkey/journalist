@@ -31,8 +31,8 @@
     <tr>
       <th></th>
       <th>Identifier</th>
+      <th>Status</th>
       <th>Title</th>
-      <th>Description</th>
       <th>Owner</th>
       <th>Date Modified</th>
       <th>Created By</th>
@@ -44,24 +44,27 @@
       {{#each importedItems}}
         <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
           <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right'}}</td>
-          <td>{{> ImportedItemPreviewLink _id }}</td>
-          <td class="force-wrap no-word-break" style="min-width: 100px;">{{title}}</td>
-          <td class="force-wrap">
-            {{#HeightLimitedContent}}{{{description}}}{{/HeightLimitedContent}}
+          <td class="no-wrap">{{> ImportedItemPreviewLink _id }}</td>
+          <td>
+            <label class="label label-default">{{statusLabel}}</label>
+            <label class="label label-{{workStateColor}}">{{camelToTitle workStateLabel}}</label>
+            <label class="label label-{{workPhaseColor}}">{{camelToTitle workPhaseLabel}}</label>
           </td>
+          <td class="force-wrap no-word-break" style="min-width: 100px;">{{title}}</td>
           <td class="no-word-break">{{contributorName owner}}</td>
           <td>{{dateFormat dateModified}}</td>
           <td class="no-word-break">{{contributorName createdBy}}</td>
           <td>{{dateFormat dateCreated}}</td>
         </tr>
       {{/each}}
-    {{else}}
-      {{> RobaSpinner rainbow=true }}
     {{/if}}
     </tbody>
   </table>
-  {{#unless Template.subscriptionsReady}} {{> RobaSpinner rainbow=true}} {{/unless}}
-  
+
+  {{#unless Template.subscriptionsReady}}
+    {{> RobaSpinner rainbow=true }}
+  {{/unless}}
+
   <div>
     {{#if multiplePages}}
       <nav aria-label="Page navigation">

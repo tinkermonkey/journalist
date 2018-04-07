@@ -19,6 +19,12 @@ Template.AdminProjectIntegration.helpers({
   randomImportedItem () {
     let integrationId = FlowRouter.getParam('integrationId');
     return ImportedItems.findOne({ integrationId: integrationId }, { sort: { lastImported: -1 } })
+  },
+  importedItemQuery () {
+    let integrationId = FlowRouter.getParam('integrationId');
+    return {
+      query: { integrationId: integrationId }
+    }
   }
 });
 
@@ -48,7 +54,6 @@ Template.AdminProjectIntegration.events({
  * Template Created
  */
 Template.AdminProjectIntegration.onCreated(() => {
-  console.log('AdminProjectIntegration onCreated');
   let instance = Template.instance();
   
   instance.subscribe('integration_calculated_fields');
@@ -67,7 +72,7 @@ Template.AdminProjectIntegration.onCreated(() => {
  * Template Rendered
  */
 Template.AdminProjectIntegration.onRendered(() => {
-  console.log('AdminProjectIntegration onRendered');
+
 });
 
 /**

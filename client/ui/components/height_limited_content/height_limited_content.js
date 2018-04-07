@@ -1,4 +1,5 @@
 import './height_limited_content.html';
+import './height_limited_content.css';
 import { Template } from 'meteor/templating';
 
 let maxHeight    = 150,

@@ -57,7 +57,7 @@ Template.JiraIntegrationDetailPanel.onCreated(() => {
         if (error) {
           console.error('JiraIntegrationDetailPanel getIntegrationQueryDefinitions failed:', error, integration)
         } else {
-          console.log('Query Definitions:', response);
+          //console.log('Query Definitions:', response);
           instance.queryDefinitions.set({
             _id        : integration._id,
             definitions: response
