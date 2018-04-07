@@ -38,7 +38,7 @@ export const Release = new SimpleSchema({
     defaultValue: false
   },
   // Template for the admin view for a custom form
-  adminTemplate       : {
+  adminTemplate        : {
     type    : String,
     optional: true
   },
@@ -61,8 +61,8 @@ export const Release = new SimpleSchema({
     type: String
   },
   // Generic Meta-data field
-  metadata: {
-    type: Object,
+  metadata             : {
+    type    : Object,
     blackbox: true,
     optional: true
   },
@@ -120,9 +120,9 @@ if (Meteor.isServer) {
     // If either the title or the version are being changed, update the sort version
     if (modifier.$set.versionNumber || modifier.$set.title) {
       // If the version is being nulled our
-      if(modifier.$set.versionNumber.length > 0){
+      if (modifier.$set.versionNumber.length > 0) {
         modifier.$set.sortVersion = Util.versionNumberToSortString(modifier.$set.versionNumber);
-      } else if(doc.versionNumber) {
+      } else if (doc.versionNumber) {
         // If there's already a version, probably just leave the sort version
       } else {
         modifier.$set.sortVersion = Util.versionNumberToSortString(modifier.$set.title || doc.title);
@@ -169,5 +169,27 @@ Releases.helpers({
         }
       })
     }))
+  },
+  
+  /**
+   * Get all of the projects that are part of this release
+   * @returns {*}
+   */
+  projects () {
+    let release    = this,
+        projectIds = _.uniq(ReleaseIntegrationLinks.find({
+          releaseId: release._id
+        }).map((releaseLink) => {
+          return releaseLink.projectId
+        }));
+    
+    return Projects.find({ _id: { $in: projectIds } }, { sort: { title: 1 } })
+  },
+  
+  /**
+   * Does this release encompass multiple projects?
+   */
+  multiProject () {
+    return this.projects().count() > 1
   }
 });
