@@ -16,6 +16,7 @@ import { ContributorRoleDefinitions }       from '../../contributors/contributor
 import { ContributorTeamRoles }             from '../../contributors/contributor_team_roles';
 import { DisplayTemplates }                 from '../../display_templates/display_templates';
 import { DisplayTemplateGroups }            from '../../display_templates/display_template_groups';
+import { DynamicCollections }               from '../../dynamic_collections/dynamic_collections';
 import { PublishedDisplayTemplates }        from '../../display_templates/published_display_templates';
 import { Efforts }                          from '../../efforts/efforts';
 import { IntegrationCalculatedFields }      from '../../integrations/integration_calculated_fields';
@@ -28,6 +29,7 @@ import { Priorities }                       from '../../priorities/priorities';
 import { Projects }                         from '../../projects/projects';
 import { Releases }                         from '../../releases/releases';
 import { ReleaseIntegrationLinks }          from '../../releases/release_integration_links';
+import { ScheduledJobs }                    from '../../scheduled_jobs/scheduled_jobs';
 import { StatusReportSettings }             from '../../status_reports/status_report_settings';
 import { StatusReports }                    from '../../status_reports/status_reports';
 import { Subtasks }                         from '../../subtasks/subtasks';
@@ -53,7 +55,6 @@ export const CollectionMap = {
   CapacityPlanSprints             : CapacityPlanSprints,
   CapacityPlanStrategicEffortItems: CapacityPlanStrategicEffortItems,
   CapacityPlanStrategicEfforts    : CapacityPlanStrategicEfforts,
-  // This needs to be after all of the blocks and sprints so that the after.insert handler doesn't create duplicate sprints
   CapacityPlanOptions             : CapacityPlanOptions,
   Contributors                    : Contributors,
   ContributorProjectAssignments   : ContributorProjectAssignments,
@@ -61,6 +62,7 @@ export const CollectionMap = {
   ContributorTeamRoles            : ContributorTeamRoles,
   DisplayTemplates                : DisplayTemplates,
   DisplayTemplateGroups           : DisplayTemplateGroups,
+  DynamicCollections              : DynamicCollections,
   Efforts                         : Efforts,
   PublishedDisplayTemplates       : PublishedDisplayTemplates,
   IntegrationCalculatedFields     : IntegrationCalculatedFields,
@@ -73,6 +75,7 @@ export const CollectionMap = {
   Priorities                      : Priorities,
   Releases                        : Releases,
   ReleaseIntegrationLinks         : ReleaseIntegrationLinks,
+  ScheduledJobs                   : ScheduledJobs,
   StatusReportSettings            : StatusReportSettings,
   StatusReports                   : StatusReports,
   Subtasks                        : Subtasks,
