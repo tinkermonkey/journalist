@@ -3,8 +3,9 @@ import './top_nav.css';
 import { Meteor }              from 'meteor/meteor';
 import { Template }            from 'meteor/templating';
 import { SystemHealthMetrics } from '../../../../imports/api/system_health_metrics/system_health_metrics';
-import './status_menu_item'
 import { CapacityPlans }       from '../../../../imports/api/capacity_plans/capacity_plans';
+import { Releases }            from '../../../../imports/api/releases/releases';
+import './status_menu_item'
 
 /**
  * Template Helpers
@@ -15,7 +16,7 @@ Template.TopNav.helpers({
     if (unhealthyOnly) {
       filter.isHealthy = false;
     }
-    return SystemHealthMetrics.find(filter, { sort: { isHealthy: 1, title: 1 } })
+    return SystemHealthMetrics.find(filter, { sort: { isHealthy: 1, sortVersion: 1 } })
   },
   meteorServerStatus () {
     let status = Meteor.status();
@@ -35,6 +36,9 @@ Template.TopNav.helpers({
       title    : status === true ? 'System Healthy' : 'System Unhealthy',
       isHealthy: status
     }
+  },
+  releases () {
+    return Releases.find({ isReleased: false }, { sort: { title: 1 } })
   },
   capacityPlans () {
     return CapacityPlans.find({ isActive: true, selectedOptionId: { $exists: true } }, { sort: { title: 1 } })

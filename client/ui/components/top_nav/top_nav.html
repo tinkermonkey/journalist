@@ -56,6 +56,20 @@
               </ul>
             </li>
             
+            {{#if releases.count }}
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                  Releases
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  {{#each releases}}
+                    <li><a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a></li>
+                  {{/each}}
+                </ul>
+              </li>
+            {{/if}}
+
             {{#if capacityPlans.count }}
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button">
@@ -69,7 +83,7 @@
                 </ul>
               </li>
             {{/if}}
-            
+
             {{#if userIsManager}}
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button">

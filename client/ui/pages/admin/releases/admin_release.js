@@ -115,12 +115,12 @@ Template.AdminRelease.helpers({
   workPhaseItemTableContext (project, release) {
     let workPhase = this;
     
-    console.log('workPhaseItemTableContext:', workPhase, project, release);
+    //console.log('workPhaseItemTableContext:', workPhase, project, release);
     
     return {
       query: {
-        projectId: project._id,
-        workPhase: workPhase.value,
+        projectId    : project._id,
+        workPhase    : workPhase.value,
         versionsFixed: release._id
       }
     }
@@ -182,14 +182,8 @@ Template.AdminRelease.events({
  */
 Template.AdminRelease.onCreated(() => {
   let instance = Template.instance();
-  
-  instance.autorun(() => {
-    let projectId = FlowRouter.getParam('projectId');
-    
-    instance.subscribe('integrations', projectId);
-    instance.subscribe('integration_servers');
-    instance.subscribe('integration_server_caches', 'versionList');
-  });
+  instance.subscribe('integration_servers');
+  instance.subscribe('integration_server_caches', 'versionList');
 });
 
 /**

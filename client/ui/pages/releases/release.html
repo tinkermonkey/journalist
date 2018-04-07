@@ -2,9 +2,37 @@
   {{#with release}}
     {{#if Template.subscriptionsReady}}
       <div class="container release-container" data-pk="{{_id}}">
-        <div class="row">
-          <div class="col-md-12">
-            <h1>{{title}}</h1>
+        <div class="full-width page-banner">
+          {{#if bannerTemplate}}
+            {{> Template.dynamic template=bannerTemplate }}
+          {{/if}}
+        </div>
+        <div class="container">
+          <div class="row">
+            {{#if homeTemplate}}
+              {{> Template.dynamic template=homeTemplate }}
+            {{else}}
+              <h1>{{title}}</h1>
+
+              <h2>Contents</h2>
+              {{#if multiProject}}
+                {{#RobaTabGroup name="release-project-tabs" navClass="nav-tabs"}}
+                  {{#each projects }}
+                    {{#RobaTab name=_id title=title }}
+                      {{#RobaTabGroup name="release-contents-project-tabs" navClass="nav-pills"}}
+                        {{#each workStates}}
+                          {{#RobaTab name=key title=title }}
+                            {{> ImportedItemTable workStateItemTableContext .. ../..}}
+                          {{/RobaTab}}
+                        {{/each}}
+                      {{/RobaTabGroup}}
+                    {{/RobaTab}}
+                  {{/each}}
+                {{/RobaTabGroup}}
+              {{else}}
+
+              {{/if}}
+            {{/if}}
           </div>
         </div>
       </div>
