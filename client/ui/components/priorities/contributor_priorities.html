@@ -4,7 +4,7 @@
       <h3>Priorities</h3>
     </div>
     
-    {{#if userManagesContributor _id}}
+    {{#if userManagesOrIsContributor _id}}
       <table class="sortable-table overhang-table-left">
         {{#each priorities}}
           <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{order}}">
@@ -30,7 +30,7 @@
       </table>
     {{/if}}
     
-    {{#if userManagesContributor _id}}
+    {{#if userManagesOrIsContributor _id}}
       <div>
         <a class="btn-add-priority hidden-control">
           <span class="glyphicon glyphicon-plus-sign"></span>

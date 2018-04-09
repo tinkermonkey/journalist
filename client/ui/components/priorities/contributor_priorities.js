@@ -72,7 +72,7 @@ Template.ContributorPriorities.events({
       }.bind(this)
     });
   },
-  'click .btn-delete' (e, instance) {
+  'click .btn-delete-priority' (e, instance) {
     let priorityId = $(e.target).closest('.sortable-table-row').attr('data-pk'),
         priority   = Priorities.findOne(priorityId);
     

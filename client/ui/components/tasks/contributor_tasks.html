@@ -4,7 +4,7 @@
       <h3>Tasks</h3>
     </div>
     
-    {{#if userManagesContributor _id}}
+    {{#if userManagesOrIsContributor _id}}
       <table class="table data-table overhang-table-left">
         {{#each tasks}}
           <tr class="data-table-row" data-pk="{{_id}}">
@@ -17,7 +17,7 @@
               {{> EditableTextField dataKey="title" value=title emptyText="Enter Title" }}
             </td>
             <td class="text-right">
-              <a class="btn-delete-role link-red hidden-control">
+              <a class="btn-delete-task link-red hidden-control">
                 <span class="glyphicon glyphicon-minus-sign"></span>
               </a>
             </td>
@@ -39,7 +39,7 @@
       </table>
     {{/if}}
     
-    {{#if userManagesContributor _id}}
+    {{#if userManagesOrIsContributor _id}}
       <div>
         <a class="btn-add-task hidden-control">
           <span class="glyphicon glyphicon-plus-sign"></span>

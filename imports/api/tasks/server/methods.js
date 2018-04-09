@@ -18,7 +18,7 @@ Meteor.methods({
     check(title, String);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(contributorId) || user.isAdmin()) {
+    if (user.managesContributor(contributorId) || user.isAdmin() || (user.contributor() || {})._id === contributorId) {
       // Create the task
       Tasks.insert({
         contributorId: contributorId,
@@ -49,7 +49,7 @@ Meteor.methods({
     let task = Tasks.findOne(taskId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(task.contributorId) || user.isAdmin()) {
+    if (user.managesContributor(task.contributorId) || user.isAdmin() || (user.contributor() || {})._id === task.contributorId) {
       let update    = {};
       update[ key ] = value;
       
@@ -76,7 +76,7 @@ Meteor.methods({
     let task = Tasks.findOne(taskId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(task.contributorId) || user.isAdmin()) {
+    if (user.managesContributor(task.contributorId) || user.isAdmin() || (user.contributor() || {})._id === task.contributorId) {
       // Delete the task
       Tasks.remove(taskId);
     } else {

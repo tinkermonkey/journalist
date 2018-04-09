@@ -18,7 +18,7 @@ Meteor.methods({
     check(title, String);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(contributorId) || user.isAdmin()) {
+    if (user.managesContributor(contributorId) || user.isAdmin() || (user.contributor() || {})._id === contributorId) {
       // Create the effort
       Efforts.insert({
         contributorId: contributorId,
@@ -49,7 +49,7 @@ Meteor.methods({
     let effort = Efforts.findOne(effortId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(effort.contributorId) || user.isAdmin()) {
+    if (user.managesContributor(effort.contributorId) || user.isAdmin() || (user.contributor() || {})._id === effort.contributorId) {
       let update    = {};
       update[ key ] = value;
       
@@ -76,7 +76,7 @@ Meteor.methods({
     let effort = Efforts.findOne(effortId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(effort.contributorId) || user.isAdmin()) {
+    if (user.managesContributor(effort.contributorId) || user.isAdmin() || (user.contributor() || {})._id === effort.contributorId) {
       // Delete the effort
       Efforts.remove(effortId);
     } else {

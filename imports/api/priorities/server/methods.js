@@ -18,7 +18,7 @@ Meteor.methods({
     check(title, String);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(contributorId) || user.isAdmin()) {
+    if (user.managesContributor(contributorId) || user.isAdmin() || (user.contributor() || {})._id === contributorId) {
       let nextOrder = Priorities.find({ contributorId: contributorId }).count() + 1;
       
       // Create the priority
@@ -52,7 +52,7 @@ Meteor.methods({
     let priority = Priorities.findOne(priorityId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(priority.contributorId) || user.isAdmin()) {
+    if (user.managesContributor(priority.contributorId) || user.isAdmin() || (user.contributor() || {})._id === priority.contributorId) {
       let update    = {};
       update[ key ] = value;
       
@@ -79,7 +79,7 @@ Meteor.methods({
     let priority = Priorities.findOne(priorityId);
     
     // Validate that the current user is an administrator
-    if (user.managesContributor(priority.contributorId) || user.isAdmin()) {
+    if (user.managesContributor(priority.contributorId) || user.isAdmin() || (user.contributor() || {})._id === priority.contributorId) {
       // Delete the priority
       Priorities.remove(priorityId);
     } else {

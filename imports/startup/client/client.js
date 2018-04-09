@@ -33,7 +33,7 @@ AutoForm.hooks({
       let dialogElement = $('#' + this.formId).closest('.roba-dialog'),
           dialogButton  = dialogElement.find('.button-bar button').last('button');
       dialogButton.trigger('click');
-      return false;
+      return false
     }
   },
   addRecordForm   : {
@@ -42,7 +42,7 @@ AutoForm.hooks({
       let dialogElement = $('#' + this.formId).closest('.roba-dialog'),
           dialogButton  = dialogElement.find('.button-bar button').last('button');
       dialogButton.trigger('click');
-      return false;
+      return false
     }
   }
 });
@@ -76,45 +76,52 @@ Template.registerHelper('userIsAdmin', function () {
 Template.registerHelper('userIsManager', function () {
   let user = Users.findOne(Meteor.userId());
   if (user) {
-    return user.isManager();
+    return user.isManager()
   }
 });
 Template.registerHelper('isCurrentContributor', function (contributorId) {
   let user = Users.findOne(Meteor.userId());
   if (user) {
-    return user.contributor()._id === contributorId;
+    return user.contributor()._id === contributorId
   }
 });
 Template.registerHelper('userManagesContributor', function (contributorId) {
   let user      = Users.findOne(Meteor.userId());
   contributorId = contributorId || (this && this.contributorId);
   if (user && contributorId) {
-    return user.contributor().managesContributor(contributorId) || user.isAdmin();
+    return user.contributor().managesContributor(contributorId) || user.isAdmin()
+  }
+});
+Template.registerHelper('userManagesOrIsContributor', function (contributorId) {
+  let user      = Users.findOne(Meteor.userId());
+  contributorId = contributorId || (this && this.contributorId);
+  if (user && contributorId) {
+    return user.contributor().managesContributor(contributorId) || user.isAdmin() || (user.contributor() || {})._id === contributorId
   }
 });
 Template.registerHelper('userManagesTeam', function (teamId) {
   let user = Users.findOne(Meteor.userId());
   teamId   = teamId || (this && this.teamId);
   if (user && teamId) {
-    return user.contributor().managesTeam(teamId) || user.isAdmin();
+    return user.contributor().managesTeam(teamId) || user.isAdmin()
   }
 });
 Template.registerHelper('userDirectStaff', function () {
   let user = Users.findOne(Meteor.userId());
   if (user) {
-    return user.directStaff();
+    return user.directStaff()
   }
 });
 Template.registerHelper('userName', function () {
   let user = Users.findOne(Meteor.userId());
   if (user && user.profile) {
-    return user.profile.name;
+    return user.profile.name
   }
 });
 Template.registerHelper('contributorName', function (contributorId) {
   let contributor = Contributors.findOne(contributorId);
   if (contributor) {
-    return contributor.name;
+    return contributor.name
   }
 });
 
