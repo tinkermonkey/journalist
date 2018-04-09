@@ -120,7 +120,7 @@ if (Meteor.isServer) {
     // If either the title or the version are being changed, update the sort version
     if (modifier.$set.versionNumber || modifier.$set.title) {
       // If the version is being nulled our
-      if (modifier.$set.versionNumber.length > 0) {
+      if (modifier.$set.versionNumber && modifier.$set.versionNumber.length > 0) {
         modifier.$set.sortVersion = Util.versionNumberToSortString(modifier.$set.versionNumber);
       } else if (doc.versionNumber) {
         // If there's already a version, probably just leave the sort version
