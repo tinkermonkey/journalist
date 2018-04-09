@@ -75,14 +75,17 @@ Template.AdminRelease.helpers({
           serverId : server._id,
           projectId: project._id,
           releaseId: release._id
-        }) || { integrationReleaseId: [] };
+        }) || { integrationReleaseId: [] },
+        mappedReleases       = _.flatten(ReleaseIntegrationLinks.find({}).fetch().map((releaseLink) => {
+          return releaseLink.integrationReleaseId
+        }));
     
     if (integrationProjectId && serverVersionList.value.length) {
       versionList = serverVersionList.value.filter((version) => {
         // This needs to not be strictly equal because we're comparing a string to maybe a number
         return version.projectId == integrationProjectId && version.name.match(releaseRegex)
       }).filter((version) => {
-        return !_.contains(currentMapping.integrationReleaseId, version.id)
+        return !_.contains(currentMapping.integrationReleaseId, version.id) && !_.contains(mappedReleases, version.id)
       }).map((version) => {
         version.projectId      = project._id;
         version.releaseId      = release._id;
