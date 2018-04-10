@@ -26,7 +26,7 @@ Template.ReleaseDashboardProjectCard.helpers({
     let project = this,
         latestRelease;
     
-    Releases.find({ isReleased: true, releasedDate: { $exists: true } }, { sort: { releasedDate: -1 } }).forEach((release) => {
+    Releases.find({ isReleased: true, releaseDate: { $exists: true } }, { sort: { releaseDate: -1 } }).forEach((release) => {
       let link = ReleaseIntegrationLinks.findOne({ releaseId: release._id, projectId: project._id });
       if (link && latestRelease == null) {
         latestRelease = release
@@ -51,8 +51,9 @@ Template.ReleaseDashboardProjectCard.helpers({
     if (nextRelease) {
       console.log('futureReleases project:', project);
       console.log('futureReleases nextRelease:', nextRelease);
-      Releases.find({ isReleased: false,
-            _id: { $ne: nextRelease._id },
+      Releases.find({
+            isReleased                    : false,
+            _id                           : { $ne: nextRelease._id },
             'metadata.internalReleaseDate': { $exists: true }
           }, { sort: { 'metadata.internalReleaseDate': 1 } })
           .forEach((release) => {
