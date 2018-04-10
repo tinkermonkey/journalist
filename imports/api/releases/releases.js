@@ -14,72 +14,73 @@ import { ReleaseIntegrationLinks } from './release_integration_links';
  * ============================================================================
  */
 export const Release = new SimpleSchema({
-  title                : {
+  title         : {
     type: String
   },
-  versionNumber        : {
+  versionNumber : {
     type    : String,
     optional: true
   },
-  sortVersion          : {
+  sortVersion   : {
     type    : String,
     optional: true
   },
-  externalReleaseTiming: {
-    type    : String,
-    optional: true
-  },
-  internalReleaseDate  : {
-    type    : Date,
-    optional: true
-  },
-  isReleased           : {
+  isReleased    : {
     type        : Boolean,
     defaultValue: false
   },
+  releaseDate   : {
+    type    : Date,
+    optional: true
+  },
   // Template for the admin view for a custom form
-  adminTemplate        : {
+  adminTemplate : {
     type    : String,
     optional: true
   },
   // The banner template to show to users
-  bannerTemplate       : {
+  bannerTemplate: {
     type    : String,
     optional: true
   },
   // The main page content to show to users
-  homeTemplate         : {
+  homeTemplate  : {
+    type    : String,
+    optional: true
+  },
+  // The content to show to on the dashboard
+  cardTemplate  : {
     type    : String,
     optional: true
   },
   // Reports to show for this release
-  reports              : {
+  reports       : {
     type    : Array, // String
     optional: true
   },
-  'reports.$'          : {
+  'reports.$'   : {
     type: String
   },
   // Generic Meta-data field
-  metadata             : {
+  metadata      : {
     type    : Object,
     blackbox: true,
     optional: true
   },
   // Standard tracking fields
-  dateCreated          : {
+  dateCreated   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy            : {
+  createdBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified         : {
+  dateModified  : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy           : {
+  modifiedBy    : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -116,9 +117,10 @@ if (Meteor.isServer) {
   });
   Releases.before.update((userId, doc, fieldNames, modifier, options) => {
     modifier.$set = modifier.$set || {};
+    let setKeys   = _.keys(modifier.$set);
     
     // If either the title or the version are being changed, update the sort version
-    if (modifier.$set.versionNumber || modifier.$set.title) {
+    if (_.contains(setKeys, 'versionNumber') || _.contains(setKeys, 'title')) {
       // If the version is being nulled our
       if (modifier.$set.versionNumber && modifier.$set.versionNumber.length > 0) {
         modifier.$set.sortVersion = Util.versionNumberToSortString(modifier.$set.versionNumber);
@@ -128,6 +130,15 @@ if (Meteor.isServer) {
         modifier.$set.sortVersion = Util.versionNumberToSortString(modifier.$set.title || doc.title);
       }
     }
+    
+    // Check to see if the release is being released
+    if (_.contains(setKeys, 'isReleased') && modifier.$set.isReleased === true) {
+      modifier.$set.releaseDate = new Date();
+    } else if (_.contains(setKeys, 'isReleased')) {
+      modifier.$unset = modifier.$unset || {};
+      modifier.$unset.releaseDate = true;
+    }
+    
     //console.log('Before Releases Update:', doc, modifier.$set);
   });
 }
