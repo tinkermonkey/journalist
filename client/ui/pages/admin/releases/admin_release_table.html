@@ -10,7 +10,6 @@
       <th>Released</th>
       <th>Release Date</th>
       <th>Admin Template</th>
-      <th>Card Template</th>
       <th>Banner Template</th>
       <th>Home Template</th>
       <th>Reports</th>
@@ -55,7 +54,6 @@
           {{/if}}
         </td>
         <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTemplate" value=adminTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
-        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="cardTemplate" value=cardTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
         <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner mode="popup" }}</td>
         <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
         <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" mode="popup" }}</td>

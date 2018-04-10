@@ -26,8 +26,8 @@ export const Release = new SimpleSchema({
     optional: true
   },
   isReleased    : {
-    type        : Boolean,
-    defaultValue: false
+    type    : Boolean,
+    optional: true
   },
   releaseDate   : {
     type    : Date,
@@ -45,11 +45,6 @@ export const Release = new SimpleSchema({
   },
   // The main page content to show to users
   homeTemplate  : {
-    type    : String,
-    optional: true
-  },
-  // The content to show to on the dashboard
-  cardTemplate  : {
     type    : String,
     optional: true
   },
@@ -135,7 +130,7 @@ if (Meteor.isServer) {
     if (_.contains(setKeys, 'isReleased') && modifier.$set.isReleased === true) {
       modifier.$set.releaseDate = new Date();
     } else if (_.contains(setKeys, 'isReleased')) {
-      modifier.$unset = modifier.$unset || {};
+      modifier.$unset             = modifier.$unset || {};
       modifier.$unset.releaseDate = true;
     }
     
@@ -153,6 +148,8 @@ Releases.helpers({
    */
   linkedReleases () {
     let release = this;
+    
+    console.log('linkedReleases:', release);
     
     return _.flatten(IntegrationServers.find({}).map((server) => {
       let serverVersionList = (IntegrationServerCaches.findOne({ serverId: server._id, key: 'versionList' }) || {}).value || [];

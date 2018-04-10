@@ -6,9 +6,6 @@ import { Template } from 'meteor/templating';
  * Template Helpers
  */
 Template.AdminReleaseTable.helpers({
-  linkedReleases () {
-    return this.linkedReleases();
-  }
 });
 
 /**

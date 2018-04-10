@@ -51,7 +51,7 @@ Meteor.publish('integration_servers', function () {
   if (this.userId) {
     let user = Meteor.users.findOne(this.userId);
     if (user && user.isAdmin()) {
-      return IntegrationServers.find({});
+      return IntegrationServers.find({}, { fields: { authData: 0 } });
     } else {
       console.warn('integration_servers requested by non-admin:', this.userId, user && user.username)
     }
@@ -66,7 +66,7 @@ Meteor.publish('integration_server', function (serverId) {
   if (this.userId) {
     let user = Meteor.users.findOne(this.userId);
     if (user && user.isAdmin()) {
-      return IntegrationServers.find({ _id: serverId });
+      return IntegrationServers.find({ _id: serverId }, { fields: { authData: 0 } });
     } else {
       console.warn('integration_servers requested by non-admin:', this.userId, user && user.username)
     }

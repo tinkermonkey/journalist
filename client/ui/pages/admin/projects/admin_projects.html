@@ -18,11 +18,14 @@
               <th>Title</th>
               <th>Description</th>
               <th>Show on Dashboard</th>
+              <th>Background Color</th>
+              <th>Foreground Color</th>
+              <th>Card Template</th>
+              <th>Dashboard Category</th>
               <th>Banner Template</th>
               <th>Home Template</th>
               <th>Reports</th>
               <th>Owner</th>
-              <th>Modified</th>
               <th></th>
             </tr>
             </thead>
@@ -43,11 +46,14 @@
                 <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" mode="popup" }}</td>
                 <td>{{> EditableTextArea dataKey="description" value=description emptyText="Enter a description for this project" mode="popup" }}</td>
                 <td>{{> EditableCheckbox dataKey="showOnDashboard" value=showOnDashboard }}</td>
+                <td>{{> EditableColorPicker dataKey="backgroundColor" value=backgroundColor }}</td>
+                <td>{{> EditableColorPicker dataKey="foregroundColor" value=foregroundColor }}</td>
+                <td>{{> EditableTextField dataKey='dashboardCategory' value=dashboardCategory emptyText='Category' mode='inline' }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="cardTemplate" value=cardTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
                 <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner }}</td>
                 <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component }}</td>
                 <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports"}}</td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
-                <td>{{dateFormat dateModified}}</td>
                 <td>
                   <a class="link-red hidden-control btn-delete-project">
                     <span class="glyphicon glyphicon-minus-sign"></span>

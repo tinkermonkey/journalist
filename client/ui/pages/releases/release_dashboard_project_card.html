@@ -1,0 +1,44 @@
+<template name="ReleaseDashboardProjectCard">
+  <div class="release-dashboard-project-card" style="border-color: {{backgroundColor}};">
+    <div class="release-dashboard-project-card-header" style="background-color: {{backgroundColor}}; color: {{foregroundColor}}">
+      {{title}}
+    </div>
+    <div class="release-dashboard-project-card-body">
+      {{#if cardTemplate}}
+        {{> Template.dynamic template=cardTemplate }}
+      {{else}}
+        <h3>Next Release</h3>
+        {{#with nextRelease}}
+          <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
+
+          {{#if metadata.externalReleaseDate}}
+            (<i>{{metadata.externalReleaseDate}}</i>)
+          {{/if}}
+        {{else}}
+          <div>Nothing actively planned</div>
+        {{/with}}
+
+        <h3>Latest Version</h3>
+        {{#with latestRelease}}
+          <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
+          (<i>{{dateFormat releaseDate}}</i>)
+        {{else}}
+        {{/with}}
+
+        <h3>Future Releases</h3>
+        {{#if futureReleases.length}}
+          {{#each futureReleases}}
+            <div>
+              <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
+              {{#if metadata.externalReleaseDate}}
+                (<i>{{metadata.externalReleaseDate}}</i>)
+              {{/if}}
+            </div>
+          {{/each}}
+        {{else}}
+          <div>Nothing actively planned</div>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+</template>

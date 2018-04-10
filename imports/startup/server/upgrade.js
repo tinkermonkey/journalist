@@ -5,6 +5,7 @@ import { Clustering }               from 'meteor/austinsand:journalist-clusterin
 import { CapacityPlans }            from '../../api/capacity_plans/capacity_plans';
 import { CapacityPlanOptions }      from '../../api/capacity_plans/capacity_plan_options';
 import { CapacityPlanReleases }     from '../../api/capacity_plans/capacity_plan_releases';
+import { Projects }                 from '../../api/projects/projects';
 import { Releases }                 from '../../api/releases/releases';
 import { CapacityPlanSprintBlocks } from '../../api/capacity_plans/capacity_plan_sprint_blocks';
 import { CapacityPlanBlockTypes }   from '../../api/capacity_plans/capacity_plan_block_types';
@@ -12,6 +13,24 @@ import { Util }                     from '../../api/util';
 
 // Only run on the cluster master node
 if (Clustering.isMaster()) {
+  /**
+   * Add the default color to projects that don't have it
+   */
+  if (Projects.find({ backgroundColor: { $exists: false } }).count()) {
+    console.log("UPGRADE: Updating backgroundColor for Projects");
+    Projects.find({ backgroundColor: { $exists: false } }).forEach((project) => {
+      console.log("UPGRADE: setting project backgroundColor:", project._id, project.title);
+      Projects.update(project._id, { $set: { backgroundColor: '#298cff' } });
+    })
+  }
+  if (Projects.find({ foregroundColor: { $exists: false } }).count()) {
+    console.log("UPGRADE: Updating foregroundColor for Projects");
+    Projects.find({ foregroundColor: { $exists: false } }).forEach((project) => {
+      console.log("UPGRADE: setting project foregroundColor:", project._id, project.title);
+      Projects.update(project._id, { $set: { foregroundColor: '#ffffff' } });
+    })
+  }
+  
   /**
    * Update the sort version for any releases without one
    */

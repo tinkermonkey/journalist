@@ -6,6 +6,7 @@ import { Projects }   from '../../../../../imports/api/projects/projects.js';
 import '../../../components/add_record_form/add_record_form.js';
 import './admin_project_home.js';
 import './admin_projects_order_list.js';
+import '../../../components/editable_color_picker/editable_color_picker';
 
 /**
  * Template Helpers

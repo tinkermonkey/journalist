@@ -97,6 +97,8 @@ export const Util = {
     instance.subscribe('contributor_team_roles');
     instance.subscribe('contributor_project_assignments');
     instance.subscribe('efforts');
+    instance.subscribe('integration_servers');
+    instance.subscribe('integration_server_caches', 'versionList');
     instance.subscribe('priorities');
     instance.subscribe('projects');
     instance.subscribe('releases');
@@ -194,9 +196,9 @@ export const Util = {
    * Convert a version number into a sortable string
    * @param versionString
    */
-  versionNumberToSortString (versionString){
+  versionNumberToSortString (versionString) {
     return versionString.toLowerCase().split('.').map((segment) => {
-      if(!_.isNaN(parseInt(segment))){
+      if (!_.isNaN(parseInt(segment))) {
         return numeral(segment).format('0000')
       } else {
         return segment

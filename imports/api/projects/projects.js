@@ -23,8 +23,20 @@ export const Project = new SimpleSchema({
     type    : String,
     optional: true
   },
+  backgroundColor    : {
+    type        : String,
+    defaultValue: '#298cff'
+  },
+  foregroundColor    : {
+    type        : String,
+    defaultValue: '#ffffff'
+  },
   showOnDashboard    : {
     type    : Boolean,
+    optional: true
+  },
+  dashboardCategory  : {
+    type    : String,
     optional: true
   },
   sortOrder          : {
@@ -41,6 +53,12 @@ export const Project = new SimpleSchema({
     type    : String,
     optional: true
   },
+  // The content to show to on the dashboard
+  cardTemplate       : {
+    type    : String,
+    optional: true
+  },
+  // The list of reports to show for this project
   reports            : {
     type    : Array, // String
     optional: true
@@ -119,6 +137,7 @@ Projects.helpers({
     // Filter for uniqueness
     return _.uniq(teamRoleIds);
   },
+  
   /**
    * Fetch a list of teams that work on this project
    * @param sortBy
@@ -141,6 +160,7 @@ Projects.helpers({
     
     return Teams.find({ _id: { $in: teamIds } }, { sort: sortBy })
   },
+  
   /**
    * Get all of the contributors in a given role on a given team for this project
    * @param roleId

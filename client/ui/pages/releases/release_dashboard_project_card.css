@@ -1,0 +1,23 @@
+.release-dashboard-project-card {
+  border: 2px solid;
+  min-height: 100px
+}
+
+.release-dashboard-project-card:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.release-dashboard-project-card:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.release-dashboard-project-card-header {
+  font-size: 3em;
+  padding: 15px;
+}
+
+.release-dashboard-project-card-body {
+  padding: 15px;
+}

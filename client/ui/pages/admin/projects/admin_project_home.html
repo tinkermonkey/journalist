@@ -32,6 +32,12 @@
                 <td>{{> EditableTextField dataKey='title' value=title mode='inline' }}</td>
               </tr>
               <tr class="show-controls-on-hover">
+                <td>Project Description</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableTextArea dataKey='description' value=description mode='inline' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
                 <td>Project Owner</td>
                 <td class="open-link">
                   {{#if owner}}
@@ -41,6 +47,39 @@
                   {{/if}}
                 </td>
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Show on Dashboard</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableTextArea dataKey='description' value=description mode='inline' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Dashboard Category</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableTextField dataKey='dashboardCategory' value=dashboardCategory emptyText='Category' mode='inline' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Background Color</td>
+                <td class="open-link hidden-control">
+                </td>
+                <td>{{> EditableColorPicker dataKey="backgroundColor" value=backgroundColor }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Foreground Color</td>
+                <td class="open-link hidden-control">
+                </td>
+                <td>{{> EditableColorPicker dataKey="foregroundColor" value=foregroundColor }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Card Template</td>
+                <td class="open-link hidden-control">
+                  {{#if cardTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=cardTemplate}}
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="cardTemplate" value=cardTemplate templateType=DisplayTemplateTypes.component }}</td>
               </tr>
               <tr class="show-controls-on-hover">
                 <td>Banner Template</td>
