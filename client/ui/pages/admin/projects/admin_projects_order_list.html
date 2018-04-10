@@ -1,0 +1,10 @@
+<template name="AdminProjectsOrderList">
+  <table class="sortable-table">
+    {{#each projects}}
+      <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{sortOrder}}">
+        <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
+        <td>{{ title }}</td>
+      </tr>
+    {{/each}}
+  </table>
+</template>

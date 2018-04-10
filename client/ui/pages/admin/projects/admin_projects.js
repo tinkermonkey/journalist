@@ -5,6 +5,7 @@ import { RobaDialog } from 'meteor/austinsand:roba-dialog';
 import { Projects }   from '../../../../../imports/api/projects/projects.js';
 import '../../../components/add_record_form/add_record_form.js';
 import './admin_project_home.js';
+import './admin_projects_order_list.js';
 
 /**
  * Template Helpers

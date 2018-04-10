@@ -23,6 +23,14 @@ export const Project = new SimpleSchema({
     type    : String,
     optional: true
   },
+  showOnDashboard    : {
+    type    : Boolean,
+    optional: true
+  },
+  sortOrder          : {
+    type    : Number,
+    optional: true
+  },
   // Banner Template
   bannerTemplate     : {
     type    : String,
