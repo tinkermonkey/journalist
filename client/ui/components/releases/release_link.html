@@ -1,0 +1,35 @@
+<template name="ReleaseLink">
+  <div class="release-link">
+    {{#with release}}
+      <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
+
+      {{#unless hideDetails}}
+        <div class="release-link-details">
+          {{#if userIsTeamMember}}
+            <table class="table">
+              <tbody>
+              {{#if externalReleaseDate }}
+                <tr>
+                  <td>External Date</td>
+                  <td>{{externalReleaseDate}}</td>
+                </tr>
+              {{/if}}
+              {{#if devCompleteDate }}
+                <tr>
+                  <td>External Date</td>
+                  <td>{{externalReleaseDate}}</td>
+                </tr>
+              {{/if}}
+              </tbody>
+            </table>
+          {{else}}
+            {{#if externalReleaseDate}}
+              (<i>{{externalReleaseDate}}</i>)
+            {{/if}}
+          {{/if}}
+        </div>
+      {{/unless}}
+    {{else}}
+    {{/with}}
+  </div>
+</template>
