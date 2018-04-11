@@ -67,6 +67,12 @@ Template.registerHelper('UserTypes', function () {
 /**
  * User helpers
  */
+Template.registerHelper('userIsTeamMember', function () {
+  let user = Users.findOne(Meteor.userId());
+  if (user) {
+    return user.contributor().participatingTeams().count() > 0;
+  }
+});
 Template.registerHelper('userIsAdmin', function () {
   let user = Users.findOne(Meteor.userId());
   if (user) {
@@ -161,6 +167,11 @@ Template.registerHelper('renderTeamRole', function (roleId) {
 Template.registerHelper('renderIntegrationType', function (type) {
   if (type !== null) {
     return Util.capitalize(_.invert(IntegrationTypes)[ type ]);
+  }
+});
+Template.registerHelper('renderItemType', function (type) {
+  if (type !== null) {
+    return Util.capitalize(_.invert(ItemTypes)[ type ]);
   }
 });
 
