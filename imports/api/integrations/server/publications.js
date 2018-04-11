@@ -49,12 +49,7 @@ Meteor.publish('integration', function (integrationId) {
 Meteor.publish('integration_servers', function () {
   console.info('Publish: integration_servers');
   if (this.userId) {
-    let user = Meteor.users.findOne(this.userId);
-    if (user && user.isAdmin()) {
-      return IntegrationServers.find({}, { fields: { authData: 0 } });
-    } else {
-      console.warn('integration_servers requested by non-admin:', this.userId, user && user.username)
-    }
+    return IntegrationServers.find({}, { fields: { authData: 0 } });
   } else {
     this.ready();
     return [];
