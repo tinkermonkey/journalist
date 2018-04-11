@@ -173,7 +173,20 @@ ImportedItems.helpers({
     return Projects.findOne(this.projectId)
   },
   
+  /**
+   * Confirm if this item is still incomplete
+   * @returns {boolean}
+   */
   isOpen () {
     return this.workState !== ImportedItemWorkStates.workCompleted
+  },
+  
+  /**
+   * Confirm if this item is of a particular type
+   * @param type
+   * @returns {boolean}
+   */
+  isType(type){
+    return this.itemType === type
   }
 });
