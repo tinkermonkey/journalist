@@ -14,68 +14,84 @@ import { ReleaseIntegrationLinks } from './release_integration_links';
  * ============================================================================
  */
 export const Release = new SimpleSchema({
-  title         : {
+  title              : {
     type: String
   },
-  versionNumber : {
+  description        : {
     type    : String,
     optional: true
   },
-  sortVersion   : {
+  versionNumber      : {
     type    : String,
     optional: true
   },
-  isReleased    : {
+  sortVersion        : {
+    type    : String,
+    optional: true
+  },
+  isReleased         : {
     type    : Boolean,
     optional: true
   },
-  releaseDate   : {
+  releaseDate        : {
     type    : Date,
     optional: true
   },
+  devCompleteDate    : {
+    type    : Date,
+    optional: true
+  },
+  internalReleaseDate: {
+    type    : Date,
+    optional: true
+  },
+  externalReleaseDate: {
+    type    : String,
+    optional: true
+  },
   // Template for the admin view for a custom form
-  adminTemplate : {
+  adminTemplate      : {
     type    : String,
     optional: true
   },
   // The banner template to show to users
-  bannerTemplate: {
+  bannerTemplate     : {
     type    : String,
     optional: true
   },
   // The main page content to show to users
-  homeTemplate  : {
+  homeTemplate       : {
     type    : String,
     optional: true
   },
   // Reports to show for this release
-  reports       : {
+  reports            : {
     type    : Array, // String
     optional: true
   },
-  'reports.$'   : {
+  'reports.$'        : {
     type: String
   },
   // Generic Meta-data field
-  metadata      : {
+  metadata           : {
     type    : Object,
     blackbox: true,
     optional: true
   },
   // Standard tracking fields
-  dateCreated   : {
+  dateCreated        : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy     : {
+  createdBy          : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified  : {
+  dateModified       : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy    : {
+  modifiedBy         : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }

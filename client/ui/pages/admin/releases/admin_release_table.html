@@ -8,11 +8,11 @@
       <th>Version Number</th>
       <th>Linked Releases</th>
       <th>Released</th>
-      <th>Release Date</th>
-      <th>Admin Template</th>
-      <th>Banner Template</th>
-      <th>Home Template</th>
-      <th>Reports</th>
+      <th>Actual Release Date</th>
+      <th>Dev Complete Date</th>
+      <th>Internal Release Date</th>
+      <th>External Release Date</th>
+      <th>Description</th>
       <th></th>
     </tr>
     </thead>
@@ -53,10 +53,10 @@
             {{> EditableDate dataKey="releaseDate" value=releaseDate emptyText="Select" }}
           {{/if}}
         </td>
-        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTemplate" value=adminTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
-        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner mode="popup" }}</td>
-        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component mode="popup" }}</td>
-        <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" mode="popup" }}</td>
+        <td>{{> EditableDate dataKey='devCompleteDate' value=devCompleteDate mode='popup' emptyText='Select Date' }}</td>
+        <td>{{> EditableDate dataKey='internalReleaseDate' value=internalReleaseDate mode='popup' emptyText='Select Date' }}</td>
+        <td>{{> EditableTextField dataKey='externalReleaseDate' value=externalReleaseDate mode='popup' emptyText='Enter a value' }}</td>
+        <td>{{> EditableTextArea dataKey='releaseDescription' value=releaseDescription mode='popup' emptyText='Describe the purpose of this release' }}</td>
         <td>
           <a class="link-red hidden-control btn-delete-release">
             <span class="glyphicon glyphicon-minus-sign"></span>

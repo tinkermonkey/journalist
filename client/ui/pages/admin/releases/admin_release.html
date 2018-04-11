@@ -11,7 +11,6 @@
             </ol>
             <h1>{{title}}</h1>
             
-            <h2>Configuration</h2>
             <table class="table data-table table-striped config-table narrow-width">
               <tbody>
               <tr class="show-controls-on-hover">
@@ -26,11 +25,53 @@
                 </td>
                 <td>{{> EditableTextField dataKey="versionNumber" value=versionNumber emptyText="Version Number" mode="popup" }}</td>
               </tr>
+              </tbody>
+            </table>
+
+            <h2>Release Info</h2>
+            <table class="table data-table table-striped config-table narrow-width">
+              <tbody>
               <tr class="show-controls-on-hover">
                 <td>Has Been Released</td>
                 <td class="open-link">
                 </td>
                 <td>{{> EditableCheckbox  dataKey="isReleased" value=isReleased }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Dev Complete Date</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableDate dataKey='devCompleteDate' value=devCompleteDate mode='popup' emptyText='Select Date' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Internal Release Date</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableDate dataKey='internalReleaseDate' value=internalReleaseDate mode='popup' emptyText='Select Date' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>External Release Date</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableTextField dataKey='externalReleaseDate' value=externalReleaseDate mode='popup' emptyText='Enter a value' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Release Description</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableTextArea dataKey='releaseDescription' value=releaseDescription mode='popup' emptyText='Describe the purpose of this release' }}</td>
+              </tr>
+              </tbody>
+            </table>
+
+            <h2>Details</h2>
+            <table class="table data-table table-striped config-table narrow-width">
+              <tbody>
+              <tr class="show-controls-on-hover">
+                <td>Release Dependencies</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableRecordChecklist activeReleaseSelectorContext }}</td>
               </tr>
               <tr class="show-controls-on-hover">
                 <td>Admin Template</td>

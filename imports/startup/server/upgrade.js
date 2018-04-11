@@ -14,6 +14,27 @@ import { Util }                     from '../../api/util';
 // Only run on the cluster master node
 if (Clustering.isMaster()) {
   /**
+   * Copy some metadata from releases into the core record
+   */
+  if (Releases.find({ metadata: { $exists: true } }).count()) {
+    console.log("UPGRADE: Updating metadata for Releases");
+    Releases.find({ metadata: { $exists: true } }).forEach((release) => {
+      console.log("UPGRADE: setting release metadata:", release._id, release.title);
+      Releases.update(release._id, {
+        $set  : {
+          description        : release.metadata.releaseDescription,
+          devCompleteDate    : release.metadata.devCompleteDate,
+          internalReleaseDate: release.metadata.internalReleaseDate,
+          externalReleaseDate: release.metadata.externalReleaseDate
+        },
+        $unset: {
+          metadata: true
+        }
+      });
+    })
+  }
+  
+  /**
    * Add the default color to projects that don't have it
    */
   if (Projects.find({ backgroundColor: { $exists: false } }).count()) {

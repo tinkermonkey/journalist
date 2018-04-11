@@ -8,6 +8,7 @@ import { Releases }                from '../../../../../imports/api/releases/rel
 import { ReleaseIntegrationLinks } from '../../../../../imports/api/releases/release_integration_links';
 import { Util }                    from '../../../../../imports/api/util';
 import '../../../components/metadata_form/metadata_form';
+import '../../../components/editable_date/editable_date';
 import '../../releases/release_items_fixed';
 import '../../releases/release_items_found';
 
@@ -126,6 +127,24 @@ Template.AdminRelease.helpers({
         workPhase    : workPhase.value,
         versionsFixed: release._id
       }
+    }
+  },
+  activeReleaseSelectorContext () {
+    let release = ((Template.parentData(3) || {}).record || {});
+    console.log('activeReleaseSelectorContext release:', release);
+    for (let i = 0; i < 4; i++) {
+      console.log('activeReleaseSelectorContext parentData[', i, ']:', Template.parentData(i));
+    }
+    return {
+      valueField  : '_id',
+      displayField: 'title',
+      value       : this.dependentReleases,
+      dataKey     : 'dependentReleases',
+      collection  : Releases,
+      emptyText   : 'Select releases dependent on this release',
+      cssClass    : 'inline-block',
+      mode        : 'popup',
+      query       : { isReleased: false, _id: { $ne: release._id } }
     }
   }
 });

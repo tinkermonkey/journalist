@@ -1,12 +1,12 @@
 import './admin_release_table.html';
 import './admin_release_table.css';
 import { Template } from 'meteor/templating';
+import '../../../components/editable_date/editable_date';
 
 /**
  * Template Helpers
  */
-Template.AdminReleaseTable.helpers({
-});
+Template.AdminReleaseTable.helpers({});
 
 /**
  * Template Event Handlers
