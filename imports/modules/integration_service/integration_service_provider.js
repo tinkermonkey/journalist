@@ -427,6 +427,11 @@ export class IntegrationServiceProvider {
       // Set the serverId
       importedItem.serverId = self.server._id;
       
+      // Pull in some details
+      importedItem.viewUrl  = processedItem.viewUrl;
+      importedItem.links    = processedItem.links;
+      importedItem.metadata = processedItem.metadata;
+      
       // Store the full processedItem as the document field
       importedItem.document = processedItem;
       
@@ -590,7 +595,7 @@ export class IntegrationServiceProvider {
     self.integrator.processItemForLinks(processedItem);
     
     // Set the view link
-    self.integrator.processItemForViewLink(processedItem);
+    self.integrator.processItemForViewUrl(processedItem);
     
     return processedItem;
   }

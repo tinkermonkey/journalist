@@ -75,7 +75,9 @@ export class IntegrationAgent {
               return parser.text(parserText);
             },
             job () {
-              self.executeQuery(queryKey, false);
+              if (self.integration.details && self.integration.details[ queryKey ]) {
+                self.executeQuery(queryKey, false);
+              }
             }
           });
         });
@@ -94,7 +96,9 @@ export class IntegrationAgent {
               return parser.text(parserText);
             },
             job () {
-              self.executeQuery(queryKey, true);
+              if (self.integration.details && self.integration.details[ queryKey ]) {
+                self.executeQuery(queryKey, true);
+              }
             }
           });
         });
@@ -180,7 +184,9 @@ export class IntegrationAgent {
     
     if (queryDefinitions) {
       _.keys(queryDefinitions).forEach((queryKey) => {
-        self.executeQuery(queryKey, deepSync);
+        if (self.integration.details && self.integration.details[ queryKey ]) {
+          self.executeQuery(queryKey, deepSync);
+        }
       });
     }
   }

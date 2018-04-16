@@ -11,24 +11,24 @@ import { Projects }               from '../projects/projects';
  * ============================================================================
  */
 export const ImportedItemLink = new SimpleSchema({
-  itemId  : {
+  itemId        : {
     type: String
   },
-  itemType: {
+  itemType      : {
     type         : SimpleSchema.Integer,
     allowedValues: _.values(ItemTypes)
   },
   itemIdentifier: {
     type: String
   },
-  itemTitle: {
+  itemTitle     : {
     type: String
   },
-  linkId: {
+  linkId        : {
     type    : String,
     optional: true
   },
-  linkType: {
+  linkType      : {
     type    : String,
     optional: true
   }
@@ -40,7 +40,7 @@ export const ImportedItem = new SimpleSchema({
     type: String
   },
   // The server this item was imported from
-  serverId        : {
+  serverId         : {
     type: String
   },
   // The home project of this item

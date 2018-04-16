@@ -9,6 +9,11 @@
           <a class="" href="{{pathFor 'ImportedItem' itemId=_id}}">
             {{identifier}}
           </a>
+          {{#if viewUrl}}
+            <a href="{{viewUrl}}" target="_blank" class="hidden-control">
+              <span class="glyphicon glyphicon-share-alt"></span>
+            </a>
+          {{/if}}
         </div>
       </div>
       <div class="imported-item-title">

@@ -585,10 +585,14 @@ export class JiraIntegrator extends Integrator {
    * Process any links found in the item data into links to other issues
    * @param processedItem
    */
-  processItemForViewLink (processedItem) {
-    trace && console.log('JiraIntegrator.processItemForViewLink:', this.server._id, this.server.title);
+  processItemForViewUrl (processedItem) {
+    trace && console.log('JiraIntegrator.processItemForViewUrl:', this.provider.server._id, this.provider.server.title);
     let self = this;
     
+    if (processedItem && processedItem.key) {
+      let baseUrl           = self.provider.server.baseUrl.replace(/\/$/, '');
+      processedItem.viewUrl = [ baseUrl, 'browse', processedItem.key ].join('/');
+    }
   }
   
   /**
