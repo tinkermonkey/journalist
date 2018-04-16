@@ -20,7 +20,7 @@ Template.ReleaseLink.events({});
  * Template Created
  */
 Template.ReleaseLink.onCreated(() => {
-  console.log('ReleaseLink.created:', Template.currentData());
+
 });
 
 /**

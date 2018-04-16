@@ -561,11 +561,13 @@ export class JiraIntegrator extends Integrator {
             // Lookup the issue by the identifier
             let linkedItem = ImportedItems.findOne({ serverId: this.provider.server._id, identifier: linkedIssue.key });
             if (linkedItem) {
+              let baseUrl           = self.provider.server.baseUrl.replace(/\/$/, '');
               processedItem.links.push({
                 itemId        : linkedItem._id,
                 itemType      : linkedItem.itemType,
                 itemIdentifier: linkedItem.identifier,
                 itemTitle     : linkedItem.title,
+                itemViewUrl   : linkedItem.viewUrl,
                 linkId        : link.id,
                 linkType      : link.type[ linkTypeKey ]
               });

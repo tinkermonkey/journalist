@@ -171,7 +171,7 @@ Template.registerHelper('renderIntegrationType', function (type) {
 });
 Template.registerHelper('renderItemType', function (type) {
   if (type !== null) {
-    return Util.capitalize(_.invert(ItemTypes)[ type ]);
+    return Util.camelToTitle(_.invert(ItemTypes)[ type ]);
   }
 });
 

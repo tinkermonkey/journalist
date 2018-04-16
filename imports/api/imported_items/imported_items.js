@@ -24,6 +24,10 @@ export const ImportedItemLink = new SimpleSchema({
   itemTitle     : {
     type: String
   },
+  itemViewUrl   : {
+    type    : String,
+    optional: true
+  },
   linkId        : {
     type    : String,
     optional: true

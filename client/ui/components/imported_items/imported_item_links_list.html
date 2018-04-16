@@ -1,0 +1,28 @@
+<template name="ImportedItemLinksList">
+  <table class="table table-striped" id="{{getElementId}}">
+    <tbody>
+    {{#each links}}
+      <tr>
+        <td>
+          <label class="label label-default">{{linkType}}</label>
+        </td>
+        <td>{{renderItemType itemType}}</td>
+        <td class="no-wrap">
+          {{#if inPopover}}
+            <a href="{{pathFor 'ImportedItem' itemId=itemId}}">{{itemIdentifier}}</a>
+          {{else}}
+            {{> ImportedItemPreviewLink itemId}}
+          {{/if}}
+        </td>
+        <td class="open-link">
+          {{#if itemViewUrl}}
+            <a href="{{itemViewUrl}}" target="_blank">
+              <span class="glyphicon glyphicon-share-alt"></span>
+            </a>
+          {{/if}}
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>
