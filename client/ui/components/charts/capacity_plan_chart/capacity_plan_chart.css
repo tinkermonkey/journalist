@@ -37,17 +37,17 @@
 /**
  * Contributors & teams list
  */
-.team-title-group {
+.capacity-plan-chart .team-title-group {
   cursor : pointer;
 }
 
-.team-title {
+.capacity-plan-chart .team-title {
   font-size          : 18px;
   text-anchor        : end;
   alignment-baseline : hanging;
 }
 
-.team-title-background {
+.capacity-plan-chart .team-title-background {
   fill               : rgba(255, 255, 255, 0.25);
   -webkit-transition : fill 0.5s, opacity 0.5s;
   -moz-transition    : fill 0.5s, opacity 0.5s;
@@ -56,28 +56,28 @@
   transition         : fill 0.5s, opacity 0.5s;
 }
 
-.team-title-background.collapsed {
+.capacity-plan-chart .team-title-background.collapsed {
   fill : rgba(127, 127, 127, 0.25);
 }
 
-.team-title-group:hover .team-title-background {
+.capacity-plan-chart .team-title-group:hover .team-title-background {
   fill : #ff009d;
 }
 
-.contributor-group {
+.capacity-plan-chart .contributor-group {
   cursor : pointer;
 }
 
-.contributor-name {
+.capacity-plan-chart .contributor-name {
   text-anchor        : end;
   alignment-baseline : hanging;
 }
 
-.contributor-background {
+.capacity-plan-chart .contributor-background {
   fill : #298cff;
 }
 
-.link-drag-handle {
+.capacity-plan-chart .link-drag-handle {
   opacity            : 0;
   fill               : #298cff;
   stroke             : #fff;
@@ -90,23 +90,23 @@
   transition-delay   : 0.125s;
 }
 
-.contributor-group:hover .link-drag-handle,
-.contributor-block-group:hover .link-drag-handle,
-.contributor-block-group:hover .link-drag-handle-dot,
-.effort-block-group:hover .link-drag-handle,
-.effort-block-group:hover .link-drag-handle-dot,
-.link-drag-handle-container.in-drag .link-drag-handle,
-.link-drag-handle-container.in-drag .link-drag-handle-dot {
+.capacity-plan-chart .contributor-group:hover .link-drag-handle,
+.capacity-plan-chart .contributor-block-group:hover .link-drag-handle,
+.capacity-plan-chart .contributor-block-group:hover .link-drag-handle-dot,
+.capacity-plan-chart .effort-block-group:hover .link-drag-handle,
+.capacity-plan-chart .effort-block-group:hover .link-drag-handle-dot,
+.capacity-plan-chart .link-drag-handle-container.in-drag .link-drag-handle,
+.capacity-plan-chart .link-drag-handle-container.in-drag .link-drag-handle-dot {
   opacity : 1 !important;
 }
 
-.link-drag-handle:hover {
+.capacity-plan-chart .link-drag-handle:hover {
   stroke       : #ff009d;
   stroke-width : 2px;
   cursor       : pointer;
 }
 
-.link-drag-handle-container.in-drag .link-drag-handle {
+.capacity-plan-chart .link-drag-handle-container.in-drag .link-drag-handle {
   opacity : 1;
   pointer-events : none;
   stroke         : #ff009d;
@@ -114,7 +114,7 @@
   cursor         : pointer;
 }
 
-.link-drag-handle-dot {
+.capacity-plan-chart .link-drag-handle-dot {
   pointer-events     : none;
   fill               : #fff;
   opacity            : 0;
@@ -126,20 +126,20 @@
   transition-delay   : 0.125s;
 }
 
-.link-drag-handle-container:hover .link-drag-handle-dot,
-.link-drag-handle-container.in-drag .link-drag-handle-dot {
+.capacity-plan-chart .link-drag-handle-container:hover .link-drag-handle-dot,
+.capacity-plan-chart .link-drag-handle-container.in-drag .link-drag-handle-dot {
   opacity : 1;
   fill    : #ff009d;
 }
 
-.link-drag-link {
+.capacity-plan-chart .link-drag-link {
   fill           : none;
   stroke         : rgba(126, 255, 0, 1.0);
-  stroke-width   : 10;
+  stroke-width   : 10px;
   pointer-events : none;
 }
 
-.y-axis-separator {
+.capacity-plan-chart .y-axis-separator {
   stroke-width    : 4px;
   stroke          : #fff;
   shape-rendering : crispEdges;
@@ -148,15 +148,15 @@
 /**
  * Sprints
  */
-.sprint-header-title {
+.capacity-plan-chart .sprint-header-title {
   alignment-baseline : hanging;
 }
 
-.sprint-link-section {
+.capacity-plan-chart .sprint-link-section {
   fill : none;
 }
 
-.sprint-body-section {
+.capacity-plan-chart .sprint-body-section {
   fill               : #298cff;
   -webkit-transition : fill 0.25s;
   -moz-transition    : fill 0.25s;
@@ -166,7 +166,7 @@
   transition-delay   : 0.125s;
 }
 
-.sprint-background-border {
+.capacity-plan-chart .sprint-background-border {
   stroke-width       : 2px;
   stroke             : rgba(255, 255, 255, 0);
   -webkit-transition : stroke 0.25s, stroke-width 0.25s;
@@ -177,18 +177,18 @@
   transition-delay   : 0.125s;
 }
 
-.sprint-background-group.hover .sprint-background-border {
+.capacity-plan-chart .sprint-background-group.hover .sprint-background-border {
   stroke : #fff;
 }
 
-.sprint-background-group.hover .sprint-body-section {
+.capacity-plan-chart .sprint-background-group.hover .sprint-body-section {
   fill : rgba(255, 255, 255, 0.5);
 }
 
 /**
  * Effort blocks
  */
-.effort-block {
+.capacity-plan-chart .effort-block {
   stroke             : #fff;
   stroke-width       : 1px;
   -webkit-transition : stroke 0.25s, stroke-width 0.25s, fill 0.25s;
@@ -199,32 +199,32 @@
   transition-delay   : 0.125s;
 }
 
-.effort-block.hover,
-.effort-block:hover {
+.capacity-plan-chart .effort-block.hover,
+.capacity-plan-chart .effort-block:hover {
   stroke       : #ff009d;
   stroke-width : 3px;
 }
 
-.effort-block-group.in-drag {
+.capacity-plan-chart .effort-block-group.in-drag {
   pointer-events : none;
   cursor         : pointer;
 }
 
-.effort-block .contributor-background {
+.capacity-plan-chart .effort-block .contributor-background {
   fill : rgba(255, 255, 255, 0.50);
 }
 
-.effort-title {
+.capacity-plan-chart .effort-title {
   fill : #fff;
 }
 
-.effort-block-group.effort-highlight .effort-block {
+.capacity-plan-chart .effort-block-group.effort-highlight .effort-block {
   fill         : #ff009d !important;
   stroke       : #ff009d;
   stroke-width : 3px;
 }
 
-.effort-link {
+.capacity-plan-chart .effort-link {
   fill               : none;
   stroke             : #ff009d;
   stroke-width       : 1px;
@@ -237,64 +237,64 @@
   transition-delay   : 0.125s;
 }
 
-.effort-link.highlight {
+.capacity-plan-chart .effort-link.highlight {
   fill         : none;
   stroke       : #ff009d;
   stroke-width : 20px;
   opacity      : 1;
 }
 
-.round-control-background,
-.contributor-control-background {
+.capacity-plan-chart .round-control-background,
+.capacity-plan-chart .contributor-control-background {
   fill         : #298cff;
   stroke       : #fff;
   stroke-width : 1px;
   filter       : url(#controls-drop-shadow);
 }
 
-.round-control text,
-.contributor-control text {
+.capacity-plan-chart .round-control text,
+.capacity-plan-chart .contributor-control text {
   fill               : #fff;
   text-anchor        : middle;
   alignment-baseline : middle;
 }
 
-.round-control:hover,
-.contributor-control:hover {
+.capacity-plan-chart .round-control:hover,
+.capacity-plan-chart .contributor-control:hover {
   cursor : pointer;
 }
 
-.round-control:hover .round-control-background,
-.contributor-control:hover .contributor-control-background {
+.capacity-plan-chart .round-control:hover .round-control-background,
+.capacity-plan-chart .contributor-control:hover .contributor-control-background {
   stroke       : #ff009d;
   stroke-width : 2px;
 }
 
-.round-control:hover text,
-.contributor-control:hover text {
+.capacity-plan-chart .round-control:hover text,
+.capacity-plan-chart .contributor-control:hover text {
   fill : #ff009d;
 }
 
 /**
  * Contributor blocks and links
  */
-.contributor-block {
+.capacity-plan-chart .contributor-block {
   fill             : rgba(255, 255, 255, 0.3);
   shape-rendering  : crispEdges;
   transition-delay : 0.125s;
 }
 
-.contributor-block-group .contributor-name {
+.capacity-plan-chart .contributor-block-group .contributor-name {
   text-anchor : start;
 }
 
-path.contributor-highlight.highlight {
+.capacity-plan-chart path.contributor-highlight.highlight {
   stroke       : #7eff00 !important;
   stroke-width : 25px;
   opacity      : 1;
 }
 
-.contributor-background-path {
+.capacity-plan-chart .contributor-background-path {
   stroke             : rgba(255, 255, 255, 0);
   stroke-width       : 1px;
   -webkit-transition : stroke 0.25s, stroke-width 0.25s;
@@ -305,18 +305,18 @@ path.contributor-highlight.highlight {
   transition-delay   : 0.125s;
 }
 
-.link-layer,
-.highlight-link-layer {
+.capacity-plan-chart .link-layer,
+.capacity-plan-chart .highlight-link-layer {
   pointer-events : none;
 }
 
-.contributor-link {
+.capacity-plan-chart .contributor-link {
   fill         : none;
   stroke       : #fff;
   stroke-width : 1px;
 }
 
-.contributor-highlight-link {
+.capacity-plan-chart .contributor-highlight-link {
   fill               : none;
   stroke             : #fff;
   stroke-width       : 1px;
@@ -329,7 +329,7 @@ path.contributor-highlight.highlight {
   transition-delay   : 0.125s;
 }
 
-.contributor-background-link {
+.capacity-plan-chart .contributor-background-link {
   fill         : none;
   stroke       : #298cff;
   opacity      : 0;
@@ -339,7 +339,7 @@ path.contributor-highlight.highlight {
 /**
  * Release Blocks
  */
-.release-block {
+.capacity-plan-chart .release-block {
   fill             : rgb(22, 231, 58);
   stroke           : #fff;
   stroke-width     : 1px;
@@ -347,18 +347,18 @@ path.contributor-highlight.highlight {
   transition-delay : 0.125s;
 }
 
-.release-block.hover,
-.release-block:hover {
+.capacity-plan-chart .release-block.hover,
+.capacity-plan-chart .release-block:hover {
   stroke       : #fff;
   stroke-width : 2px;
 }
 
-.release-title {
+.capacity-plan-chart .release-title {
   alignment-baseline : baseline;
   font-size          : 18px;
 }
 
-.release-link {
+.capacity-plan-chart .release-link {
   fill               : none;
   stroke-width       : 1px;
   opacity            : 0;
@@ -370,15 +370,15 @@ path.contributor-highlight.highlight {
   transition-delay   : 0.125s;
 }
 
-.release-link-gradient-stop-1 {
+.capacity-plan-chart .release-link-gradient-stop-1 {
   stop-color : #ff009d;
 }
 
-.release-link-gradient-stop-2 {
+.capacity-plan-chart .release-link-gradient-stop-2 {
   stop-color : rgb(22, 231, 58);
 }
 
-path.release-highlight.highlight {
+.capacity-plan-chart path.release-highlight.highlight {
   stroke-width : 20px;
   opacity      : 1;
 }
@@ -386,8 +386,8 @@ path.release-highlight.highlight {
 /**
  * Generic controls directives
  */
-.controls-group,
-.controls-group-2 {
+.capacity-plan-chart .controls-group,
+.capacity-plan-chart .controls-group-2 {
   opacity            : 0;
   -webkit-transition : opacity 0.5s;
   -moz-transition    : opacity 0.5s;
@@ -397,38 +397,38 @@ path.release-highlight.highlight {
   transition-delay   : 0.125s;
 }
 
-.controls-hover:hover .controls-group,
-.controls-hover-2:hover .controls-group-2,
-.controls-group.in-drag,
-.controls-group-2.in-drag {
+.capacity-plan-chart .controls-hover:hover .controls-group,
+.capacity-plan-chart .controls-hover-2:hover .controls-group-2,
+.capacity-plan-chart .controls-group.in-drag,
+.capacity-plan-chart .controls-group-2.in-drag {
   opacity : 1;
 }
 
 /**
  * The effort list
  */
-.effort-list-hide {
+.capacity-plan-chart .effort-list-hide {
   display : none;
 }
 
-.effort-list-control {
+.capacity-plan-chart .effort-list-control {
   stroke       : #ff009d;
   stroke-width : 2px;
   fill         : #fff;
 }
 
-.effort-list-control:hover {
+.capacity-plan-chart .effort-list-control:hover {
   filter : url(#controls-drop-shadow);
 }
 
-.effort-list-background {
+.capacity-plan-chart .effort-list-background {
   stroke-width : 2px;
   fill         : #298cff;
   stroke       : #ff009d;
   filter       : url(#controls-drop-shadow);
 }
 
-.effort-list-title {
+.capacity-plan-chart .effort-list-title {
   font-size          : 18px;
   alignment-baseline : hanging;
 }
@@ -436,54 +436,54 @@ path.release-highlight.highlight {
 /**
  * Separate styling for printable charts
  */
-.printable svg.capacity-plan-chart {
+.capacity-plan-chart.printable svg.capacity-plan-chart {
   background-color : #fff;
 }
 
-.printable .sprint-body-section {
+.capacity-plan-chart.printable .sprint-body-section {
   fill : rgba(225, 225, 225, 0.50);
 }
 
-.printable .capacity-plan-chart text,
-.printable .capacity-plan-chart tspan {
+.capacity-plan-chart.printable .capacity-plan-chart text,
+.capacity-plan-chart.printable .capacity-plan-chart tspan {
   fill : #333;
 }
 
-.printable .effort-title,
-.printable .effort-title tspan {
+.capacity-plan-chart.printable .effort-title,
+.capacity-plan-chart.printable .effort-title tspan {
   fill : #fff !important;
 }
 
-.printable .y-axis-separator {
+.capacity-plan-chart.printable .y-axis-separator {
   stroke : #999;
 }
 
-.printable .effort-list-control {
+.capacity-plan-chart.printable .effort-list-control {
   stroke : #fff;
   cursor : pointer;
 }
 
-.printable .effort-list-control:hover {
+.capacity-plan-chart.printable .effort-list-control:hover {
   stroke : #ff009d;
 }
 
-.printable .effort-list-background {
+.capacity-plan-chart.printable .effort-list-background {
   fill : #fff;
 }
 
-.printable .team-title-background {
+.capacity-plan-chart.printable .team-title-background {
   fill : #ffffff;
 }
 
-.printable .team-title {
+.capacity-plan-chart.printable .team-title {
   font-weight : bold;
 }
 
-.printable .contributor-link {
+.capacity-plan-chart.printable .contributor-link {
   stroke : rgba(199, 199, 199, 0.5);
 }
 
-.printable .contributor-background {
+.capacity-plan-chart.printable .contributor-background {
   fill : #fff;
 }
 
@@ -491,25 +491,25 @@ path.release-highlight.highlight {
   stroke : rgba(199, 199, 199, 0);
 }
 
-.printable .sprint-background-group.hover .sprint-background-border {
+.capacity-plan-chart.printable .sprint-background-group.hover .sprint-background-border {
   stroke : #298cff;
 }
 
-.printable .sprint-background-group.hover .sprint-body-section {
+.capacity-plan-chart.printable .sprint-background-group.hover .sprint-body-section {
   fill : rgba(41, 140, 255, 0.50);
 }
 
-.printable .shadow-gradient-stop-1 {
+.capacity-plan-chart.printable .shadow-gradient-stop-1 {
   stop-color   : #fff;
   stop-opacity : 0;
 }
 
-.printable .shadow-gradient-stop-2 {
+.capacity-plan-chart.printable .shadow-gradient-stop-2 {
   stop-color   : #fff;
   stop-opacity : 0;
 }
 
-.printable .shadow-gradient-stop-3 {
+.capacity-plan-chart.printable .shadow-gradient-stop-3 {
   stop-color   : #fff;
   stop-opacity : 0;
 }
