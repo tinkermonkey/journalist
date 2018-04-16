@@ -9,28 +9,31 @@ import { Projects }                 from '../../api/projects/projects';
 import { Releases }                 from '../../api/releases/releases';
 import { CapacityPlanSprintBlocks } from '../../api/capacity_plans/capacity_plan_sprint_blocks';
 import { CapacityPlanBlockTypes }   from '../../api/capacity_plans/capacity_plan_block_types';
+import { ImportedItems }            from '../../api/imported_items/imported_items';
+import { Integrations }             from '../../api/integrations/integrations';
 import { Util }                     from '../../api/util';
 
 // Only run on the cluster master node
 if (Clustering.isMaster()) {
   /**
-   * Copy some metadata from releases into the core record
+   * Add a link to the server an item came from to ImportedItems
    */
-  if (Releases.find({ metadata: { $exists: true } }).count()) {
-    console.log("UPGRADE: Updating metadata for Releases");
-    Releases.find({ metadata: { $exists: true } }).forEach((release) => {
-      console.log("UPGRADE: setting release metadata:", release._id, release.title);
-      Releases.update(release._id, {
-        $set  : {
-          description        : release.metadata.releaseDescription,
-          devCompleteDate    : release.metadata.devCompleteDate,
-          internalReleaseDate: release.metadata.internalReleaseDate,
-          externalReleaseDate: release.metadata.externalReleaseDate
-        },
-        $unset: {
-          metadata: true
-        }
-      });
+  if (ImportedItems.find({ serverId: { $exists: false } }).count()) {
+    console.log("UPGRADE: Updating serverId for ImportedItems");
+    let serverMap = {};
+    
+    Integrations.find({}).forEach((integration) => {
+      serverMap[ integration._id ] = integration.serverId
+    });
+    
+    ImportedItems.find({ serverId: { $exists: false } }).forEach((item) => {
+      if (serverMap[ item.integrationId ]) {
+        ImportedItems.update(item._id, {
+          $set: {
+            serverId: serverMap[ item.integrationId ]
+          }
+        });
+      }
     })
   }
   

@@ -27,7 +27,7 @@ export class IntegrationAgent {
     
     // Initialize the health tracker
     self.trackerKey = 'integration-agent-' + integration._id;
-    if(self.integration.project()){
+    if (self.integration.project()) {
       HealthTracker.add(self.trackerKey, self.integration.project().title + ' - ' + self.integration.itemTypeTitle(), 'integrationAgent');
     }
     
@@ -137,7 +137,7 @@ export class IntegrationAgent {
         query = self.serviceProvider.integrator.appendUpdateLimitToQuery(query, lastUpdate);
         
         // Fetch the data from the service provider
-        let importResult = self.serviceProvider.importItemsFromQuery( self.integration.projectId, self.integration.importFunction(), query);
+        let importResult = self.serviceProvider.importItemsFromQuery(self.integration.projectId, self.integration.importFunction(), query, null, self.integration.calculatedFields());
         
         if (importResult.items && importResult.items.length) {
           debug && console.log('IntegrationAgent.executeQuery returned:', self.integration._id, queryKey, importResult.items.length);
@@ -198,7 +198,7 @@ export class IntegrationAgent {
       i % 50 === 0 && console.log('IntegrationAgent.reprocessItems reprocessing item', i);
       
       let reprocessedItem = self.serviceProvider.postProcessItem(item.document),
-          reimportResult  = self.serviceProvider.importItem(importFunction, reprocessedItem, self.integration.projectId);
+          reimportResult  = self.serviceProvider.importItem(importFunction, reprocessedItem, self.integration.projectId, self.integration.calculatedFields());
       
       if (reimportResult.success) {
         try {

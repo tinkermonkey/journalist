@@ -10,9 +10,37 @@ import { Projects }               from '../projects/projects';
  * ImportedItems
  * ============================================================================
  */
+export const ImportedItemLink = new SimpleSchema({
+  itemId  : {
+    type: String
+  },
+  itemType: {
+    type         : SimpleSchema.Integer,
+    allowedValues: _.values(ItemTypes)
+  },
+  itemIdentifier: {
+    type: String
+  },
+  itemTitle: {
+    type: String
+  },
+  linkId: {
+    type    : String,
+    optional: true
+  },
+  linkType: {
+    type    : String,
+    optional: true
+  }
+});
+
 export const ImportedItem = new SimpleSchema({
   // The source of this item
   integrationId    : {
+    type: String
+  },
+  // The server this item was imported from
+  serverId        : {
     type: String
   },
   // The home project of this item
@@ -56,6 +84,12 @@ export const ImportedItem = new SimpleSchema({
     optional: true,
     label   : 'The _id of the Contributor who owns this item'
   },
+  // The URL to view this item at in the native tool UI
+  viewUrl          : {
+    type    : String,
+    optional: true,
+    label   : 'The URL to view this item at in the tool from which it was imported'
+  },
   // The descriptive label of the status of this issue (Assigned, Closed, etc)
   statusLabel      : {
     type    : String,
@@ -85,24 +119,32 @@ export const ImportedItem = new SimpleSchema({
     optional     : true
   },
   // An array of [_id]s of the release(s) that this item was identified in
-  versionsFound: {
+  versionsFound    : {
     type    : Array,
     optional: true
   },
   'versionsFound.$': {
-    type    : String
+    type: String
   },
   // An array of [_id]s of the release(s) that this item was completed in
-  versionsFixed: {
+  versionsFixed    : {
     type    : Array,
     optional: true
   },
   'versionsFixed.$': {
-    type    : String
+    type: String
+  },
+  // An array of links to other items
+  links            : {
+    type    : Array,
+    optional: true
+  },
+  'links.$'        : {
+    type: ImportedItemLink
   },
   // Generic Meta-data field
-  metadata: {
-    type: Object,
+  metadata         : {
+    type    : Object,
     blackbox: true,
     optional: true
   },
@@ -186,7 +228,7 @@ ImportedItems.helpers({
    * @param type
    * @returns {boolean}
    */
-  isType(type){
+  isType (type) {
     return this.itemType === type
   }
 });

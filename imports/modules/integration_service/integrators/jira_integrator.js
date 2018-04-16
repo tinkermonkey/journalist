@@ -1,8 +1,8 @@
 import { Integrator }             from './integrator';
 import { IntegrationTypes }       from '../../../api/integrations/integration_types';
 import { Meteor }                 from 'meteor/meteor';
-import { MongoCookieStore }       from './mongo_cookie_store';
 import { Util }                   from '../../../api/util';
+import { ImportedItems }          from '../../../api/imported_items/imported_items';
 import { ImportedItemWorkPhases } from '../../../api/imported_items/imported_item_work_phases';
 import { ImportedItemWorkStates } from '../../../api/imported_items/imported_item_work_states';
 
@@ -39,11 +39,6 @@ export class JiraIntegrator extends Integrator {
     console.log('Creating new JiraIntegrator');
     super(...arguments);
     this.type = IntegrationTypes.jira;
-    
-    // Create a cookie jar and load any stored data from Mongo
-    //this.cookieStore = new MongoCookieStore(this.provider.trackerKey);
-    //this.cookieStore.restoreCookies();
-    //this.cookieJar = request.jar(this.cookieStore);
     
     return this;
   }
@@ -268,31 +263,11 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
-   * Test out an import function
-   * @param importFunction
-   * @param identifier
-   * @param projectId
-   */
-  testImportFunction (importFunction, identifier, projectId) {
-    debug && console.log('JiraIntegrator.testImportFunction:', this.provider.server.title);
-    let self              = this,
-        rawItem           = self.fetchItem(identifier).response,
-        postProcessedItem = self.postProcessItem(rawItem);
-    
-    return {
-      rawItem      : rawItem,
-      postProcessed: postProcessedItem,
-      importResult : self.provider.importItem(importFunction, postProcessedItem, projectId)
-    }
-  }
-  
-  /**
    * Test out an integration pipeline
    * @param integration
    * @param details
-   * @param projectId
    */
-  testIntegration (integration, details, projectId) {
+  testIntegration (integration, details) {
     debug && console.log('JiraIntegrator.testIntegration:', this.provider.server.title, integration._id);
     let self      = this,
         query     = integration.details[ details.queryKey ],
@@ -307,7 +282,7 @@ export class JiraIntegrator extends Integrator {
           success       : true,
           rawResult     : rawResult,
           processedItems: postProcessedItems,
-          importResult  : self.provider.importItems(integration.importFunction(), postProcessedItems, projectId)
+          importResult  : self.provider.importItems(integration.importFunction(), postProcessedItems, integration.projectId, integration.calculatedFields())
         }
       } catch (e) {
         return {
@@ -504,7 +479,7 @@ export class JiraIntegrator extends Integrator {
    * @param statusMap
    */
   processItemForStatus (processedItem, statusMap) {
-    trace && console.log('IntegrationServiceProvider.processItemForStatus:', this.server._id, this.server.title);
+    trace && console.log('JiraIntegrator.processItemForStatus:', this.provider.server._id, this.provider.server.title);
     let self = this;
     
     // Check to see if there is
@@ -569,6 +544,54 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
+   * Process any links found in the item data into links to other issues
+   * @param processedItem
+   */
+  processItemForLinks (processedItem) {
+    trace && console.log('JiraIntegrator.processItemForLinks:', this.provider.server._id, this.provider.server.title);
+    let self = this;
+    
+    if (processedItem.fields && processedItem.fields.issuelinks && processedItem.fields.issuelinks.length) {
+      processedItem.links = [];
+      processedItem.fields.issuelinks.forEach((link) => {
+        try {
+          let linkedIssue = link.inwardIssue || link.outwardIssue,
+              linkTypeKey = link.inwardIssue ? 'inward' : 'outward';
+          if (linkedIssue) {
+            // Lookup the issue by the identifier
+            let linkedItem = ImportedItems.findOne({ serverId: this.provider.server._id, identifier: linkedIssue.key });
+            if (linkedItem) {
+              processedItem.links.push({
+                itemId        : linkedItem._id,
+                itemType      : linkedItem.itemType,
+                itemIdentifier: linkedItem.identifier,
+                itemTitle     : linkedItem.title,
+                linkId        : link.id,
+                linkType      : link.type[ linkTypeKey ]
+              });
+            } else {
+              console.warn('JiraIntegrator.processItemForLinks could not find linked item:', linkedIssue.key);
+              // TODO: Log these unlocated issues as load them later
+            }
+          }
+        } catch (e) {
+          console.error('JiraIntegrator.processItemForLinks failed:', link, e);
+        }
+      });
+    }
+  }
+  
+  /**
+   * Process any links found in the item data into links to other issues
+   * @param processedItem
+   */
+  processItemForViewLink (processedItem) {
+    trace && console.log('JiraIntegrator.processItemForViewLink:', this.server._id, this.server.title);
+    let self = this;
+    
+  }
+  
+  /**
    * Call a client method to fetch data
    * @param {*} module
    * @param {*} method
@@ -620,7 +643,7 @@ export class JiraIntegrator extends Integrator {
             result            = self.fetchData(module, method, payload);
             accumulatedValues = accumulatedValues.concat(result.response.values);
           }
-          debug && console.log('JiraIntegrator.fetchPagedData paged data complete:', accumulatedValues.length);
+          debug && console.log('JiraIntegrator.fetchData paged data complete:', accumulatedValues.length);
           result.response.isLast     = true;
           result.response.startAt    = 0;
           result.response.maxResults = accumulatedValues.length;
@@ -635,38 +658,6 @@ export class JiraIntegrator extends Integrator {
     } else {
       return { success: false, error: 'No Jira client' };
     }
-  }
-  
-  /**
-   * Fetch data that could return more than one page and automatically page if that is the case
-   */
-  fetchPagedData (module, method, payload) {
-    debug && console.log('JiraIntegrator.fetchPagedData:', this.provider.server.title, module, method);
-    let self = this;
-    
-    if (_.isObject(module)) {
-      payload = module.payload;
-      method  = module.method;
-      module  = module.module;
-    }
-    
-    let result = self.fetchData(module, method, payload);
-    if (!result.response.isLast) {
-      payload = payload || {};
-      
-      let pageSize           = result.response.maxResults,
-          accumulatedResults = [].contcat(result.response.values),
-          i                  = 1;
-      
-      while (!result.response.isLast) {
-        payload.startAt    = i * pageSize;
-        result             = self.fetchData(module, method, payload);
-        accumulatedResults = accumulatedResults.concat(result.response.values)
-      }
-      debug && console.log('JiraIntegrator.fetchPagedData getting page:', module, method);
-    }
-    
-    return result;
   }
   
   /**

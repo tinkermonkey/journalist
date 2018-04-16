@@ -144,7 +144,7 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (integration) {
-        return IntegrationService.testIntegration(integration, details, integration.projectId);
+        return IntegrationService.testIntegration(integration, details);
       } else {
         throw new Meteor.Error(404);
       }

@@ -121,7 +121,7 @@ Integrations.helpers({
   },
   calculatedFields () {
     if (this.calculatedFieldIds && this.calculatedFieldIds.length) {
-      return IntegrationCalculatedFields.find({ _id: { $in: this.calculatedFieldIds } }, { sort: { title: 1 } });
+      return IntegrationCalculatedFields.find({ _id: { $in: this.calculatedFieldIds } }, { sort: { title: 1 } }).fetch()
     }
   }
 });

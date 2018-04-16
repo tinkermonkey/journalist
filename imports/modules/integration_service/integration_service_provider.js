@@ -404,23 +404,28 @@ export class IntegrationServiceProvider {
   
   /**
    * Pass an item through an import function to produce an importedItem
-   * @param importFunction
-   * @param processedItem
-   * @param projectId
+   * @param importFunction {IntegrationImportFunction}
+   * @param processedItem {Object}
+   * @param projectId {String}
+   * @param calculatedFields {[IntegrationCalculatedField]} optional
    */
-  importItem (importFunction, processedItem, projectId) {
-    trace && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title, projectId);
+  importItem (importFunction, processedItem, projectId, calculatedFields) {
+    trace && console.log('IntegrationServiceProvider.importItem:', this.server._id, this.server.title, projectId, (calculatedFields || []).length);
     let self = this;
     
     // Attempt to process the item through the import function
     // Needs to be able to access ReleaseIntegrationLinks
     try {
-      let importFn     = new Function('processedItem', 'importContext', importFunction.code),
-          importedItem = importFn(processedItem, {
+      let importFn      = new Function('processedItem', 'importContext', importFunction.code),
+          importContext = {
             projectId  : projectId,
             server     : self.server,
             collections: CollectionMap
-          });
+          },
+          importedItem  = importFn(processedItem, importContext);
+      
+      // Set the serverId
+      importedItem.serverId = self.server._id;
       
       // Store the full processedItem as the document field
       importedItem.document = processedItem;
@@ -446,6 +451,23 @@ export class IntegrationServiceProvider {
         }).map((teamRole) => {
           return teamRole.teamId
         });
+      }
+      
+      // Process all of the calculated fields
+      if (calculatedFields && calculatedFields.length) {
+        importedItem.metadata = importedItem.metadata || {};
+        calculatedFields.forEach((calculatedField) => {
+          // try calculating the value
+          try {
+            trace && console.log('IntegrationServiceProvider.importItem calculating field:', calculatedField.title);
+            let calcFn = new Function('processedItem', 'importContext', calculatedField.code);
+            
+            // Calculate and store the value
+            importedItem.metadata[ calculatedField.title ] = calcFn(importedItem, importContext);
+          } catch (e) {
+            console.error('IntegrationCalculatedField calculation failed:', calculatedField.title, e);
+          }
+        })
       }
       
       // Validate the processed item against the importedItem schema
@@ -476,8 +498,9 @@ export class IntegrationServiceProvider {
    * @param importFunction
    * @param processedItems
    * @param projectId
+   * @param calculatedFields {[IntegrationCalculatedField]} optional
    */
-  importItems (importFunction, processedItems, projectId) {
+  importItems (importFunction, processedItems, projectId, calculatedFields) {
     debug && console.log('IntegrationServiceProvider.importItems:', this.server._id, this.server.title, processedItems.length);
     let self   = this,
         result = {
@@ -487,7 +510,7 @@ export class IntegrationServiceProvider {
     
     // import each of the processed items
     processedItems.forEach((item) => {
-      let importResult = self.importItem(importFunction, item, projectId);
+      let importResult = self.importItem(importFunction, item, projectId, calculatedFields);
       if (importResult.success === true) {
         result.items.push(importResult.item)
       } else {
@@ -507,13 +530,14 @@ export class IntegrationServiceProvider {
    * @param importFunction {IntegrationImportFunction}
    * @param query {String}
    * @param limit {Number} optional
+   * @param calculatedFields {[IntegrationCalculatedField]} optional
    */
-  importItemsFromQuery (projectId, importFunction, query, limit) {
+  importItemsFromQuery (projectId, importFunction, query, limit, calculatedFields) {
     debug && console.log('IntegrationServiceProvider.importItemsFromQuery:', projectId, this.server._id, this.server.title);
     let self           = this,
         processedItems = self.integrator.executeAndProcessQuery(query, 0, limit);
     
-    return self.importItems(importFunction, processedItems, projectId)
+    return self.importItems(importFunction, processedItems, projectId, calculatedFields)
   }
   
   /**
@@ -539,13 +563,12 @@ export class IntegrationServiceProvider {
    * Test an integration by executing the query to fetch some issues and returning the imported (but not stored) results
    * @param integration
    * @param details
-   * @param projectId
    */
-  testIntegration (integration, details, projectId) {
+  testIntegration (integration, details) {
     debug && console.log('IntegrationServiceProvider.testIntegration:', this.server._id, this.server.title, integration._id);
     let self = this;
     
-    return self.integrator.testIntegration(integration, details, projectId)
+    return self.integrator.testIntegration(integration, details)
   }
   
   /**
@@ -558,34 +581,18 @@ export class IntegrationServiceProvider {
         processedItem = self.integrator.postProcessItem(rawItem);
     
     // Get all of the contributors involved
-    self.processItemForContributors(processedItem);
+    self.integrator.processItemForContributors(processedItem);
     
     // Map the status
-    self.processItemForStatus(processedItem);
+    self.integrator.processItemForStatus(processedItem);
+    
+    // Map all of the links
+    self.integrator.processItemForLinks(processedItem);
+    
+    // Set the view link
+    self.integrator.processItemForViewLink(processedItem);
     
     return processedItem;
-  }
-  
-  /**
-   * Replace all of the raw contributor identifiers on an issue with contributor _ids
-   * @param processedItem
-   */
-  processItemForContributors (processedItem) {
-    trace && console.log('IntegrationServiceProvider.processItemForContributors:', this.server._id, this.server.title);
-    let self = this;
-    
-    self.integrator.processItemForContributors(processedItem);
-  }
-  
-  /**
-   * Use the status map for this server to append the workState and workPhase values for this issue
-   * @param processedItem
-   */
-  processItemForStatus (processedItem) {
-    trace && console.log('IntegrationServiceProvider.processItemForStatus:', this.server._id, this.server.title);
-    let self = this;
-    
-    self.integrator.processItemForStatus(processedItem, self.server.statusMap);
   }
   
   /**

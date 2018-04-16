@@ -205,14 +205,13 @@ export const IntegrationService = {
    * Test a project integration including remote query and item processing
    * @param integration {Integration}
    * @param details {Object}
-   * @param projectId {String}
    */
-  testIntegration (integration, details, projectId) {
+  testIntegration (integration, details) {
     console.log('IntegrationService.testIntegration:', integration._id);
     let self     = this,
         provider = self.getServiceProvider(integration.server());
     
-    return provider.testIntegration(integration, details, projectId)
+    return provider.testIntegration(integration, details)
   },
   
   /**

@@ -9,6 +9,12 @@ import './integration_server_panels/confluence/confluence_import_testbed';
  * Template Helpers
  */
 Template.IntegrationServerImportTestbed.helpers({
+  integrationType () {
+    let context         = this && this.context || {},
+        integrationType = Template.instance().integrationType.get();
+    
+    return context.integrationType || integrationType
+  },
   integrationImportTestbedPanel () {
     let context = this.context,
         integrationType;
@@ -39,6 +45,8 @@ Template.IntegrationServerImportTestbed.events({});
  */
 Template.IntegrationServerImportTestbed.onCreated(() => {
   let instance = Template.instance();
+  
+  instance.integrationType = new ReactiveVar();
   
   instance.subscribe('integration_servers');
 });
