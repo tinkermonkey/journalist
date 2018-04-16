@@ -56,7 +56,9 @@
 }
 
 .imported-item-description {
-
+  word-break: break-all;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .imported-item-summary-container,
