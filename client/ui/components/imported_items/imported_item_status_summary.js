@@ -8,6 +8,9 @@ import '../contributors/contributor_link';
  * Template Helpers
  */
 Template.ImportedItemStatusSummary.helpers({
+  fixVersionList(){
+    return Releases.find({}, {sort: {sortVersion: 1}})
+  }
 });
 
 /**

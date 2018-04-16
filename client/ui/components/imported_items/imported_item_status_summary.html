@@ -42,6 +42,40 @@
           {{ fromNow dateModified }}
         </td>
       </tr>
+      {{#if versionsFound}}
+        <tr>
+          <td>
+            <label>Version Found</label>
+          </td>
+          <td>
+            {{#each versionsFound}}
+              {{> ReleaseLink releaseId=this }}
+            {{/each}}
+          </td>
+        </tr>
+      {{/if}}
+      {{#if versionsFixed}}
+        <tr>
+          <td>
+            <label>
+              {{#if isType ItemTypes.bug}}
+                Version Fixed
+              {{else}}
+                {{#if isComplete}}
+                  Version Completed
+                {{else}}
+                  Version Planned
+                {{/if}}
+              {{/if}}
+            </label>
+          </td>
+          <td>
+            {{#each versionsFixed}}
+              {{> ReleaseLink releaseId=this }}
+            {{/each}}
+          </td>
+        </tr>
+      {{/if}}
     </table>
   </div>
 </template>

@@ -31,6 +31,7 @@
     <tr>
       <th></th>
       <th>Identifier</th>
+      <th>Type</th>
       <th>Status</th>
       <th>Title</th>
       <th>Owner</th>
@@ -45,6 +46,7 @@
         <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}">
           <td>{{> JsonInfoLink cssClass="hidden-control" data=this placement='right'}}</td>
           <td class="no-wrap">{{> ImportedItemPreviewLink _id }}</td>
+          <td class="no-wrap">{{renderItemType itemType}}</td>
           <td>
             <label class="label label-default">{{statusLabel}}</label>
             <label class="label label-{{workStateColor}}">{{camelToTitle workStateLabel}}</label>
