@@ -35,6 +35,10 @@
   margin-right: 1em;
 }
 
+.imported-item-type {
+  color: #000000;
+}
+
 .imported-item-title {
   color: #666666;
   font-size: 2em;

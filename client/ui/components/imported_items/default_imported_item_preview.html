@@ -1,13 +1,15 @@
 <template name="DefaultImportedItemPreview">
   <div class="imported-item-container imported-item-preview">
     <div class="flex">
+      <div class="imported-item-id imported-item-type">
+        {{renderItemType itemType}}
+      </div>
       <div class="imported-item-id no-wrap show-controls-on-hover">
-        <a class="" href="{{pathFor 'ImportedItem' itemId=_id}}">
-          {{identifier}}
-        </a>
-        <a href="" target="_blank" class="hidden-control">
-          <span class="glyphicon glyphicon-share-alt"></span>
-        </a>
+        <div>
+          <a class="" href="{{pathFor 'ImportedItem' itemId=_id}}">
+            {{identifier}}
+          </a>
+        </div>
       </div>
       <div class="imported-item-title">
         {{title}}
