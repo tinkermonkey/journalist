@@ -1,33 +1,45 @@
 <template name="ReleaseLink">
-  <div class="release-link">
+  <div class="inline-release-link">
     {{#with release}}
       <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
 
-      {{#unless hideDetails}}
-        <div class="release-link-details">
-          {{#if userIsTeamMember}}
-            <table class="table">
-              <tbody>
-              {{#if externalReleaseDate }}
-                <tr>
-                  <td>External Date</td>
-                  <td>{{externalReleaseDate}}</td>
-                </tr>
+      {{#unless isReleased}}
+        {{#unless ../hideDetails}}
+          <div class="release-link-details">
+            {{#if userIsTeamMember}}
+              <table>
+                <tbody>
+                {{#if devCompleteDate }}
+                  <tr>
+                    <td>Dev Complete</td>
+                    <td>{{dateFormat devCompleteDate 'MMM Do'}}</td>
+                  </tr>
+                {{/if}}
+                {{#if internalReleaseDate }}
+                  <tr>
+                    <td>Internal Date</td>
+                    <td>{{dateFormat internalReleaseDate 'MMM Do'}}</td>
+                  </tr>
+                {{/if}}
+                {{#if externalReleaseDate }}
+                  <tr>
+                    <td>External Date</td>
+                    <td>{{externalReleaseDate}}</td>
+                  </tr>
+                {{/if}}
+                </tbody>
+              </table>
+            {{else}}
+              {{#if externalReleaseDate}}
+                (<i>{{externalReleaseDate}}</i>)
               {{/if}}
-              {{#if devCompleteDate }}
-                <tr>
-                  <td>External Date</td>
-                  <td>{{externalReleaseDate}}</td>
-                </tr>
-              {{/if}}
-              </tbody>
-            </table>
-          {{else}}
-            {{#if externalReleaseDate}}
-              (<i>{{externalReleaseDate}}</i>)
             {{/if}}
-          {{/if}}
-        </div>
+          </div>
+        {{/unless}}
+      {{else}}
+        {{#if releaseDate}}
+          (released {{dateFormat releaseDate 'MMM Do'}})
+        {{/if}}
       {{/unless}}
     {{else}}
     {{/with}}

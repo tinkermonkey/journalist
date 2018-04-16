@@ -3,6 +3,7 @@ import './release_dashboard_project_card.css';
 import { Template }                from 'meteor/templating';
 import { Releases }                from '../../../../imports/api/releases/releases';
 import { ReleaseIntegrationLinks } from '../../../../imports/api/releases/release_integration_links';
+import '../../components/releases/release_link';
 
 /**
  * Template Helpers
@@ -12,7 +13,7 @@ Template.ReleaseDashboardProjectCard.helpers({
     let project = this,
         nextRelease;
     
-    Releases.find({ isReleased: false, 'metadata.internalReleaseDate': { $exists: true } }, { sort: { 'metadata.internalReleaseDate': 1 } })
+    Releases.find({ isReleased: false, internalReleaseDate: { $exists: true } }, { sort: { internalReleaseDate: 1 } })
         .forEach((release) => {
           let link = ReleaseIntegrationLinks.findOne({ releaseId: release._id, projectId: project._id });
           if (link && nextRelease == null) {
@@ -40,7 +41,7 @@ Template.ReleaseDashboardProjectCard.helpers({
         futureReleases = [],
         nextRelease;
     
-    Releases.find({ isReleased: false, 'metadata.internalReleaseDate': { $exists: true } }, { sort: { 'metadata.internalReleaseDate': 1 } })
+    Releases.find({ isReleased: false, internalReleaseDate: { $exists: true } }, { sort: { internalReleaseDate: 1 } })
         .forEach((release) => {
           let link = ReleaseIntegrationLinks.findOne({ releaseId: release._id, projectId: project._id });
           if (link && nextRelease == null) {
@@ -52,10 +53,10 @@ Template.ReleaseDashboardProjectCard.helpers({
       console.log('futureReleases project:', project);
       console.log('futureReleases nextRelease:', nextRelease);
       Releases.find({
-            isReleased                    : false,
-            _id                           : { $ne: nextRelease._id },
-            'metadata.internalReleaseDate': { $exists: true }
-          }, { sort: { 'metadata.internalReleaseDate': 1 } })
+            isReleased         : false,
+            _id                : { $ne: nextRelease._id },
+            internalReleaseDate: { $exists: true }
+          }, { sort: { internalReleaseDate: 1 } })
           .forEach((release) => {
             if (ReleaseIntegrationLinks.find({ releaseId: release._id, projectId: project._id }).count()) {
               futureReleases.push(release)

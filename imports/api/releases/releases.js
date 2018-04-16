@@ -165,7 +165,7 @@ Releases.helpers({
   linkedReleases () {
     let release = this;
     
-    console.log('linkedReleases:', release);
+    //console.log('linkedReleases:', release);
     
     return _.flatten(IntegrationServers.find({}).map((server) => {
       let serverVersionList = (IntegrationServerCaches.findOne({ serverId: server._id, key: 'versionList' }) || {}).value || [];

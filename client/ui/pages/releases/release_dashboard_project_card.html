@@ -9,31 +9,21 @@
       {{else}}
         <h3>Next Release</h3>
         {{#with nextRelease}}
-          <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
-
-          {{#if metadata.externalReleaseDate}}
-            (<i>{{metadata.externalReleaseDate}}</i>)
-          {{/if}}
+          {{> ReleaseLink releaseId=_id }}
         {{else}}
           <div>Nothing actively planned</div>
         {{/with}}
 
         <h3>Latest Version</h3>
         {{#with latestRelease}}
-          <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
-          (<i>{{dateFormat releaseDate}}</i>)
+          {{> ReleaseLink releaseId=_id }}
         {{else}}
         {{/with}}
 
         <h3>Future Releases</h3>
         {{#if futureReleases.length}}
           {{#each futureReleases}}
-            <div>
-              <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
-              {{#if metadata.externalReleaseDate}}
-                (<i>{{metadata.externalReleaseDate}}</i>)
-              {{/if}}
-            </div>
+            {{> ReleaseLink releaseId=_id }}
           {{/each}}
         {{else}}
           <div>Nothing actively planned</div>

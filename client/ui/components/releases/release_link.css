@@ -1,3 +1,27 @@
+.inline-release-link {
+  display     : flex;
+  align-items : start;
+  white-space: nowrap;
+}
+
+.inline-release-link a {
+  font-weight: bold;
+  flex-basis: 30%;
+}
+
 .release-link-details {
-  display: inline-block;
+  display : inline-block;
+}
+
+.release-link-details table {
+  margin-left: 5px;
+  flex-basis: 70%;
+}
+
+.release-link-details table td {
+  padding : 2px;
+}
+
+.release-link-details table td:first-child {
+  font-weight: bold;
 }
