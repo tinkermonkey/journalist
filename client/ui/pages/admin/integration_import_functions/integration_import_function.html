@@ -26,43 +26,21 @@
             <p>
               Whatever is returned from this function will be stored as the imported item and needs to be an object to be valid.
             </p>
-            
-            <h2>Schema Reference</h2>
-            <p>
-              Your function should populate the following parameters in order import items properly:
-            </p>
-            
-            <table class="table data-table">
-              <thead>
-              <tr>
-                <th>Param</th>
-                <th>Type</th>
-                <th>Description</th>
-              </tr>
-              </thead>
-              <tbody>
-              {{#each importedItemFieldReference}}
-                <tr class="data-table-row {{#if isOdd @index}}odd{{/if}}">
-                  <td>{{key}}</td>
-                  <td>{{type}}</td>
-                  <td>
-                    {{#if optional}}
-                      <i>(optional)</i>
-                    {{/if}}
-                    {{label}}
-                  </td>
-                </tr>
-              {{/each}}
-              </tbody>
-            </table>
-            
+
             <h2>Function Code</h2>
             
             {{> EditableCode value=code dataKey="code" emptyText="Enter function code" language="javascript" mode="inline" autoHeight=true }}
           </div>
           <div class="col-md-4">
+            <h2>Item Schema Reference</h2>
+            <p>
+              Your function should populate the following parameters in order import items properly:
+            </p>
+
+            {{> ImportedItemSchemaReference }}
+
             <h2>Field Reference</h2>
-            
+
             {{> IntegrationServerFieldReference context=this }}
           </div>
         </div>

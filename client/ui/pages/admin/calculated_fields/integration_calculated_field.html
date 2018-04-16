@@ -28,12 +28,18 @@
             <p>
               Calculated fields are generate before the import function is executed for an item being imported.
             </p>
-            
+
             <h2>Function Code</h2>
             
             {{> EditableCode value=code dataKey="code" emptyText="Enter function code" language="javascript" mode="inline" autoHeight=true }}
           </div>
           <div class="col-md-4">
+            <h2>Item Schema Reference</h2>
+            <p>
+              Your function should populate the following parameters in order import items properly:
+            </p>
+
+            {{> ImportedItemSchemaReference }}
             <h2>Field Reference</h2>
             
             {{> IntegrationServerFieldReference context=this }}

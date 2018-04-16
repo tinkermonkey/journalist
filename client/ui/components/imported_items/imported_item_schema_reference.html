@@ -1,0 +1,23 @@
+<template name="ImportedItemSchemaReference">
+  <table class="table data-table">
+    <thead>
+    <tr>
+      <th>Param</th>
+      <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each importedItemFieldReference}}
+      <tr class="data-table-row {{#if isOdd @index}}odd{{/if}}">
+        <td>{{key}}</td>
+        <td>
+          {{#if optional}}
+            <i>(optional)</i>
+          {{/if}}
+          {{label}}
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>

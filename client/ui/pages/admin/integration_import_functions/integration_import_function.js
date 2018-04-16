@@ -2,9 +2,9 @@ import './integration_import_function.html';
 import { Template }                   from 'meteor/templating';
 import { RobaDialog }                 from 'meteor/austinsand:roba-dialog';
 import { IntegrationImportFunctions } from '../../../../../imports/api/integrations/integration_import_functions';
-import { ImportedItem }               from '../../../../../imports/api/imported_items/imported_items';
 import '../integration_servers/integration_server_import_testbed';
 import '../integration_servers/integration_server_field_reference';
+import '../../../components/imported_items/imported_item_schema_reference';
 
 /**
  * Template Helpers
@@ -13,36 +13,6 @@ Template.IntegrationImportFunction.helpers({
   importFunction () {
     let importFunctionId = FlowRouter.getParam('functionId');
     return IntegrationImportFunctions.findOne(importFunctionId);
-  },
-  importedItemFieldReference () {
-    //console.log('ImportedItem:', ImportedItem);
-    let itemSchema     = ImportedItem.schema(),
-        fieldReference = [];
-    _.keys(itemSchema).sort((keyA, keyB) => {
-      let fieldA = itemSchema[ keyA ],
-          fieldB = itemSchema[ keyB ];
-      
-      if (fieldA.optional === fieldB.optional) {
-        return keyA.substr(0, 1).toLowerCase() > keyB.substr(0, 1).toLowerCase() ? 1 : -1
-      } else if (fieldA.optional === true && fieldB.optional !== true) {
-        return 1
-      } else {
-        return -1;
-      }
-    }).forEach((key) => {
-      let field = itemSchema[ key ];
-      
-      //console.log('ImportedItem field:', key, field, field.type && field.type.name);
-      // All of the user-facing fields have a descriptive label
-      if (field.label && field.label.length) {
-        
-        field.key  = key;
-        field.type = field.type && field.type.name;
-        fieldReference.push(field);
-      }
-    });
-    
-    return fieldReference
   }
 });
 
