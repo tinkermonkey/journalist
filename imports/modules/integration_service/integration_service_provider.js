@@ -589,7 +589,7 @@ export class IntegrationServiceProvider {
     self.integrator.processItemForContributors(processedItem);
     
     // Map the status
-    self.integrator.processItemForStatus(processedItem);
+    self.integrator.processItemForStatus(processedItem, self.server.statusMap);
     
     // Map all of the links
     self.integrator.processItemForLinks(processedItem);
