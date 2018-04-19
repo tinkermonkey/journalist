@@ -66,7 +66,7 @@ Template.ReleasePlan.onCreated(() => {
       CapacityPlanSprints.find({ optionId: { $in: optionIds } }, { sort: { startDate: 1 } }).forEach((sprint) => {
         let key = sprint.startDate.getTime();
         if (sprintMap[ key ]) {
-          sprintMap[ key ].planSprints.push(sprint)
+          sprintMap[ key ].capacityPlanSprints.push(sprint)
         } else {
           let sprintLength = moment(sprint.endDate).isoWeek() - moment(sprint.startDate).isoWeek();
           sprintMap[ key ] = {
@@ -75,7 +75,7 @@ Template.ReleasePlan.onCreated(() => {
             sprintLength: sprintLength,
             weekNum: moment(sprint.startDate).isoWeek(),
             sprintNumber: Math.floor(moment(sprint.startDate).isoWeek() / sprintLength) + 1,
-            planSprints : [ sprint ]
+            capacityPlanSprints : [ sprint ]
           };
         }
       });

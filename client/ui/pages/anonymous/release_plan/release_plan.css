@@ -16,7 +16,7 @@
 }
 
 .release-plan-table {
-  width: 100%;
+  width : 100%;
 }
 
 .release-plan-table > thead > tr > th {
@@ -24,7 +24,8 @@
 }
 
 .release-plan-table > tbody > tr > td {
-  padding : 10px;
+  padding        : 10px;
+  vertical-align : top;
 }
 
 .release-plan-container .release-title {
@@ -38,3 +39,27 @@
   font-weight : bold;
 }
 
+.release-plan-effort {
+  background-color : #999999;
+  border-radius    : 5px;
+  margin-bottom    : 5px;
+  padding: 5px;
+}
+
+.release-plan-effort:last-child {
+  margin-bottom : 0;
+}
+
+.release-plan-effort-title {
+  margin: -5px;
+  padding: 5px;
+  background-color : rgba(255, 255, 255, 0.7);
+  color: #333333;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.release-plan-effort-roles {
+  margin-top: 10px;
+  padding: 5px;
+}

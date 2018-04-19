@@ -1,0 +1,10 @@
+<template name="ReleasePlanEffort">
+  <div class="release-plan-effort" style="background-color: {{color}};">
+    <div class="release-plan-effort-title">{{title}}</div>
+    <div class="release-plan-effort-roles">
+      {{#each roles}}
+        <div>{{count}} {{definition.title}}{{#if multipleContributors}}s{{/if}}</div>
+      {{/each}}
+    </div>
+  </div>
+</template>

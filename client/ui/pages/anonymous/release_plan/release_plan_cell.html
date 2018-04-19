@@ -1,3 +1,5 @@
 <template name="ReleasePlanCell">
-  release_plan_cell
+  {{#each efforts}}
+    {{> ReleasePlanEffort }}
+  {{/each}}
 </template>
