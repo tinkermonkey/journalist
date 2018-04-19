@@ -19,7 +19,7 @@ Meteor.publish('active_capacity_plans', function () {
 });
 
 Meteor.publish('capacity_plan', function (planId) {
-  console.info('Publish: capacity_plan');
+  console.info('Publish: capacity_plan', planId);
   if (this.userId) {
     return CapacityPlans.find({ _id: planId });
   } else {
@@ -39,7 +39,7 @@ Meteor.publish('capacity_plans', function () {
 });
 
 Meteor.publish('capacity_plan_options', function (planId) {
-  console.info('Publish: capacity_plan_options');
+  console.info('Publish: capacity_plan_options', planId);
   if (this.userId) {
     return CapacityPlanOptions.find({ planId: planId });
   } else {
@@ -69,7 +69,7 @@ Meteor.publish('capacity_plan_releases', function () {
 });
 
 Meteor.publish('capacity_plan_sprints', function (planId) {
-  console.info('Publish: capacity_plan_sprints');
+  console.info('Publish: capacity_plan_sprints', planId);
   if (this.userId) {
     return CapacityPlanSprints.find({ planId: planId });
   } else {
@@ -79,7 +79,7 @@ Meteor.publish('capacity_plan_sprints', function (planId) {
 });
 
 Meteor.publish('capacity_plan_sprint_blocks', function (planId) {
-  console.info('Publish: capacity_plan_sprint_blocks');
+  console.info('Publish: capacity_plan_sprint_blocks', planId);
   if (this.userId) {
     return CapacityPlanSprintBlocks.find({ planId: planId });
   } else {
@@ -89,7 +89,7 @@ Meteor.publish('capacity_plan_sprint_blocks', function (planId) {
 });
 
 Meteor.publish('capacity_plan_sprint_links', function (planId) {
-  console.info('Publish: capacity_plan_sprint_links');
+  console.info('Publish: capacity_plan_sprint_links', planId);
   if (this.userId) {
     return CapacityPlanSprintLinks.find({ planId: planId });
   } else {
@@ -99,7 +99,7 @@ Meteor.publish('capacity_plan_sprint_links', function (planId) {
 });
 
 Meteor.publish('capacity_plan_strategic_efforts', function (planId) {
-  console.info('Publish: capacity_plan_strategic_efforts');
+  console.info('Publish: capacity_plan_strategic_efforts', planId);
   if (this.userId) {
     return CapacityPlanStrategicEfforts.find({ planId: planId });
   } else {
@@ -109,7 +109,7 @@ Meteor.publish('capacity_plan_strategic_efforts', function (planId) {
 });
 
 Meteor.publish('capacity_plan_strategic_effort_items', function (planId) {
-  console.info('Publish: capacity_plan_strategic_effort_items');
+  console.info('Publish: capacity_plan_strategic_effort_items', planId);
   if (this.userId) {
     return CapacityPlanStrategicEffortItems.find({ planId: planId });
   } else {

@@ -86,6 +86,22 @@ export const Util = {
   },
   
   /**
+   * Subscribe to the standard set of data for an anonymous page
+   * @param instance
+   */
+  anonymousSubscriptions (instance) {
+    instance.subscribe('active_capacity_plans');
+    instance.subscribe('contributors');
+    instance.subscribe('integration_servers');
+    instance.subscribe('integration_server_caches', 'versionList');
+    instance.subscribe('projects');
+    instance.subscribe('releases');
+    instance.subscribe('release_integration_links');
+    instance.subscribe('system_health_metrics');
+    instance.subscribe('teams');
+  },
+  
+  /**
    * Subscribe to the standard set of data
    * @param instance
    */

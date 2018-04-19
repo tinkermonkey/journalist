@@ -1,0 +1,43 @@
+<template name="ReleasePlan">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Release Plan</h1>
+      </div>
+    </div>
+  </div>
+  <div class="release-plan-container">
+    <div class="release-plan-shadow-top"></div>
+    <table class="release-plan-table">
+      <thead>
+      <tr>
+        <th></th>
+        {{#each sprints}}
+          <th>
+            <div class="sprint-title">Sprint {{sprintNumber}}</div>
+            <div>{{dateFormat startDate 'MMM Do'}}</div>
+          </th>
+        {{/each}}
+      </tr>
+      </thead>
+      <tbody>
+      {{#if Template.subscriptionsReady}}
+        {{#each releases }}
+          <tr>
+            <td>
+              <span class="release-title">{{title}}</span>
+            </td>
+            {{#each sprints}}
+              <td>
+              </td>
+            {{/each}}
+          </tr>
+        {{/each}}
+      {{else}}
+        {{> AppLoading}}
+      {{/if}}
+      </tbody>
+    </table>
+    <div class="release-plan-shadow-bottom"></div>
+  </div>
+</template>

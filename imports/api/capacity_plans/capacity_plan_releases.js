@@ -1,7 +1,6 @@
 import { Mongo }                    from 'meteor/mongo';
 import SimpleSchema                 from 'simpl-schema';
 import { SchemaHelpers }            from '../schema_helpers';
-import { CapacityPlans }            from './capacity_plans';
 import { CapacityPlanSprintLinks }  from './capacity_plan_sprint_links';
 import { CapacityPlanSprintBlocks } from './capacity_plan_sprint_blocks';
 import { Releases }                 from '../releases/releases';

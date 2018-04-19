@@ -3,6 +3,7 @@ import { FlowRouter }  from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 // Import the base templates
 import '../../../client/ui/layouts/unauthenticated_layout';
+import '../../../client/ui/layouts/anonymous_layout';
 import '../../../client/ui/layouts/authenticated_layout';
 import '../../../client/ui/layouts/report_layout';
 // Import the pages
@@ -25,6 +26,7 @@ import '../../../client/ui/pages/admin/releases/admin_releases';
 import '../../../client/ui/pages/admin/teams/admin_team';
 import '../../../client/ui/pages/admin/teams/admin_teams';
 import '../../../client/ui/pages/admin/users/admin_users';
+import '../../../client/ui/pages/anonymous/release_plan/release_plan';
 import '../../../client/ui/pages/capacity_plans/capacity_plan';
 import '../../../client/ui/pages/capacity_plans/capacity_plans';
 import '../../../client/ui/pages/capacity_plans/capacity_plan_report';
@@ -173,6 +175,18 @@ FlowRouter.route('/capacity_plan_summary_report/:planId', {
   name: 'CapacityPlanSummaryReport',
   action () {
     BlazeLayout.render('ReportLayout', { main: 'CapacityPlanSummaryReport' });
+  }
+});
+
+/**
+ *
+ * Anonymous Routes
+ *
+ */
+FlowRouter.route('/release_plan', {
+  name: 'ReleasePlan',
+  action () {
+    BlazeLayout.render('AnonymousLayout', { main: 'ReleasePlan' });
   }
 });
 

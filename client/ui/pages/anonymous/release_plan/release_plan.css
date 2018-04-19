@@ -1,0 +1,40 @@
+.release-plan-container {
+  background-color : #298cff;
+  color            : #ffffff;
+}
+
+.release-plan-shadow-top {
+  height           : 20px;
+  width            : 100%;
+  background-image : linear-gradient(rgba(51, 51, 51, 0.7) 30%, rgba(51, 51, 51, 0.3) 70%, rgba(51, 51, 51, 0) 100%);
+}
+
+.release-plan-shadow-bottom {
+  height           : 20px;
+  width            : 100%;
+  background-image : linear-gradient(rgba(51, 51, 51, 0.0) 30%, rgba(51, 51, 51, 0.3) 70%, rgba(51, 51, 51, 0.7) 100%);
+}
+
+.release-plan-table {
+  width: 100%;
+}
+
+.release-plan-table > thead > tr > th {
+  padding : 10px;
+}
+
+.release-plan-table > tbody > tr > td {
+  padding : 10px;
+}
+
+.release-plan-container .release-title {
+  font-size   : 2.2em;
+  font-weight : bold;
+  margin      : 10px 0;
+}
+
+.release-plan-container .sprint-title {
+  font-size   : 1.5em;
+  font-weight : bold;
+}
+

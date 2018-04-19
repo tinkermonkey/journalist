@@ -50,11 +50,13 @@
         </td>
         -->
         <td style="width:25%;">
-          {{#unless itemIdentifier}}
-            {{> EditableCode dataKey='description' value=description emptyText="Item Description" language="markdown"}}
-          {{else}}
-            {{itemDescription}}
-          {{/unless}}
+          {{#HeightLimitedContent}}
+            {{#unless itemIdentifier}}
+              {{> EditableCode dataKey='description' value=description emptyText="Item Description" language="markdown"}}
+            {{else}}
+              {{itemDescription}}
+            {{/unless}}
+          {{/HeightLimitedContent}}
         </td>
         <td class="open-link">
           <a class="link-red hidden-control btn-delete-effort">
