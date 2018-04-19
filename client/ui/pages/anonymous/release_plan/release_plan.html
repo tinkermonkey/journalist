@@ -16,6 +16,9 @@
           <th>
             <div class="sprint-title">Sprint {{sprintNumber}}</div>
             <div>{{dateFormat startDate 'MMM Do'}}</div>
+            <div>{{dateFormat endDate 'MMM Do'}}</div>
+            <div>Sprint Length: {{sprintLength}} weeks</div>
+            <div>Week Number: {{weekNum}}</div>
           </th>
         {{/each}}
       </tr>
@@ -25,10 +28,12 @@
         {{#each releases }}
           <tr>
             <td>
-              <span class="release-title">{{title}}</span>
+              <div class="release-title">{{title}}</div>
+              {{> ReleaseDateSummary }}
             </td>
             {{#each sprints}}
               <td>
+                {{> ReleasePlanCell release=.. sprint=this}}
               </td>
             {{/each}}
           </tr>

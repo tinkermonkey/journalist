@@ -6,6 +6,8 @@ import { CapacityPlans }        from '../../../../../imports/api/capacity_plans/
 import { CapacityPlanReleases } from '../../../../../imports/api/capacity_plans/capacity_plan_releases';
 import { CapacityPlanSprints }  from '../../../../../imports/api/capacity_plans/capacity_plan_sprints';
 import { Releases }             from '../../../../../imports/api/releases/releases';
+import '../../../components/releases/release_date_summary';
+import './release_plan_cell';
 
 /**
  * Template Helpers
@@ -66,11 +68,13 @@ Template.ReleasePlan.onCreated(() => {
         if (sprintMap[ key ]) {
           sprintMap[ key ].planSprints.push(sprint)
         } else {
-          let sprintLength = moment(sprint.endDate).diff(sprint.startDate, 'weeks');
+          let sprintLength = moment(sprint.endDate).isoWeek() - moment(sprint.startDate).isoWeek();
           sprintMap[ key ] = {
             startDate   : sprint.startDate,
+            endDate   : sprint.endDate,
             sprintLength: sprintLength,
-            sprintNumber: Math.floor(moment(sprint.startDate).isoWeek() / sprintLength),
+            weekNum: moment(sprint.startDate).isoWeek(),
+            sprintNumber: Math.floor(moment(sprint.startDate).isoWeek() / sprintLength) + 1,
             planSprints : [ sprint ]
           };
         }
