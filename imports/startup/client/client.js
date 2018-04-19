@@ -70,7 +70,7 @@ Template.registerHelper('UserTypes', function () {
 Template.registerHelper('userIsTeamMember', function () {
   let user = Users.findOne(Meteor.userId());
   if (user) {
-    return user.contributor().participatingTeams().count() > 0;
+    return user.isTeamMember();
   }
 });
 Template.registerHelper('userIsAdmin', function () {

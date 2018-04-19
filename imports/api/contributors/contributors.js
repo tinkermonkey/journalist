@@ -146,9 +146,24 @@ Contributors.helpers({
    * Get the roles for this contributor on a specific team
    */
   rolesOnTeam (teamId) {
-    console.log('rolesOnTeam:', this._id, this.name, teamId, ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId }).count());
+    console.log('rolesOnTeam:', this._id, this.name, teamId, ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId })
+        .count());
     return ContributorTeamRoles.find({ contributorId: this._id, teamId: teamId });
   },
+  
+  /**
+   * Get the list of contributorIds that this users manages along with their own
+   */
+  contributorIdList () {
+    let contributor       = this,
+        contributorIdList = contributor.allStaffIds();
+    
+    // Compile the list of all contributors to consider
+    contributorIdList.push(contributor._id);
+    
+    return contributorIdList
+  },
+  
   /**
    * Get the list of teams that this contributor participates in
    * @param sortBy {Object} Mongo sort directive
@@ -162,7 +177,7 @@ Contributors.helpers({
     sortBy = sortBy || { title: 1 };
     
     // Find all of the teams that this user has a role on
-    ContributorTeamRoles.find({ contributorId: { $in: contributor.allStaffIds() } }).forEach((teamRole) => {
+    ContributorTeamRoles.find({ contributorId: { $in: contributor.contributorIdList() } }).forEach((teamRole) => {
       teamIds.push(teamRole.teamId);
     });
     
@@ -199,7 +214,7 @@ Contributors.helpers({
     let contributor               = this,
         contributorManagesManager = false;
     
-    // Get the list of managers for the team that this contributor manages
+    // Get the list of managers for the teams that this contributor manages
     ContributorTeamRoles.find({ teamId: teamId, contributorId: { $in: contributor.allStaffIds() } }).forEach((teamRole) => {
       contributorManagesManager = contributorManagesManager || teamRole.roleDefinition().isManager
     });

@@ -22,6 +22,7 @@ Users.helpers({
       return contributor.isAdmin();
     }
   },
+  
   /**
    * Does this user have a manager role
    * @return {boolean}
@@ -32,13 +33,18 @@ Users.helpers({
       return contributor.isManager();
     }
   },
+  
   /**
    * Determine if this user manages a specific contributor
    * @param contributorId
    */
   managesContributor (contributorId) {
-    return this.contributor().managesContributor(contributorId);
+    let contributor = this.contributor();
+    if (contributor) {
+      return contributor.managesContributor(contributorId);
+    }
   },
+  
   /**
    * Get the contributor record for this user
    */
@@ -66,11 +72,22 @@ Users.helpers({
     }
     return contributor
   },
+  
   /**
    * Quick fetch of the contributorId for permissions checks
    */
   contributorId () {
     let contributor = this.contributor();
     return contributor && contributor._id;
+  },
+  
+  /**
+   * Is this user part of a team
+   */
+  isTeamMember () {
+    let contributor = this.contributor();
+    if (contributor) {
+      return contributor.participatingTeams().count() > 0
+    }
   }
 });
