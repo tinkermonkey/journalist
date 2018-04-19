@@ -1,9 +1,10 @@
-import { Meteor }                  from 'meteor/meteor';
-import { check, Match }            from 'meteor/check';
-import { Auth }                    from '../../auth';
-import { CapacityPlanReleases }    from '../../capacity_plans/capacity_plan_releases';
-import { Releases }                from '../releases';
-import { ReleaseIntegrationLinks } from '../release_integration_links';
+import { Meteor }                   from 'meteor/meteor';
+import { check, Match }             from 'meteor/check';
+import { Auth }                     from '../../auth';
+import { CapacityPlanReleases }     from '../../capacity_plans/capacity_plan_releases';
+import { CapacityPlanSprintBlocks } from '../../capacity_plans/capacity_plan_sprint_blocks';
+import { Releases }                 from '../releases';
+import { ReleaseIntegrationLinks }  from '../release_integration_links';
 
 Meteor.methods({
   /**
@@ -50,6 +51,9 @@ Meteor.methods({
         // Remove all of the blocks for this release
         CapacityPlanSprintBlocks.remove({ dataId: planRelease._id });
       });
+      
+      CapacityPlanReleases.remove({ releaseId: releaseId });
+      ReleaseIntegrationLinks.remove({ releaseId: releaseId });
       
       Releases.remove(releaseId);
     } else {
