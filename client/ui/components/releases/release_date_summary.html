@@ -1,3 +1,30 @@
 <template name="ReleaseDateSummary">
-  release_date_summary
+  {{#if userIsTeamMember}}
+    <table class="release-date-summary">
+      <tbody>
+      {{#if devCompleteDate }}
+        <tr>
+          <td>Dev Complete</td>
+          <td>{{dateFormat devCompleteDate 'MMM Do'}}</td>
+        </tr>
+      {{/if}}
+      {{#if internalReleaseDate }}
+        <tr>
+          <td>Internal Date</td>
+          <td>{{dateFormat internalReleaseDate 'MMM Do'}}</td>
+        </tr>
+      {{/if}}
+      {{#if externalReleaseDate }}
+        <tr>
+          <td>External Date</td>
+          <td>{{externalReleaseDate}}</td>
+        </tr>
+      {{/if}}
+      </tbody>
+    </table>
+  {{else}}
+    {{#if externalReleaseDate}}
+      <span class="external-release-date">{{externalReleaseDate}}</span>
+    {{/if}}
+  {{/if}}
 </template>

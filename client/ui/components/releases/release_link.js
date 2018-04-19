@@ -1,6 +1,7 @@
 import './release_link.html';
 import { Template } from 'meteor/templating';
 import { Releases } from '../../../../imports/api/releases/releases';
+import './release_date_summary';
 
 /**
  * Template Helpers
