@@ -8,6 +8,7 @@ import { CapacityPlanSprints }  from '../../../../../imports/api/capacity_plans/
 import { Releases }             from '../../../../../imports/api/releases/releases';
 import '../../../components/releases/release_date_summary';
 import './release_plan_cell';
+import '../../releases/release';
 
 /**
  * Template Helpers
@@ -25,13 +26,23 @@ Template.ReleasePlan.helpers({
   },
   sprints () {
     return Template.instance().sprints.get()
+  },
+  releasePreviewTemplate(){
+    return Template.Release
   }
 });
 
 /**
  * Template Event Handlers
  */
-Template.ReleasePlan.events({});
+Template.ReleasePlan.events({
+  'mouseenter .release-plan-row > td'(e, instance){
+    $(e.target).closest('.release-plan-row').children('td').addClass('hover');
+  },
+  'mouseleave .release-plan-row > td'(e, instance){
+    $(e.target).closest('.release-plan-row').children('td').removeClass('hover');
+  }
+});
 
 /**
  * Template Created

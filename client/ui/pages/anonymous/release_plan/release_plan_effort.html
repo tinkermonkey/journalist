@@ -1,6 +1,16 @@
 <template name="ReleasePlanEffort">
   <div class="release-plan-effort" style="background-color: {{color}};">
-    <div class="release-plan-effort-title">{{title}}</div>
+    <div class="release-plan-effort-title">
+      {{#if userIsTeamMember}}
+        {{#if importedItemId}}
+          {{> QuickPopover contentTemplate=previewTemplate data=this text=title cssClass='release-plan-effort-preview-link' }}
+        {{else}}
+          {{title}}
+        {{/if}}
+      {{else}}
+        {{title}}
+      {{/if}}
+    </div>
     <div class="release-plan-effort-roles">
       {{#each roles}}
         <div>{{count}} {{definition.title}}{{#if multipleContributors}}s{{/if}}</div>

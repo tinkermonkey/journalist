@@ -199,7 +199,7 @@ export const ImportExportTool = {
         });
         console.info('ImportExportTool inserted', importCount, 'records into', collectionName);
       } catch (e) {
-        console.error(e);
+        console.error('ImportExportTool.insertDataIntoCollection failed:', e);
       }
     } else {
       console.error('ImportExportTool.insertDataIntoCollection failed: collection [', collectionName, '] not found');

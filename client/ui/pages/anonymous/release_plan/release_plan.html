@@ -15,10 +15,7 @@
         {{#each sprints}}
           <th>
             <div class="sprint-title">Sprint {{sprintNumber}}</div>
-            <div>{{dateFormat startDate 'MMM Do'}}</div>
-            <div>{{dateFormat endDate 'MMM Do'}}</div>
-            <div>Sprint Length: {{sprintLength}} weeks</div>
-            <div>Week Number: {{weekNum}}</div>
+            <div>{{dateFormat startDate 'MMM Do'}} - {{dateFormat endDate 'MMM Do'}}</div>
           </th>
         {{/each}}
       </tr>
@@ -26,9 +23,15 @@
       <tbody>
       {{#if Template.subscriptionsReady}}
         {{#each releases }}
-          <tr>
-            <td>
-              <div class="release-title">{{title}}</div>
+          <tr class="release-plan-row">
+            <td class="release-summary-container">
+              <div class="release-title">
+                {{#if userIsTeamMember}}
+                  {{> QuickPopover contentTemplate=releasePreviewTemplate data=_id text=title cssClass='release-plan-preview-link' }}
+                {{else}}
+                  {{title}}
+                {{/if}}
+              </div>
               {{> ReleaseDateSummary }}
             </td>
             {{#each sprints}}

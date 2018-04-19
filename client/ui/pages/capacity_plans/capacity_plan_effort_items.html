@@ -4,15 +4,15 @@
     {{#each items}}
       <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
         <td class="open-link">
-          {{#if itemIdentifier}}
+          {{#if importedItemId}}
             <a href="">
               <span class="glyphicon glyphicon-folder-open"></span>
             </a>
           {{/if}}
         </td>
-        <td>{{> EditableItemSelector dataKey='itemIdentifier' value=itemIdentifier valueField='identifier' emptyText="Select an item to link" }}</td>
+        <td>{{> EditableItemSelector dataKey='importedItemId' value=importedItemId valueField='_id' emptyText="Select an item to link" }}</td>
         <td>
-          {{#if itemIdentifier}}
+          {{#if importedItemId}}
             {{itemTitle}}
           {{else}}
             {{> EditableTextField dataKey='title' value=title mode='popup' }}

@@ -8,8 +8,8 @@ import { Util }                   from '../../../../imports/api/util';
  * Template Helpers
  */
 Template.Release.helpers({
-  release(){
-    let releaseId = FlowRouter.getParam('releaseId');
+  release () {
+    let releaseId = Template.instance().releaseId.get();
     return Releases.findOne(releaseId)
   },
   workStates () {
@@ -28,8 +28,8 @@ Template.Release.helpers({
     
     return {
       query: {
-        projectId: project._id,
-        workState: workState.value,
+        projectId    : project._id,
+        workState    : workState.value,
         versionsFixed: release._id
       }
     }
@@ -45,7 +45,16 @@ Template.Release.events({});
  * Template Created
  */
 Template.Release.onCreated(() => {
-  let instance = Template.instance()
+  let instance = Template.instance();
+  
+  instance.releaseId = new ReactiveVar();
+  
+  instance.autorun(() => {
+    let paramReleaseId = FlowRouter.getParam('releaseId'),
+        dataReleaseId  = Template.currentData().toString();
+    
+    instance.releaseId.set(paramReleaseId || dataReleaseId)
+  })
 });
 
 /**

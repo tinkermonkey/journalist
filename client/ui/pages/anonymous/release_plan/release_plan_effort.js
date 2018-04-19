@@ -1,5 +1,6 @@
 import './release_plan_effort.html';
 import { Template } from 'meteor/templating';
+import './release_plan_effort_overlay';
 
 /**
  * Template Helpers
@@ -7,6 +8,9 @@ import { Template } from 'meteor/templating';
 Template.ReleasePlanEffort.helpers({
   multipleContributors(){
     return this.count > 1
+  },
+  previewTemplate(){
+    return Template.ReleasePlanEffortOverlay
   }
 });
 

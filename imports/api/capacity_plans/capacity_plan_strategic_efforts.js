@@ -18,7 +18,7 @@ export const CapacityPlanStrategicEffort = new SimpleSchema({
   planId          : {
     type: String
   },
-  itemIdentifier  : {
+  importedItemId  : {
     type    : String,
     optional: true
   },
@@ -88,31 +88,31 @@ CapacityPlanStrategicEfforts.helpers({
     return CapacityPlanStrategicEffortItems.find({ effortId: this._id, estimate: { $gt: 0 } }, { sort: { title: 1 } })
   },
   itemTitle () {
-    if (this.itemIdentifier) {
-      let item = ImportedItemCrumbs.findOne({ identifier: this.itemIdentifier });
+    if (this.importedItemId) {
+      let item = ImportedItemCrumbs.findOne({ _id: this.importedItemId });
       return item && item.title || this.title
     } else {
       return this.title
     }
   },
   itemDescription () {
-    if (this.itemIdentifier) {
-      let item = ImportedItemCrumbs.findOne({ identifier: this.itemIdentifier });
+    if (this.importedItemId) {
+      let item = ImportedItemCrumbs.findOne({ _id: this.importedItemId });
       return item && item.description || this.description
     } else {
       return this.description
     }
   },
   linkedItemCrumb () {
-    if (this.itemIdentifier) {
-      return ImportedItemCrumbs.findOne({ identifier: this.itemIdentifier })
+    if (this.importedItemId) {
+      return ImportedItemCrumbs.findOne({ _id: this.importedItemId })
     }
   },
   /**
    * If this is linked to an item, service the linked items and make sure they're in sync
    */
   crossReferenceLinkedItems () {
-    if (this.itemIdentifier) {
+    if (this.importedItemId) {
       this.linkedItemCrumb();
     }
   },

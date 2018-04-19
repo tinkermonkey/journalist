@@ -20,20 +20,20 @@
     {{#each efforts}}
       <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
         <td class="open-link">
-          {{#if itemIdentifier}}
+          {{#if importedItemId}}
             <a class="hidden-control" href="{{pathFor 'CapacityPlan' planId=_id}}">
               <span class="glyphicon glyphicon-folder-open"></span>
             </a>
           {{/if}}
         </td>
         <td>
-          {{#unless itemIdentifier}}
+          {{#unless importedItemId}}
             {{> EditableTextField dataKey='title' value=title mode='popup' }}
           {{else}}
             {{itemTitle}}
           {{/unless}}
         </td>
-        <td>{{> EditableItemSelector dataKey='itemIdentifier' value=itemIdentifier valueField='identifier' emptyText="Select an item to link"}}</td>
+        <td>{{> EditableItemSelector dataKey='importedItemId' value=importedItemId valueField='_id' emptyText="Select an item to link"}}</td>
         <td>{{> EditableColorPicker dataKey='color' value=color debug=true }}</td>
         <td>{{> EditableCheckbox dataKey='isReleaseContent' value=isReleaseContent }}</td>
         <!--
@@ -51,7 +51,7 @@
         -->
         <td style="width:25%;">
           {{#HeightLimitedContent}}
-            {{#unless itemIdentifier}}
+            {{#unless importedItemId}}
               {{> EditableCode dataKey='description' value=description emptyText="Item Description" language="markdown"}}
             {{else}}
               {{itemDescription}}
