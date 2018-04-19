@@ -50,8 +50,8 @@ Template.ReleaseDashboardProjectCard.helpers({
         });
     
     if (nextRelease) {
-      console.log('futureReleases project:', project);
-      console.log('futureReleases nextRelease:', nextRelease);
+      //console.log('futureReleases project:', project);
+      //console.log('futureReleases nextRelease:', nextRelease);
       Releases.find({
             isReleased         : false,
             _id                : { $ne: nextRelease._id },
@@ -63,7 +63,7 @@ Template.ReleaseDashboardProjectCard.helpers({
             }
           });
       
-      console.log('futureReleases futureReleases:', futureReleases);
+      //console.log('futureReleases futureReleases:', futureReleases);
     }
     
     return futureReleases

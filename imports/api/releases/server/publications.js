@@ -5,15 +5,10 @@ import { ReleaseIntegrationLinks } from '../release_integration_links';
 Meteor.publish('releases', function () {
   console.log('Publish: releases');
   if (this.userId) {
-    let user = Meteor.users.findOne(this.userId);
-    if (user && user.isAdmin()) {
-      return Releases.find({});
-    } else {
-      return Releases.find({}, { fields: { internalReleaseDate: false } });
-    }
+    return Releases.find({});
   } else {
     this.ready();
-    return [];
+    return []
   }
 });
 
@@ -23,6 +18,6 @@ Meteor.publish('release_integration_links', function () {
     return ReleaseIntegrationLinks.find({});
   } else {
     this.ready();
-    return [];
+    return []
   }
 });

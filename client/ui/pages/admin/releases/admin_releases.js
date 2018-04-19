@@ -35,7 +35,7 @@ Template.AdminReleases.events({
             label   : 'Version Number',
             optional: true
           },
-          isReleased: {
+          isReleased   : {
             type    : Boolean,
             label   : 'Is Released',
             optional: true
