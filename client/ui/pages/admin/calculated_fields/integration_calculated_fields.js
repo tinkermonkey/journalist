@@ -11,7 +11,6 @@ Template.IntegrationCalculatedFields.helpers({
   calculatedFields () {
     return IntegrationCalculatedFields.find({}, { sort: { title: 1 } })
   }
-  
 });
 
 /**
