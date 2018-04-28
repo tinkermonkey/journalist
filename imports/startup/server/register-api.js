@@ -10,6 +10,9 @@ import '../../api/contributors/server/publications';
 // Display Templates
 import '../../api/display_templates/server/methods';
 import '../../api/display_templates/server/publications';
+// Dynamic Collections
+import '../../api/dynamic_collections/server/methods';
+import '../../api/dynamic_collections/server/publications';
 // Efforts
 import '../../api/efforts/server/methods';
 import '../../api/efforts/server/publications';

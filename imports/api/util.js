@@ -58,7 +58,17 @@ export const Util = {
    */
   camelToDash (word) {
     if (word) {
-      return word.replace(/([A-Z])/g, '-$1').trim().toLowerCase();
+      return (word.substr(0, 1).toLowerCase() + word.substr(1)).replace(/([A-Z])/g, '-$1').trim().toLowerCase();
+    }
+  },
+  
+  /**
+   * Convert camel case to dashed words
+   * @param word
+   */
+  camelToUnderscore (word) {
+    if (word) {
+      return (word.substr(0, 1).toLowerCase() + word.substr(1)).replace(/([A-Z])/g, '_$1').trim().toLowerCase();
     }
   },
   
@@ -112,6 +122,7 @@ export const Util = {
     instance.subscribe('contributor_role_definitions');
     instance.subscribe('contributor_team_roles');
     instance.subscribe('contributor_project_assignments');
+    instance.subscribe('basic_dynamic_collections');
     instance.subscribe('efforts');
     instance.subscribe('integration_servers');
     instance.subscribe('integration_server_caches', 'versionList');

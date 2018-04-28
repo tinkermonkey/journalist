@@ -1,0 +1,81 @@
+<template name="DynamicCollection">
+  {{#if Template.subscriptionsReady }}
+    {{#with dynamicCollection}}
+      {{setPageTitle 'Journalist - Dynamic Collection - ' title }}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'DynamicCollections' }}">Dynamic Collections</a></li>
+              <li class="active">{{title}}</li>
+            </ol>
+
+            <h1>{{title}}</h1>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-8">
+            {{#RobaTabGroup name='dynamic-collection-tabs' navClass='nav-tabs'}}
+              {{#RobaTab name='definition' title='Definition'}}
+                <button class="btn btn-primary btn-recompile">
+                  <span class="glyphicon glyphicon-refresh"></span>
+                  Recompile Collection
+                </button>
+
+                <h2>Preamble Code</h2>
+                {{> EditableCode value=preambleCode dataKey="preambleCode" emptyText="Enter code" language="javascript" mode="inline" autoHeight=true }}
+
+                <h2>Schema Definition</h2>
+                {{> EditableCode value=schemaCode dataKey="schemaCode" emptyText="Enter schema definition" language="javascript" mode="inline" autoHeight=true }}
+
+                <h2>Helper Functions</h2>
+                {{> EditableCode value=helpersCode dataKey="helpersCode" emptyText="Enter helper functions" language="javascript" mode="inline" autoHeight=true }}
+              {{/RobaTab}}
+              {{#RobaTab name='methods' title='Methods'}}
+                <button class="btn btn-primary btn-recompile">
+                  <span class="glyphicon glyphicon-refresh"></span>
+                  Recompile Collection
+                </button>
+
+                <h2>Server Methods</h2>
+                {{> EditableCode value=methodsCode dataKey="methodsCode" emptyText="Enter methods" language="javascript" mode="inline" autoHeight=true }}
+              {{/RobaTab}}
+              {{#RobaTab name='publications' title='Publications'}}
+                <button class="btn btn-primary btn-recompile">
+                  <span class="glyphicon glyphicon-refresh"></span>
+                  Recompile Collection
+                </button>
+
+                <h2>Publications</h2>
+                {{> EditableCode value=publicationsCode dataKey="publicationsCode" emptyText="Enter publications" language="javascript" mode="inline" autoHeight=true }}
+              {{/RobaTab}}
+              {{#RobaTab name='upgrade' title='Upgrade Tasks'}}
+                <button class="btn btn-primary btn-recompile">
+                  <span class="glyphicon glyphicon-refresh"></span>
+                  Recompile Collection
+                </button>
+
+                <h2>Publications</h2>
+                {{> EditableCode value=upgradeCode dataKey="upgradeCode" emptyText="Enter upgrade code" language="javascript" mode="inline" autoHeight=true }}
+              {{/RobaTab}}
+            {{/RobaTabGroup}}
+          </div>
+          <div class="col-md-4">
+            <h2>Schema Reference</h2>
+          </div>
+        </div>
+      </div>
+    {{else}}
+      {{> NotFound}}
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
+</template>

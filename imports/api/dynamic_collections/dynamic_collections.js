@@ -31,6 +31,10 @@ export const DynamicCollection = new SimpleSchema({
     type    : String,
     optional: true
   },
+  upgradeCode     : {
+    type    : String,
+    optional: true
+  },
   // Standard tracking fields
   dateCreated     : {
     type     : Date,

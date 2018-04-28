@@ -5,25 +5,26 @@ import { SyncedCron }                     from 'meteor/percolate:synced-cron';
 import { Clustering }                     from 'meteor/austinsand:journalist-clustering';
 import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
-//
+import { DynamicCollectionManager }       from '../../api/dynamic_collection_manager';
+
 // include the base layer functionality
 import './register-api';
 import './fixture';
 import './change_tracker_config';
-//
+
 // configure
 import '../accounts_config';
 import '../later_config';
 import '../moment_config';
 import '../synced_cron_config';
-//
+
 // Upgrade
 import './upgrade';
-//
+
 // Integration Service
-import { IntegrationService }             from '../../modules/integration_service/integration_service';
-import { HealthTracker }                  from '../../api/system_health_metrics/server/health_tracker';
-import SimpleSchema                       from "simpl-schema";
+import { IntegrationService } from '../../modules/integration_service/integration_service';
+import { HealthTracker }      from '../../api/system_health_metrics/server/health_tracker';
+import SimpleSchema           from "simpl-schema";
 
 let os = require('os');
 
@@ -40,6 +41,9 @@ Meteor.startup(() => {
     SyncedCron.start();
     HealthTracker.init();
   }
+  
+  // Initialize the DynamicCollectionManager
+  DynamicCollectionManager.compileCollections();
   
   // This needs to be running on all servers for the admin UI to work
   IntegrationService.start();

@@ -14,6 +14,8 @@ import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields';
 import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions';
 import '../../../client/ui/pages/admin/display_templates/display_templates';
+import '../../../client/ui/pages/admin/dynamic_collections/dynamic_collection';
+import '../../../client/ui/pages/admin/dynamic_collections/dynamic_collections';
 import '../../../client/ui/pages/admin/import_export/import_export';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_functions';
@@ -281,6 +283,20 @@ FlowRouter.route('/admin/display_template/:groupId/:templateName', {
   name: 'DisplayTemplateByName',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'DisplayTemplates' });
+  }
+});
+
+FlowRouter.route('/admin/dynamic_collections', {
+  name: 'DynamicCollections',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'DynamicCollections' });
+  }
+});
+
+FlowRouter.route('/admin/dynamic_collection/:collectionId', {
+  name: 'DynamicCollection',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'DynamicCollection' });
   }
 });
 
