@@ -12,9 +12,14 @@
       {{/if}}
     </div>
     <div class="release-plan-effort-roles">
-      {{#each roles}}
-        <div>{{count}} {{definition.title}}{{#if multipleContributors}}s{{/if}}</div>
-      {{/each}}
+      {{#if roles.length}}
+        {{#each roles}}
+          <div>{{count}} {{definition.title}}{{#if multipleContributors}}s{{/if}}</div>
+        {{/each}}
+      {{else}}
+        <div>1 Developer</div>
+        <div>1 QA Engineer</div>
+      {{/if}}
     </div>
   </div>
 </template>

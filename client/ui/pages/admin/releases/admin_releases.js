@@ -8,7 +8,7 @@ import SimpleSchema from 'simpl-schema';
  */
 Template.AdminReleases.helpers({
   activeReleases () {
-    return Releases.find({ isReleased: false }, { sort: { internalReleaseDate: -1, sortVersion: 1 } })
+    return Releases.find({ isReleased: false }, { sort: { internalReleaseDate: 1, sortVersion: 1 } })
   },
   inactiveReleases () {
     return Releases.find({ isReleased: true }, { sort: { sortVersion: -1 } })
