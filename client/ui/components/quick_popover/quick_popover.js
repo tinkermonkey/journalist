@@ -1,4 +1,5 @@
 import './quick_popover.html';
+import './quick_popover.css';
 import { Random }   from 'meteor/random';
 import { Template } from 'meteor/templating';
 
@@ -31,7 +32,7 @@ Template.QuickPopover.events({
         
         // Render the search form into the popover
         try {
-          instance.childView = Blaze.renderWithData(context.contentTemplate, context.data, popoverContents.get(0));
+          instance.childView     = Blaze.renderWithData(context.contentTemplate, context.data, popoverContents.get(0));
           instance.childInstance = Blaze.getView(popoverContents.get(0)).templateInstance();
           if (instance.childInstance) {
             instance.childInstance.autorun(() => {
@@ -39,16 +40,16 @@ Template.QuickPopover.events({
               if (instance.childInstance.subscriptionsReady()) {
                 //console.log('QuickPopover child instance subscriptions ready!');
                 setTimeout(() => {
-                  instance.popover.popover('reposition');
+                  instance.popover && instance.popover.popover('reposition');
                 }, 30);
                 setTimeout(() => {
-                  instance.popover.popover('reposition');
+                  instance.popover && instance.popover.popover('reposition');
                 }, 250);
                 setTimeout(() => {
-                  instance.popover.popover('reposition');
+                  instance.popover && instance.popover.popover('reposition');
                 }, 1000);
               }
-              instance.popover.popover('reposition');
+              instance.popover && instance.popover.popover('reposition');
             });
           }
         } catch (e) {
@@ -65,7 +66,7 @@ Template.QuickPopover.events({
       
       // Focus on the first input
       setTimeout(() => {
-        $('.quick-popover-contents input:visible').first('').focus()
+        $('.quick-popover-contents input:visible').first('input').focus()
       }, 500);
     } else {
       instance.closePopover({
