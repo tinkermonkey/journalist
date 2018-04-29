@@ -24,9 +24,11 @@ Template.AdminLayout.onCreated(() => {
   let instance = Template.instance();
   
   Util.standardSubscriptions(instance);
-  instance.subscribe('display_templates');
   instance.subscribe('capacity_plans');
   instance.subscribe('all_capacity_plan_options');
+  instance.subscribe('display_templates');
+  instance.subscribe('dynamic_collections');
+  instance.subscribe('scheduled_jobs');
 });
 
 /**

@@ -1,40 +1,42 @@
 import { Mongo }         from 'meteor/mongo';
 import SimpleSchema      from 'simpl-schema';
-import { Util }          from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { Releases }      from '../releases/releases';
 
 /**
  * ============================================================================
- * Jobs
+ * ScheduledJobs
  * ============================================================================
  */
 export const ScheduledJob = new SimpleSchema({
-  title       : {
+  title         : {
     type: String
   },
-  preambleCode: {
+  preambleCode  : {
     type    : String,
     optional: true
   },
-  jobCode     : {
+  jobCode       : {
+    type    : String,
+    optional: true
+  },
+  laterDirective: {
     type    : String,
     optional: true
   },
   // Standard tracking fields
-  dateCreated : {
+  dateCreated   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
+  createdBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
+  dateModified  : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
+  modifiedBy    : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }

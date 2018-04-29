@@ -2,7 +2,7 @@ import './status_report_settings.html';
 import { Template }             from 'meteor/templating';
 import { RobaDialog }           from 'meteor/austinsand:roba-dialog';
 import { StatusReportSettings } from '../../../../imports/api/status_reports/status_report_settings';
-import '../later_preview/later_preview.js';
+import '../editable_later_directive/later_preview.js';
 
 /**
  * Template Helpers

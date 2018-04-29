@@ -44,7 +44,7 @@ Template.DynamicCollections.events({
           }
         })
       },
-      title          : 'Add Dynamic collection',
+      title          : 'Add Dynamic Collection',
       width          : 500,
       buttons        : [
         { text: 'Cancel' },
@@ -76,7 +76,7 @@ Template.DynamicCollections.events({
   'click .btn-delete-dynamic-collection' (e, instance) {
     let collection = this;
     
-    RobaDialog.ask('Delete Function?', 'Are you sure that you want to delete the dynamic collection <span class="label label-primary"> ' + collection.title + '</span> ?', () => {
+    RobaDialog.ask('Delete Dynamic Collection?', 'Are you sure that you want to delete the dynamic collection <span class="label label-primary"> ' + collection.title + '</span> ?', () => {
       RobaDialog.hide();
       Meteor.call('deleteDynamicCollection', collection._id, function (error, response) {
         if (error) {

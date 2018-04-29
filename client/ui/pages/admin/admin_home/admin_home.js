@@ -4,12 +4,13 @@ import { CapacityPlans }               from '../../../../../imports/api/capacity
 import { Contributors }                from '../../../../../imports/api/contributors/contributors';
 import { ContributorRoleDefinitions }  from '../../../../../imports/api/contributors/contributor_role_definitions';
 import { DisplayTemplates }            from '../../../../../imports/api/display_templates/display_templates';
-import { DynamicCollections}           from '../../../../../imports/api/dynamic_collections/dynamic_collections';
+import { DynamicCollections }          from '../../../../../imports/api/dynamic_collections/dynamic_collections';
 import { IntegrationCalculatedFields } from '../../../../../imports/api/integrations/integration_calculated_fields';
 import { IntegrationImportFunctions }  from '../../../../../imports/api/integrations/integration_import_functions';
 import { IntegrationServers }          from '../../../../../imports/api/integrations/integration_servers';
 import { Projects }                    from '../../../../../imports/api/projects/projects';
 import { Releases }                    from '../../../../../imports/api/releases/releases';
+import { ScheduledJobs }               from '../../../../../imports/api/scheduled_jobs/scheduled_jobs';
 import { Teams }                       from '../../../../../imports/api/teams/teams';
 import { Users }                       from '../../../../../imports/api/users/users';
 import './admin_stats_imported_items';
@@ -45,6 +46,9 @@ Template.AdminHome.helpers({
   },
   roleDefinitionCount () {
     return ContributorRoleDefinitions.find().count()
+  },
+  scheduledJobCount () {
+    return ScheduledJobs.find().count()
   },
   serverCount () {
     return IntegrationServers.find().count()

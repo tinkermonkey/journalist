@@ -25,6 +25,8 @@ import '../../../client/ui/pages/admin/projects/admin_projects';
 import '../../../client/ui/pages/admin/projects/admin_project_integration';
 import '../../../client/ui/pages/admin/releases/admin_release';
 import '../../../client/ui/pages/admin/releases/admin_releases';
+import '../../../client/ui/pages/admin/scheduled_jobs/scheduled_job';
+import '../../../client/ui/pages/admin/scheduled_jobs/scheduled_jobs';
 import '../../../client/ui/pages/admin/teams/admin_team';
 import '../../../client/ui/pages/admin/teams/admin_teams';
 import '../../../client/ui/pages/admin/users/admin_users';
@@ -360,6 +362,20 @@ FlowRouter.route('/admin/release/:releaseId', {
   name: 'AdminRelease',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'AdminRelease' });
+  }
+});
+
+FlowRouter.route('/admin/scheduled_jobs', {
+  name: 'ScheduledJobs',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'ScheduledJobs' });
+  }
+});
+
+FlowRouter.route('/admin/scheduled_job/:jobId', {
+  name: 'ScheduledJob',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'ScheduledJob' });
   }
 });
 

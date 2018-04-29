@@ -42,6 +42,9 @@ import '../../api/releases/server/publications';
 // Status Reports
 import '../../api/status_reports/server/methods';
 import '../../api/status_reports/server/publications';
+// Scheduled Jobs
+import '../../api/scheduled_jobs/server/methods';
+import '../../api/scheduled_jobs/server/publications';
 // Subtasks
 import '../../api/subtasks/server/methods';
 import '../../api/subtasks/server/publications';
