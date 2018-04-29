@@ -1,0 +1,13 @@
+<template name="EditableLaterDirective">
+  <div class="editable editable-later-directive {{cssClass}}"
+       data-value="{{value}}"
+       data-key="{{dataKey}}">
+    <div class="inline-block {{#unless value}}hide{{/unless}}">
+      {{> QuickPopover contentTemplate=previewTemplate data=this cssClass='inline-block editable-later-click glyphicon glyphicon-info-sign' }}
+    </div>
+    <div class="inline-block editable-click">
+      <span class="{{#unless value}}hide{{/unless}}">{{value}}</span>
+      <span class="{{#if value}}hide{{/if}}"><i>{{emptyText}}</i></span>
+    </div>
+  </div>
+</template>

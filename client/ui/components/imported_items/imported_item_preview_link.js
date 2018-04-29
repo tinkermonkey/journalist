@@ -1,8 +1,8 @@
 import './imported_item_preview_link.html';
 import { Template }      from 'meteor/templating';
+import { ImportedItems } from '../../../../imports/api/imported_items/imported_items';
 import '../quick_popover/quick_popover';
 import './imported_item_preview';
-import { ImportedItems } from '../../../../imports/api/imported_items/imported_items';
 
 /**
  * Template Helpers

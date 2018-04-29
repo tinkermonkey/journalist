@@ -11,8 +11,8 @@ Template.LaterPreview.helpers({
    * @return {*}
    */
   result () {
-    if (this.directive) {
-      let schedule  = later.parse.text(this.directive),
+    if (this.value) {
+      let schedule  = later.parse.text(this.value),
           rawResult = later.schedule(schedule).next(3);
       
       //console.log('LaterPreview:', schedule, rawResult);
