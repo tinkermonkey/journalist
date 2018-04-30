@@ -4,8 +4,9 @@ import { UploadServer }                   from 'meteor/tomi:upload-server';
 import { SyncedCron }                     from 'meteor/percolate:synced-cron';
 import { Clustering }                     from 'meteor/austinsand:journalist-clustering';
 import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
-import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
 import { DynamicCollectionManager }       from '../../api/dynamic_collection_manager';
+import { ScheduledJobs }                  from '../../api/scheduled_jobs/scheduled_jobs';
+import { StatusReportSettings }           from '../../api/status_reports/status_report_settings';
 
 // include the base layer functionality
 import './register-api';
@@ -25,6 +26,7 @@ import './upgrade';
 import { IntegrationService } from '../../modules/integration_service/integration_service';
 import { HealthTracker }      from '../../api/system_health_metrics/server/health_tracker';
 import SimpleSchema           from "simpl-schema";
+import { Util }               from '../../api/util';
 
 let os = require('os');
 
@@ -88,6 +90,22 @@ Meteor.startup(() => {
           setting.updateNextDue();
         });
         console.log('==== Update complete');
+      }
+    });
+    
+    console.log('==== Configuring scheduled job collection monitoring');
+    ScheduledJobs.find().observe({
+      added (doc) {
+        console.log('==== ScheduledJobs added:', doc._id, doc.title);
+        doc.updateSchedule();
+      },
+      changed (newDoc, oldDoc) {
+        console.log('==== ScheduledJobs changed:', newDoc._id, newDoc.title);
+        newDoc.updateSchedule();
+      },
+      removed (oldDoc) {
+        console.log('==== ScheduledJobs removed:', oldDoc._id, oldDoc.title);
+        SyncedCron.remove(oldDoc._id);
       }
     });
   }

@@ -1,6 +1,7 @@
 import { Mongo }         from 'meteor/mongo';
 import SimpleSchema      from 'simpl-schema';
 import { SchemaHelpers } from '../schema_helpers.js';
+import { SyncedCron }    from 'meteor/percolate:synced-cron';
 
 /**
  * ============================================================================
@@ -62,4 +63,38 @@ ScheduledJobs.deny({
 /**
  * Helpers
  */
-ScheduledJobs.helpers({});
+ScheduledJobs.helpers({
+  updateSchedule () {
+    console.log('==== ScheduledJob.updateSchedule:', this._id, this.title);
+    let job = this;
+    
+    SyncedCron.remove(job._id);
+    if (job.jobCode && job.laterDirective) {
+      SyncedCron.add({
+        name: job._id,
+        schedule (parser) {
+          return parser.text(job.laterDirective);
+        },
+        job () {
+          console.log('==== ScheduledJob executing:', job._id, job.title);
+          
+          try {
+            let code = '(function(){' + "\n" +
+                (job.preambleCode || '') + "\n" +
+                job.jobCode + "\n" +
+                '})()';
+            
+            eval(code);
+          } catch (e) {
+            console.error('==== ScheduledJob failed:', job._id, job.title, e)
+          }
+          
+          console.log('==== ScheduledJob complete:', job._id, job.title);
+        }
+      });
+      console.log('==== ScheduledJob scheduled:', job._id, job.title, job.laterDirective);
+    } else {
+      console.log('==== ScheduledJob skipped because it`s incomplete:', job._id, job.title);
+    }
+  }
+});

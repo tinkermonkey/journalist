@@ -1,3 +1,53 @@
 <template name="ScheduledJob">
-  scheduled_job
+  {{#if Template.subscriptionsReady }}
+    {{#with scheduledJob}}
+      {{setPageTitle 'Journalist - Scheduled Job - ' title }}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+              <li><a href="{{pathFor 'ScheduledJobs' }}">Scheduled Jobs</a></li>
+              <li class="active">{{title}}</li>
+            </ol>
+
+            <h1>{{title}}</h1>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table data-table table-striped config-table narrow-width">
+              <tbody>
+              <tr class="show-controls-on-hover">
+                <td>Title</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableTextField dataKey='title' value=title mode='inline' }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
+                <td>Later Directive</td>
+                <td class="open-link">
+                </td>
+                <td>{{> EditableLaterDirective dataKey="laterDirective" value=laterDirective emptyText="Later Directive" }}</td>
+              </tr>
+              </tbody>
+            </table>
+
+            <!--
+            <h2>Preamble Code</h2>
+            {{> EditableCode value=preambleCode dataKey="preambleCode" emptyText="Enter preamble code" language="javascript" mode="inline" autoHeight=true }}
+            -->
+
+            <h2>Job Code</h2>
+            {{> EditableCode value=jobCode dataKey="jobCode" emptyText="Enter job code" language="javascript" mode="inline" autoHeight=true }}
+          </div>
+        </div>
+      </div>
+    {{else}}
+      {{> NotFound}}
+    {{/with}}
+  {{else}}
+    {{> AppLoading }}
+  {{/if}}
 </template>
