@@ -1,6 +1,7 @@
 import './display_template.html';
 import { Template }   from 'meteor/templating';
 import { RobaDialog } from 'meteor/austinsand:roba-dialog';
+import { RobaTabs }   from 'meteor/austinsand:roba-tabs';
 import { Util }       from '../../../../../imports/api/util';
 
 /**
@@ -46,6 +47,11 @@ Template.DisplayTemplate.events({
     instance.previewError.set(null);
     instance.previewMessage.set(null);
     instance.$('.preview-container').empty();
+    
+    // Activate the preview tab
+    RobaTabs.setActive({
+      target: instance.$('.nav-tabs > li > a[data-tab-name="preview"]').get(0)
+    });
     
     console.log('DisplayTemplate Preview:', displayTemplate);
     
@@ -96,12 +102,11 @@ Template.DisplayTemplate.events({
           RobaDialog.error('Export failed:' + error.toString());
         } else {
           let a = window.document.createElement('a');
-    
+          
           a.setAttribute('href', '/export/' + response);
           a.setAttribute('target', '_blank');
           a.click();
         }
-  
       });
     }
   },
