@@ -77,7 +77,9 @@ Template.AdminReleases.events({
  * Template Created
  */
 Template.AdminReleases.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.subscribe('releases')
 });
 
 /**

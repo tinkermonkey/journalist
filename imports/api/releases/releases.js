@@ -186,7 +186,7 @@ Releases.helpers({
           }
         }
       }).filter((projectData) => {
-        return projectData.releases && projectData.releases.length
+        return projectData && projectData.releases && projectData.releases.length
       })).sort((a, b) => {
         if (a.project && a.project.title && b.project && b.project.title) {
           return a.project.title.toLowerCase() > b.project.title.toLowerCase() ? 1 : -1
