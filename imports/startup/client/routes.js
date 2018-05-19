@@ -10,6 +10,8 @@ import '../../../client/ui/layouts/report_layout';
 import '../../../client/ui/pages/admin/contributors/admin_contributor';
 import '../../../client/ui/pages/admin/contributors/admin_contributors';
 import '../../../client/ui/pages/admin/admin_home/admin_home';
+import '../../../client/ui/pages/admin/backlogs/admin_backlog';
+import '../../../client/ui/pages/admin/backlogs/admin_backlogs';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_field';
 import '../../../client/ui/pages/admin/calculated_fields/integration_calculated_fields';
 import '../../../client/ui/pages/admin/contributor_roles/contributor_role_definitions';
@@ -78,6 +80,12 @@ FlowRouter.route('/', {
   name: 'Home',
   action () {
     BlazeLayout.render('AuthenticatedLayout', { main: 'ContributorHome' });
+  }
+});
+FlowRouter.route('/backlog/:backlogId', {
+  name: 'Backlog',
+  action () {
+    BlazeLayout.render('AuthenticatedLayout', { main: 'Backlog' });
   }
 });
 FlowRouter.route('/contributor/:contributorId', {
@@ -211,6 +219,19 @@ FlowRouter.route('/report/weekly_support_report/:projectId', {
  * Admin Routes
  *
  */
+FlowRouter.route('/admin/backlogs', {
+  name: 'AdminBacklogs',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminBacklogs' });
+  }
+});
+FlowRouter.route('/admin/backlog/:backlogId', {
+  name: 'AdminBacklog',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminBacklog' });
+  }
+});
+
 FlowRouter.route('/admin/contributor/:contributorId', {
   name: 'AdminContributor',
   action () {

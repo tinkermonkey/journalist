@@ -73,15 +73,15 @@
               </li>
             {{/if}}
 
-            {{#if capacityPlans.count }}
+            {{#if backlogs.count }}
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-                  Capacity Plans
+                  Backlogs
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  {{#each capacityPlans}}
-                    <li><a href="{{pathFor 'CapacityPlanOption' planId=_id optionId=selectedOptionId}}">{{title}}</a></li>
+                  {{#each backlogs}}
+                    <li><a href="{{pathFor 'Backlog' backlogId=_id}}">{{title}}</a></li>
                   {{/each}}
                 </ul>
               </li>
@@ -117,6 +117,7 @@
                 <ul class="dropdown-menu">
                   <li><a href="{{pathFor 'AdminHome'}}">Admin Home</a></li>
                   <li class="divider" role="separator"></li>
+                  <li><a href="{{pathFor 'AdminBacklogs'}}">Backlogs</a></li>
                   <li><a href="{{pathFor 'IntegrationCalculatedFields'}}">Calculated Fields</a></li>
                   <li><a href="{{pathFor 'AdminContributors'}}">Contributors</a></li>
                   <li><a href="{{pathFor 'CapacityPlans'}}">Capacity Plans</a></li>

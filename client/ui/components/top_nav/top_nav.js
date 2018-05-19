@@ -3,6 +3,7 @@ import './top_nav.css';
 import { Meteor }              from 'meteor/meteor';
 import { Template }            from 'meteor/templating';
 import { SystemHealthMetrics } from '../../../../imports/api/system_health_metrics/system_health_metrics';
+import { Backlogs }            from '../../../../imports/api/backlogs/backlogs';
 import { CapacityPlans }       from '../../../../imports/api/capacity_plans/capacity_plans';
 import { Releases }            from '../../../../imports/api/releases/releases';
 import './status_menu_item'
@@ -39,6 +40,9 @@ Template.TopNav.helpers({
   },
   releases () {
     return Releases.find({ isReleased: false }, { sort: { title: 1 } })
+  },
+  backlogs () {
+    return Backlogs.find({ isActive: true }, { sort: { title: 1 } })
   },
   capacityPlans () {
     return CapacityPlans.find({ isActive: true, selectedOptionId: { $exists: true } }, { sort: { title: 1 } })

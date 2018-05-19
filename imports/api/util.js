@@ -101,6 +101,8 @@ export const Util = {
    */
   anonymousSubscriptions (instance) {
     instance.subscribe('active_capacity_plans');
+    instance.subscribe('backlogs');
+    instance.subscribe('backlog_items');
     instance.subscribe('contributors');
     instance.subscribe('integration_servers');
     instance.subscribe('integration_server_caches', 'versionList');
@@ -117,6 +119,8 @@ export const Util = {
    */
   standardSubscriptions (instance) {
     instance.subscribe('active_capacity_plans');
+    instance.subscribe('backlogs');
+    instance.subscribe('backlog_items');
     instance.subscribe('basic_integrations');
     instance.subscribe('contributors');
     instance.subscribe('contributor_role_definitions');

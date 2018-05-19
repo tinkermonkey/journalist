@@ -1,0 +1,43 @@
+<template name="AdminBacklogTable">
+  <table class="table data-table full-width border-bottom">
+    <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Title</th>
+      <th>Sprint Source</th>
+      <th>Modified By</th>
+      <th>Modified</th>
+      <th>Public</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each this}}
+      <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+          data-pk="{{_id}}">
+        <td class="open-link">
+          <a class="hidden-control" href="{{pathFor 'AdminBacklog' backlogId=_id}}">
+            <span class="glyphicon glyphicon-folder-open"></span>
+          </a>
+        </td>
+        <td class="open-link">
+          <a class="hidden-control" href="{{pathFor 'Backlog' backlogId=_id}}">
+            <span class="glyphicon glyphicon-home"></span>
+          </a>
+        </td>
+        <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+        <td></td>
+        <td>{{ userName modifiedBy }}</td>
+        <td>{{ dateFormat dateModified }}</td>
+        <td>{{> EditableCheckbox dataKey="isPublic" value=isPublic }}</td>
+        <td>
+          <a class="link-red hidden-control btn-delete-backlog">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+          </a>
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>

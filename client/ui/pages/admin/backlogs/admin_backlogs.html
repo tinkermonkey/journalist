@@ -1,3 +1,41 @@
 <template name="AdminBacklogs">
-  admin_backlogs
+  {{setPageTitle 'Journalist - Backlogs' }}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+          <li class="active">Backlogs</li>
+        </ol>
+
+        <h1>Backlogs</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Public Backlogs</h2>
+        {{#if Template.subscriptionsReady }}
+          {{> AdminBacklogTable publicBacklogs }}
+          <button class="btn btn-xs btn-primary btn-add-backlog">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add Backlog
+          </button>
+        {{else}}
+          {{> RobaSpinner rainbow=true }}
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Non-Public Backlogs</h2>
+        {{#if Template.subscriptionsReady }}
+          {{> AdminBacklogTable nonPublicBacklogs }}
+        {{else}}
+          {{> RobaSpinner rainbow=true }}
+        {{/if}}
+      </div>
+    </div>
+  </div>
 </template>
