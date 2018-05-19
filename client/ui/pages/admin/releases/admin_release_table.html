@@ -7,12 +7,12 @@
       <th>Title</th>
       <th>Version Number</th>
       <th>Linked Releases</th>
-      <th>Released</th>
       <th>Actual Release Date</th>
       <th>Dev Complete Date</th>
       <th>Internal Release Date</th>
       <th>External Release Date</th>
       <th>Description</th>
+      <th>Released</th>
       <th></th>
     </tr>
     </thead>
@@ -47,7 +47,6 @@
             </tbody>
           </table>
         </td>
-        <td>{{> EditableCheckbox dataKey="isReleased" value=isReleased }}</td>
         <td>
           {{#if isReleased }}
             {{> EditableDate dataKey="releaseDate" value=releaseDate emptyText="Select" }}
@@ -57,6 +56,7 @@
         <td>{{> EditableDate dataKey='internalReleaseDate' value=internalReleaseDate mode='popup' emptyText='Select Date' }}</td>
         <td>{{> EditableTextField dataKey='externalReleaseDate' value=externalReleaseDate mode='popup' emptyText='Enter a value' }}</td>
         <td>{{> EditableTextArea dataKey='releaseDescription' value=releaseDescription mode='popup' emptyText='Describe the purpose of this release' }}</td>
+        <td>{{> EditableCheckbox dataKey="isReleased" value=isReleased }}</td>
         <td>
           <a class="link-red hidden-control btn-delete-release">
             <span class="glyphicon glyphicon-minus-sign"></span>
