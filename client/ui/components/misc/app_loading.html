@@ -5,7 +5,11 @@
         {{> RobaSpinner rainbow=true }}
       </div>
       <div style="margin-top: 20px;">
-        {{message}}
+        {{#if message}}
+          {{message}}
+        {{else}}
+          Loading data...
+        {{/if}}
       </div>
     </div>
   </div>
