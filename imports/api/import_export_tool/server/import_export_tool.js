@@ -301,8 +301,8 @@ export const ImportExportTool = {
   },
   
   /**
-   * Export a paritcular collection
-   * @param cursor        Collection cursor poiting to records to export
+   * Export a single collection
+   * @param cursor         Collection cursor pointing to records to export
    * @param collectionName The name of the collection to tag the data with
    */
   getPayload (cursor, collectionName) {
@@ -311,12 +311,16 @@ export const ImportExportTool = {
         recordCount = cursor.count();
     
     console.info('ImportExportTool.getPayload exporting ' + collectionName + ' (' + recordCount + ' records)');
-    
+    // Originally this was being done manually record by record to allow for more readable files, but somehow the count-1 was not accurate
+    // and this cause errors, so reverting to just stringifying the whole array for now.
+    /*
     output += "[\n";
     cursor.forEach((record, i) => {
       output += JSON.stringify(record) + (i < recordCount - 1 ? ",\n" : "\n");
     });
     output += "]\n";
+    */
+    output = JSON.stringify(cursor.fetch());
     
     console.info('ImportExportTool.getPayload done Exporting ' + collectionName);
     
