@@ -168,6 +168,7 @@ export const ImportExportTool = {
     
     fs.unlinkSync(filePath);
   },
+  
   /**
    * Inserts the Data into your Collections.
    * @param data The contents of the file
@@ -205,6 +206,7 @@ export const ImportExportTool = {
       console.error('ImportExportTool.insertDataIntoCollection failed: collection [', collectionName, '] not found');
     }
   },
+  
   /**
    * Export a set of the Collections
    * @param collectionNames (optional) A list of collection names
@@ -253,6 +255,51 @@ export const ImportExportTool = {
     
     return path.basename(dataDir);
   },
+  
+  /**
+   * Export a single document
+   * @param collectionName The name of the collection to export the document from
+   * @param documentId The _id of the document to export
+   */
+  exportDocument (collectionName, documentId) {
+    console.info('ImportExportTool.exportDocument:', collectionName, documentId);
+    let handler = this,
+        dataDir = path.join(handler.dataPath, moment().format('YYYYMMDD_HHmmss'));
+    
+    if (fs.existsSync(dataDir)) {
+      console.info('ImportExportTool.exportDocument removing existing files');
+      fs.readdirSync(dataDir).filter((filepath) => {
+        return path.basename(filepath).match(handler.fileRegex) != null
+      }).forEach((filepath) => {
+        console.info('Removing file: ' + filepath);
+        
+        fs.unlinkSync(path.join(dataDir, filepath));
+      });
+    }
+    
+    let zipFile  = new AdmZip(),
+        cursor   = CollectionMap[ collectionName ].find({ _id: documentId }),
+        fileName = numeral(1).format('000') + '_' + collectionName + '.json';
+    
+    zipFile.addFile(fileName, new Buffer(handler.getPayload(cursor, collectionName), handler.encoding), collectionName, 644);
+    
+    dataDir = dataDir + '.zip';
+    
+    console.info('ImportExportTool.exportDocument creating data directory: ' + dataDir);
+    
+    zipFile.writeZip(dataDir);
+    
+    // delete the file after a bit, the download should start automatically
+    Meteor.setTimeout(function () {
+      fs.unlinkSync(dataDir);
+      console.info('ImportExportTool.exportDocument deleted ' + dataDir);
+    }, 25000);
+    
+    console.info('ImportExportTool.exportDocument complete');
+    
+    return path.basename(dataDir);
+  },
+  
   /**
    * Export a paritcular collection
    * @param cursor        Collection cursor poiting to records to export

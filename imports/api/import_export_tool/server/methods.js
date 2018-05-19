@@ -6,6 +6,10 @@ Meteor.methods({
     console.log('ImportExport.exportData:', collectionNames);
     return ImportExportTool.exportData(collectionNames);
   },
+  exportDocument (collectionName, documentId) {
+    console.log('ImportExport.exportDocument:', collectionName, documentId);
+    return ImportExportTool.exportDocument(collectionName, documentId);
+  },
   importData (fileName) {
     console.log('ImportExport.importData:', fileName);
     ImportExportTool.importData(fileName);

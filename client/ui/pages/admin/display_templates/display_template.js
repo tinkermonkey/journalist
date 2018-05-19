@@ -87,6 +87,24 @@ Template.DisplayTemplate.events({
       });
     }
   },
+  'click .btn-export' (e, instance) {
+    let displayTemplate = this;
+    
+    if (displayTemplate._id) {
+      Meteor.call('exportDocument', 'DisplayTemplates', displayTemplate._id, (error, response) => {
+        if (error) {
+          RobaDialog.error('Export failed:' + error.toString());
+        } else {
+          let a = window.document.createElement('a');
+    
+          a.setAttribute('href', '/export/' + response);
+          a.setAttribute('target', '_blank');
+          a.click();
+        }
+  
+      });
+    }
+  },
   'submit .navbar-form' (e, instance) {
     e.preventDefault();
   }
