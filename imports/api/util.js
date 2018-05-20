@@ -103,6 +103,7 @@ export const Util = {
     instance.subscribe('active_capacity_plans');
     instance.subscribe('backlogs');
     instance.subscribe('backlog_items');
+    instance.subscribe('backlog_item_categories');
     instance.subscribe('contributors');
     instance.subscribe('integration_servers');
     instance.subscribe('integration_server_caches', 'versionList');
@@ -121,6 +122,7 @@ export const Util = {
     instance.subscribe('active_capacity_plans');
     instance.subscribe('backlogs');
     instance.subscribe('backlog_items');
+    instance.subscribe('backlog_item_categories');
     instance.subscribe('basic_integrations');
     instance.subscribe('contributors');
     instance.subscribe('contributor_role_definitions');

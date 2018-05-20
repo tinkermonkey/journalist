@@ -42,7 +42,7 @@ Template.TopNav.helpers({
     return Releases.find({ isReleased: false }, { sort: { title: 1 } })
   },
   backlogs () {
-    return Backlogs.find({ isActive: true }, { sort: { title: 1 } })
+    return Backlogs.find({ isPublic: true }, { sort: { title: 1 } })
   },
   capacityPlans () {
     return CapacityPlans.find({ isActive: true, selectedOptionId: { $exists: true } }, { sort: { title: 1 } })

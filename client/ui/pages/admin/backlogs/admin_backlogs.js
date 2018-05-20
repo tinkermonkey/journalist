@@ -1,7 +1,7 @@
 import './admin_backlogs.html';
+import SimpleSchema from 'simpl-schema';
 import { Template } from 'meteor/templating';
 import { Backlogs } from '../../../../../imports/api/backlogs/backlogs';
-import SimpleSchema from 'simpl-schema';
 
 /**
  * Template Helpers
@@ -65,7 +65,9 @@ Template.AdminBacklogs.events({
  * Template Created
  */
 Template.AdminBacklogs.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.subscribe('admin_backlogs')
 });
 
 /**

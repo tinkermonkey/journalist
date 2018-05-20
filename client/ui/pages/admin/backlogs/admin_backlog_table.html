@@ -5,7 +5,12 @@
       <th></th>
       <th></th>
       <th>Title</th>
-      <th>Sprint Source</th>
+      <!--
+      <th>Public Report</th>
+      <th>Team Report</th>
+      <th>Admin Header</th>
+      <th>Admin Row</th>
+      -->
       <th>Modified By</th>
       <th>Modified</th>
       <th>Public</th>
@@ -27,7 +32,12 @@
           </a>
         </td>
         <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-        <td></td>
+        <!--
+        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="publicTemplate" value=publicTemplate templateType=DisplayTemplateTypes.report }}</td>
+        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="teamTemplate" value=teamTemplate templateType=DisplayTemplateTypes.report }}</td>
+        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTableHeaderTemplate" value=adminTableHeaderTemplate templateType=DisplayTemplateTypes.component }}</td>
+        <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTableRowTemplate" value=adminTableRowTemplate templateType=DisplayTemplateTypes.component }}</td>
+        -->
         <td>{{ userName modifiedBy }}</td>
         <td>{{ dateFormat dateModified }}</td>
         <td>{{> EditableCheckbox dataKey="isPublic" value=isPublic }}</td>

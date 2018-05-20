@@ -1,27 +1,29 @@
-import { Meteor }                      from 'meteor/meteor';
-import { Random }                      from 'meteor/random';
-import { Template }                    from 'meteor/templating';
-import { FlowRouter }                  from 'meteor/kadira:flow-router';
-import { AutoForm }                    from 'meteor/aldeed:autoform';
-import { moment }                      from 'meteor/momentjs:moment';
-import { Util }                        from '../../api/util.js';
-import { Contributors }                from '../../api/contributors/contributors.js';
-import { ContributorRoleDefinitions }  from '../../api/contributors/contributor_role_definitions';
-import { IntegrationCalculatedFields } from '../../api/integrations/integration_calculated_fields.js';
-import { DisplayTemplates }            from '../../api/display_templates/display_templates.js';
-import { DisplayTemplateGroups }       from '../../api/display_templates/display_template_groups.js';
-import { DisplayTemplateTypes }        from '../../api/display_templates/display_template_types';
-import { IntegrationImportFunctions }  from '../../api/integrations/integration_import_functions.js';
-import { IntegrationServers }          from '../../api/integrations/integration_servers';
-import { IntegrationTypes }            from '../../api/integrations/integration_types.js';
-import { ItemTypes }                   from '../../api/imported_items/item_types.js';
-import { Projects }                    from '../../api/projects/projects.js';
-import { Teams }                       from '../../api/teams/teams';
-import { Users }                       from '../../api/users/users';
-import { UserTypes }                   from '../../api/users/user_types.js';
+import { Meteor }                       from 'meteor/meteor';
+import { Random }                       from 'meteor/random';
+import { Template }                     from 'meteor/templating';
+import { FlowRouter }                   from 'meteor/kadira:flow-router';
+import { AutoForm }                     from 'meteor/aldeed:autoform';
+import { moment }                       from 'meteor/momentjs:moment';
+import { Util }                         from '../../api/util.js';
+import { Contributors }                 from '../../api/contributors/contributors.js';
+import { ContributorRoleDefinitions }   from '../../api/contributors/contributor_role_definitions';
+import { IntegrationCalculatedFields }  from '../../api/integrations/integration_calculated_fields.js';
+import { DisplayTemplates }             from '../../api/display_templates/display_templates.js';
+import { DisplayTemplateGroups }        from '../../api/display_templates/display_template_groups.js';
+import { DisplayTemplateTypes }         from '../../api/display_templates/display_template_types';
+import { IntegrationImportFunctions }   from '../../api/integrations/integration_import_functions.js';
+import { IntegrationServers }           from '../../api/integrations/integration_servers';
+import { IntegrationTypes }             from '../../api/integrations/integration_types.js';
+import { ItemTypes }                    from '../../api/imported_items/item_types.js';
+import { Projects }                     from '../../api/projects/projects.js';
+import { Teams }                        from '../../api/teams/teams';
+import { Users }                        from '../../api/users/users';
+import { UserTypes }                    from '../../api/users/user_types.js';
+import { ImportedItemWorkPhases }       from '../../api/imported_items/imported_item_work_phases';
+import { ImportedItemWorkStates }       from '../../api/imported_items/imported_item_work_states';
+import { BacklogResourceDurationUnits } from '../../api/backlogs/backlog_resource_duration_units';
+import { BacklogItemCategories }        from '../../api/backlogs/backlog_item_categories';
 import '../../../node_modules/c3/c3.css';
-import { ImportedItemWorkPhases }      from '../../api/imported_items/imported_item_work_phases';
-import { ImportedItemWorkStates }      from '../../api/imported_items/imported_item_work_states';
 
 /**
  * Custom autoform hooks to prevent client side inserts
@@ -50,7 +52,9 @@ AutoForm.hooks({
 /**
  * Enums
  */
-
+Template.registerHelper('BacklogResourceDurationUnits', function () {
+  return BacklogResourceDurationUnits
+});
 Template.registerHelper('DisplayTemplateTypes', function () {
   return DisplayTemplateTypes
 });
@@ -395,6 +399,26 @@ Template.registerHelper('displayTemplateGroupSelectorContext', function (params)
         dataKey     : 'parentGroup',
         collection  : DisplayTemplateGroups,
         emptyText   : 'Select a template group',
+        cssClass    : 'inline-block',
+        mode        : 'popup',
+        query       : {}
+      };
+  
+  if (params && params.hash) {
+    _.extend(context, params.hash);
+  }
+  
+  return context
+});
+Template.registerHelper('backlogItemCategorySelectorContext', function (params) {
+  let record  = this,
+      context = {
+        valueField  : '_id',
+        displayField: 'title',
+        value       : record.category,
+        dataKey     : 'category',
+        collection  : BacklogItemCategories,
+        emptyText   : 'Select a category',
         cssClass    : 'inline-block',
         mode        : 'popup',
         query       : {}

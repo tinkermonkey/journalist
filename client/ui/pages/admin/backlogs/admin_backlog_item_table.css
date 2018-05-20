@@ -1,0 +1,11 @@
+.backlog-item-resource-requirements,
+.backlog-item-resource-allocations {
+  vertical-align: top;
+  display: flex;
+}
+
+.backlog-item-resource-requirements-table td,
+.backlog-item-resource-allocations-table td {
+  padding-left: 2px;
+  padding-right: 2px;
+}

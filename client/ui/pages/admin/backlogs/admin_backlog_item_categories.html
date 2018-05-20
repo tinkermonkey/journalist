@@ -1,0 +1,27 @@
+<template name="AdminBacklogItemCategories">
+  <table class="table data-table full-width border-bottom" data-pk="{{_id}}">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Color</th>
+      <th></th>
+    </tr>
+    </thead>
+    {{#each categories}}
+      <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+        <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" mode="popup"}}</td>
+        <td>{{> EditableColorPicker dataKey="color" value=color }}</td>
+        <td>
+          <a class="link-red hidden-control btn-delete-category">
+            <span class="glyphicon glyphicon-minus-sign"></span>
+          </a>
+        </td>
+      </tr>
+    {{/each}}
+  </table>
+
+  <button class="btn btn-xs btn-primary btn-add-category">
+    <span class="glyphicon glyphicon-plus"></span>
+    Add Category
+  </button>
+</template>

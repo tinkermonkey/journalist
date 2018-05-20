@@ -1,0 +1,37 @@
+<template name="AdminBacklogItemTable">
+  <table class="table data-table sortable-table full-width border-bottom" data-pk="{{_id}}">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Title</th>
+      {{#if adminTableHeaderTemplate}}
+        {{> Template.dynamic template=adminTableHeaderTemplate data=this }}
+      {{/if}}
+      <th>Resources Estimates</th>
+      <!--
+      <th>Resources Identified</th>
+      -->
+      <th>Category</th>
+      <th>Public</th>
+      <th></th>
+    </tr>
+    </thead>
+    {{#each items}}
+      <tr class="data-table-row sortable-table-row {{#if isOdd @index}}odd{{/if}}"
+          data-pk="{{_id}}">
+        <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
+        <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+        {{#if ../adminTableRowTemplate}}
+          {{> Template.dynamic template=../adminTableRowTemplate data=tableRowContext }}
+        {{/if}}
+        <td>{{> AdminBacklogItemResourceRequirements }}</td>
+        <!--
+        <td>{{> AdminBacklogItemResourceAllocations }}</td>
+        -->
+        <td>{{> EditableRecordSelector backlogItemCategorySelectorContext dataKey="category" value=category }}</td>
+        <td>{{> EditableCheckbox dataKey="isPublic" value=isPublic }}</td>
+        <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
+      </tr>
+    {{/each}}
+  </table>
+</template>

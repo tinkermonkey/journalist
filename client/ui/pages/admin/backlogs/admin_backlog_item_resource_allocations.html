@@ -1,0 +1,25 @@
+<template name="AdminBacklogItemResourceAllocations">
+  <div class="backlog-item-resource-allocations show-controls-on-hover">
+    {{#if rolesAvailable.length}}
+      <div class="inline-block hidden-control">
+        <button class="btn btn-primary btn-xs btn-add-allocation">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+    {{/if}}
+    <table class="backlog-item-resource-allocations-table inline-block">
+      {{#each resourceAllocations}}
+        <tr class="backlog-item-resource-allocation" data-pk="{{_id}}">
+          <td>{{> EditableTextField dataKey="roleQuantity" value=roleQuantity dataType="number" mode="popup" emptyText="Number" }}</td>
+          <td>{{> EditableRecordSelector roleSelectorContext dataKey="roleDefinitionId" value=roleDefinitionId mode="popup"}}</td>
+          <td>
+            <a class="link-red hidden-control btn-delete-allocation">
+              <span class="glyphicon glyphicon-minus-sign"></span>
+            </a>
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+
+</template>

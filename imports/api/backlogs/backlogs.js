@@ -2,7 +2,7 @@ import { Mongo }         from 'meteor/mongo';
 import SimpleSchema      from 'simpl-schema';
 import { Util }          from '../util.js';
 import { SchemaHelpers } from '../schema_helpers.js';
-import { Projects }      from '../projects/projects';
+import { BacklogItems }  from './backlog_items';
 
 /**
  * ============================================================================
@@ -10,34 +10,43 @@ import { Projects }      from '../projects/projects';
  * ============================================================================
  */
 export const Backlog = new SimpleSchema({
-  title         : {
+  title       : {
     type: String
   },
-  projectIds    : {
-    type    : Array,
-    optional: true
-  },
-  'projectIds.$': {
-    type: String
-  },
-  isPublic      : {
+  isPublic    : {
     type        : Boolean,
     defaultValue: false
   },
+  publicTemplate: {
+    type: String,
+    optional: true
+  },
+  teamTemplate: {
+    type: String,
+    optional: true
+  },
+  adminTableHeaderTemplate: {
+    type: String,
+    optional: true
+  },
+  adminTableRowTemplate: {
+    type: String,
+    optional: true
+  },
   // Standard tracking fields
-  dateCreated   : {
+  dateCreated : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy     : {
+  createdBy   : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified  : {
+  dateModified: {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy    : {
+  modifiedBy  : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -64,32 +73,12 @@ Backlogs.deny({
  * Helpers
  */
 Backlogs.helpers({
-  
-  /**
-   * Get the list of projects that are not part of another backlog and should be shown in the projects selector
-   */
-  availableProjectsIds () {
-    let backlog            = this,
-        selectedProjects   = backlog.projectIds || [],
-        backloggedProjects = _.flatten(Backlogs.find({ isActive: true, _id: { $ne: backlog._id } }).map((existingBacklog) => {
-          return existingBacklog.projectIds || []
-        })),
-        allProjects        = Projects.find({}).map((project) => {
-          return project._id
-        });
+  // Get the number of backlog items in this backlog
+  items () {
+    let sort = {};
     
-    return _.union(selectedProjects, _.difference(allProjects, backloggedProjects))
-  },
-  
-  /**
-   * Handy helper for getting all of the projects
-   */
-  availableProjectsQuery () {
-    let backlog = this;
+    sort[ 'backlogOrders.' + this._id ] = 1;
     
-    return {
-      _id: { $in: backlog.availableProjectsIds() }
-    }
-  },
-  
+    return BacklogItems.find({ backlogIds: this._id }, { sort: sort })
+  }
 });

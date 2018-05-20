@@ -1,0 +1,24 @@
+<template name="AdminBacklogItemResourceRequirements">
+  <div class="backlog-item-resource-requirements show-controls-on-hover no-wrap">
+    <div class="inline-block {{#if rolesAvailable.length}}hidden-control{{else}}transparent{{/if}}">
+      <button class="btn btn-primary btn-xs btn-add-requirement">
+        <span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </div>
+    <table class="backlog-item-resource-requirements-table inline-block">
+      {{#each resourceRequirements}}
+        <tr class="backlog-item-resource-requirement" data-pk="{{_id}}">
+          <td>{{> EditableTextField dataKey="roleQuantity" value=roleQuantity dataType="number" mode="popup" emptyText="Quantity" }}</td>
+          <td>{{> EditableRecordSelector roleSelectorContext dataKey="roleDefinitionId" value=roleDefinitionId mode="popup"}}</td>
+          <td>{{> EditableTextField dataKey="durationQuantity" value=durationQuantity dataType="number" mode="popup" emptyText="Duration" }}</td>
+          <td>{{> EditableEnumSelector enum=BacklogResourceDurationUnits dataKey="durationUnits" value=durationUnits mode="popup"}}</td>
+          <td>
+            <a class="link-red hidden-control btn-delete-requirement">
+              <span class="glyphicon glyphicon-minus-sign"></span>
+            </a>
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>

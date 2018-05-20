@@ -15,42 +15,38 @@
     <div class="row">
       <div class="col-md-12">
         {{#if Template.subscriptionsReady }}
-          <div class="row">
-            <div class="col-md-12">
-              <table class="table data-table sortable-table">
-                <thead>
-                <tr>
-                  <th></th>
-                  <th>Role Title</th>
-                  <th>Is Management Role</th>
-                  <th>Plan Capacity</th>
-                  <th>Count As</th>
-                  <th>Banner Template</th>
-                  <th>Home Template</th>
-                  <th>Reports</th>
-                  <th></th>
-                </tr>
-                </thead>
-                {{#each roleDefinitions}}
-                  <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{order}}">
-                    <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
-                    <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-                    <td>{{> EditableCheckbox dataKey="isManager" value=isManager cssClass="blue"}}</td>
-                    <td>{{> EditableCheckbox dataKey="planCapacity" value=planCapacity cssClass="blue"}}</td>
-                    <td>{{> EditableRecordSelector roleSelectorContext dataKey="countCapacityAs" value=countCapacityAs}}</td>
-                    <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner }}</td>
-                    <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component }}</td>
-                    <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" }}</td>
-                    <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
-                  </tr>
-                {{/each}}
-              </table>
-              <button class="btn btn-xs btn-primary btn-add-definition">
-                <span class="glyphicon glyphicon-plus"></span>
-                Add Role Definition
-              </button>
-            </div>
-          </div>
+          <table class="table data-table sortable-table">
+            <thead>
+            <tr>
+              <th></th>
+              <th>Role Title</th>
+              <th>Is Management Role</th>
+              <th>Plan Capacity</th>
+              <th>Count As</th>
+              <th>Banner Template</th>
+              <th>Home Template</th>
+              <th>Reports</th>
+              <th></th>
+            </tr>
+            </thead>
+            {{#each roleDefinitions}}
+              <tr class="sortable-table-row" data-pk="{{_id}}" data-sort-order="{{order}}">
+                <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
+                <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
+                <td>{{> EditableCheckbox dataKey="isManager" value=isManager cssClass="blue"}}</td>
+                <td>{{> EditableCheckbox dataKey="planCapacity" value=planCapacity cssClass="blue"}}</td>
+                <td>{{> EditableRecordSelector roleSelectorContext dataKey="countCapacityAs" value=countCapacityAs}}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="bannerTemplate" value=bannerTemplate templateType=DisplayTemplateTypes.banner }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="homeTemplate" value=homeTemplate templateType=DisplayTemplateTypes.component }}</td>
+                <td>{{> EditableRecordChecklist displayTemplateSelectorContext dataKey="reports" value=reports templateType=DisplayTemplateTypes.report emptyText="Select Reports" }}</td>
+                <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
+              </tr>
+            {{/each}}
+          </table>
+          <button class="btn btn-xs btn-primary btn-add-definition">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add Role Definition
+          </button>
         {{else}}
           {{> AppLoading }}
         {{/if}}

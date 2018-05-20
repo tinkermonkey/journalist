@@ -138,6 +138,10 @@ table.table .table {
   width : auto;
 }
 
+.transparent {
+  opacity: 0;
+}
+
 .center-content-banner {
   font-size   : 84pt;
   font-weight : bold;

@@ -13,7 +13,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-9">
         <h2>Public Backlogs</h2>
         {{#if Template.subscriptionsReady }}
           {{> AdminBacklogTable publicBacklogs }}
@@ -24,17 +24,17 @@
         {{else}}
           {{> RobaSpinner rainbow=true }}
         {{/if}}
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-md-12">
         <h2>Non-Public Backlogs</h2>
         {{#if Template.subscriptionsReady }}
           {{> AdminBacklogTable nonPublicBacklogs }}
         {{else}}
           {{> RobaSpinner rainbow=true }}
         {{/if}}
+      </div>
+      <div class="col-md-3">
+        <h2>Item Categories</h2>
+        {{> AdminBacklogItemCategories }}
       </div>
     </div>
   </div>
