@@ -21,9 +21,6 @@ Template.StaticAssets.helpers({
         });
       }
     }
-  },
-  assetTemplate(){
-  
   }
 });
 

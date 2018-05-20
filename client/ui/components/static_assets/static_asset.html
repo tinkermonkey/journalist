@@ -1,7 +1,7 @@
 <template name="StaticAsset">
   {{#with asset}}
     {{#if isImage}}
-      <img src="data:image/{{type}};base64,{{data}}">
+      <img src="data:image/{{type}};base64,{{data}}" class="{{../cssClass}}" style="{{../style}}">
     {{else}}
       {{data}}
     {{/if}}

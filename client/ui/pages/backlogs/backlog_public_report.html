@@ -1,7 +1,7 @@
 <template name="BacklogPublicReport">
   {{#if Template.subscriptionsReady }}
     {{#with backlog}}
-      {{#if teamTemplate}}
+      {{#if publicTemplate}}
         {{> Template.dynamic template=publicTemplate }}
       {{else}}
         {{> DefaultBacklogPublicReport }}
