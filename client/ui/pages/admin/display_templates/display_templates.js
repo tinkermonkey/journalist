@@ -276,8 +276,6 @@ Template.DisplayTemplates.events({
         a.click();
       }
     });
-  },
-  'click ' (e, instance) {
   }
 });
 
@@ -306,9 +304,10 @@ Template.DisplayTemplates.onRendered(() => {
           return group.treeNodes()
         }).concat(baseTemplates.map((template) => {
           return {
-            text    : template.templateName,
-            href    : FlowRouter.path('DisplayTemplate', { templateId: template._id }),
-            customId: template._id
+            text      : template.templateName,
+            href      : FlowRouter.path('DisplayTemplate', { templateId: template._id }),
+            selectable: false,
+            customId  : template._id
           }
         })),
         groupId       = FlowRouter.getParam('groupId'),
@@ -322,22 +321,25 @@ Template.DisplayTemplates.onRendered(() => {
       }
     }
     
-    console.log('DisplayTemplates treeData:', treeData);
+    //console.log('DisplayTemplates treeData:', treeData);
     
     instance.$('.treeview-container').treeview({
-      levels      : 1,
-      injectStyle : false,
-      showTags    : true,
-      collapseIcon: 'glyphicon glyphicon-folder-open',
-      expandIcon  : 'glyphicon glyphicon-folder-close',
-      nodeIcon    : 'glyphicon glyphicon-file',
-      enableLinks : true,
-      data        : treeData
+      levels        : 1,
+      injectStyle   : false,
+      showTags      : true,
+      collapseIcon  : 'glyphicon glyphicon-folder-open',
+      expandIcon    : 'glyphicon glyphicon-folder-close',
+      nodeIcon      : 'glyphicon glyphicon-file',
+      enableLinks   : true,
+      data          : treeData,
+      onNodeSelected: function (event, data) {
+        FlowRouter.go(data.href);
+      }
     });
     
     if (groupId) {
       let groupNodeId = instance.$('.treeview-container').treeview('findNodeIdByCustomId', groupId);
-      console.log('Treeview revealing group node:', groupId, groupNodeId);
+      //console.log('Treeview revealing group node:', groupId, groupNodeId);
       
       if (groupNodeId !== undefined) {
         try {
@@ -358,7 +360,7 @@ Template.DisplayTemplates.onRendered(() => {
     
     if (templateId) {
       let templateNodeId = instance.$('.treeview-container').treeview('findNodeIdByCustomId', templateId);
-      console.log('Treeview selecting template node:', templateId, templateNodeId);
+      //console.log('Treeview selecting template node:', templateId, templateNodeId);
       
       if (templateNodeId !== undefined) {
         try {
