@@ -80,8 +80,14 @@
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
+                  <li class="disabled"><a>Team Reports</a></li>
                   {{#each backlogs}}
-                    <li><a href="{{pathFor 'Backlog' backlogId=_id}}">{{title}}</a></li>
+                    <li><a href="{{pathFor 'BacklogTeamReport' backlogId=_id}}">{{title}}</a></li>
+                  {{/each}}
+                  <li class="divider" role="separator"></li>
+                  <li class="disabled"><a>Public Reports</a></li>
+                  {{#each backlogs}}
+                    <li><a href="{{pathFor 'BacklogPublicReport' backlogId=_id}}">{{title}}</a></li>
                   {{/each}}
                 </ul>
               </li>
@@ -129,6 +135,7 @@
                   <li><a href="{{pathFor 'AdminReleases'}}">Releases</a></li>
                   <li><a href="{{pathFor 'ScheduledJobs'}}">Scheduled Jobs</a></li>
                   <li><a href="{{pathFor 'IntegrationServers'}}">Servers</a></li>
+                  <li><a href="{{pathFor 'StaticAssets'}}">Static Assets</a></li>
                   <li><a href="{{pathFor 'AdminTeams'}}">Teams</a></li>
                   <li><a href="{{pathFor 'AdminUsers'}}">Users</a></li>
                   <li><a href="{{pathFor 'ImportExport'}}">Import Export</a></li>

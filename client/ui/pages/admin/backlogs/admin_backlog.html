@@ -56,20 +56,20 @@
               <tr class="show-controls-on-hover">
                 <td>Admin Table Header Template</td>
                 <td class="open-link hidden-control">
-                  {{#if adminTableHeaderTemplate}}
-                    {{>AdminDisplayTemplateLink templateName=adminTableHeaderTemplate}}
+                  {{#if tableHeaderTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=tableHeaderTemplate}}
                   {{/if}}
                 </td>
-                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTableHeaderTemplate" value=adminTableHeaderTemplate templateType=DisplayTemplateTypes.component }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="tableHeaderTemplate" value=tableHeaderTemplate templateType=DisplayTemplateTypes.component }}</td>
               </tr>
               <tr class="show-controls-on-hover">
                 <td>Admin Table Row Template</td>
                 <td class="open-link hidden-control">
-                  {{#if adminTableRowTemplate}}
-                    {{>AdminDisplayTemplateLink templateName=adminTableRowTemplate}}
+                  {{#if tableRowTemplate}}
+                    {{>AdminDisplayTemplateLink templateName=tableRowTemplate}}
                   {{/if}}
                 </td>
-                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="adminTableRowTemplate" value=adminTableRowTemplate templateType=DisplayTemplateTypes.component }}</td>
+                <td>{{> EditableRecordSelector displayTemplateSelectorContext dataKey="tableRowTemplate" value=tableRowTemplate templateType=DisplayTemplateTypes.component }}</td>
               </tr>
               </tbody>
             </table>

@@ -254,7 +254,7 @@ Meteor.methods({
       let category = BacklogItemCategories.findOne(categoryId);
       if (category) {
         // Remove this category from any backlog items
-        BacklogItems.update({ category: categoryId }, { $unset: { category: true } }, { multi: true });
+        BacklogItems.update({ categoryId: categoryId }, { $unset: { categoryId: true } }, { multi: true });
         
         BacklogItemCategories.remove(categoryId);
       } else {

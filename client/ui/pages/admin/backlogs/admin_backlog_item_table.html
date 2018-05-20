@@ -4,15 +4,15 @@
     <tr>
       <th></th>
       <th>Title</th>
-      {{#if adminTableHeaderTemplate}}
-        {{> Template.dynamic template=adminTableHeaderTemplate data=this }}
+      {{#if tableHeaderTemplate}}
+        {{> Template.dynamic template=tableHeaderTemplate data=this }}
       {{/if}}
       <th>Resources Estimates</th>
       <!--
       <th>Resources Identified</th>
       -->
       <th>Category</th>
-      <th>Public</th>
+      <th>Committed</th>
       <th></th>
     </tr>
     </thead>
@@ -21,15 +21,15 @@
           data-pk="{{_id}}">
         <td class="drag-handle"><span class="glyphicon glyphicon-record"></span></td>
         <td>{{> EditableTextField dataKey="title" value=title emptyText="Title" }}</td>
-        {{#if ../adminTableRowTemplate}}
-          {{> Template.dynamic template=../adminTableRowTemplate data=tableRowContext }}
+        {{#if ../tableRowTemplate}}
+          {{> Template.dynamic template=../tableRowTemplate data=tableRowContext }}
         {{/if}}
         <td>{{> AdminBacklogItemResourceRequirements }}</td>
         <!--
         <td>{{> AdminBacklogItemResourceAllocations }}</td>
         -->
-        <td>{{> EditableRecordSelector backlogItemCategorySelectorContext dataKey="category" value=category }}</td>
-        <td>{{> EditableCheckbox dataKey="isPublic" value=isPublic }}</td>
+        <td>{{> EditableRecordSelector backlogItemCategorySelectorContext dataKey="categoryId" value=categoryId }}</td>
+        <td>{{> EditableCheckbox dataKey="isCommitted" value=isCommitted }}</td>
         <td class="btn-delete"><span class="glyphicon glyphicon-remove"></span></td>
       </tr>
     {{/each}}

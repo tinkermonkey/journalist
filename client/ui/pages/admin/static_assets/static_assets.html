@@ -1,0 +1,56 @@
+<template name="StaticAssets">
+  {{setPageTitle 'Journalist - Admin Backlogs' }}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+          <li class="active">Static Assets</li>
+        </ol>
+
+        <h1>Static Assets</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table data-table full-width border-bottom">
+          <thead>
+          <tr>
+            <th></th>
+            <th>Key</th>
+            <th>Type</th>
+            <th>Disk Size</th>
+            <th>Encoded Chars</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          {{#each assets}}
+            <tr class="data-table-row show-controls-on-hover {{#if isOdd @index}}odd{{/if}}" data-pk="{{_id}}">
+              <td class="open-link">
+                {{> QuickPopover contentTemplate='StaticAsset' data=this glyphClass="glyphicon-info-sign" }}
+              </td>
+              <td>{{> EditableTextField dataKey="key" value=key emptyText="Key" }}</td>
+              <td>{{> EditableTextField dataKey="type" value=type emptyText="Type" }}</td>
+              <td>{{stats.size}}</td>
+              <td>{{size}}</td>
+              <td>
+                <a class="link-red hidden-control btn-delete-asset">
+                  <span class="glyphicon glyphicon-minus-sign"></span>
+                </a>
+              </td>
+            </tr>
+          {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Upload</h2>
+        {{> upload_bootstrap callbacks=uploadCallbacks}}
+      </div>
+    </div>
+  </div>
+</template>

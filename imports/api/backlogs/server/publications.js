@@ -7,12 +7,8 @@ import { BacklogItemResourceRequirements } from '../backlog_item_resource_requir
 
 Meteor.publish('backlogs', function () {
   console.log('Publish: backlogs');
-  if (this.userId) {
-    return Backlogs.find({ isPublic: true });
-  } else {
-    this.ready();
-    return [];
-  }
+  // TODO: add controls for anonymous access
+  return Backlogs.find({ isPublic: true });
 });
 
 Meteor.publish('admin_backlogs', function () {
@@ -31,6 +27,11 @@ Meteor.publish('admin_backlogs', function () {
   }
 });
 
+Meteor.publish('backlog', function (backlogId) {
+  console.log('Publish: backlog');
+  return Backlogs.find({ _id: backlogId, isPublic: true });
+});
+
 Meteor.publish('admin_backlog', function (backlogId) {
   console.log('Publish: admin_backlog');
   if (this.userId) {
@@ -47,13 +48,12 @@ Meteor.publish('admin_backlog', function (backlogId) {
   }
 });
 
-Meteor.publish('backlog_items', function () {
-  console.log('Publish: backlog_items');
+Meteor.publish('backlog_items', function (backlogId) {
+  console.log('Publish: backlog_items', backlogId);
   if (this.userId) {
-    return BacklogItems.find({ isPublic: true });
+    return BacklogItems.find({ backlogId: backlogId });
   } else {
-    this.ready();
-    return [];
+    return BacklogItems.find({ isCommitted: true, backlogId: backlogId });
   }
 });
 
@@ -85,20 +85,12 @@ Meteor.publish('backlog_item_resource_allocations', function (itemId) {
 
 Meteor.publish('backlog_item_resource_requirements', function (itemId) {
   console.log('Publish: backlog_item_resource_requirements', itemId);
-  if (this.userId) {
-    return BacklogItemResourceRequirements.find({ backlogItemId: itemId });
-  } else {
-    this.ready();
-    return [];
-  }
+  // TODO: add controls for anonymous access
+  return BacklogItemResourceRequirements.find({ backlogItemId: itemId });
 });
 
 Meteor.publish('backlog_item_categories', function () {
   console.log('Publish: backlog_item_categories');
-  if (this.userId) {
-    return BacklogItemCategories.find({});
-  } else {
-    this.ready();
-    return [];
-  }
+  // TODO: add controls for anonymous access
+  return BacklogItemCategories.find({});
 });

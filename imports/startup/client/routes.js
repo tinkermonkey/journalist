@@ -27,12 +27,15 @@ import '../../../client/ui/pages/admin/projects/admin_projects';
 import '../../../client/ui/pages/admin/projects/admin_project_integration';
 import '../../../client/ui/pages/admin/releases/admin_release';
 import '../../../client/ui/pages/admin/releases/admin_releases';
+import '../../../client/ui/pages/admin/static_assets/static_assets';
 import '../../../client/ui/pages/admin/scheduled_jobs/scheduled_job';
 import '../../../client/ui/pages/admin/scheduled_jobs/scheduled_jobs';
 import '../../../client/ui/pages/admin/teams/admin_team';
 import '../../../client/ui/pages/admin/teams/admin_teams';
 import '../../../client/ui/pages/admin/users/admin_users';
 import '../../../client/ui/pages/anonymous/release_plan/release_plan';
+import '../../../client/ui/pages/backlogs/backlog_public_report';
+import '../../../client/ui/pages/backlogs/backlog_team_report';
 import '../../../client/ui/pages/capacity_plans/capacity_plan';
 import '../../../client/ui/pages/capacity_plans/capacity_plans';
 import '../../../client/ui/pages/capacity_plans/capacity_plan_report';
@@ -82,10 +85,10 @@ FlowRouter.route('/', {
     BlazeLayout.render('AuthenticatedLayout', { main: 'ContributorHome' });
   }
 });
-FlowRouter.route('/backlog/:backlogId', {
-  name: 'Backlog',
+FlowRouter.route('/backlog_team_report/:backlogId', {
+  name: 'BacklogTeamReport',
   action () {
-    BlazeLayout.render('AuthenticatedLayout', { main: 'Backlog' });
+    BlazeLayout.render('AuthenticatedLayout', { main: 'BacklogTeamReport' });
   }
 });
 FlowRouter.route('/contributor/:contributorId', {
@@ -199,6 +202,12 @@ FlowRouter.route('/release_plan', {
   name: 'ReleasePlan',
   action () {
     BlazeLayout.render('AnonymousLayout', { main: 'ReleasePlan' });
+  }
+});
+FlowRouter.route('/backlog_public_report/:backlogId', {
+  name: 'BacklogPublicReport',
+  action () {
+    BlazeLayout.render('AnonymousLayout', { main: 'BacklogPublicReport' });
   }
 });
 
@@ -383,6 +392,13 @@ FlowRouter.route('/admin/release/:releaseId', {
   name: 'AdminRelease',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'AdminRelease' });
+  }
+});
+
+FlowRouter.route('/admin/static_assets', {
+  name: 'StaticAssets',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'StaticAssets' });
   }
 });
 

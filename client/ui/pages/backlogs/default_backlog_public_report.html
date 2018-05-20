@@ -1,0 +1,41 @@
+<template name="DefaultBacklogPublicReport">
+  {{setPageTitle 'Journalist - ' title }}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{title}}</h1>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <hr class="backlog-report-hr"/>
+
+        <table class="table data-table table-striped">
+          <thead>
+          <tr>
+            <th>Title</th>
+            {{#if tableHeaderTemplate}}
+              {{> Template.dynamic template=tableHeaderTemplate data=this }}
+            {{/if}}
+            <th>Resources</th>
+            <th>Category</th>
+          </tr>
+          </thead>
+          <tbody>
+          {{#each committedItems}}
+            <tr>
+              <td>{{title}}</td>
+              {{#if ../tableRowTemplate}}
+                {{> Template.dynamic template=../tableRowTemplate data=this }}
+              {{/if}}
+              <td>{{> BacklogItemResourceRequirements}}</td>
+              <td>{{category.title}}</td>
+            </tr>
+          {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</template>

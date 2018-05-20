@@ -1,6 +1,7 @@
 import { Mongo }                        from 'meteor/mongo';
 import SimpleSchema                     from 'simpl-schema';
 import { BacklogResourceDurationUnits } from './backlog_resource_duration_units';
+import { ContributorRoleDefinitions }   from '../contributors/contributor_role_definitions';
 
 /**
  * ============================================================================
@@ -8,7 +9,7 @@ import { BacklogResourceDurationUnits } from './backlog_resource_duration_units'
  * ============================================================================
  */
 export const BacklogItemResourceRequirement = new SimpleSchema({
-  backlogItemId: {
+  backlogItemId   : {
     type: String
   },
   roleDefinitionId: {
@@ -24,7 +25,7 @@ export const BacklogItemResourceRequirement = new SimpleSchema({
   },
   durationUnits   : {
     type        : SimpleSchema.Integer,
-    defaultValue: BacklogResourceDurationUnits.weeks
+    defaultValue: BacklogResourceDurationUnits.week
   }
 });
 
@@ -46,4 +47,8 @@ BacklogItemResourceRequirements.deny({
 /**
  * Helpers
  */
-BacklogItemResourceRequirements.helpers({});
+BacklogItemResourceRequirements.helpers({
+  role () {
+    return ContributorRoleDefinitions.findOne(this.roleDefinitionId)
+  }
+});

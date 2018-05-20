@@ -1,0 +1,7 @@
+<template name="BacklogItemResourceRequirements">
+  {{#each requirements}}
+    <div class="no-wrap">
+      {{roleQuantity}} {{role.title}}{{#if multipleResources}}s{{/if}} for {{durationQuantity}} {{renderDurationUnits durationUnits}}{{#if multipleDuration}}s{{/if}}
+    </div>
+  {{/each}}
+</template>

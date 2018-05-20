@@ -11,6 +11,7 @@ import { IntegrationServers }          from '../../../../../imports/api/integrat
 import { Projects }                    from '../../../../../imports/api/projects/projects';
 import { Releases }                    from '../../../../../imports/api/releases/releases';
 import { ScheduledJobs }               from '../../../../../imports/api/scheduled_jobs/scheduled_jobs';
+import { StaticAssets }                from '../../../../../imports/api/static_assets/static_assets';
 import { Teams }                       from '../../../../../imports/api/teams/teams';
 import { Users }                       from '../../../../../imports/api/users/users';
 import './admin_stats_imported_items';
@@ -52,6 +53,9 @@ Template.AdminHome.helpers({
   },
   serverCount () {
     return IntegrationServers.find().count()
+  },
+  staticAssetCount () {
+    return StaticAssets.find().count()
   },
   teamCount () {
     return Teams.find().count()

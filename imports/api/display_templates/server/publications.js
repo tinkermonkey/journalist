@@ -35,10 +35,11 @@ Meteor.publish('display_template_groups', function () {
 
 Meteor.publish('published_display_templates', function () {
   console.info('Publish: published_display_templates');
-  if (this.userId) {
-    return PublishedDisplayTemplates.find({});
-  } else {
-    this.ready();
-    return [];
-  }
+  //if (this.userId) {
+  // TODO: Design better anonymous access controls
+  return PublishedDisplayTemplates.find({});
+  //} else {
+  //  this.ready();
+  //  return [];
+  //}
 });

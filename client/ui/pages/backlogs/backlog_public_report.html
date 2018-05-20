@@ -1,0 +1,15 @@
+<template name="BacklogPublicReport">
+  {{#if Template.subscriptionsReady }}
+    {{#with backlog}}
+      {{#if teamTemplate}}
+        {{> Template.dynamic template=publicTemplate }}
+      {{else}}
+        {{> DefaultBacklogPublicReport }}
+      {{/if}}
+    {{else}}
+      {{> NotFound }}
+    {{/with}}
+  {{else}}
+    {{> AppLoading message="Loading Data" }}
+  {{/if}}
+</template>

@@ -105,11 +105,13 @@ export const Util = {
     instance.subscribe('backlog_items');
     instance.subscribe('backlog_item_categories');
     instance.subscribe('contributors');
+    instance.subscribe('contributor_role_definitions');
     instance.subscribe('integration_servers');
     instance.subscribe('integration_server_caches', 'versionList');
     instance.subscribe('projects');
     instance.subscribe('releases');
     instance.subscribe('release_integration_links');
+    instance.subscribe('static_assets');
     instance.subscribe('system_health_metrics');
     instance.subscribe('teams');
   },
@@ -136,6 +138,7 @@ export const Util = {
     instance.subscribe('projects');
     instance.subscribe('releases');
     instance.subscribe('release_integration_links');
+    instance.subscribe('static_assets');
     instance.subscribe('status_report_settings');
     instance.subscribe('system_health_metrics');
     instance.subscribe('user_level');

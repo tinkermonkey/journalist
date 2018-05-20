@@ -53,6 +53,10 @@ import '../../api/status_reports/server/publications';
 import '../../api/scheduled_jobs/server/methods';
 import '../../api/scheduled_jobs/server/publications';
 
+// Static Assets
+import '../../api/static_assets/server/methods';
+import '../../api/static_assets/server/publications';
+
 // Subtasks
 import '../../api/subtasks/server/methods';
 import '../../api/subtasks/server/publications';

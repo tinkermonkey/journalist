@@ -28,11 +28,12 @@ Template.QuickPopover.events({
       
       // Render the contents
       setTimeout(() => {
-        let popoverContents = $('#' + instance.elementId);
+        let popoverContents = $('#' + instance.elementId),
+            template        = _.isString(context.contentTemplate) ? Template[ context.contentTemplate ] : context.contentTemplate;
         
         // Render the search form into the popover
         try {
-          instance.childView     = Blaze.renderWithData(context.contentTemplate, context.data, popoverContents.get(0));
+          instance.childView     = Blaze.renderWithData(template, context.data, popoverContents.get(0));
           instance.childInstance = Blaze.getView(popoverContents.get(0)).templateInstance();
           if (instance.childInstance) {
             instance.childInstance.autorun(() => {

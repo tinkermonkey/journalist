@@ -178,6 +178,11 @@ Template.registerHelper('renderItemType', function (type) {
     return Util.camelToTitle(_.invert(ItemTypes)[ type ]);
   }
 });
+Template.registerHelper('renderDurationUnits', function (duration) {
+  if (duration !== null) {
+    return Util.camelToTitle(_.invert(BacklogResourceDurationUnits)[ duration ]);
+  }
+});
 
 /**
  * Selector helpers
@@ -415,8 +420,8 @@ Template.registerHelper('backlogItemCategorySelectorContext', function (params) 
       context = {
         valueField  : '_id',
         displayField: 'title',
-        value       : record.category,
-        dataKey     : 'category',
+        value       : record.categoryId,
+        dataKey     : 'categoryId',
         collection  : BacklogItemCategories,
         emptyText   : 'Select a category',
         cssClass    : 'inline-block',

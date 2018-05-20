@@ -2,7 +2,11 @@
   <div class="quick-popover-container">
     <div class="quick-popover-placement">
       <div class="quick-popover-click {{cssClass}}" data-key="{{dataKey}}">
-        {{text}}
+        {{#if glyphClass}}
+          <span class="glyphicon {{glyphClass}}"></span>
+        {{else}}
+          {{text}}
+        {{/if}}
       </div>
     </div>
   </div>

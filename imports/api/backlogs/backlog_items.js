@@ -1,7 +1,8 @@
-import { Mongo }         from 'meteor/mongo';
-import SimpleSchema      from 'simpl-schema';
-import { Util }          from '../util.js';
-import { SchemaHelpers } from '../schema_helpers.js';
+import { Mongo }                 from 'meteor/mongo';
+import SimpleSchema              from 'simpl-schema';
+import { Util }                  from '../util.js';
+import { SchemaHelpers }         from '../schema_helpers.js';
+import { BacklogItemCategories } from './backlog_item_categories';
 
 /**
  * ============================================================================
@@ -12,11 +13,11 @@ export const BacklogItem = new SimpleSchema({
   title         : {
     type: String
   },
-  isPublic      : {
+  isCommitted   : {
     type        : Boolean,
     defaultValue: false
   },
-  category      : {
+  categoryId    : {
     type    : String,
     optional: true
   },
@@ -32,25 +33,25 @@ export const BacklogItem = new SimpleSchema({
     blackbox: true,
     optional: true
   },
-  metadata    : {
+  metadata      : {
     type    : Object,
     blackbox: true,
     optional: true
   },
   // Standard tracking fields
-  dateCreated : {
+  dateCreated   : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateCreated
   },
-  createdBy   : {
+  createdBy     : {
     type     : String,
     autoValue: SchemaHelpers.autoValueCreatedBy
   },
-  dateModified: {
+  dateModified  : {
     type     : Date,
     autoValue: SchemaHelpers.autoValueDateModified
   },
-  modifiedBy  : {
+  modifiedBy    : {
     type     : String,
     autoValue: SchemaHelpers.autoValueModifiedBy
   }
@@ -99,5 +100,15 @@ BacklogItems.helpers({
     let item = this;
     
     return (this.backlogOrders && this.backlogOrders[ backlogId ]) || 0
+  },
+  
+  /**
+   * Get the category record for this item
+   */
+  category () {
+    if (this.categoryId) {
+      console.log('category:', this.categoryId, BacklogItemCategories.findOne(this.categoryId));
+      return BacklogItemCategories.findOne(this.categoryId)
+    }
   }
 });
