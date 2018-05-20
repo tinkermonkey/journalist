@@ -37,6 +37,17 @@
                 <td>{{> EditableRecordSelector ownerSelectorContext }}</td>
               </tr>
               <tr class="show-controls-on-hover">
+                <td>Default Project</td>
+                <td class="open-link">
+                  {{#if defaultProjectId}}
+                    <a class="hidden-control" href="{{pathFor 'ProjectHome' projectId=defaultProjectId }}">
+                      <span class="glyphicon glyphicon-folder-open"></span>
+                    </a>
+                  {{/if}}
+                </td>
+                <td>{{> EditableRecordSelector projectSelectorContext dataKey='defaultProjectId' value=defaultProjectId }}</td>
+              </tr>
+              <tr class="show-controls-on-hover">
                 <td>Default Reporter</td>
                 <td class="open-link">
                   {{#if reportingContributorId}}

@@ -22,6 +22,10 @@ export const Team = new SimpleSchema({
     type    : String,
     optional: true
   },
+  defaultProjectId: {
+    type    : String,
+    optional: true
+  },
   // Contributor._id of the default team reporter
   reportingContributorId: {
     type    : String,
