@@ -76,25 +76,30 @@ ScheduledJobs.helpers({
           return parser.text(job.laterDirective);
         },
         job () {
-          console.log('==== ScheduledJob executing:', job._id, job.title);
-          
-          try {
-            let code = '(function(){' + "\n" +
-                (job.preambleCode || '') + "\n" +
-                job.jobCode + "\n" +
-                '})()';
-            
-            eval(code);
-          } catch (e) {
-            console.error('==== ScheduledJob failed:', job._id, job.title, e)
-          }
-          
-          console.log('==== ScheduledJob complete:', job._id, job.title);
+          job.execute();
         }
       });
       console.log('==== ScheduledJob scheduled:', job._id, job.title, job.laterDirective);
     } else {
       console.log('==== ScheduledJob skipped because it`s incomplete:', job._id, job.title);
     }
+  },
+  execute () {
+    let job = this;
+    
+    console.log('==== ScheduledJob executing:', job._id, job.title);
+    
+    try {
+      let code = '(function(){' + "\n" +
+          (job.preambleCode || '') + "\n" +
+          job.jobCode + "\n" +
+          '})()';
+      
+      eval(code);
+    } catch (e) {
+      console.error('==== ScheduledJob failed:', job._id, job.title, e)
+    }
+    
+    console.log('==== ScheduledJob complete:', job._id, job.title);
   }
 });

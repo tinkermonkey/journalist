@@ -62,17 +62,44 @@ Meteor.methods({
     check(key, String);
     check(value, Match.Any);
     
-    // Get the collection record to make sure this is authorized
-    let collection = ScheduledJobs.findOne(jobId);
+    // Get the job record to make sure this is authorized
+    let job = ScheduledJobs.findOne(jobId);
     
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
-      if (collection) {
+      if (job) {
         let update    = {};
         update[ key ] = value;
         
         // Update the contributor
         ScheduledJobs.update(jobId, { $set: update });
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to edit a scheduled job:', user.username, key, value, jobId);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Execute a job
+   * @param jobId
+   */
+  executeScheduledJob(jobId){
+    console.log('executeScheduledJob:', jobId);
+    let user = Auth.requireAuthentication();
+  
+    // Validate the data is complete
+    check(jobId, String);
+  
+    // Get the job record to make sure this is authorized
+    let job = ScheduledJobs.findOne(jobId);
+  
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (job) {
+        job.execute();
       } else {
         throw new Meteor.Error(404);
       }
