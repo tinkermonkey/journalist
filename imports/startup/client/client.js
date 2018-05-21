@@ -11,6 +11,8 @@ import { IntegrationCalculatedFields }  from '../../api/integrations/integration
 import { DisplayTemplates }             from '../../api/display_templates/display_templates.js';
 import { DisplayTemplateGroups }        from '../../api/display_templates/display_template_groups.js';
 import { DisplayTemplateTypes }         from '../../api/display_templates/display_template_types';
+import { DynamicCollectionManager }     from '../../api/dynamic_collection_manager';
+import { DynamicCollections }           from '../../api/dynamic_collections/dynamic_collections';
 import { IntegrationImportFunctions }   from '../../api/integrations/integration_import_functions.js';
 import { IntegrationServers }           from '../../api/integrations/integration_servers';
 import { IntegrationTypes }             from '../../api/integrations/integration_types.js';
@@ -24,6 +26,16 @@ import { ImportedItemWorkStates }       from '../../api/imported_items/imported_
 import { BacklogResourceDurationUnits } from '../../api/backlogs/backlog_resource_duration_units';
 import { BacklogItemCategories }        from '../../api/backlogs/backlog_item_categories';
 import '../../../node_modules/c3/c3.css';
+
+Meteor.startup(() => {
+  console.log('Subscribing to dynamic_collections');
+  Meteor.subscribe('dynamic_collections', {
+    onReady () {
+      console.log('DynamicCollections subscription ready:', DynamicCollections.find({}).count());
+      DynamicCollectionManager.compileCollections();
+    }
+  });
+});
 
 /**
  * Custom autoform hooks to prevent client side inserts
