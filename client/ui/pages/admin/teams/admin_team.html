@@ -120,18 +120,21 @@
                   <td>
                     <table class="table data-table">
                       {{#each rolesOnTeam ../_id}}
-                        {{> EditableContributorRole }}
+                        {{> AdminTeamContributorRole }}
                       {{/each}}
                     </table>
                   </td>
                   <td>
-                    {{#each contributorOtherTeams}}
-                      <table class="table data-table">
-                      {{#each ../rolesOnTeam _id}}
-                        {{> EditableContributorRole }}
+                    <table class="table data-table">
+                      {{#each contributorOtherTeams}}
+                        <tr>
+                          <td colspan="2"><a href="{{pathFor 'AdminTeam' teamId=_id}}"><b>{{title}}</b></a></td>
+                        </tr>
+                        {{#each ../rolesOnTeam _id}}
+                          {{> AdminTeamContributorRole }}
+                        {{/each}}
                       {{/each}}
-                      </table>
-                    {{/each}}
+                    </table>
                   </td>
                 </tr>
               {{/each}}

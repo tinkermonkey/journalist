@@ -1,0 +1,13 @@
+<template name="AdminTeamContributorRole">
+  {{#each projectAssignments}}
+    <tr class="data-table-row" data-pk="{{_id}}">
+      <td class="project-assignment-percent-col">
+        {{> EditableTextField dataKey="percent" value=percent emptyText="Percent" dataType="number" cssClass="inline-block"}}
+        %
+      </td>
+      <td>
+        {{> EditableRecordSelector projectSelectorContext }}
+      </td>
+    </tr>
+  {{/each}}
+</template>

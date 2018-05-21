@@ -9,7 +9,7 @@
       <th>User</th>
       <th>Type</th>
       <th>Manager</th>
-      <th>Modified</th>
+      <th>Teams</th>
       <th>Active</th>
       <th></th>
     </tr>
@@ -35,7 +35,7 @@
         </td>
         <td>{{> EditableEnumSelector dataKey="usertype" value=usertype enum=UserTypes emptyText="Select" mode="popup" }}</td>
         <td>{{> EditableRecordSelector managerSelectorContext }}</td>
-        <td>{{dateFormat dateModified}}</td>
+        <td>{{> EditableRecordChecklist teamSelectorContext dataKey="contributorTeamsList" value=contributorTeamsList emptyText="Select Teams" }}</td>
         <td>{{> EditableCheckbox dataKey="isActive" value=isActive mode="popup" }}</td>
         <td>
           <a class="link-red hidden-control btn-delete-contributor">

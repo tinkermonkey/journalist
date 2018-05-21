@@ -33,21 +33,6 @@ Template.AdminContributors.helpers({
  * Template Event Handlers
  */
 Template.AdminContributors.events({
-  'edited .editable' (e, instance, newValue) {
-    e.stopImmediatePropagation();
-    
-    let contributorId = $(e.target).closest('.data-table-row').attr('data-pk'),
-        dataKey       = $(e.target).attr('data-key');
-    
-    console.log('AdminContributors edited:', contributorId, dataKey, newValue);
-    if (contributorId && dataKey) {
-      Meteor.call('editContributor', contributorId, dataKey, newValue, (error, response) => {
-        if (error) {
-          RobaDialog.error('Update failed:' + error.toString());
-        }
-      });
-    }
-  },
   'click .btn-add-contributor' (e, instance) {
     let roleDefinition = this;
     
@@ -150,7 +135,7 @@ Template.AdminContributors.events({
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Set the usertype
-            console.log('Add user data:', formData);
+            //console.log('Add user data:', formData);
             
             // Create the user
             Meteor.call('addUser', formData, (error, response) => {
@@ -167,19 +152,6 @@ Template.AdminContributors.events({
           RobaDialog.hide();
         }
       }.bind(this)
-    });
-  },
-  'click .btn-delete-contributor' (e, instance) {
-    let contributorId = $(e.target).closest('.data-table-row').attr('data-pk'),
-        contributor   = Contributors.findOne(contributorId);
-    
-    RobaDialog.ask('Delete Contributor?', 'Are you sure that you want to delete the contributor <span class="label label-primary"> ' + contributor.email + '</span> ?', () => {
-      RobaDialog.hide();
-      Meteor.call('deleteContributor', contributorId, function (error, response) {
-        if (error) {
-          RobaDialog.error('Delete failed: ' + error.message);
-        }
-      });
     });
   }
 });

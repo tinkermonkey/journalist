@@ -4,6 +4,7 @@ import { Contributors }                  from '../contributors.js';
 import { ContributorTeamRoles }          from '../contributor_team_roles.js';
 import { ContributorProjectAssignments } from '../contributor_project_assignments.js';
 import { ContributorRoleDefinitions }    from '../contributor_role_definitions.js';
+import { Teams }                         from '../../teams/teams';
 import { Auth }                          from '../../auth.js';
 
 Meteor.methods({
@@ -219,6 +220,80 @@ Meteor.methods({
       }
     } else {
       console.error('Non-admin user tried to edit a contributor team role:', user.username, key, value);
+      throw new Meteor.Error(403);
+    }
+  },
+  
+  /**
+   * Edit contributor team memberships in bulk
+   * @param contributorId
+   * @param teamIdList
+   */
+  editContributorTeamMemberships (contributorId, teamIdList) {
+    console.log('editContributorTeamMemberships:', contributorId);
+    let user = Auth.requireAuthentication();
+    
+    // Validate the data is complete
+    check(contributorId, String);
+    check(teamIdList, Match.Any);
+    
+    // Get the contributor record to make sure this is authorized
+    let contributor = Contributors.findOne(contributorId);
+    
+    // Validate that the current user is an administrator
+    if (user.isAdmin()) {
+      if (contributor) {
+        // Go through the contributor's team memberships and add/delete as needed
+        let existingTeamIds = contributor.participatingTeams().map((team) => {
+              return team._id
+            }),
+            masterlist      = _.union(teamIdList, existingTeamIds);
+        
+        console.log('editContributorTeamMemberships masterlist:', masterlist, existingTeamIds, teamIdList);
+        masterlist.forEach((teamId) => {
+          let team = Teams.findOne(teamId);
+          if (_.contains(teamIdList, teamId) && !_.contains(existingTeamIds, teamId)) {
+            console.log('editContributorTeamMemberships adding team membership:', contributorId, teamId);
+            // Add a new team membership for this team
+            let teamRoleId = ContributorTeamRoles.insert({
+              contributorId: contributorId,
+              teamId       : teamId,
+              roleId       : contributor.roleId
+            });
+            
+            // Add a project assignment
+            if (team.defaultProjectId) {
+              console.log('editContributorTeamMemberships adding team project role:', contributorId, teamId, team.defaultProjectId, contributor.percentCommitted());
+              // Insert the project percent
+              let percentCommitted = contributor.percentCommitted(),
+                  assignmentId     = ContributorProjectAssignments.insert({
+                    contributorId: contributorId,
+                    teamRoleId   : teamRoleId,
+                    projectId    : team.defaultProjectId,
+                    percent      : Math.max(10, 100 - percentCommitted)
+                  });
+              
+              // Balance the contributor's assignments
+              ContributorProjectAssignments.findOne(assignmentId).balanceOtherAssignments();
+            }
+          } else if (!_.contains(teamIdList, teamId) && _.contains(existingTeamIds, teamId)) {
+            console.log('editContributorTeamMemberships removing team membership:', contributorId, teamId);
+            // Remove an existing membership
+            ContributorTeamRoles.find({ contributorId: contributorId, teamId: teamId }).forEach((teamRole) => {
+              // Remove all of the project assignments for this team role
+              ContributorProjectAssignments.remove({ contributorId: contributorId, teamRoleId: teamRole._id });
+              ContributorTeamRoles.remove(teamRole._id);
+            });
+          } else {
+            // Make sure an existing team membership has as much data as possible
+            
+          }
+        });
+      } else {
+        throw new Meteor.Error(404);
+      }
+    } else {
+      console.error('Non-admin user tried to edit a contributor:', user.username, key, teamIdList);
       throw new Meteor.Error(403);
     }
   },

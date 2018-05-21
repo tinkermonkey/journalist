@@ -3,7 +3,7 @@ import { Template }             from 'meteor/templating';
 import { Teams }                from '../../../../../imports/api/teams/teams';
 import { Contributors }         from '../../../../../imports/api/contributors/contributors';
 import { UserTypes }            from '../../../../../imports/api/users/user_types';
-import '../../../components/team_roles/editable_contributor_role';
+import './admin_team_contributor_role';
 
 /**
  * Template Helpers
