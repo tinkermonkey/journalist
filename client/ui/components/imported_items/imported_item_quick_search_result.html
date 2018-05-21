@@ -3,13 +3,14 @@
     <div class="flex search-result-info">
       <span>{{renderItemType itemType}}</span>
       <span class="item-identifier">{{identifier}}</span>
+      <a href="{{pathFor 'ContributorHome' contributorId=owner}}">
+        {{contributorName owner}}
+      </a>
       <span><label class="label label-default">{{statusLabel}}</label></span>
       {{#if viewUrl}}
-        <div>
-          <a href="{{viewUrl}}" target="_blank" class="hidden-control">
-            <span class="glyphicon glyphicon-share-alt"></span>
-          </a>
-        </div>
+        <a href="{{viewUrl}}" target="_blank">
+          <span class="glyphicon glyphicon-share-alt"></span>
+        </a>
       {{/if}}
     </div>
     <div class="flex search-result-info">
