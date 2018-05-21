@@ -2,14 +2,7 @@
   {{setPageTitle 'Journalist -' templateName }}
   <div class="full-width">
     <h2>{{templateName}}</h2>
-    <div>
-      Current version is {{currentVersion}},
-      {{#if lastPublished}}
-        last published {{ dateFormat lastPublished 'MM/DD hh:mm:ss a'}}, version {{publishedVersion}}
-      {{else }}
-        this template has never been published
-      {{/if}}
-    </div>
+
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="collapse navbar-collapse">
@@ -33,14 +26,20 @@
               </a>
             </li>
           </ul>
+          <p class="navbar-text">
+            Current version is {{currentVersion}},
+            {{#if lastPublished}}
+              published {{ dateFormat lastPublished 'MM/DD hh:mm a'}}, v{{publishedVersion}}
+            {{else }}
+              this template has never been published
+            {{/if}}
+          </p>
         </div>
       </div>
     </nav>
-
   </div>
   
   <div class="full-width">
-
     {{#RobaTabGroup name="template-tabs" navClass="nav-tabs"}}
       {{#RobaTab name="layout" title="Layout"}}
         <h2>Template HTML</h2>
