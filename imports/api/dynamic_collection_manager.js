@@ -39,7 +39,15 @@ export const DynamicCollectionManager = {
     let code = '(function(){' + "\n" + (collection.preambleCode || '') + "\n" +
         'let collectionKey       = \'' + collection.title + '\',' + "\n" +
         '    mongoCollectionName = \'' + Util.camelToUnderscore(collection.title) + '\';' + "\n" +
-        'DynamicCollectionManager.collections[collectionKey] = new Mongo.Collection(mongoCollectionName);' + "\n";
+        'try {' + "\n" +
+        '  DynamicCollectionManager.collections[collectionKey] = new Mongo.Collection(mongoCollectionName);' + "\n" +
+        '} catch(e) {' + "\n" +
+        '  if(e.toString().match(/already a collection named/i)){' + "\n" +
+        '    console.log("Collection", mongoCollectionName, "already exists")' + "\n" +
+        '  } else {' + "\n" +
+        '    throw e;' + "\n" +
+        '  }' + "\n" +
+        '}';
     
     if (collection.schemaCode) {
       code += 'DynamicCollectionManager.schemas[collectionKey] = new SimpleSchema(' + collection.schemaCode + ');' + "\n";
@@ -55,7 +63,7 @@ export const DynamicCollectionManager = {
     // If this is the server, compile the methods and publications
     if (Meteor.isServer) {
       if (collection.methodsCode) {
-        code += "\n" + 'Meteor.methods(' + collection.methodsCode + ');'+ "\n";
+        code += "\n" + 'Meteor.methods(' + collection.methodsCode + ');' + "\n";
       }
       
       if (collection.publicationsCode) {
