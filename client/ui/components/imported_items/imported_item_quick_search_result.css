@@ -1,0 +1,25 @@
+.imported-item-quick-search-result {
+  margin        : 1em 0;
+  padding       : 0.5em;
+  border-radius : 4px;
+  cursor        : pointer;
+}
+
+.imported-item-quick-search-result:hover {
+  background-color : #efefef;
+}
+
+.imported-item-quick-search-result .item-identifier {
+  color : #298cff;
+}
+
+.imported-item-quick-search-result .search-result-body {
+  margin-top    : 1em;
+  max-height    : 100px;
+  overflow      : hidden;
+  text-overflow : ellipsis;
+}
+
+.imported-item-quick-search-result .search-result-info > * {
+  padding-right: 3px;
+}

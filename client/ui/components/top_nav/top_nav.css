@@ -4,3 +4,7 @@
   color         : #999999;
   margin-bottom : 5px;
 }
+
+.top-nav-search-results-container {
+  width: 400px;
+}

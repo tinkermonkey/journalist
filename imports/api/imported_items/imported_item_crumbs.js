@@ -1,5 +1,7 @@
-import { Mongo }         from 'meteor/mongo';
-import { ImportedItems } from './imported_items';
+import { Mongo }                  from 'meteor/mongo';
+import { ImportedItems }          from './imported_items';
+import { Projects }               from '../projects/projects';
+import { ImportedItemWorkStates } from './imported_item_work_states';
 
 const omitFields = [
   'document'
@@ -49,4 +51,28 @@ ImportedItems.after.remove((userId, document) => {
 /**
  * Helpers
  */
-ImportedItemCrumbs.helpers({});
+ImportedItemCrumbs.helpers({
+  /**
+   * Grab the project
+   */
+  project () {
+    return Projects.findOne(this.projectId)
+  },
+  
+  /**
+   * Confirm if this item is still incomplete
+   * @returns {boolean}
+   */
+  isOpen () {
+    return this.workState !== ImportedItemWorkStates.workCompleted
+  },
+  
+  /**
+   * Confirm if this item is of a particular type
+   * @param type
+   * @returns {boolean}
+   */
+  isType (type) {
+    return this.itemType === type
+  }
+});

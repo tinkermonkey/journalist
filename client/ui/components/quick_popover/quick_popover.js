@@ -2,6 +2,7 @@ import './quick_popover.html';
 import './quick_popover.css';
 import { Random }   from 'meteor/random';
 import { Template } from 'meteor/templating';
+import './quick_popover_controller';
 
 /**
  * Template Helpers
@@ -110,41 +111,4 @@ Template.QuickPopover.onRendered(() => {
  */
 Template.QuickPopover.onDestroyed(() => {
   
-});
-
-/**
- * Create a reposition function to call after the content is rendered
- */
-$(function () {
-  if (!$.fn.popover.Constructor.prototype.reposition) {
-    $.fn.popover.Constructor.prototype.reposition = function () {
-      let $tip      = this.tip();
-      let autoPlace = true;
-      
-      let placement = typeof this.options.placement === 'function' ? this.options.placement.call(this, $tip[ 0 ], this.$element[ 0 ]) : this.options.placement;
-      
-      let pos          = this.getPosition();
-      let actualWidth  = $tip[ 0 ].offsetWidth;
-      let actualHeight = $tip[ 0 ].offsetHeight;
-      
-      if (autoPlace) {
-        let orgPlacement = placement;
-        let viewportDim  = this.getPosition(this.$viewport);
-        
-        placement = placement === 'bottom' &&
-        pos.bottom + actualHeight > viewportDim.bottom ? 'top' : placement === 'top' &&
-        pos.top - actualHeight < viewportDim.top ? 'bottom' : placement === 'right' &&
-        pos.right + actualWidth > viewportDim.width ? 'left' : placement === 'left' &&
-        pos.left - actualWidth < viewportDim.left ? 'right' : placement;
-        
-        $tip
-            .removeClass(orgPlacement)
-            .addClass(placement);
-      }
-      
-      let calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
-      
-      this.applyPlacement(calculatedOffset, placement);
-    }
-  }
 });

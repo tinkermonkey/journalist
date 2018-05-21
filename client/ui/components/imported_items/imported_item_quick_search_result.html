@@ -1,0 +1,49 @@
+<template name="ImportedItemQuickSearchResult">
+  <div class="imported-item-quick-search-result" data-pk="{{_id}}">
+    <div class="flex search-result-info">
+      <span>{{renderItemType itemType}}</span>
+      <span class="item-identifier">{{identifier}}</span>
+      <span><label class="label label-default">{{statusLabel}}</label></span>
+      {{#if viewUrl}}
+        <div>
+          <a href="{{viewUrl}}" target="_blank" class="hidden-control">
+            <span class="glyphicon glyphicon-share-alt"></span>
+          </a>
+        </div>
+      {{/if}}
+    </div>
+    <div class="flex search-result-info">
+      {{#if versionsFound}}
+        <div>
+          <div>Found</div>
+          <div>
+            {{#each versionsFound}}
+              {{> ReleaseLink releaseId=this }}
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+      {{#if versionsFixed}}
+        <div>
+          <div>
+            {{#if isType ItemTypes.bug}}
+              Fixed
+            {{else}}
+              {{#if isComplete}}
+                Completed
+              {{else}}
+                Planned
+              {{/if}}
+            {{/if}}
+          </div>
+          <div>
+            {{#each versionsFixed}}
+              {{> ReleaseLink releaseId=this }}
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+    </div>
+    <h4>{{title}}</h4>
+  </div>
+</template>

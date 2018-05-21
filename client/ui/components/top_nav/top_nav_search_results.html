@@ -1,0 +1,23 @@
+<template name="TopNavSearchResults">
+  <div class="top-nav-search-results-container">
+    {{#if contributors.count}}
+      <h3>Contributors</h3>
+      {{#each contributors}}
+        <div>
+          <a href="{{pathFor 'ContributorHome' contributorId=_id}}">{{name}}</a> ({{renderTeamRole roleId}})
+        </div>
+      {{/each}}
+    {{/if}}
+
+    {{#if Template.subscriptionsReady}}
+      {{#if importedItems.count}}
+        <h3>Items</h3>
+        {{#each importedItems}}
+          {{> ImportedItemQuickSearchResult }}
+        {{/each}}
+      {{/if}}
+    {{else}}
+      {{> RobaSpinner rainbow=true}}
+    {{/if}}
+  </div>
+</template>
