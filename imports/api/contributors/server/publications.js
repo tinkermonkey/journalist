@@ -36,10 +36,6 @@ Meteor.publish('contributor_project_assignments', function () {
 
 Meteor.publish('contributor_role_definitions', function () {
   console.info('Publish: contributor_role_definitions');
-  if (this.userId) {
-    return ContributorRoleDefinitions.find({});
-  } else {
-    this.ready();
-    return [];
-  }
+  // TODO: Figure out a better way to control anonymous access
+  return ContributorRoleDefinitions.find({});
 });
