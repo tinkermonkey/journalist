@@ -278,6 +278,7 @@ export class JiraIntegrator extends Integrator {
         let postProcessedItems = rawResult.response.issues.map((rawItem) => {
           return self.provider.postProcessItem(rawItem)
         });
+
         return {
           success       : true,
           rawResult     : rawResult,

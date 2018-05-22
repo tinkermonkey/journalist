@@ -7,6 +7,7 @@ import { ContributorTeamRoles }                  from '../../api/contributors/co
 import { ContributorProjectAssignments }         from '../../api/contributors/contributor_project_assignments';
 import { HealthTracker }                         from '../../api/system_health_metrics/server/health_tracker';
 import { ImportedItems, ImportedItemTestSchema } from '../../api/imported_items/imported_items';
+import { ImportedItemWorkStates }                from '../../api/imported_items/imported_item_work_states';
 import { Integrations }                          from '../../api/integrations/integrations';
 import { IntegrationServerCaches }               from '../../api/integrations/integration_server_caches';
 import { IntegrationServers }                    from '../../api/integrations/integration_servers';
@@ -17,6 +18,8 @@ import { ConfluenceIntegrator }                  from './integrators/confluence_
 import { JiraIntegrator }                        from './integrators/jira_integrator';
 import { IntegrationAgent }                      from './integration_agent';
 import { CollectionMap }                         from '../../api/import_export_tool/server/import_export_tool';
+import SimpleSchema                              from 'simpl-schema';
+import { ItemTypes }                             from '../../api/imported_items/item_types';
 
 const { URL } = require('url');
 
@@ -628,6 +631,71 @@ export class IntegrationServiceProvider {
         identifier   : item.identifier
       }, {
         $set: item
+      });
+      
+      // Grab the record fresh to make we have the _id
+      let importedItem = ImportedItems.findOne({
+        integrationId: integrationId,
+        projectId    : projectId,
+        itemType     : itemType,
+        identifier   : item.identifier
+      });
+      
+      // Make sure that all links on this item are reciprocated back from the linked item
+      if (importedItem.links) {
+        importedItem.links.forEach((link) => {
+          // Check for an existing link back from the linked item
+          let linkedItem           = ImportedItems.findOne({ _id: link.itemId }),
+              linkedItemLinkIds    = (linkedItem.links || []).map((l) => {
+                return l.itemId
+              }),
+              hasReciprocatingLink = _.contains(linkedItemLinkIds, item._id);
+          
+          // Create a link if one doesn't exist
+          if (!hasReciprocatingLink) {
+            trace && console.log('IntegrationServiceProvider.storeImportedItem creating new inbound link:', linkedItem._id);
+            ImportedItems.update(linkedItem._id, {
+              $push: {
+                links: {
+                  itemId        : importedItem._id,
+                  itemType      : importedItem.itemType,
+                  itemIdentifier: importedItem.identifier,
+                  itemTitle     : importedItem.title,
+                  itemViewUrl   : importedItem.viewUrl,
+                  linkId        : link.linkId,
+                  linkType      : link.linkType
+                }
+              }
+            });
+          }
+        });
+      }
+      
+      // Make sure that all links to this item are reciprocated back to the linking item
+      let linkedItemIds = (importedItem.links || []).map((link) => {
+        return link.itemId
+      });
+      ImportedItems.find({ _id: { $nin: linkedItemIds }, links: { itemId: importedItem._id } }).forEach((linkingItem) => {
+        // Locate the link from the linking item back to the item being imported
+        let link = _.find(linkingItem.links, (link) => {
+          return link.itemId === importedItem._id
+        });
+        if (link) {
+          trace && console.log('IntegrationServiceProvider.storeImportedItem creating new outbound link:', importedItem._id, importedItem.identifier, '->', linkedItem._id, linkedItem.identifier);
+          ImportedItems.update(importedItem._id, {
+            $push: {
+              links: {
+                itemId        : linkingItem._id,
+                itemType      : linkingItem.itemType,
+                itemIdentifier: linkingItem.identifier,
+                itemTitle     : linkingItem.title,
+                itemViewUrl   : linkingItem.viewUrl,
+                linkId        : link.linkId,
+                linkType      : link.linkType
+              }
+            }
+          });
+        }
       });
     } else {
       console.error('IntegrationServiceProvider.storeImportedItem failed:', this.server._id, this.server.title, item && item.identifier);
