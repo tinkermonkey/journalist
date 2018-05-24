@@ -1,9 +1,10 @@
 //import { moment } from 'meteor/momentjs:moment';
-import { SyncedCron }    from 'meteor/percolate:synced-cron';
-import { Clustering }    from 'meteor/austinsand:journalist-clustering';
-import { Integrations }  from '../../api/integrations/integrations';
-import { ImportedItems } from '../../api/imported_items/imported_items';
-import { HealthTracker } from '../../api/system_health_metrics/server/health_tracker';
+import { SyncedCron }             from 'meteor/percolate:synced-cron';
+import { Clustering }             from 'meteor/austinsand:journalist-clustering';
+import { Integrations }           from '../../api/integrations/integrations';
+import { ImportedItems }          from '../../api/imported_items/imported_items';
+import { ImportedItemFetchQueue } from '../../api/imported_items/imported_item_fetch_queue';
+import { HealthTracker }          from '../../api/system_health_metrics/server/health_tracker';
 
 let debug = false,
     trace = false;
@@ -77,6 +78,7 @@ export class IntegrationAgent {
             job () {
               if (self.integration.details && self.integration.details[ queryKey ]) {
                 self.executeQuery(queryKey, false);
+                self.checkForQueuedImports(queryKey);
               }
             }
           });
@@ -170,6 +172,52 @@ export class IntegrationAgent {
     }
     
     console.log('IntegrationAgent.executeQuery complete:', this.integration._id, queryKey, deepSync, Date.now() - startTime);
+  }
+  
+  /**
+   * Check the item import queue for anything that this integration can fetch
+   */
+  checkForQueuedImports (queryKey) {
+    debug && console.log('IntegrationAgent.checkForQueuedImports:', this.integration._id, queryKey, ImportedItemFetchQueue.find({
+      serverId           : this.integration.serverId,
+      integrationsChecked: { $ne: this.integration._id }
+    }).count());
+    
+    let self  = this,
+        query = self.integration.details[ queryKey ];
+    
+    // Get the items from the queue
+    ImportedItemFetchQueue.find({
+      serverId           : self.integration.serverId,
+      integrationsChecked: { $ne: self.integration._id }
+    }).forEach((queueItem) => {
+      trace && console.log('IntegrationAgent.checkForQueuedImports found a queued item to check:', self.integration._id, queryKey, queueItem.identifier);
+      
+      // Try importing this item using the query
+      let itemQuery    = self.serviceProvider.integrator.appendIdentifierToQuery(query, queueItem.identifier),
+          importResult = self.serviceProvider.importItemsFromQuery(self.integration.projectId, self.integration.importFunction(), itemQuery, null, self.integration.calculatedFields());
+      
+      if (importResult.items && importResult.items.length) {
+        console.log('IntegrationAgent.checkForQueuedImports found a match:', self.integration._id, queryKey, queueItem.identifier, importResult.items.length);
+        
+        // Persist all of the results
+        importResult.items.forEach((item) => {
+          self.serviceProvider.storeImportedItem(self.integration._id, self.integration.projectId, self.integration.itemType, item);
+        });
+        
+        // Remove the import from the queue
+        ImportedItemFetchQueue.remove(queueItem._id);
+      } else {
+        trace && console.log('IntegrationAgent.checkForQueuedImports found no match, marking integration:', self.integration._id, queryKey, queueItem.identifier);
+        
+        // Mark the queue for this integration
+        ImportedItemFetchQueue.update(queueItem._id, {
+          $push: {
+            integrationsChecked: self.integration._id
+          }
+        });
+      }
+    });
   }
   
   /**

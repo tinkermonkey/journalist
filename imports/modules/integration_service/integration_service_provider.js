@@ -8,6 +8,7 @@ import { ContributorProjectAssignments }         from '../../api/contributors/co
 import { HealthTracker }                         from '../../api/system_health_metrics/server/health_tracker';
 import { ImportedItems, ImportedItemTestSchema } from '../../api/imported_items/imported_items';
 import { ImportedItemWorkStates }                from '../../api/imported_items/imported_item_work_states';
+import { ImportedItemFetchQueue }                from '../../api/imported_items/imported_item_fetch_queue';
 import { Integrations }                          from '../../api/integrations/integrations';
 import { IntegrationServerCaches }               from '../../api/integrations/integration_server_caches';
 import { IntegrationServers }                    from '../../api/integrations/integration_servers';
@@ -649,7 +650,7 @@ export class IntegrationServiceProvider {
               linkedItemLinkIds    = (linkedItem.links || []).map((l) => {
                 return l.itemId
               }),
-              hasReciprocatingLink = _.contains(linkedItemLinkIds, item._id);
+              hasReciprocatingLink = _.contains(linkedItemLinkIds, importedItem._id);
           
           // Create a link if one doesn't exist
           if (!hasReciprocatingLink) {
@@ -697,10 +698,67 @@ export class IntegrationServiceProvider {
           });
         }
       });
+      
+      // Scrub for duplicate links
+      importedItem = ImportedItems.findOne(importedItem._id);
+      if (importedItem.links && importedItem.links.length) {
+        let linkCounts = {};
+        importedItem.links.forEach((link) => {
+          if (linkCounts[ link.linkId ] && linkCounts[ link.linkId ].count > 0) {
+            linkCounts[ link.linkId ].count += 1;
+          } else {
+            linkCounts[ link.linkId ] = {
+              link : link,
+              count: 1
+            };
+          }
+        });
+        
+        _.keys(linkCounts).forEach((linkId) => {
+          let linkCount = linkCounts[ linkId ];
+          if (linkCount.count > 1) {
+            console.log('IntegrationServiceProvider.storeImportedItem removing duplicate links:', importedItem._id, importedItem.identifier, '->', linkCount.link.itemIdentifier);
+            // Remove duplicated
+            ImportedItems.update(importedItem._id, {
+              $pull: {
+                links: {
+                  linkId: linkCount.linkId
+                }
+              }
+            });
+            
+            // Insert the link
+            ImportedItems.update(importedItem._id, {
+              $push: {
+                links: linkCount.link
+              }
+            });
+          }
+        });
+        
+      }
     } else {
       console.error('IntegrationServiceProvider.storeImportedItem failed:', this.server._id, this.server.title, item && item.identifier);
       throw new Meteor.Error(500, 'storeImportedItem could not determine item identifier')
     }
+  }
+  
+  /**
+   * Store the identifier of an issue that needs to be imported
+   */
+  queueItemImport (identifier) {
+    trace && console.log('IntegrationServiceProvider.queueItemImport:', this.server._id, this.server.title, identifier);
+    let self = this;
+    
+    ImportedItemFetchQueue.upsert({
+      serverId  : self.server._id,
+      identifier: identifier
+    }, {
+      $set: {
+        serverId  : self.server._id,
+        identifier: identifier
+      }
+    });
   }
   
   /**

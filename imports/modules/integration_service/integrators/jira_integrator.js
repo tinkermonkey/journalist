@@ -306,6 +306,15 @@ export class JiraIntegrator extends Integrator {
   }
   
   /**
+   * Take in a query and append the criteria to look for a particular identifier
+   * @param query
+   * @param identifier
+   */
+  appendIdentifierToQuery (query, identifier) {
+    return query + ' AND id = "' + identifier + '"'
+  }
+  
+  /**
    * Execute a query and return the raw results, following the paging in order to fetch the full results set
    * @param jql
    * @param startAt
@@ -574,7 +583,7 @@ export class JiraIntegrator extends Integrator {
               });
             } else {
               console.warn('JiraIntegrator.processItemForLinks could not find linked item:', linkedIssue.key);
-              // TODO: Log these unlocated issues as load them later
+              self.provider.queueItemImport(linkedIssue.key);
             }
           }
         } catch (e) {
