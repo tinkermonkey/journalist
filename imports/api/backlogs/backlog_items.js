@@ -1,8 +1,9 @@
-import { Mongo }                 from 'meteor/mongo';
-import SimpleSchema              from 'simpl-schema';
-import { Util }                  from '../util.js';
-import { SchemaHelpers }         from '../schema_helpers.js';
-import { BacklogItemCategories } from './backlog_item_categories';
+import { Mongo }                           from 'meteor/mongo';
+import SimpleSchema                        from 'simpl-schema';
+import { Util }                            from '../util.js';
+import { SchemaHelpers }                   from '../schema_helpers.js';
+import { BacklogItemCategories }           from './backlog_item_categories';
+import { BacklogItemResourceRequirements } from './backlog_item_resource_requirements';
 
 /**
  * ============================================================================
@@ -103,11 +104,19 @@ BacklogItems.helpers({
   },
   
   /**
+   * Get the resource requirements for this item
+   */
+  resourceRequirements () {
+    let item = this;
+    
+    return BacklogItemResourceRequirements.find({ backlogItemId: item._id })
+  },
+  
+  /**
    * Get the category record for this item
    */
   category () {
     if (this.categoryId) {
-      console.log('category:', this.categoryId, BacklogItemCategories.findOne(this.categoryId));
       return BacklogItemCategories.findOne(this.categoryId)
     }
   }

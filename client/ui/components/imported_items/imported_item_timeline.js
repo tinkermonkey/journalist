@@ -38,6 +38,10 @@ Template.ImportedItemTimeline.helpers({
         entry.delta = {
           workDays: Util.workDaysDiff(entry.date, next.date)
         };
+      } else {
+        entry.delta = {
+          workDays: Util.workDaysDiff(entry.date, new Date())
+        };
       }
     });
     
