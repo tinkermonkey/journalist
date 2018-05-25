@@ -2,7 +2,6 @@ import './admin_project_integrations.html';
 import { Template }           from 'meteor/templating';
 import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
 import { Integrations }       from '../../../../../imports/api/integrations/integrations';
-import { ImportedItemCounts } from './imported_item_counts';
 import './add_integration_form';
 import './admin_project_integration';
 
@@ -10,10 +9,6 @@ import './admin_project_integration';
  * Template Helpers
  */
 Template.AdminProjectIntegrations.helpers({
-  importedItemCount () {
-    let integration = this;
-    return ImportedItemCounts.findOne(integration._id)
-  }
 });
 
 /**
@@ -106,21 +101,6 @@ Template.AdminProjectIntegrations.onCreated(() => {
   instance.subscribe('display_templates');
   instance.subscribe('integration_import_functions');
   instance.subscribe('integration_servers');
-  
-  instance.subscribedIntegrations = [];
-  
-  instance.autorun(() => {
-    let projectId = FlowRouter.getParam('projectId');
-    
-    if (projectId) {
-      Integrations.find({ projectId: projectId }).forEach((integration) => {
-        if (!_.contains(instance.subscribedIntegrations, integration._id)) {
-          instance.subscribedIntegrations.push(integration._id);
-          instance.subscribe('integration_imported_item_count', integration._id)
-        }
-      });
-    }
-  });
 });
 
 /**

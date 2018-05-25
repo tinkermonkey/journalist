@@ -69,39 +69,6 @@ Meteor.publish('team_imported_item_crumbs', function (teamId) {
   }
 });
 
-Meteor.publish('integration_imported_item_count', function (integrationId) {
-  console.log('Publish: integration_imported_item_count', integrationId);
-  
-  if (!this.userId) {
-    this.ready();
-    return []
-  }
-  
-  let self         = this,
-      count        = 0,
-      initializing = true,
-      handle       = ImportedItemCrumbs.find({ integrationId: integrationId }).observeChanges({
-        added  : function (id) {
-          count++;
-          if (!initializing) {
-            self.changed('imported_item_counts', integrationId, { count: count });
-          }
-        },
-        removed: function (id) {
-          count--;
-          self.changed('imported_item_counts', integrationId, { count: count });
-        }
-      });
-  
-  initializing = false;
-  self.added('imported_item_counts', integrationId, { count: count });
-  self.ready();
-  
-  self.onStop(function () {
-    handle.stop();
-  });
-});
-
 Meteor.publish('imported_item_query_count', function (query, queryId) {
   console.log('Publish: imported_item_query_count', queryId);
   

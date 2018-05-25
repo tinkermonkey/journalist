@@ -79,6 +79,9 @@ export class IntegrationAgent {
               if (self.integration.details && self.integration.details[ queryKey ]) {
                 self.executeQuery(queryKey, false);
                 self.checkForQueuedImports(queryKey);
+                
+                let itemCount = ImportedItems.find({ integrationId: self.integration._id }).count();
+                Integrations.update(self.integration._id, { $set: { itemCount: itemCount } });
               }
             }
           });
@@ -100,6 +103,10 @@ export class IntegrationAgent {
             job () {
               if (self.integration.details && self.integration.details[ queryKey ]) {
                 self.executeQuery(queryKey, true);
+                self.checkForQueuedImports(queryKey);
+  
+                let itemCount = ImportedItems.find({ integrationId: self.integration._id }).count();
+                Integrations.update(self.integration._id, { $set: { itemCount: itemCount } });
               }
             }
           });
@@ -116,8 +123,8 @@ export class IntegrationAgent {
    */
   executeQuery (queryKey, deepSync) {
     debug && console.log('IntegrationAgent.executeQuery:', this.integration._id, queryKey, deepSync);
-    let self      = this,
-        query     = self.integration.details[ queryKey ],
+    let self       = this,
+        query      = self.integration.details[ queryKey ],
         queryStart = Date.now();
     
     if (self.serviceProvider.isHealthy()) {

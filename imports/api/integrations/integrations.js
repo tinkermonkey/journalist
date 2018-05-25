@@ -61,6 +61,10 @@ export const Integration = new SimpleSchema({
     type        : String,
     defaultValue: 'at 1:00 am'
   },
+  itemCount             : {
+    type        : SimpleSchema.Integer,
+    defaultValue: 0
+  },
   // Configuration blob
   details               : {
     type    : Object,
