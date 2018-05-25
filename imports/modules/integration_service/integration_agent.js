@@ -178,13 +178,11 @@ export class IntegrationAgent {
    * Check the item import queue for anything that this integration can fetch
    */
   checkForQueuedImports (queryKey) {
-    debug && console.log('IntegrationAgent.checkForQueuedImports:', this.integration._id, queryKey, ImportedItemFetchQueue.find({
-      serverId           : this.integration.serverId,
-      integrationsChecked: { $ne: this.integration._id }
-    }).count());
+    debug && console.log('IntegrationAgent.checkForQueuedImports:', this.integration._id, queryKey);
     
-    let self  = this,
-        query = self.integration.details[ queryKey ];
+    let self      = this,
+        query     = self.integration.details[ queryKey ],
+        startTime = Date.now();
     
     // Get the items from the queue
     ImportedItemFetchQueue.find({
@@ -218,6 +216,8 @@ export class IntegrationAgent {
         });
       }
     });
+    
+    console.log('IntegrationAgent.checkForQueuedImports complete:', this.integration._id, Date.now() - startTime);
   }
   
   /**
