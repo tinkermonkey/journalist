@@ -2,6 +2,11 @@ import { Meteor }                           from 'meteor/meteor';
 import { moment }                           from 'meteor/momentjs:moment';
 import numeral                              from 'numeral';
 import { Picker }                           from 'meteor/meteorhacks:picker';
+import { Backlogs }                         from '../../backlogs/backlogs';
+import { BacklogItems }                     from '../../backlogs/backlog_items';
+import { BacklogItemCategories }            from '../../backlogs/backlog_item_categories';
+import { BacklogItemResourceRequirements }  from '../../backlogs/backlog_item_resource_requirements';
+import { BacklogItemResourceAllocations }   from '../../backlogs/backlog_item_resource_allocations';
 import { CapacityPlans }                    from '../../capacity_plans/capacity_plans';
 import { CapacityPlanOptions }              from '../../capacity_plans/capacity_plan_options';
 import { CapacityPlanReleases }             from '../../capacity_plans/capacity_plan_releases';
@@ -48,6 +53,11 @@ let AdmZip     = require('adm-zip'),
     };
 
 export const CollectionMap = {
+  Backlogs                        : Backlogs,
+  BacklogItems                    : BacklogItems,
+  BacklogItemCategories           : BacklogItemCategories,
+  BacklogItemResourceRequirements : BacklogItemResourceRequirements,
+  BacklogItemResourceAllocations  : BacklogItemResourceAllocations,
   CapacityPlans                   : CapacityPlans,
   CapacityPlanReleases            : CapacityPlanReleases,
   CapacityPlanSprintBlocks        : CapacityPlanSprintBlocks,
