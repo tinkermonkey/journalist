@@ -35,6 +35,10 @@ export const ImportedItemLink = new SimpleSchema({
   linkType      : {
     type    : String,
     optional: true
+  },
+  dateCreated   : {
+    type    : Date,
+    optional: true
   }
 });
 

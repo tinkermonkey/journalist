@@ -15,163 +15,76 @@ import { Util }                     from '../../api/util';
 
 // Only run on the cluster master node
 if (Clustering.isMaster()) {
+  console.log('==== Upgrade scripts executing');
+  
   /**
-   * Add a link to the server an item came from to ImportedItems
+   * Add date created to the links between items based on the item history
    */
-  if (ImportedItems.find({ serverId: { $exists: false } }).count()) {
-    console.log("UPGRADE: Updating serverId for ImportedItems");
-    let serverMap = {};
-    
-    Integrations.find({}).forEach((integration) => {
-      serverMap[ integration._id ] = integration.serverId
-    });
-    
-    ImportedItems.find({ serverId: { $exists: false } }).forEach((item) => {
-      if (serverMap[ item.integrationId ]) {
-        ImportedItems.update(item._id, {
-          $set: {
-            serverId: serverMap[ item.integrationId ]
-          }
+  let undatedLinks = ImportedItems.find({ 'links.itemId': { $exists: true }, 'links.dateCreated': { $exists: false } });
+  if (undatedLinks.count()) {
+    console.log('==== Upgrade adding dateCreated to links without it:', undatedLinks.count());
+    undatedLinks.forEach((item) => {
+      // Look up the date the item was linked
+      if (item.document.changelog && item.document.changelog.histories) {
+        item.document.changelog.histories.forEach((entry) => {
+          entry.items.forEach((changeItem) => {
+            if (changeItem.field.toLowerCase() === 'link' && changeItem.to) {
+              let dateCreated = moment(entry.created).toDate();
+              // Update the link
+              console.log('Setting link created date:', item.identifier, changeItem.to, dateCreated);
+              ImportedItems.update({
+                _id                   : item._id,
+                'links.itemIdentifier': { $regex: changeItem.to, $options: 'i' }
+              }, { $set: { 'links.$.dateCreated': dateCreated } })
+            }
+          })
         });
       }
-    })
-  }
-  
-  /**
-   * Add the default color to projects that don't have it
-   */
-  if (Projects.find({ backgroundColor: { $exists: false } }).count()) {
-    console.log("UPGRADE: Updating backgroundColor for Projects");
-    Projects.find({ backgroundColor: { $exists: false } }).forEach((project) => {
-      console.log("UPGRADE: setting project backgroundColor:", project._id, project.title);
-      Projects.update(project._id, { $set: { backgroundColor: '#298cff' } });
-    })
-  }
-  if (Projects.find({ foregroundColor: { $exists: false } }).count()) {
-    console.log("UPGRADE: Updating foregroundColor for Projects");
-    Projects.find({ foregroundColor: { $exists: false } }).forEach((project) => {
-      console.log("UPGRADE: setting project foregroundColor:", project._id, project.title);
-      Projects.update(project._id, { $set: { foregroundColor: '#ffffff' } });
-    })
-  }
-  
-  /**
-   * Update the sort version for any releases without one
-   */
-  if (Releases.find({ sortVersion: { $exists: false } }).count()) {
-    console.log("UPGRADE: Updating sortVersion for Releases");
-    
-    Releases.find({ sortVersion: { $exists: false } }).forEach((release) => {
-      if (release.versionNumber && release.versionNumber.length) {
-        console.log("UPGRADE: setting sort version:", release._id, release.title, release.versionNumber, Util.versionNumberToSortString(release.versionNumber));
-        Releases.update(release._id, { $set: { sortVersion: Util.versionNumberToSortString(release.versionNumber) } })
-      } else {
-        console.log("UPGRADE: setting sort version:", release._id, release.title, release.versionNumber, Util.versionNumberToSortString(release.title));
-        Releases.update(release._id, { $set: { sortVersion: Util.versionNumberToSortString(release.title) } })
-      }
     });
   }
   
   /**
-   * Moving releases to a separate collection and keeping the CapacityPlanReleases collection as a link collection
+   * Scrub duplicate links
    */
-  if (CapacityPlanReleases.find({ title: { $exists: true } }).count()) {
-    console.log("UPGRADE: Creating Releases for legacy CapacityPlanReleases");
-    
-    // Convert all of the existing records
-    CapacityPlanReleases.find({ title: { $exists: true } }).forEach((planRelease) => {
-      console.log("UPGRADE: Checking for release for plan release:", planRelease._id, planRelease.title);
-      
-      let release = Releases.findOne({ title: planRelease.title }),
-          option  = CapacityPlanOptions.findOne({
-            $or: [
-              { planId: planRelease.planId },
-              { _id: planRelease.optionId }
-            ]
-          });
-      
-      // Create a release if one doesn't already exist
-      if (option) {
-        if (release && release.title) {
-          console.log("UPGRADE: Found an existing release for plan release:", planRelease._id, planRelease.title, release._id, release.title);
-          CapacityPlanReleases.update(planRelease._id, {
-            $set  : { releaseId: release._id, optionId: option._id },
-            $unset: { title: "", planId: "" }
-          });
+  // Scrub for duplicate links
+  console.log('==== Upgrade checking for duplicate links:');
+  ImportedItems.find({ links: { $exists: true } }).forEach((importedItem) => {
+    if (importedItem.links && importedItem.links.length) {
+      let linkCounts = {};
+      importedItem.links.forEach((link) => {
+        if (linkCounts[ link.linkId ] && linkCounts[ link.linkId ].count > 0) {
+          linkCounts[ link.linkId ].count += 1;
         } else {
-          console.log("UPGRADE: No release found for plan release:", planRelease._id, planRelease.title);
-          let releaseId = Releases.insert({
-            title       : planRelease.title,
-            createdBy   : planRelease.createdBy,
-            dateCreated : planRelease.dateCreated,
-            modifiedBy  : planRelease.modifiedBy,
-            dateModified: planRelease.dateModified
-          });
-          CapacityPlanReleases.update(planRelease._id, {
-            $set  : { releaseId: releaseId, optionId: option._id },
-            $unset: { title: "", planId: "" }
-          });
-        }
-      }
-    });
-    
-    // Cleanup all of the options
-    CapacityPlanOptions.find().forEach((option) => {
-      console.log("UPGRADE: Checking option for orphaned release blocks:", option._id, option.title);
-      
-      CapacityPlanSprintBlocks.find({
-        optionId : option._id,
-        blockType: CapacityPlanBlockTypes.release
-      }).forEach((releaseBlock) => {
-        let releaseRecord = releaseBlock.dataRecord();
-        if (releaseRecord.optionId !== option._id) {
-          console.log("UPGRADE: found an orphaned release block:", option._id, option.title, releaseRecord._id);
-          let correctRelease = CapacityPlanReleases.findOne({ optionId: option._id, releaseId: releaseRecord.releaseId });
-          if (correctRelease) {
-            console.log("UPGRADE: linking orphaned release block to correct release:", option._id, option.title, correctRelease._id);
-            CapacityPlanSprintBlocks.update(releaseBlock._id, { $set: { dataId: correctRelease._id } })
-          } else {
-            console.log("UPGRADE: creating release for orphaned release block:", option._id, option.title);
-            let planReleaseId = CapacityPlanReleases.insert({
-              optionId    : option._id,
-              releaseId   : releaseRecord.releaseId,
-              createdBy   : releaseRecord.createdBy,
-              dateCreated : releaseRecord.dateCreated,
-              modifiedBy  : releaseRecord.modifiedBy,
-              dateModified: releaseRecord.dateModified
-            });
-            CapacityPlanSprintBlocks.update(releaseBlock._id, { $set: { dataId: planReleaseId } })
-          }
+          linkCounts[ link.linkId ] = {
+            link : link,
+            count: 1
+          };
         }
       });
-    });
-  }
+      
+      _.keys(linkCounts).forEach((linkId) => {
+        let linkCount = linkCounts[ linkId ];
+        if (linkCount.count > 1) {
+          console.log('Removing duplicate links:', importedItem._id, importedItem.identifier, '->', linkCount.link.itemIdentifier);
+          // Remove duplicated
+          ImportedItems.update(importedItem._id, {
+            $pull: {
+              links: {
+                linkId: linkCount.linkId
+              }
+            }
+          });
+          
+          // Insert the link
+          ImportedItems.update(importedItem._id, {
+            $push: {
+              links: linkCount.link
+            }
+          });
+        }
+      });
+    }
+  });
   
-  /**
-   * Start date was moved from CapacityPlanOption to CapacityPlan on 3/11/2018
-   *
-   * https://github.com/austinsand/journalist/commit/2977d1380338671930034c4d11d645fd56cfcc99
-   */
-  if (CapacityPlanOptions.find({ startDate: { $exists: true } }).count()) {
-    console.log("UPGRADE: Migrating startDate from CapacityPlanOptions to CapacityPlans");
-    
-    CapacityPlans.find({ startDate: { $exists: false } }).forEach((plan) => {
-      console.log("UPGRADE: Setting CapacityPlan.startDate for plan that doesn't have one set:", plan._id, plan.title);
-      
-      // Get an option and use that start date
-      let option = CapacityPlanOptions.findOne({ planId: plan._id });
-      
-      if (option && option.startDate) {
-        // Pull the start date from the option to the plan
-        CapacityPlans.update(plan._id, { $set: { startDate: option.startDate } });
-        console.log("UPGRADE: CapacityPlan.startDate set:", plan._id, plan.title, option.startDate);
-      } else {
-        console.log("UPGRADE: Failed to locate any options for plan:", plan._id, plan.title)
-      }
-    });
-    
-    // Remote the startDate data from the options to avoid confusion
-    console.log("UPGRADE: Removing startDate from all CapacityPlanOptions");
-    CapacityPlanOptions.update({ startDate: { $exists: true } }, { $unset: { startDate: "" } });
-  }
+  console.log('==== Upgrade scripts complete');
 }

@@ -278,7 +278,7 @@ export class JiraIntegrator extends Integrator {
         let postProcessedItems = rawResult.response.issues.map((rawItem) => {
           return self.provider.postProcessItem(rawItem)
         });
-
+        
         return {
           success       : true,
           rawResult     : rawResult,
@@ -363,7 +363,8 @@ export class JiraIntegrator extends Integrator {
             debug && console.log('JiraIntegrator.executeQuery paging result starting at:', (i - 1) * pageSize, 'of', result.response.total, 'loaded');
             cumulativeIssues = cumulativeIssues.concat(result.response.issues);
           } else {
-            console.error("JiraIntegrator.executeQuery failed recursive get:", {
+            console.error("JiraIntegrator.executeQuery failed:", jql, (i - 1) * pageSize, '->', maxResults);
+            debug && console.error("JiraIntegrator.executeQuery failed recursive get:", {
               jql       : jql,
               startAt   : (i - 1) * pageSize,
               maxResults: maxResults,
@@ -379,7 +380,8 @@ export class JiraIntegrator extends Integrator {
         return result
       }
     } else {
-      console.error("JiraIntegrator.executeQuery failed:", {
+      console.error("JiraIntegrator.executeQuery failed:", jql, startAt, '->', maxResults);
+      debug && console.error("JiraIntegrator.executeQuery failed:", {
         jql       : jql,
         startAt   : startAt || 0,
         maxResults: maxResults,
@@ -408,7 +410,7 @@ export class JiraIntegrator extends Integrator {
         return self.provider.postProcessItem(rawItem)
       });
     } else {
-      console.error('JiraIntegrator.executeAndProcessQuery encountered error:', rawResult);
+      console.error('JiraIntegrator.executeAndProcessQuery encountered error:', rawResult && rawResult.response && rawResult.response.statusCode);
       throw new Meteor.Error(500, 'JiraIntegrator.executeAndProcessQuery failed');
     }
   }
@@ -566,12 +568,24 @@ export class JiraIntegrator extends Integrator {
       processedItem.fields.issuelinks.forEach((link) => {
         try {
           let linkedIssue = link.inwardIssue || link.outwardIssue,
-              linkTypeKey = link.inwardIssue ? 'inward' : 'outward';
+              linkTypeKey = link.inwardIssue ? 'inward' : 'outward',
+              dateCreated;
+          
           if (linkedIssue) {
             // Lookup the issue by the identifier
             let linkedItem = ImportedItems.findOne({ serverId: this.provider.server._id, identifier: linkedIssue.key });
             if (linkedItem) {
-              let baseUrl           = self.provider.server.baseUrl.replace(/\/$/, '');
+              // Look up the date the item was linked
+              if(processedItem.changelog && processedItem.changelog.histories){
+                processedItem.changelog.histories.forEach((entry) => {
+                  entry.items.forEach((changeItem) => {
+                    if(changeItem.field.toLowerCase() === 'link' && changeItem.to === linkedItem.identifier){
+                      dateCreated = moment(entry.created).toDate();
+                    }
+                  })
+                });
+              }
+              
               processedItem.links.push({
                 itemId        : linkedItem._id,
                 itemType      : linkedItem.itemType,
@@ -579,7 +593,8 @@ export class JiraIntegrator extends Integrator {
                 itemTitle     : linkedItem.title,
                 itemViewUrl   : linkedItem.viewUrl,
                 linkId        : link.id,
-                linkType      : link.type[ linkTypeKey ]
+                linkType      : link.type[ linkTypeKey ],
+                dateCreated   : dateCreated
               });
             } else {
               console.warn('JiraIntegrator.processItemForLinks could not find linked item:', linkedIssue.key);

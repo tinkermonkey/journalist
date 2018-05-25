@@ -104,7 +104,7 @@ export class IntegrationAgent {
               if (self.integration.details && self.integration.details[ queryKey ]) {
                 self.executeQuery(queryKey, true);
                 self.checkForQueuedImports(queryKey);
-  
+                
                 let itemCount = ImportedItems.find({ integrationId: self.integration._id }).count();
                 Integrations.update(self.integration._id, { $set: { itemCount: itemCount } });
               }
@@ -171,7 +171,7 @@ export class IntegrationAgent {
           HealthTracker.update(self.trackerKey, true, { message: 'No updates since ' + moment(lastUpdate).format('MM/DD hh:mm a') });
         }
       } catch (e) {
-        console.error('IntegrationAgent.executeQuery failed:', self.integration.project().title, self.integration.itemType, e.response && e.response.statusCode, query);
+        console.error('IntegrationAgent.executeQuery failed:', self.integration.project().title, self.integration.itemType, query, e.toString());
         HealthTracker.update(self.trackerKey, false, { message: 'Query execution failed' });
       }
     } else {
@@ -195,7 +195,7 @@ export class IntegrationAgent {
     ImportedItemFetchQueue.find({
       serverId           : self.integration.serverId,
       integrationsChecked: { $ne: self.integration._id }
-    }).forEach((queueItem) => {
+    }, { limit: 10 }).forEach((queueItem) => {
       trace && console.log('IntegrationAgent.checkForQueuedImports found a queued item to check:', self.integration._id, queryKey, queueItem.identifier);
       
       // Try importing this item using the query
@@ -224,7 +224,7 @@ export class IntegrationAgent {
       }
     });
     
-    console.log('IntegrationAgent.checkForQueuedImports complete:', this.integration.project().title, this.integration.itemType, Date.now() - startTime);
+    console.log('IntegrationAgent.checkForQueuedImports complete:', self.integration.project().title, self.integration.itemType, Date.now() - startTime);
   }
   
   /**
