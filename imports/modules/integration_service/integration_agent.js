@@ -171,14 +171,14 @@ export class IntegrationAgent {
           HealthTracker.update(self.trackerKey, true, { message: 'No updates since ' + moment(lastUpdate).format('MM/DD hh:mm a') });
         }
       } catch (e) {
-        console.error('IntegrationAgent.executeQuery failed:', queryKey, self.integration, e);
+        console.error('IntegrationAgent.executeQuery failed:', self.integration.project().title, self.integration.itemType, e.response && e.response.statusCode, query);
         HealthTracker.update(self.trackerKey, false, { message: 'Query execution failed' });
       }
     } else {
       HealthTracker.update(self.trackerKey, false, { message: 'Service provider is not healthy' });
     }
     
-    console.log('IntegrationAgent.executeQuery complete:', this.integration.project().title, this.integration.itemType, deepSync || false, Date.now() - queryStart);
+    console.log('IntegrationAgent.executeQuery complete:', self.integration.project().title, self.integration.itemType, deepSync || false, Date.now() - queryStart);
   }
   
   /**
