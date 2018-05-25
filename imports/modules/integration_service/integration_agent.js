@@ -118,7 +118,7 @@ export class IntegrationAgent {
     debug && console.log('IntegrationAgent.executeQuery:', this.integration._id, queryKey, deepSync);
     let self      = this,
         query     = self.integration.details[ queryKey ],
-        startTime = Date.now();
+        queryStart = Date.now();
     
     if (self.serviceProvider.isHealthy()) {
       try {
@@ -171,7 +171,7 @@ export class IntegrationAgent {
       HealthTracker.update(self.trackerKey, false, { message: 'Service provider is not healthy' });
     }
     
-    console.log('IntegrationAgent.executeQuery complete:', this.integration._id, queryKey, deepSync, Date.now() - startTime);
+    console.log('IntegrationAgent.executeQuery complete:', this.integration.project().title, this.integration.itemType, deepSync || false, Date.now() - queryStart);
   }
   
   /**
@@ -217,7 +217,7 @@ export class IntegrationAgent {
       }
     });
     
-    console.log('IntegrationAgent.checkForQueuedImports complete:', this.integration._id, Date.now() - startTime);
+    console.log('IntegrationAgent.checkForQueuedImports complete:', this.integration.project().title, this.integration.itemType, Date.now() - startTime);
   }
   
   /**
