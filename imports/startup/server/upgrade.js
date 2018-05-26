@@ -26,18 +26,53 @@ if (Clustering.isMaster()) {
     undatedLinks.forEach((item) => {
       // Look up the date the item was linked
       if (item.document.changelog && item.document.changelog.histories) {
-        item.document.changelog.histories.forEach((entry) => {
-          entry.items.forEach((changeItem) => {
-            if (changeItem.field.toLowerCase() === 'link' && changeItem.to) {
-              let dateCreated = moment(entry.created).toDate();
-              // Update the link
-              console.log('Setting link created date:', item.identifier, changeItem.to, dateCreated);
-              ImportedItems.update({
-                _id                   : item._id,
-                'links.itemIdentifier': { $regex: changeItem.to, $options: 'i' }
-              }, { $set: { 'links.$.dateCreated': dateCreated } })
+        // Iterate through the links
+        item.links.forEach((link) => {
+          let historyFound = false;
+          
+          // Find a changelog entry for this link
+          item.document.changelog.histories.forEach((entry) => {
+            entry.items.forEach((changeItem) => {
+              if (changeItem.field.toLowerCase() === 'link' && changeItem.to && changeItem.to.toLowerCase() === link.itemIdentifier.toLowerCase()) {
+                let dateCreated = moment(entry.created).toDate();
+                historyFound    = true;
+                // Update the link
+                console.log('Setting link created date:', item.identifier, changeItem.to, dateCreated);
+                ImportedItems.update({
+                  serverId      : item.serverId,
+                  'links.linkId': link.linkId
+                }, { $set: { 'links.$.dateCreated': dateCreated } }, { multi: true });
+              }
+            })
+          });
+          
+          if (!historyFound) {
+            console.log('Link created date could not be found:', item.identifier, '->', link.itemIdentifier);
+            // Look up the linked item and find the date created there
+            let linkedItem = ImportedItems.findOne(link.itemId);
+            
+            // Find a changelog entry for this link
+            if (linkedItem) {
+              linkedItem.document.changelog.histories.forEach((entry) => {
+                entry.items.forEach((changeItem) => {
+                  if (changeItem.field.toLowerCase() === 'link' && changeItem.to && changeItem.to.toLowerCase() === item.identifier.toLowerCase()) {
+                    let dateCreated = moment(entry.created).toDate();
+                    historyFound    = true;
+                    // Update the link
+                    let updateCount = ImportedItems.update({
+                      serverId      : item.serverId,
+                      'links.linkId': link.linkId
+                    }, { $set: { 'links.$.dateCreated': dateCreated } }, { multi: true });
+                    console.log('Setting link created date from linked item:', updateCount, item.identifier, linkedItem.identifier, dateCreated);
+                  }
+                })
+              });
             }
-          })
+            
+            if (!historyFound) {
+              console.log('Link created date could not be found from linked item:', item.identifier, '->', link.itemIdentifier);
+            }
+          }
         });
       }
     });
