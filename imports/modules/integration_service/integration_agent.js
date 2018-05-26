@@ -16,7 +16,7 @@ export class IntegrationAgent {
    * @param serviceProvider {IntegrationServiceProvider}
    */
   constructor (integration, serviceProvider) {
-    console.log('Creating new IntegrationAgent:', integration._id);
+    console.log('Creating new IntegrationAgent:', integration._id, integration.project().title, integration.itemType);
     let self = this;
     
     self.integration     = Integrations.findOne({ _id: integration._id });
