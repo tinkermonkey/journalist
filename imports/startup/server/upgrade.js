@@ -33,15 +33,19 @@ if (Clustering.isMaster()) {
           // Find a changelog entry for this link
           item.document.changelog.histories.forEach((entry) => {
             entry.items.forEach((changeItem) => {
-              if (changeItem.field.toLowerCase() === 'link' && changeItem.to && changeItem.to.toLowerCase() === link.itemIdentifier.toLowerCase()) {
-                let dateCreated = moment(entry.created).toDate();
-                historyFound    = true;
-                // Update the link
-                console.log('Setting link created date:', item.identifier, changeItem.to, dateCreated);
-                ImportedItems.update({
-                  serverId      : item.serverId,
-                  'links.linkId': link.linkId
-                }, { $set: { 'links.$.dateCreated': dateCreated } }, { multi: true });
+              try {
+                if (changeItem.field.toLowerCase() === 'link' && changeItem.to && changeItem.to.toLowerCase() === link.itemIdentifier.toLowerCase()) {
+                  let dateCreated = moment(entry.created).toDate();
+                  historyFound    = true;
+                  // Update the link
+                  console.log('Setting link created date:', item.identifier, changeItem.to, dateCreated);
+                  ImportedItems.update({
+                    serverId      : item.serverId,
+                    'links.linkId': link.linkId
+                  }, { $set: { 'links.$.dateCreated': dateCreated } }, { multi: true });
+                }
+              } catch (e) {
+                console.error('Updating link dateCreated failed:', e);
               }
             })
           });
@@ -55,15 +59,19 @@ if (Clustering.isMaster()) {
             if (linkedItem) {
               linkedItem.document.changelog.histories.forEach((entry) => {
                 entry.items.forEach((changeItem) => {
-                  if (changeItem.field.toLowerCase() === 'link' && changeItem.to && changeItem.to.toLowerCase() === item.identifier.toLowerCase()) {
-                    let dateCreated = moment(entry.created).toDate();
-                    historyFound    = true;
-                    // Update the link
-                    let updateCount = ImportedItems.update({
-                      serverId      : item.serverId,
-                      'links.linkId': link.linkId
-                    }, { $set: { 'links.$.dateCreated': dateCreated } }, { multi: true });
-                    console.log('Setting link created date from linked item:', updateCount, item.identifier, linkedItem.identifier, dateCreated);
+                  try {
+                    if (changeItem.field.toLowerCase() === 'link' && changeItem.to && changeItem.to.toLowerCase() === item.identifier.toLowerCase()) {
+                      let dateCreated = moment(entry.created).toDate();
+                      historyFound    = true;
+                      // Update the link
+                      let updateCount = ImportedItems.update({
+                        serverId      : item.serverId,
+                        'links.linkId': link.linkId
+                      }, { $set: { 'links.$.dateCreated': dateCreated } }, { multi: true });
+                      console.log('Setting link created date from linked item:', updateCount, item.identifier, linkedItem.identifier, dateCreated);
+                    }
+                  } catch (e) {
+                    console.error('Updating link dateCreated failed:', e);
                   }
                 })
               });
@@ -102,20 +110,30 @@ if (Clustering.isMaster()) {
         if (linkCount.count > 1) {
           console.log('Removing duplicate links:', importedItem._id, importedItem.identifier, '->', linkCount.link.itemIdentifier);
           // Remove duplicated
-          ImportedItems.update(importedItem._id, {
-            $pull: {
-              links: {
-                linkId: linkCount.linkId
+          try {
+            ImportedItems.update(importedItem._id, {
+              $pull: {
+                links: {
+                  linkId: linkCount.linkId
+                }
               }
-            }
-          });
+            });
+          } catch (e) {
+            console.error('Removing duplicate links failed:', e);
+          }
           
           // Insert the link
-          ImportedItems.update(importedItem._id, {
-            $push: {
-              links: linkCount.link
+          try {
+            if (linkCount.link.dateCreated) {
+              ImportedItems.update(importedItem._id, {
+                $push: {
+                  links: linkCount.link
+                }
+              });
             }
-          });
+          } catch (e) {
+            console.error('Replacing de-duplicated link failed:', e);
+          }
         }
       });
     }
