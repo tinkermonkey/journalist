@@ -24,8 +24,9 @@ import { ItemTypes }                             from '../../api/imported_items/
 
 const { URL } = require('url');
 
-let debug = false,
-    trace = false;
+let debug      = false,
+    trace      = false,
+    jobSpacing = 15000; // Put some temporal space between the integration agents
 
 export class IntegrationServiceProvider {
   /**
@@ -87,11 +88,11 @@ export class IntegrationServiceProvider {
     
     // Monitor the Integrations collection to respond to additions, deletions, and modifications
     self.integrationObserver = Integrations.find({ serverId: self.server._id }).observe({
-      added (integration) {
+      addedAt (integration, index) {
         debug && console.log('IntegrationServiceProvider.integrationObserver.added:', integration._id);
-        Meteor.defer(() => {
+        Meteor.setTimeout(() => {
           self.createIntegrationAgent(integration);
-        });
+        }, index * jobSpacing);
       },
       removed (integration) {
         console.log('IntegrationServiceProvider.integrationObserver.removed:', integration._id);
@@ -664,7 +665,8 @@ export class IntegrationServiceProvider {
                   itemTitle     : importedItem.title,
                   itemViewUrl   : importedItem.viewUrl,
                   linkId        : link.linkId,
-                  linkType      : link.linkType
+                  linkType      : link.linkType,
+                  dateCreated   : link.dateCreated
                 }
               }
             });
@@ -692,7 +694,8 @@ export class IntegrationServiceProvider {
                 itemTitle     : linkingItem.title,
                 itemViewUrl   : linkingItem.viewUrl,
                 linkId        : link.linkId,
-                linkType      : link.linkType
+                linkType      : link.linkType,
+                dateCreated   : link.dateCreated
               }
             }
           });
