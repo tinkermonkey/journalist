@@ -30,7 +30,7 @@ Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
 });
 
 Meteor.publish('imported_item', function (itemId) {
-  console.log('Publish: imported_item', itemId);
+  console.log(this._session&& this._session.id || '-', this._session && this._session.userId, this.connection.clientAddress, 'Publish: imported_item', itemId);
   if (this.userId && itemId) {
     return ImportedItems.find({ _id: itemId })
   } else {
