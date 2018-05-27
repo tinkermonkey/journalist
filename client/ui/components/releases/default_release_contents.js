@@ -93,9 +93,9 @@ Template.DefaultReleaseContents.onCreated(() => {
   let instance = Template.instance();
   
   instance.releaseId  = new ReactiveVar();
-  instance.filter     = new ReactiveVar();
   instance.query      = new ReactiveVar();
   instance.items      = new ReactiveVar();
+  instance.filter     = new ReactiveVar();
   instance.chartScale = new ReactiveVar(1);
   
   instance.autorun(() => {

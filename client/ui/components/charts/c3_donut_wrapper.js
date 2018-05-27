@@ -332,7 +332,7 @@ export class C3DonutWrapper {
           let title = self.config.renderLabel && _.isFunction(self.config.renderLabel) ? self.config.renderLabel(columnKey) : Util.camelToTitle(columnKey);
           
           map[ columnKey ] = {
-            title: title,
+            title: title || 'None',
             value: 0
           }
         }
