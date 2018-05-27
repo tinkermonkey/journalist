@@ -1,0 +1,40 @@
+<template name="DefaultReleaseContents">
+  <h1>
+    {{title}}
+    {{#if totalItemCount}}
+      <small>{{totalItemCount}} items</small>
+    {{/if}}
+  </h1>
+
+  {{> FilterBar filterVar=filterVar resultCount=itemCount resultLabel='Items' }}
+
+  {{#if multiProject}}
+    <div class="flex release-chart-row">
+      {{> ImportedItemProjectDonut items=items filterVar=filterVar scaleVar=scaleVar }}
+      {{> ImportedItemTypeDonut items=items filterVar=filterVar scaleVar=scaleVar }}
+    </div>
+
+    <div class="flex release-chart-row">
+      {{> ImportedItemWorkStateDonut items=items filterVar=filterVar scaleVar=scaleVar }}
+      {{> ImportedItemStatusDonut items=items filterVar=filterVar scaleVar=scaleVar }}
+    </div>
+  {{else}}
+    <div class="flex release-chart-row">
+      {{> ImportedItemTypeDonut items=items filterVar=filterVar scaleVar=scaleVar }}
+      {{> ImportedItemStatusDonut items=items filterVar=filterVar scaleVar=scaleVar }}
+      {{> ImportedItemWorkStateDonut items=items filterVar=filterVar scaleVar=scaleVar }}
+    </div>
+  {{/if}}
+
+  <h2>Items</h2>
+  {{#RobaTabGroup name="release-contents-project-tabs" navClass="nav-pills"}}
+    {{#each workStates}}
+      {{#if workStateCount this }}
+        {{#RobaTab name=key title=title }}
+          {{> ImportedItemTable workStateItemTableContext this }}
+        {{/RobaTab}}
+      {{/if}}
+      {{tabsDoorbell}}
+    {{/each}}
+  {{/RobaTabGroup}}
+</template>

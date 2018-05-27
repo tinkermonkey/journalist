@@ -1,8 +1,7 @@
 import './release.html';
-import { Template }               from 'meteor/templating';
-import { Releases }               from '../../../../imports/api/releases/releases';
-import { ImportedItemWorkStates } from '../../../../imports/api/imported_items/imported_item_work_states';
-import { Util }                   from '../../../../imports/api/util';
+import { Template } from 'meteor/templating';
+import { Releases } from '../../../../imports/api/releases/releases';
+import '../../components/releases/default_release_contents';
 
 /**
  * Template Helpers
@@ -11,28 +10,6 @@ Template.Release.helpers({
   release () {
     let releaseId = Template.instance().releaseId.get();
     return Releases.findOne(releaseId)
-  },
-  workStates () {
-    return _.keys(ImportedItemWorkStates).map((key) => {
-      return {
-        value: ImportedItemWorkStates[ key ],
-        key  : key,
-        title: Util.camelToTitle(key)
-      }
-    })
-  },
-  workStateItemTableContext (project, release) {
-    let workState = this;
-    
-    console.log('Release.workStateItemTableContext:', workState, project, release);
-    
-    return {
-      query: {
-        projectId    : project._id,
-        workState    : workState.value,
-        versionsFixed: release._id
-      }
-    }
   }
 });
 
@@ -53,7 +30,7 @@ Template.Release.onCreated(() => {
     let paramReleaseId = FlowRouter.getParam('releaseId'),
         dataReleaseId  = Template.currentData().toString();
     
-    instance.releaseId.set(paramReleaseId || dataReleaseId)
+    instance.releaseId.set(paramReleaseId || dataReleaseId);
   })
 });
 
