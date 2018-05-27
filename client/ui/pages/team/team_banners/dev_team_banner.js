@@ -1,7 +1,7 @@
 import './dev_team_banner.html';
 import { Template }                      from 'meteor/templating';
 import { Projects }                      from '../../../../../imports/api/projects/projects';
-import { ImportedItemCrumbs }            from '../../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItems }            from '../../../../../imports/api/imported_items/imported_items';
 import { ImportedItemWorkPhases }        from '../../../../../imports/api/imported_items/imported_item_work_phases';
 import { ContributorProjectAssignments } from '../../../../../imports/api/contributors/contributor_project_assignments';
 import { ItemTypes }                     from '../../../../../imports/api/imported_items/item_types';
@@ -156,7 +156,7 @@ Template.DevTeamBanner.helpers({
   },
   teamPlanningTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs.find({
+        data = ImportedItems.find({
           teamId   : team._id,
           workPhase: ImportedItemWorkPhases.planning,
           itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
@@ -189,7 +189,7 @@ Template.DevTeamBanner.helpers({
   },
   teamImplementingTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs.find({
+        data = ImportedItems.find({
           teamId   : team._id,
           workPhase: ImportedItemWorkPhases.implementation,
           itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }
@@ -222,7 +222,7 @@ Template.DevTeamBanner.helpers({
   },
   teamVerificationTicketTypes () {
     let team = this,
-        data = ImportedItemCrumbs.find({
+        data = ImportedItems.find({
           teamId   : team._id,
           workPhase: ImportedItemWorkPhases.verification,
           itemType : { $in: [ ItemTypes.feature, ItemTypes.bug ] }

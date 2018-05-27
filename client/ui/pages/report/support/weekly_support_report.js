@@ -2,7 +2,6 @@ import './weekly_support_report.html';
 import { Template }           from 'meteor/templating';
 import { moment }             from 'meteor/momentjs:moment';
 import { ImportedItems }      from '../../../../../imports/api/imported_items/imported_items';
-import { ImportedItemCrumbs } from '../../../../../imports/api/imported_items/imported_item_crumbs';
 import { ItemTypes }          from '../../../../../imports/api/imported_items/item_types';
 import { Projects }           from '../../../../../imports/api/projects/projects';
 import '../../../components/charts/donut_chart';
@@ -342,14 +341,14 @@ Template.WeeklySupportReport.helpers({
       data[ 0 ].push(weekStart);
       
       // Get the number filed in this week
-      data[ 1 ].push(ImportedItemCrumbs.find({
+      data[ 1 ].push(ImportedItems.find({
         projectId  : project._id,
         itemType   : ItemTypes.supportTicket,
         dateCreated: { $gte: weekStart, $lt: weekEnd }
       }).count());
       
       // Get the number of tickets open during this week
-      data[ 2 ].push(ImportedItemCrumbs.find({
+      data[ 2 ].push(ImportedItems.find({
         projectId  : project._id,
         itemType   : ItemTypes.supportTicket,
         // Created before the week ended
@@ -374,7 +373,7 @@ Template.WeeklySupportReport.helpers({
       }).count());
       
       // Get the number resolved in this week
-      data[ 3 ].push(ImportedItemCrumbs.find({
+      data[ 3 ].push(ImportedItems.find({
         projectId    : project._id,
         itemType     : ItemTypes.supportTicket,
         statusHistory: {
