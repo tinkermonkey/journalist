@@ -1,0 +1,17 @@
+<template name="FilterBar">
+  <div class="filter-bar">
+    {{#each filterItems}}
+      <btn class="btn btn-default btn-remove-filter">
+        <span>
+          <b>{{title}}</b>: {{#if prettyValue}}{{prettyValue}}{{else}}{{value}}{{/if}}
+        </span>
+        <span class="glyphicon glyphicon-remove-circle"></span>
+      </btn>
+    {{/each}}
+    {{#if filterItems.length}}
+      {{#if resultCount}}
+        <span>{{resultCount}} {{#if resultLabel}}{{resultLabel}}{{else}}Results{{/if}}</span>
+      {{/if}}
+    {{/if}}
+  </div>
+</template>
