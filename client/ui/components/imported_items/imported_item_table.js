@@ -2,7 +2,7 @@ import './imported_item_table.html';
 import { Template }           from 'meteor/templating';
 import { Random }             from 'meteor/random';
 import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
-import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItems }      from '../../../../imports/api/imported_items/imported_items';
 import { ImportedItemCounts } from '../../pages/admin/projects/imported_item_counts';
 import './imported_item_preview_link';
 
@@ -17,12 +17,22 @@ Template.ImportedItemTable.helpers({
         page    = Template.instance().page.get(),
         skip    = (page - 1) * pageSize;
     
-    console.log('ImportedItemTable.importedItems:', context, { sort: { identifier: 1 }, skip: skip, limit: pageSize });
-    return ImportedItemCrumbs.find(context.query, { sort: { identifier: 1 }, skip: skip, limit: pageSize });
+    //console.log('ImportedItemTable.importedItems:', context, { sort: { identifier: 1 }, skip: skip, limit: pageSize });
+    if (context && context.query) {
+      return ImportedItems.find(context.query, { sort: { identifier: 1 }, skip: skip, limit: pageSize });
+    } else if (context && context.items) {
+      return context.items.slice(skip, pageSize)
+    }
   },
   importedItemsCount () {
-    let countRow = ImportedItemCounts.findOne(Template.instance().queryId);
-    return countRow && countRow.count;
+    let context = this;
+    
+    if (context && context.query) {
+      let countRow = ImportedItemCounts.findOne(Template.instance().queryId);
+      return countRow && countRow.count;
+    } else if (context && context.items) {
+      return context.items.length
+    }
   },
   fromIndex () {
     let page = Template.instance().page.get();

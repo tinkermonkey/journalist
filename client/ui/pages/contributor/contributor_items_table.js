@@ -1,15 +1,15 @@
 import './contributor_items_table.html';
 import { Template }           from 'meteor/templating';
-import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItems } from '../../../../imports/api/imported_items/imported_items';
 
 /**
  * Template Helpers
  */
 Template.ContributorItemsTable.helpers({
-  importedItemCrumbs () {
+  importedItems () {
     let context = this;
     if (context.query) {
-      return ImportedItemCrumbs.find(context.query, context.sort)
+      return ImportedItems.find(context.query, context.sort)
     }
   }
 });

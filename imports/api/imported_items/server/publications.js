@@ -1,7 +1,6 @@
 import { Meteor }             from 'meteor/meteor';
 import { check }              from 'meteor/check';
 import { ImportedItems }      from '../imported_items';
-import { ImportedItemCrumbs } from '../imported_item_crumbs';
 
 Meteor.publish('integration_imported_items', function (integrationId, start, limit) {
   console.log('Publish: integration_imported_items', integrationId, start, limit);
@@ -22,7 +21,7 @@ Meteor.publish('integration_imported_items', function (integrationId, start, lim
 Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
   console.log('Publish: integration_imported_item_crumbs', integrationId);
   if (this.userId && integrationId) {
-    return ImportedItemCrumbs.find({ integrationId: integrationId });
+    return ImportedItems.find({ integrationId: integrationId }, { fields: { document: false } });
   } else {
     this.ready();
     return []
@@ -30,7 +29,7 @@ Meteor.publish('integration_imported_item_crumbs', function (integrationId) {
 });
 
 Meteor.publish('imported_item', function (itemId) {
-  console.log(this._session&& this._session.id || '-', this._session && this._session.userId, this.connection.clientAddress, 'Publish: imported_item', itemId);
+  console.log(this._session && this._session.id || '-', this._session && this._session.userId, this.connection.clientAddress, 'Publish: imported_item', itemId);
   if (this.userId && itemId) {
     return ImportedItems.find({ _id: itemId })
   } else {
@@ -52,7 +51,10 @@ Meteor.publish('imported_item_query', function (query, options) {
 Meteor.publish('imported_item_crumb_query', function (query, options) {
   console.log('Publish: imported_item_crumb_query');
   if (this.userId && query && _.isObject(query)) {
-    return ImportedItemCrumbs.find(query, options);
+    _.defaults(options || {}, {
+      fields: { document: false }
+    });
+    return ImportedItems.find(query, options);
   } else {
     this.ready();
     return []
@@ -62,7 +64,7 @@ Meteor.publish('imported_item_crumb_query', function (query, options) {
 Meteor.publish('team_imported_item_crumbs', function (teamId) {
   console.log('Publish: team_imported_item_crumbs', teamId);
   if (this.userId && teamId) {
-    return ImportedItemCrumbs.find({ teamId: teamId });
+    return ImportedItems.find({ teamId: teamId }, { fields: { document: false } });
   } else {
     this.ready();
     return []

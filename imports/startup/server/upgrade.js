@@ -15,6 +15,7 @@ import { Util }                     from '../../api/util';
 
 // Only run on the cluster master node
 if (Clustering.isMaster()) {
+  console.log('==============================================================================');
   console.log('==== Upgrade scripts executing');
   
   /**

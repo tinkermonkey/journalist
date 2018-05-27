@@ -1,6 +1,6 @@
 import './admin_stats_imported_items.html';
 import { Template }               from 'meteor/templating';
-import { ImportedItemCrumbs }     from '../../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItems }          from '../../../../../imports/api/imported_items/imported_items';
 import { ImportedItemWorkStates } from '../../../../../imports/api/imported_items/imported_item_work_states';
 import { ImportedItemWorkPhases } from '../../../../../imports/api/imported_items/imported_item_work_phases';
 import { ItemTypes }              from '../../../../../imports/api/imported_items/item_types';
@@ -13,7 +13,7 @@ import '../../../components/charts/donut_chart';
  */
 Template.AdminStatsImportedItems.helpers({
   itemTypeChartContext () {
-    let data = ImportedItemCrumbs.find();
+    let data = ImportedItems.find().fetch();
     return {
       cssClass: 'chart-flex',
       config  : {
@@ -23,11 +23,11 @@ Template.AdminStatsImportedItems.helpers({
           return Util.camelToTitle(_.invert(ItemTypes)[ value ])
         },
       },
-      data    : data.fetch()
+      data    : data
     }
   },
   itemProjectContext () {
-    let data = ImportedItemCrumbs.find();
+    let data = ImportedItems.find().fetch();
     return {
       cssClass: 'chart-flex',
       config  : {
@@ -38,11 +38,11 @@ Template.AdminStatsImportedItems.helpers({
           return project && project.title
         },
       },
-      data    : data.fetch()
+      data    : data
     }
   },
   itemWorkStatesContext () {
-    let data = ImportedItemCrumbs.find();
+    let data = ImportedItems.find().fetch();
     return {
       cssClass: 'chart-flex',
       config  : {
@@ -52,11 +52,11 @@ Template.AdminStatsImportedItems.helpers({
           return Util.camelToTitle(_.invert(ImportedItemWorkStates)[ value ])
         },
       },
-      data    : data.fetch()
+      data    : data
     }
   },
   itemWorkPhasesContext () {
-    let data = ImportedItemCrumbs.find();
+    let data = ImportedItems.find().fetch();
     return {
       cssClass: 'chart-flex',
       config  : {
@@ -66,7 +66,7 @@ Template.AdminStatsImportedItems.helpers({
           return Util.camelToTitle(_.invert(ImportedItemWorkPhases)[ value ])
         },
       },
-      data    : data.fetch()
+      data    : data
     }
   }
 });

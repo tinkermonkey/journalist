@@ -1,6 +1,6 @@
 import './editable_item_search.html';
 import { Template }           from 'meteor/templating';
-import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItems } from '../../../../imports/api/imported_items/imported_items';
 
 /**
  * Template Helpers
@@ -10,7 +10,7 @@ Template.EditableItemSearch.helpers({
     let searchTerm = Template.instance().searchTerm.get();
     if (_.isString(searchTerm) && searchTerm.length) {
       searchTerm = searchTerm.toLowerCase();
-      return ImportedItemCrumbs.find({
+      return ImportedItems.find({
         $or: [
           { title: { $regex: searchTerm, $options: 'i' } },
           { identifier: { $regex: searchTerm, $options: 'i' } },

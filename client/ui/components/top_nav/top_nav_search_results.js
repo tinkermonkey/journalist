@@ -1,7 +1,7 @@
 import './top_nav_search_results.html';
 import { Template }           from 'meteor/templating';
 import { Contributors }       from '../../../../imports/api/contributors/contributors';
-import { ImportedItemCrumbs } from '../../../../imports/api/imported_items/imported_item_crumbs';
+import { ImportedItems } from '../../../../imports/api/imported_items/imported_items';
 import '../imported_items/imported_item_quick_search_result';
 
 /**
@@ -17,7 +17,7 @@ Template.TopNavSearchResults.helpers({
     }, { sort: { name: 1 } })
   },
   importedItems () {
-    return ImportedItemCrumbs.find({
+    return ImportedItems.find({
       $or: [
         { title: { $regex: this.searchTerm, $options: 'i' } },
         { identifier: { $regex: this.searchTerm, $options: 'i' } }
