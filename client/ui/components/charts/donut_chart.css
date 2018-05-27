@@ -3,15 +3,30 @@
   flex-shrink : 1;
 }
 
+.donut-with-callouts {
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.donut-title {
+  fill      : #333333;
+  font-size : 24pt;
+}
+
 .donut-total {
   font-size   : 36pt;
   font-weight : bold;
   opacity     : 0.5;
 }
 
+.donut-sub-title {
+  font-size : 12pt;
+  fill      : #333333;
+}
+
 .donut-label-group .donut-label {
   font-size : 10pt;
-  fill      : #333;
+  fill      : #333333;
 }
 
 .donut-label-left {

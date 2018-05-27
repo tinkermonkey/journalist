@@ -31,6 +31,10 @@ Template.DonutChart.onRendered(() => {
   instance.autorun(() => {
     let context = Template.currentData();
     
+    if (context.config.scaleVar) {
+      let scale = context.config.scaleVar.get();
+    }
+    
     // Clear any previous timeouts in flight
     clearTimeout(instance.updateTimeout);
     

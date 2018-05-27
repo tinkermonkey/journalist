@@ -1,13 +1,14 @@
-import numeral from 'numeral';
-import { Util }    from '../../../../imports/api/util';
+import numeral  from 'numeral';
+import { Util } from '../../../../imports/api/util';
 
 let c3         = require('c3'),
     d3         = require('d3'),
     debug      = false,
     trace      = false,
     totalDy    = -0.4,
-    nextDy     = 2.8,
-    standardDy = 1.2;
+    nextDy     = 2.0,
+    standardDy = 1.2,
+    minScale   = 0.75;
 
 export class C3DonutWrapper {
   constructor (containerId, config) {
@@ -25,6 +26,10 @@ export class C3DonutWrapper {
       }
     }, config);
     
+    // Keep track of the slices so that filtering can be made to work
+    this.slices = [];
+    this.scale  = 1.0;
+    
     return this
   }
   
@@ -36,43 +41,50 @@ export class C3DonutWrapper {
     debug && console.log(Util.timestamp(), 'C3DonutWrapper.generate:', this.containerId, data && data.length);
     let self = this;
     
-    // Parse the data
-    self.parseData(data);
-    
     // Generate the chart
     self.chartConfig = _.extend({
-      bindto : '#' + this.containerId,
-      data   : {
+      bindto : '#' + self.containerId,
+      data   : self.parseData(data, {
         type   : 'donut',
-        columns: self.columns
-      },
+        onclick: function (d, element) {
+          console.log('Default Data Click:', d, element);
+        }
+      }),
       donut  : {
         title: self.config.title || 'Donut Chart'
       },
       legend : {
-        show: self.columns.length < 5
+        show: false
       },
       padding: {
         top   : 20,
         bottom: 20,
-        left  : 120,
-        right : 120
+        left  : 20,
+        right : 20
+      },
+      onresize () {
+        console.log('chart resize:', this);
       }
     }, self.config.chart);
     
-    // check for a custom title
-    if (!_.isString(self.chartConfig.donut.title)) {
-      debug && console.log(Util.timestamp(), 'C3DonutWrapper custom title:', self.chartConfig.donut.title);
+    // Handle the title
+    if (_.isObject(self.chartConfig.donut.title) || _.isArray(self.chartConfig.donut.title)) {
       self.chartConfig.customTitle = _.clone(self.chartConfig.donut.title);
-      self.chartConfig.donut.title = '';
+    } else if (_.isArray(self.chartConfig.donut.title)) {
+      self.chartConfig.customTitle = _.clone(self.chartConfig.donut.title);
+    } else {
+      self.chartConfig.customTitle = [ (self.chartConfig.donut.title || '').toString() ];
     }
+    self.chartConfig.donut.title = '';
     
     debug && console.log(Util.timestamp(), 'C3DonutWrapper.generate chartConfig:', self.chartConfig);
-    self.chart = c3.generate(self.chartConfig);
-    
-    if (self.chartConfig.customTitle) {
-      self.updateCustomTitle();
+    try {
+      self.chart = c3.generate(self.chartConfig);
+    } catch (e) {
+      console.error('C3DonutWrapper.generate failed:', e, self.chartConfig);
     }
+    
+    self.updateTitle();
     
     if (self.config.callouts.show) {
       self.updateCallouts();
@@ -87,17 +99,14 @@ export class C3DonutWrapper {
     debug && console.log(Util.timestamp(), 'C3DonutWrapper.update:', this.containerId, data && data.length);
     let self = this;
     
-    // Parse the data
-    self.parseData(data);
-    
     if (self.chart) {
-      self.chart.load({
-        columns: self.columns
-      });
-      
-      if (self.chartConfig.customTitle) {
-        self.updateCustomTitle();
+      try {
+        self.chart.load(self.parseData(data));
+      } catch (e) {
+        console.error('C3DonutWrapper.update failed:', e, data);
       }
+      
+      self.updateTitle();
       
       if (self.config.callouts.show) {
         self.updateCallouts();
@@ -110,8 +119,8 @@ export class C3DonutWrapper {
   /**
    * Update the custom title if one exists
    */
-  updateCustomTitle () {
-    debug && console.log(Util.timestamp(), 'C3DonutWrapper.updateCustomTitle:', this.containerId);
+  updateTitle () {
+    debug && console.log(Util.timestamp(), 'C3DonutWrapper.updateTitle:', this.containerId);
     let self = this;
     
     self.titleElement = d3.select('#' + self.containerId + ' .c3-chart-arcs-title');
@@ -138,16 +147,28 @@ export class C3DonutWrapper {
           .attr('x', 0)
           .attr('dy', totalDy + 'em')
           .text(total);
+      
+      self.chartConfig.customTitle.text.forEach((piece, i) => {
+        let dy = self.chartConfig.customTitle.showTotal && i === 0 ? nextDy : standardDy;
+        self.titleElement
+            .append('tspan')
+            .attr('class', 'donut-sub-title')
+            .attr('x', 0)
+            .attr('dy', dy + 'em')
+            .text(piece);
+      });
+    } else {
+      let pieces = _.isArray(self.chartConfig.customTitle) ? self.chartConfig.customTitle : self.chartConfig.customTitle.text;
+      pieces.forEach((piece, i) => {
+        let dy = i === 0 ? (-1 * (pieces.length - 1) * standardDy) / 2 : standardDy;
+        self.titleElement
+            .append('tspan')
+            .attr('class', 'donut-title')
+            .attr('x', 0)
+            .attr('dy', dy + 'em')
+            .text(piece);
+      });
     }
-    
-    self.chartConfig.customTitle.text.forEach((piece, i) => {
-      let dy = self.chartConfig.customTitle.showTotal && i === 0 ? nextDy : standardDy;
-      self.titleElement
-          .append('tspan')
-          .attr('x', 0)
-          .attr('dy', dy + 'em')
-          .text(piece);
-    })
   }
   
   /**
@@ -250,18 +271,44 @@ export class C3DonutWrapper {
             ],
           ]
         });
+    
+    // Scale the chart display to fit
+    let container      = $('#' + self.containerId),
+        chartBounds    = container.find('svg').get(0).getBBox(),
+        containerWidth = container.width(),
+        proposedScale  = Math.max(containerWidth / (chartBounds.width * 0.9), minScale);
+    
+    // If there's a shared scale, collaborate
+    if (self.config.scaleVar) {
+      let sharedScale = self.config.scaleVar.get() || 1;
+      proposedScale   = Math.min(sharedScale, proposedScale);
+      if (proposedScale !== sharedScale) {
+        self.config.scaleVar.set(proposedScale);
+      }
+    }
+    
+    debug && console.log(Util.timestamp(), 'C3DonutWrapper proposed scale:', this.containerId, proposedScale, chartBounds.width, containerWidth);
+    if (proposedScale < 1) {
+      container.closest('.chart').css('transform', 'scale(' + proposedScale + ')')
+    }
   }
   
   /**
    * Parse the data
    * @param data
+   * @param config
    */
-  parseData (data) {
+  parseData (data, config) {
     debug && console.log(Util.timestamp(), 'C3DonutWrapper.parseData:', this.containerId, data && data.length);
     let self = this,
         map  = {};
     
-    // Aggregate the data
+    config = config || {};
+    
+    // Splice in the click handler because this lives on the C3 data construct
+    if (self.config.onclick) {
+      config.onclick = self.config.onclick.bind(self);
+    }
     data.forEach((row) => {
       let columnKey;
       
@@ -301,10 +348,29 @@ export class C3DonutWrapper {
     });
     
     // Format it into columns
-    self.columns = [];
+    config.columns = [];
     _.keys(map).forEach((columnKey) => {
       let column = map[ columnKey ];
-      self.columns.push([ column.title, column.value ]);
+      config.columns.push([ column.title, column.value ]);
+      
+      if (!_.contains(self.slices, column.title)) {
+        self.slices.push(column.title)
+      }
     });
+    
+    // Scan for slices that are no longer in the data
+    let missingSlices = _.difference(self.slices, config.columns.map((column) => {
+      return column[ 0 ]
+    }));
+    missingSlices.forEach((slice) => {
+      config.columns.push([ slice, 0 ]);
+    });
+    
+    // Backwards compatibility
+    self.columns = config.columns;
+    
+    trace && console.log(Util.timestamp(), 'C3DonutWrapper.parseData complete:', this.containerId, config);
+    
+    return config
   }
 }
