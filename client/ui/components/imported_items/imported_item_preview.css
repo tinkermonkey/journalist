@@ -1,14 +1,14 @@
 .imported-item-container {
-  min-width: 1000px;
-  max-width: 1200px;
+  /*min-width: 1000px;*/
+  max-width : 1000px;
 }
 
 .imported-item-container > .flex > div {
-  margin-right: 1em;
+  margin-right : 1em;
 }
 
 .imported-item-container > .flex > div:last-child {
-  margin-right: 0;
+  margin-right : 0;
 }
 
 .imported-item-container a,
@@ -17,11 +17,11 @@
 }
 
 .imported-item-container .field-label {
-  color : #298cff;
-  border-bottom: 2px solid #cecece;
-  border-bottom-right-radius: 10px;
-  width: 100%;
-  font-size: 1.2em;
+  color                      : #ff29ce;
+  border-bottom              : 2px solid #cecece;
+  border-bottom-right-radius : 10px;
+  width                      : 100%;
+  font-size                  : 1.2em;
 }
 
 .imported-item-preview {
@@ -29,43 +29,50 @@
 }
 
 .imported-item-id {
-  color: #298cff;
-  font-weight: bold;
-  font-size: 2em;
-  margin-right: 1em;
+  color        : #298cff;
+  font-weight  : bold;
+  font-size    : 2em;
+  margin-right : 1em;
+  flex-shrink  : 0;
 }
 
 .imported-item-type {
-  color: #000000;
+  color       : #000000;
+  flex-shrink : 0;
 }
 
 .imported-item-title {
-  color: #666666;
-  font-size: 2em;
-}
-
-.imported-item-sidebar {
-  flex-basis: 260px;
-  flex-shrink: 0;
+  color       : #666666;
+  font-size   : 2em;
+  flex-shrink : 1;
 }
 
 .imported-item-sidebar,
 .imported-item-description-container {
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top    : 1em;
+  margin-bottom : 1em;
+}
+
+.imported-item-sidebar {
+  flex-basis  : 260px;
+  flex-shrink : 0;
+}
+
+.imported-item-description-container {
+  flex-shrink : 1;
 }
 
 .imported-item-description {
-  word-break: break-all;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+  word-break    : break-all;
+  overflow-wrap : break-word;
+  word-wrap     : break-word;
 }
 
 .imported-item-summary-container,
 .imported-item-timeline-container {
-  margin-bottom: 1em;
+  margin-bottom : 1em;
 }
 
 .imported-item-sidebar .status-table td {
-  vertical-align: baseline;
+  vertical-align : baseline;
 }

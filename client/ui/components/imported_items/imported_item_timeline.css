@@ -59,23 +59,3 @@
   font-size   : 0.8em;
   font-weight : 100;
 }
-
-/*
-.imported-item-timeline-container .field-label {
-  margin-bottom: 0;
-}
-
-.imported-item-timeline-row:first-child {
-  background-color: #5a0000;
-}
-
-.imported-item-timeline-row:last-child > .imported-item-timeline-date {
-  border-bottom : 2px solid #cecece;
-}
-
-.imported-item-timeline-row:last-child > .imported-item-timeline-center {
-  border-bottom : 2px solid #cecece;
-  border-bottom-right-radius: 10px;
-}
-
-*/
