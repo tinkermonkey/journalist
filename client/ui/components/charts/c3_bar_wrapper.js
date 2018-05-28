@@ -48,6 +48,9 @@ export class C3BarWrapper {
         bottom: 20,
         left  : 40,
         right : 20
+      },
+      transition: {
+        duration: 0
       }
     }, self.config.chart);
     

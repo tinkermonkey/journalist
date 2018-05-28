@@ -46,6 +46,9 @@ export class C3AreaWrapper {
         bottom: 20,
         left  : 40,
         right : 20
+      },
+      transition: {
+        duration: 0
       }
     }, self.config.chart);
     
