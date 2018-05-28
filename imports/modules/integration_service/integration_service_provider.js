@@ -1,6 +1,7 @@
 import { check }                                 from 'meteor/check';
 import { Ping }                                  from 'meteor/frpz:ping';
 import { SyncedCron }                            from 'meteor/percolate:synced-cron';
+import SimpleSchema                              from 'simpl-schema';
 import { Clustering }                            from 'meteor/austinsand:journalist-clustering';
 import { Contributors }                          from '../../api/contributors/contributors';
 import { ContributorTeamRoles }                  from '../../api/contributors/contributor_team_roles';
@@ -8,19 +9,20 @@ import { ContributorProjectAssignments }         from '../../api/contributors/co
 import { HealthTracker }                         from '../../api/system_health_metrics/server/health_tracker';
 import { ImportedItems, ImportedItemTestSchema } from '../../api/imported_items/imported_items';
 import { ImportedItemWorkStates }                from '../../api/imported_items/imported_item_work_states';
+import { ImportedItemWorkPhases }                from '../../api/imported_items/imported_item_work_phases';
 import { ImportedItemFetchQueue }                from '../../api/imported_items/imported_item_fetch_queue';
 import { Integrations }                          from '../../api/integrations/integrations';
 import { IntegrationServerCaches }               from '../../api/integrations/integration_server_caches';
 import { IntegrationServers }                    from '../../api/integrations/integration_servers';
 import { IntegrationTypes }                      from '../../api/integrations/integration_types';
+import { ItemTypes }                             from '../../api/imported_items/item_types';
 import { ReleaseIntegrationLinks }               from '../../api/releases/release_integration_links';
 import { UserTypes }                             from '../../api/users/user_types';
 import { ConfluenceIntegrator }                  from './integrators/confluence_integrator';
 import { JiraIntegrator }                        from './integrators/jira_integrator';
 import { IntegrationAgent }                      from './integration_agent';
 import { CollectionMap }                         from '../../api/import_export_tool/server/import_export_tool';
-import SimpleSchema                              from 'simpl-schema';
-import { ItemTypes }                             from '../../api/imported_items/item_types';
+import { Util }                                  from '../../api/util';
 
 const { URL } = require('url');
 
@@ -423,9 +425,18 @@ export class IntegrationServiceProvider {
     try {
       let importFn      = new Function('processedItem', 'importContext', importFunction.code),
           importContext = {
-            projectId  : projectId,
-            server     : self.server,
-            collections: CollectionMap
+            enum               : {
+              ItemTypes             : ItemTypes,
+              ImportedItemWorkPhases: ImportedItemWorkPhases,
+              ImportedItemWorkStates: ImportedItemWorkStates,
+              IntegrationTypes      : IntegrationTypes,
+              UserTypes             : UserTypes
+            },
+            Util               : Util,
+            integrationProvider: self,
+            projectId          : projectId,
+            server             : self.server,
+            collections        : CollectionMap
           },
           importedItem  = importFn(processedItem, importContext);
       
@@ -470,6 +481,7 @@ export class IntegrationServiceProvider {
           // try calculating the value
           try {
             trace && console.log('IntegrationServiceProvider.importItem calculating field:', calculatedField.title);
+            
             let calcFn = new Function('processedItem', 'importContext', calculatedField.code);
             
             // Calculate and store the value
@@ -555,9 +567,10 @@ export class IntegrationServiceProvider {
    * @param importFunction
    * @param identifier
    * @param projectId
+   * @param calculatedFields {[IntegrationCalculatedField]} optional
    */
-  testImportFunction (importFunction, identifier, projectId) {
-    debug && console.log('IntegrationServiceProvider.testImportFunction:', this.server._id, this.server.title);
+  testImportFunction (importFunction, identifier, projectId, calculatedFields) {
+    console.log('IntegrationServiceProvider.testImportFunction:', this.server._id, this.server.title, importFunction && importFunction._id, identifier, projectId, calculatedFields);
     let self          = this,
         rawItem       = self.integrator.fetchItem(identifier),
         processedItem = self.postProcessItem(rawItem);
@@ -565,7 +578,7 @@ export class IntegrationServiceProvider {
     return {
       rawItem      : rawItem,
       processedItem: processedItem,
-      importResult : self.importItem(importFunction, processedItem, projectId)
+      importResult : self.importItem(importFunction, processedItem, projectId, calculatedFields)
     }
   }
   
