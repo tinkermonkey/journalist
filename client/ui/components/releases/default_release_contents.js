@@ -104,7 +104,7 @@ Template.DefaultReleaseContents.onCreated(() => {
     instance.releaseId.set(release._id);
     instance.subscribe('imported_item_crumb_query', {
       versionsFixed: release._id,
-      itemType     : { $in: [ ItemTypes.bug, ItemTypes.feature, ItemTypes.subtask, ItemTypes.epic ] }
+      //itemType     : { $in: [ ItemTypes.bug, ItemTypes.feature, ItemTypes.subtask, ItemTypes.epic ] }
     });
   });
   
@@ -123,7 +123,7 @@ Template.DefaultReleaseContents.onCreated(() => {
         filter    = instance.filter.get() || {},
         query     = {
           versionsFixed: releaseId,
-          itemType     : { $in: [ ItemTypes.bug, ItemTypes.feature, ItemTypes.subtask, ItemTypes.epic ] }
+          //itemType     : { $in: [ ItemTypes.bug, ItemTypes.feature, ItemTypes.subtask, ItemTypes.epic ] }
         };
     
     _.keys(filter).forEach((key) => {
