@@ -436,7 +436,8 @@ export class IntegrationServiceProvider {
             integrationProvider: self,
             projectId          : projectId,
             server             : self.server,
-            collections        : CollectionMap
+            collections        : CollectionMap,
+            ImportedItems      : ImportedItems
           },
           importedItem  = importFn(processedItem, importContext);
       
