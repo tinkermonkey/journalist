@@ -103,13 +103,14 @@ Template.JiraImportTestbed.events({
 Template.JiraImportTestbed.onCreated(() => {
   let instance = Template.instance();
   
-  instance.result      = new ReactiveVar();
-  instance.doorbell    = new ReactiveVar(Date.now());
-  instance.error       = new ReactiveVar();
-  instance.functionId  = new ReactiveVar();
-  instance.serverId    = new ReactiveVar();
-  instance.projectId   = new ReactiveVar();
-  instance.showLoading = new ReactiveVar(false);
+  instance.result             = new ReactiveVar();
+  instance.doorbell           = new ReactiveVar(Date.now());
+  instance.error              = new ReactiveVar();
+  instance.functionId         = new ReactiveVar();
+  instance.serverId           = new ReactiveVar();
+  instance.projectId          = new ReactiveVar();
+  instance.showLoading        = new ReactiveVar(false);
+  instance.calculatedFieldIds = new ReactiveVar();
   
   instance.autorun(() => {
     let context = Template.currentData().context;
@@ -133,21 +134,27 @@ Template.JiraImportTestbed.onCreated(() => {
       if (context.serverId) {
         instance.serverId.set(context.serverId);
       }
+      
+      // Pull the calculatedFieldIds out of the context if it exists
+      if (context.calculatedFieldIds) {
+        instance.calculatedFieldIds.set(context.calculatedFieldIds);
+      }
     }
   });
   
   instance.autorun(() => {
-    let functionId = instance.functionId.get(),
-        doorBell   = instance.doorbell.get(),
-        serverId   = instance.serverId.get(),
-        projectId  = instance.projectId.get();
+    let functionId         = instance.functionId.get(),
+        doorBell           = instance.doorbell.get(),
+        serverId           = instance.serverId.get(),
+        projectId          = instance.projectId.get(),
+        calculatedFieldIds = instance.calculatedFieldIds.get();
     
     if (serverId && functionId && instance.isRendered) {
       let itemKey = instance.$('.input-item-key').val();
       if (itemKey) {
-        console.log('JiraImportTestbed fetching results for', serverId, doorBell, itemKey, projectId);
+        console.log('JiraImportTestbed fetching results for', serverId, doorBell, itemKey, projectId, calculatedFieldIds);
         instance.showLoading.set(true);
-        Meteor.call('testIntegrationImportFunction', functionId, serverId, itemKey, projectId, (error, response) => {
+        Meteor.call('testIntegrationImportFunction', functionId, serverId, itemKey, projectId, calculatedFieldIds, (error, response) => {
           instance.showLoading.set(false);
           if (error) {
             console.error('JiraImportTestbed fetchData failed:', error);

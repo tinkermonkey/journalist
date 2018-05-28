@@ -484,15 +484,17 @@ Meteor.methods({
    * @param serverId
    * @param identifier
    * @param projectId
+   * @param calculatedFieldIds
    */
-  testIntegrationImportFunction (functionId, serverId, identifier, projectId) {
-    console.log('editIntegrationImportFunction:', functionId, serverId, identifier, projectId);
+  testIntegrationImportFunction (functionId, serverId, identifier, projectId, calculatedFieldIds) {
+    console.log('testIntegrationImportFunction:', functionId, serverId, identifier, projectId, calculatedFieldIds);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
     check(functionId, String);
     check(serverId, String);
     check(identifier, String);
+    calculatedFieldIds = calculatedFieldIds || [];
     
     // Get the import function record to make sure this is authorized
     let importFunction = IntegrationImportFunctions.findOne(functionId);
@@ -500,20 +502,21 @@ Meteor.methods({
     // Validate that the current user is an administrator
     if (user.isAdmin()) {
       if (importFunction) {
-        let server = IntegrationServers.findOne(serverId);
+        let server           = IntegrationServers.findOne(serverId),
+            calculatedFields = IntegrationCalculatedFields.find({ _id: { $in: calculatedFieldIds } }).fetch();
         
-        return IntegrationService.getServiceProvider(server).testImportFunction(importFunction, identifier, projectId);
+        return IntegrationService.getServiceProvider(server).testImportFunction(importFunction, identifier, projectId, calculatedFields);
       } else {
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
+      console.error('Non-admin user tried to test an integration import function:', user.username, key, functionId);
       throw new Meteor.Error(403);
     }
   },
   
   importItemAndStore (integrationId, identifier) {
-    console.log('editIntegrationImportFunction:', integrationId, identifier);
+    console.log('importItemAndStore:', integrationId, identifier);
     let user = Auth.requireAuthentication();
     
     // Validate the data is complete
@@ -537,7 +540,7 @@ Meteor.methods({
         throw new Meteor.Error(404);
       }
     } else {
-      console.error('Non-admin user tried to edit an integration import function:', user.username, key, functionId);
+      console.error('Non-admin user tried to import and store an item:', user.username, key, functionId);
       throw new Meteor.Error(403);
     }
   },
