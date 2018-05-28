@@ -1,5 +1,7 @@
 <template name="AdminRelease">
   {{#with release}}
+    {{setPageTitle 'Journalist - Admin - ' title }}
+
     {{#if Template.subscriptionsReady}}
       <div class="container release-container" data-pk="{{_id}}">
         <div class="row">
