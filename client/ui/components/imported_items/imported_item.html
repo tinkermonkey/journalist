@@ -1,6 +1,7 @@
 <template name="ImportedItem">
   {{#if Template.subscriptionsReady}}
     {{#with item}}
+      {{setPageTitle 'Journalist - ' identifier }}
       {{> Template.dynamic template=itemTemplate }}
     {{else}}
       {{> NotFound }}
