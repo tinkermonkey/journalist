@@ -129,7 +129,10 @@ export class C3DonutWrapper {
     if (self.chartConfig.customTitle.showTotal) {
       let total = 0;
       if (self.chartConfig.customTitle.totalType && self.chartConfig.customTitle.totalType === 'unique') {
-        total = self.columns.length;
+        // Only count visible columns
+        total = self.columns.filter((column) => {
+          return column.length > 1 && column[ 1 ] > 0
+        }).length;
       } else {
         total = _.flatten(self.columns).reduce((acc, val) => {
           return (_.isNumber(val) ? val : 0) + acc

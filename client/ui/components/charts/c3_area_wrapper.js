@@ -3,7 +3,7 @@ import { Util }    from '../../../../imports/api/util';
 
 let c3    = require('c3'),
     d3    = require('d3'),
-    debug = true,
+    debug = false,
     trace = false;
 
 export class C3AreaWrapper {
