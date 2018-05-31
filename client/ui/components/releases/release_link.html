@@ -3,17 +3,19 @@
     {{#with release}}
       <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
 
-      {{#unless isReleased}}
-        {{#unless ../hideDetails}}
-          <div class="release-link-details">
-            {{> ReleaseDateSummary }}
-          </div>
+      {{#if showDate}}
+        {{#unless isReleased}}
+          {{#unless ../hideDetails}}
+            <div class="release-link-details">
+              {{> ReleaseDateSummary }}
+            </div>
+          {{/unless}}
+        {{else}}
+          {{#if releaseDate}}
+            (released {{dateFormat releaseDate 'MMM Do'}})
+          {{/if}}
         {{/unless}}
-      {{else}}
-        {{#if releaseDate}}
-          (released {{dateFormat releaseDate 'MMM Do'}})
-        {{/if}}
-      {{/unless}}
+      {{/if}}
     {{else}}
     {{/with}}
   </div>
