@@ -18,6 +18,7 @@ import { IntegrationServers }           from '../../api/integrations/integration
 import { IntegrationTypes }             from '../../api/integrations/integration_types.js';
 import { ItemTypes }                    from '../../api/imported_items/item_types.js';
 import { Projects }                     from '../../api/projects/projects.js';
+import { Releases }                     from '../../api/releases/releases';
 import { Teams }                        from '../../api/teams/teams';
 import { Users }                        from '../../api/users/users';
 import { UserTypes }                    from '../../api/users/user_types.js';
@@ -193,6 +194,14 @@ Template.registerHelper('renderItemType', function (type) {
 Template.registerHelper('renderDurationUnits', function (duration) {
   if (duration !== null) {
     return Util.camelToTitle(_.invert(BacklogResourceDurationUnits)[ duration ]);
+  }
+});
+Template.registerHelper('renderReleaseTitle', function (releaseId) {
+  if (releaseId !== null) {
+    let release = Releases.findOne(releaseId);
+    if(release){
+      return release.title
+    }
   }
 });
 

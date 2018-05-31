@@ -21,9 +21,13 @@ Template.DefaultReleaseContents.helpers({
     
     setTimeout(() => {
       let activeTab = RobaTabs.getActive(instance);
-      RobaTabs.setActive({
-        target: instance.$('ul[data-tab-group="release-contents-project-tabs"] > li.active > a[data-tab-name="' + activeTab + '"]').get(0)
-      });
+      if(activeTab){
+        RobaTabs.setActive({
+          target: instance.$('ul[data-tab-group="release-contents-project-tabs"] > li.active > a[data-tab-name="' + activeTab + '"]').get(0)
+        });
+      } else {
+        RobaTabs.activateFirst(instance);
+      }
     }, 250);
   },
   workStates () {

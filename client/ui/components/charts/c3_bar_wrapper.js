@@ -30,7 +30,7 @@ export class C3BarWrapper {
     
     // Generate the chart
     self.chartConfig = _.extend({
-      bindto : '#' + this.containerId,
+      bindto : '#' + self.containerId,
       data   : {
         type   : 'bar',
         columns: data

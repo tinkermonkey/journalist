@@ -30,7 +30,7 @@ export class C3AreaWrapper {
     
     // Generate the chart
     self.chartConfig = _.extend({
-      bindto : '#' + this.containerId,
+      bindto : '#' + self.containerId,
       data   : {
         type   : 'area-spline',
         columns: data,
