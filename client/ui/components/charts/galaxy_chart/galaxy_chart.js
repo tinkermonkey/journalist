@@ -5,6 +5,8 @@ import { LineLinkHandler }    from './line_link_handler.js';
 import { CircleNodeControls } from './circle_node_controls.js';
 import { NodeControlCommand } from './node_control_command.js';
 
+let d3 = require('d3');
+
 /**
  * Galaxy Chart
  *
@@ -342,8 +344,12 @@ export class GalaxyChart {
     }
     
     // Create the stratified data structure from the raw data
-    self.data = self.stratify(rawDataPoints);
-    self.debug && console.log('GalaxyChart.processData stratified height:', self.data.height);
+    try {
+      self.data = self.stratify(rawDataPoints);
+      self.debug && console.log('GalaxyChart.processData stratified height:', self.data.height);
+    } catch (e) {
+      console.error('GalaxyChart.processData stratify failed:', e, rawDataPoints);
+    }
     
     // Calculate the size of each node
     self.data.each((d) => {

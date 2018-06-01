@@ -4,6 +4,8 @@ import { GalaxyChart }       from '../galaxy_chart/galaxy_chart.js';
 import { CircleNodeHandler } from './circle_node_handler.js';
 import { LineLinkHandler }   from './line_link_handler.js';
 
+let d3 = require('d3');
+
 /**
  * Universe Chart
  *
@@ -298,12 +300,56 @@ export class UniverseChart {
       self.galaxyCenter = self.satellites[ 0 ];
     } else {
       try {
-        let parentIdList   = self.galaxyData.reduce((idList, d) => {
+        let parentIdList     = self.galaxyData.reduce((idList, d) => {
               return _.uniq(idList.concat([ d.dimensionParent(self.dimension._id) ]))
             }, []),
-            galaxyCenterId = _.union(parentIdList, self.satellites.map((d) => {
+            galaxyNodeIdList = self.galaxyData.map((d) => {
               return d._id
-            }))[ 0 ];
+            }),
+            galaxyCenterList = _.difference(parentIdList, galaxyNodeIdList),
+            galaxyCenterId;
+        
+        if (galaxyCenterList.length > 1) {
+          self.debug && console.log('UniverseChart.processData found multiple galaxy centers:', galaxyCenterList);
+          let galaxyCenterOptions = galaxyCenterList.map((dataPointId) => {
+            let dataPoint = rawDataPoints.find((d) => {
+              return d._id === dataPointId
+            });
+            
+            dataPoint.childIds = dataPoint.dimensionChildTreeIds(self.dimension._id);
+            
+            self.debug && console.log('UniverseChart.processData galaxy center option:', dataPointId, dataPoint);
+            return dataPoint
+          }).sort((a, b) => {
+            return a.childIds.length > b.childIds.length ? -1 : 1
+          });
+          
+          galaxyCenterId = galaxyCenterOptions[ 0 ]._id;
+          
+          // Move the other options over to the satellites list
+          for (let i = 1; i < galaxyCenterOptions.length; i++) {
+            self.debug && console.log('UniverseChart.processData moving galaxy center option to satellites list:', galaxyCenterOptions[ i ]);
+            self.satellites.push(rawDataPoints.find((d) => {
+              return d._id === galaxyCenterOptions[ i ]._id
+            }));
+            
+            self.debug && console.log('UniverseChart.processData removing galaxy center option and children from galaxyData:', galaxyCenterOptions[ i ]);
+            self.galaxyData = self.galaxyData.filter((d) => {
+              return d._id !== galaxyCenterOptions[ i ]._id && !_.contains(galaxyCenterOptions[ i ].childIds, d._id)
+            });
+          }
+          
+          // Double check that everything in the galaxy data maps in
+          self.galaxyData = self.galaxyData.filter((d) => {
+            return _.contains(galaxyCenterOptions[ 0 ].childIds, d._id)
+          });
+        } else if (galaxyCenterList.length > 0) {
+          galaxyCenterId = galaxyCenterList[ 0 ]
+        } else {
+          console.error('UniverseChart.processData could not identify galaxy center:', self.galaxyData, parentIdList, galaxyNodeIdList);
+          return;
+        }
+        
         //self.debug && console.log('UniverseChart.processData parentIds:', parentIdList);
         //self.debug && console.log('UniverseChart.processData galaxyCenterId:', galaxyCenterId);
         //self.debug && console.log('UniverseChart.processData satelliteIds:', self.satellites.map((d) => { return d._id }));

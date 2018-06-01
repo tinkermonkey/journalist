@@ -3,7 +3,7 @@ import { Template }               from 'meteor/templating';
 import { Util }                   from '../../../../../imports/api/util';
 import { ImportedItems }          from '../../../../../imports/api/imported_items/imported_items';
 import { ImportedItemWorkPhases } from '../../../../../imports/api/imported_items/imported_item_work_phases';
-import '../donut_chart';
+import '../base_charts/donut_chart';
 
 let WorkPhaseTitleLookup = {};
 _.keys(ImportedItemWorkPhases).forEach((key) => {

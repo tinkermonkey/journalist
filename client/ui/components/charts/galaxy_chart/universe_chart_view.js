@@ -5,7 +5,6 @@ import { Session }       from 'meteor/session';
 import { UniverseChart } from './universe_chart.js';
 import { Dimensions }    from './dimensions.js';
 import { DataPoints }    from './data_points.js';
-import '../galaxy_chart/galaxy_chart.css';
 
 let chartSvgSelector = '.universe-chart',
     debug            = true;
@@ -28,6 +27,8 @@ Template.UniverseChartView.onCreated(() => {
   
   // Go to a dimension
   instance.autorun(() => {
+    /*
+    Data is local only for now
     let data = Template.currentData();
     if (data.dimensionId) {
       debug && console.log('UniverseChartView subscribing to data points for dimension', data.dimensionId);
@@ -37,6 +38,7 @@ Template.UniverseChartView.onCreated(() => {
     } else {
       console.error('UniverseChartView loaded without dimensionId');
     }
+    */
   })
 });
 
@@ -47,7 +49,7 @@ Template.UniverseChartView.onRendered(() => {
   let instance = Template.instance();
   
   instance.autorun(() => {
-    if (instance.subscriptionsReady() && !instance.chart) {
+    if (!instance.chart) { // subscriptionsReady removed for local-only adaptation
       debug && console.log('UniverseChartView initializing:', chartSvgSelector);
       
       // Listen for interaction events from the chart
@@ -145,7 +147,7 @@ Template.UniverseChartView.onRendered(() => {
     let context    = Template.currentData(),
         dimension  = Dimensions.findOne(context.dimensionId),
         dataPoints = DataPoints.find({ dimensionId: context.dimensionId }).fetch();
-    if (instance.chart && instance.subscriptionsReady()) {
+    if (instance.chart) { // subscriptionsReady removed for local-only adaptation
       debug && console.log('UniverseChartView data points update:', dataPoints.length);
       instance.chart.update(dimension, dataPoints);
       instance.chart.zoomBounds(250);

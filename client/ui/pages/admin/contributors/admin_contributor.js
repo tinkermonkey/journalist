@@ -1,5 +1,6 @@
 import './admin_contributor.html';
 import { Template } from 'meteor/templating';
+import '../../../components/charts/contributors/contributor_universe_chart';
 
 /**
  * Template Helpers

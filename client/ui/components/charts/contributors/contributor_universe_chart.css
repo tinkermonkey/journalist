@@ -1,0 +1,8 @@
+.contributor-universe-chart {
+  width      : 100%;
+  min-height : 600px;
+}
+
+.contributor-universe-chart .universe-chart{
+  height : 600px;
+}

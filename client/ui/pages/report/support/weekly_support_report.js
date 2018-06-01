@@ -4,9 +4,9 @@ import { moment }             from 'meteor/momentjs:moment';
 import { ImportedItems }      from '../../../../../imports/api/imported_items/imported_items';
 import { ItemTypes }          from '../../../../../imports/api/imported_items/item_types';
 import { Projects }           from '../../../../../imports/api/projects/projects';
-import '../../../components/charts/donut_chart';
-import '../../../components/charts/bar_chart';
-import '../../../components/charts/area_chart';
+import '../../../components/charts/base_charts/donut_chart';
+import '../../../components/charts/base_charts/bar_chart';
+import '../../../components/charts/base_charts/area_chart';
 import '../reports.css';
 
 /**

@@ -1,5 +1,5 @@
-import numeral from 'numeral';
-import { Util }    from '../../../../imports/api/util';
+import numeral  from 'numeral';
+import { Util } from '../../../../../imports/api/util';
 
 let c3    = require('c3'),
     d3    = require('d3'),

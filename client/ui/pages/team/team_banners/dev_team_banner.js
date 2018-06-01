@@ -8,8 +8,8 @@ import { ItemTypes }                     from '../../../../../imports/api/import
 import { ContributorRoleDefinitions }    from '../../../../../imports/api/contributors/contributor_role_definitions';
 import { ContributorTeamRoles }          from '../../../../../imports/api/contributors/contributor_team_roles';
 import { Util }                          from '../../../../../imports/api/util';
-import '../../../components/charts/donut_chart';
-import '../../../components/charts/dashboard_metric';
+import '../../../components/charts/base_charts/donut_chart';
+import '../../../components/charts/base_charts/dashboard_metric';
 
 /**
  * Template Helpers

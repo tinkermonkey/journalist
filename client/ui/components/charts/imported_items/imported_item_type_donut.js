@@ -3,7 +3,7 @@ import { Template }      from 'meteor/templating';
 import { Util }          from '../../../../../imports/api/util';
 import { ItemTypes }     from '../../../../../imports/api/imported_items/item_types';
 import { ImportedItems } from '../../../../../imports/api/imported_items/imported_items';
-import '../donut_chart';
+import '../base_charts/donut_chart';
 
 let d3 = require('d3');
 

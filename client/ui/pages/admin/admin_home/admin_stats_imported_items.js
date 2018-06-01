@@ -6,7 +6,7 @@ import { ImportedItemWorkPhases } from '../../../../../imports/api/imported_item
 import { ItemTypes }              from '../../../../../imports/api/imported_items/item_types';
 import { Projects }               from '../../../../../imports/api/projects/projects';
 import { Util }                   from '../../../../../imports/api/util';
-import '../../../components/charts/donut_chart';
+import '../../../components/charts/base_charts/donut_chart';
 
 /**
  * Template Helpers
