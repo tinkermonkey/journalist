@@ -4,6 +4,7 @@ import { Template }                     from 'meteor/templating';
 import { FlowRouter }                   from 'meteor/kadira:flow-router';
 import { AutoForm }                     from 'meteor/aldeed:autoform';
 import { moment }                       from 'meteor/momentjs:moment';
+import { Session }                      from 'meteor/session';
 import { Util }                         from '../../api/util.js';
 import { Contributors }                 from '../../api/contributors/contributors.js';
 import { ContributorRoleDefinitions }   from '../../api/contributors/contributor_role_definitions';
@@ -35,6 +36,18 @@ Meteor.startup(() => {
       console.log('DynamicCollections subscription ready:', DynamicCollections.find({}).count());
       DynamicCollectionManager.compileCollections();
     }
+  });
+  
+  let self = {};
+  // setup a resize event for redraw actions
+  Session.set("resize", { timestamp: Date.now(), width: window.innerWidth, height: window.innerHeight });
+  $(window).resize(function () {
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+    }
+    this.resizeTimeout = setTimeout(function () {
+      Session.set("resize", { timestamp: Date.now(), width: window.innerWidth, height: window.innerHeight });
+    }.bind(self), 250);
   });
 });
 
@@ -199,7 +212,7 @@ Template.registerHelper('renderDurationUnits', function (duration) {
 Template.registerHelper('renderReleaseTitle', function (releaseId) {
   if (releaseId !== null) {
     let release = Releases.findOne(releaseId);
-    if(release){
+    if (release) {
       return release.title
     }
   }
