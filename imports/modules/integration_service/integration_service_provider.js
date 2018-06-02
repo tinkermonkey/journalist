@@ -636,6 +636,16 @@ export class IntegrationServiceProvider {
     check(item, Object);
     check(item.identifier, String);
     
+    // Set the defaults for the item to prevent stale data from lingering
+    _.defaults(item, {
+      teamId       : [],
+      statusHistory: [],
+      versionsFound: [],
+      versionsFixed: [],
+      links        : [],
+      metadata     : {}
+    });
+    
     if (item.identifier.length) {
       // Set the lastImported date
       item.lastImported = Date.now();
