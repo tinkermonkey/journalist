@@ -1,0 +1,22 @@
+<template name="AdminIntegrations">
+  {{setPageTitle 'Journalist - Integrations' }}
+
+  {{#if Template.subscriptionsReady }}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <ol class="breadcrumb">
+            <li><a href="{{pathFor 'AdminHome' }}">Admin Home</a></li>
+            <li class="active">Integration</li>
+          </ol>
+
+          <h1>Integrations</h1>
+
+          {{> AdminIntegrationsTable integrations=integrations }}
+        </div>
+      </div>
+    </div>
+  {{else}}
+    {{> AppLoading message="Loading Data..." }}
+  {{/if}}
+</template>

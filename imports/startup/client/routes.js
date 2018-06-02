@@ -19,6 +19,8 @@ import '../../../client/ui/pages/admin/display_templates/display_templates';
 import '../../../client/ui/pages/admin/dynamic_collections/dynamic_collection';
 import '../../../client/ui/pages/admin/dynamic_collections/dynamic_collections';
 import '../../../client/ui/pages/admin/import_export/import_export';
+import '../../../client/ui/pages/admin/imported_items/admin_imported_items';
+import '../../../client/ui/pages/admin/integrations/admin_integrations';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_function';
 import '../../../client/ui/pages/admin/integration_import_functions/integration_import_functions';
 import '../../../client/ui/pages/admin/integration_servers/integration_servers';
@@ -276,10 +278,24 @@ FlowRouter.route('/admin/integration_server/:serverId', {
   }
 });
 
+FlowRouter.route('/admin/integrations', {
+  name: 'AdminIntegrations',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminIntegrations' });
+  }
+});
+
 FlowRouter.route('/admin/contributor_role_definitions', {
   name: 'ContributorRoleDefinitions',
   action () {
     BlazeLayout.render('AdminLayout', { main: 'ContributorRoleDefinitions' });
+  }
+});
+
+FlowRouter.route('/admin/imported_items', {
+  name: 'AdminImportedItems',
+  action () {
+    BlazeLayout.render('AdminLayout', { main: 'AdminImportedItems' });
   }
 });
 

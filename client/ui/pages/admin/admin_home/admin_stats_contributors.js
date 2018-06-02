@@ -10,13 +10,31 @@ import { Util }                       from '../../../../../imports/api/util';
  */
 Template.AdminStatsContributors.helpers({
   contributorRolesContext () {
-    let data = Contributors.find();
+    let instance = Template.instance(),
+        data     = Contributors.find({ isActive: true, roleId: { $exists: true } });
     return {
       cssClass: 'chart-flex',
       config  : {
-        title         : { text: [ 'Contributor Roles' ], showTotal: true },
-        countNull     : true,
+        scaleVar      : instance.scaleVar,
         valueAttribute: 'roleId',
+        callouts      : {
+          show : true,
+          align: false
+        },
+        chart         : {
+          donut : {
+            title: { text: [ 'Contributor', 'Roles' ], showTotal: true, totalType: 'unique' },
+            label: {
+              format (value, ratio, id) {
+                return value
+              }
+            }
+          },
+          legend: {
+            show: false
+          }
+        },
+        countNull     : true,
         renderLabel (value) {
           if (value !== 'null') {
             let roleDefinition = ContributorRoleDefinitions.findOne(value);
@@ -30,12 +48,30 @@ Template.AdminStatsContributors.helpers({
     }
   },
   contributorTypeContext () {
-    let data = Contributors.find();
+    let instance = Template.instance(),
+        data     = Contributors.find({ isActive: true, roleId: { $exists: true } });
     return {
       cssClass: 'chart-flex',
       config  : {
-        title         : { text: [ 'Contributor Types' ], showTotal: true },
+        scaleVar      : instance.scaleVar,
         valueAttribute: 'usertype',
+        callouts      : {
+          show : true,
+          align: false
+        },
+        chart         : {
+          donut : {
+            title: { text: [ 'Contributor', 'Types' ], showTotal: true, totalType: 'unique' },
+            label: {
+              format (value, ratio, id) {
+                return value
+              }
+            }
+          },
+          legend: {
+            show: false
+          }
+        },
         renderLabel (value) {
           return Util.camelToTitle(_.invert(UserTypes)[ value ])
         }
@@ -44,12 +80,30 @@ Template.AdminStatsContributors.helpers({
     }
   },
   contributorIsActiveContext () {
-    let data = Contributors.find();
+    let instance = Template.instance(),
+        data     = Contributors.find();
     return {
       cssClass: 'chart-flex',
       config  : {
-        title         : { text: [ 'Contributors Active' ], showTotal: true },
+        scaleVar      : instance.scaleVar,
         valueAttribute: 'isActive',
+        callouts      : {
+          show : true,
+          align: false
+        },
+        chart         : {
+          donut : {
+            title: { text: [ 'Contributors', 'Records' ], showTotal: true },
+            label: {
+              format (value, ratio, id) {
+                return value
+              }
+            }
+          },
+          legend: {
+            show: false
+          }
+        },
         renderLabel (value) {
           return value ? 'Yes' : 'No'
         }
@@ -69,6 +123,8 @@ Template.AdminStatsContributors.events({});
  */
 Template.AdminStatsContributors.onCreated(() => {
   let instance = Template.instance();
+  
+  instance.scaleVar = new ReactiveVar();
   
   instance.subscribe('contributors');
 });

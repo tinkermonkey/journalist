@@ -1,0 +1,55 @@
+<template name="AdminIntegrationsTable">
+  {{#if Template.subscriptionsReady}}
+    <table class="table data-table border-bottom">
+      <thead>
+      <tr>
+        <th></th>
+        <th>Project</th>
+        <th>Server</th>
+        <th>Item Type</th>
+        <th>Update Frequency</th>
+        <th>Deep Sync Job</th>
+        <th>Queries</th>
+        <th>Items</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      {{#each integrations}}
+        <tr class="data-table-row show-controls-on-hover {{#if isNewRecord}}new-record{{/if}} {{#if isOdd @index}}odd{{/if}}"
+            data-pk="{{_id}}">
+          <td class="open-link">
+            <a class="hidden-control" href="{{pathFor 'AdminProjectIntegration' integrationId=_id}}">
+              <span class="glyphicon glyphicon-folder-open"></span>
+            </a>
+          </td>
+          <td>{{ project.title }}</td>
+          <td>{{ server.title }}</td>
+          <td>{{ renderItemType itemType }}</td>
+          <td>{{> EditableTextField dataKey="updateFrequency" value=updateFrequency emptyText="Enter later directive" }}</td>
+          <td>{{> EditableTextField dataKey="deepSyncFrequency" value=deepSyncFrequency emptyText="Enter later directive" }}</td>
+          <td>
+            {{#if integrationDetailColumn }}
+              {{> Template.dynamic template=integrationDetailColumn }}
+            {{/if}}
+          </td>
+          <td>{{itemCount}}</td>
+          <td class="open-link">
+            <a class="link-red hidden-control btn-delete-integration">
+              <span class="glyphicon glyphicon-minus-sign"></span>
+            </a>
+          </td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+    <!--
+    <button class="btn btn-xs btn-primary btn-add-integration">
+      <span class="glyphicon glyphicon-plus"></span>
+      Add Integration
+    </button>
+    -->
+  {{else}}
+    {{> RobaSpinner rainbow=true }}
+  {{/if}}
+</template>

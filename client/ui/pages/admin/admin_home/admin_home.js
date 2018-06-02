@@ -7,6 +7,7 @@ import { DisplayTemplates }            from '../../../../../imports/api/display_
 import { DynamicCollections }          from '../../../../../imports/api/dynamic_collections/dynamic_collections';
 import { IntegrationCalculatedFields } from '../../../../../imports/api/integrations/integration_calculated_fields';
 import { IntegrationImportFunctions }  from '../../../../../imports/api/integrations/integration_import_functions';
+import { Integrations }                from '../../../../../imports/api/integrations/integrations';
 import { IntegrationServers }          from '../../../../../imports/api/integrations/integration_servers';
 import { Projects }                    from '../../../../../imports/api/projects/projects';
 import { Releases }                    from '../../../../../imports/api/releases/releases';
@@ -35,6 +36,9 @@ Template.AdminHome.helpers({
   },
   dynamicCollectionCount () {
     return DynamicCollections.find().count()
+  },
+  integrationsCount () {
+    return Integrations.find().count()
   },
   importFunctionCount () {
     return IntegrationImportFunctions.find().count()

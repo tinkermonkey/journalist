@@ -1,0 +1,5 @@
+<template name="JiraIntegrationDetailColumn">
+  {{#each queryDefinitions}}
+    {{> EditableTextField dataKey=fieldKey value=fieldValue emptyText='Enter a query' }}
+  {{/each}}
+</template>

@@ -46,6 +46,21 @@ Meteor.publish('integration', function (integrationId) {
   }
 });
 
+Meteor.publish('all_integrations', function () {
+  console.info('Publish: all_integrations');
+  if (this.userId) {
+    let user = Meteor.users.findOne(this.userId);
+    if (user && user.isAdmin()) {
+      return Integrations.find({});
+    } else {
+      console.warn('all_integrations requested by non-admin:', this.userId, user && user.username)
+    }
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
 Meteor.publish('integration_servers', function () {
   console.info('Publish: integration_servers');
   if (this.userId) {

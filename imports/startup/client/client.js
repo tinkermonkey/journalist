@@ -52,7 +52,7 @@ Meteor.startup(() => {
   /**
    * This hack fixes a problem where the line and bar charts don't draw automatically when the page is not visible
    * The chart primitives are setup to listen for the resize session variable
-   * 
+   *
    * @param e
    */
   document.onvisibilitychange = (e) => {

@@ -8,8 +8,8 @@ import { UserTypes }                  from '../../../../../imports/api/users/use
 import { Util }                       from '../../../../../imports/api/util';
 import '../../../components/add_record_form/add_record_form.js';
 import '../../../components/team_roles/editable_team_roster.js';
-import './admin_contributors_table';
 import '../admin_home/admin_stats_contributors';
+import './admin_contributors_table';
 
 /**
  * Template Helpers
