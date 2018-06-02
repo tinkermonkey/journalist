@@ -650,6 +650,11 @@ export class IntegrationServiceProvider {
       // Set the lastImported date
       item.lastImported = Date.now();
       
+      // Cache the links to insert individually
+      let cachedLinks = _.clone(item.links) || [];
+      item.links      = [];
+      
+      // Upsert the item
       ImportedItems.upsert({
         integrationId: integrationId,
         projectId    : projectId,
@@ -667,6 +672,22 @@ export class IntegrationServiceProvider {
         identifier   : item.identifier
       });
       
+      // Insert the links that came with this
+      cachedLinks.forEach((link) => {
+        try {
+          ImportedItems.update(importedItem._id, {
+            $push: {
+              links: link
+            }
+          });
+        } catch (e) {
+          console.error('IntegrationServiceProvider.storeImportedItem failed to store parsed link:', importedItem.identifier, '->', link.identifier, e);
+        }
+      });
+      
+      // Refresh local copy
+      importedItem = ImportedItems.findOne(importedItem._id);
+      
       // Make sure that all links on this item are reciprocated back from the linked item
       if (importedItem.links) {
         importedItem.links.forEach((link) => {
@@ -680,23 +701,30 @@ export class IntegrationServiceProvider {
           // Create a link if one doesn't exist
           if (!hasReciprocatingLink) {
             trace && console.log('IntegrationServiceProvider.storeImportedItem creating new inbound link:', linkedItem._id);
-            ImportedItems.update(linkedItem._id, {
-              $push: {
-                links: {
-                  itemId        : importedItem._id,
-                  itemType      : importedItem.itemType,
-                  itemIdentifier: importedItem.identifier,
-                  itemTitle     : importedItem.title,
-                  itemViewUrl   : importedItem.viewUrl,
-                  linkId        : link.linkId,
-                  linkType      : link.linkType,
-                  dateCreated   : link.dateCreated
+            try {
+              ImportedItems.update(linkedItem._id, {
+                $push: {
+                  links: {
+                    itemId        : importedItem._id,
+                    itemType      : importedItem.itemType,
+                    itemIdentifier: importedItem.identifier,
+                    itemTitle     : importedItem.title,
+                    itemViewUrl   : importedItem.viewUrl,
+                    linkId        : link.linkId,
+                    linkType      : link.linkType,
+                    dateCreated   : link.dateCreated
+                  }
                 }
-              }
-            });
+              });
+            } catch (e) {
+              console.error('IntegrationServiceProvider.storeImportedItem failed to store inbound link:', linkedItem.identifier, '->', importedItem.identifier, e);
+            }
           }
         });
       }
+      
+      // Refresh local copy
+      importedItem = ImportedItems.findOne(importedItem._id);
       
       // Make sure that all links to this item are reciprocated back to the linking item
       let linkedItemIds = (importedItem.links || []).map((link) => {
@@ -709,20 +737,24 @@ export class IntegrationServiceProvider {
         });
         if (link) {
           trace && console.log('IntegrationServiceProvider.storeImportedItem creating new outbound link:', importedItem._id, importedItem.identifier, '->', linkedItem._id, linkedItem.identifier);
-          ImportedItems.update(importedItem._id, {
-            $push: {
-              links: {
-                itemId        : linkingItem._id,
-                itemType      : linkingItem.itemType,
-                itemIdentifier: linkingItem.identifier,
-                itemTitle     : linkingItem.title,
-                itemViewUrl   : linkingItem.viewUrl,
-                linkId        : link.linkId,
-                linkType      : link.linkType,
-                dateCreated   : link.dateCreated
+          try {
+            ImportedItems.update(importedItem._id, {
+              $push: {
+                links: {
+                  itemId        : linkingItem._id,
+                  itemType      : linkingItem.itemType,
+                  itemIdentifier: linkingItem.identifier,
+                  itemTitle     : linkingItem.title,
+                  itemViewUrl   : linkingItem.viewUrl,
+                  linkId        : link.linkId,
+                  linkType      : link.linkType,
+                  dateCreated   : link.dateCreated
+                }
               }
-            }
-          });
+            });
+          } catch (e) {
+            console.error('IntegrationServiceProvider.storeImportedItem failed to store outbound link:', importedItem.identifier, '->', linkingItem.identifier, e);
+          }
         }
       });
       
@@ -744,7 +776,7 @@ export class IntegrationServiceProvider {
         _.keys(linkCounts).forEach((linkId) => {
           let linkCount = linkCounts[ linkId ];
           if (linkCount.count > 1) {
-            console.log('IntegrationServiceProvider.storeImportedItem removing duplicate links:', importedItem._id, importedItem.identifier, '->', linkCount.link.itemIdentifier);
+            console.error('IntegrationServiceProvider.storeImportedItem removing duplicate links:', importedItem._id, importedItem.identifier, '->', linkCount.link.itemIdentifier);
             // Remove duplicated
             ImportedItems.update(importedItem._id, {
               $pull: {
@@ -762,7 +794,6 @@ export class IntegrationServiceProvider {
             });
           }
         });
-        
       }
     } else {
       console.error('IntegrationServiceProvider.storeImportedItem failed:', this.server._id, this.server.title, item && item.identifier);

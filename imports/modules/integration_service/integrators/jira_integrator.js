@@ -565,46 +565,50 @@ export class JiraIntegrator extends Integrator {
     
     if (processedItem.fields && processedItem.fields.issuelinks && processedItem.fields.issuelinks.length) {
       processedItem.links = [];
-      processedItem.fields.issuelinks.forEach((link) => {
-        try {
-          let linkedIssue = link.inwardIssue || link.outwardIssue,
-              linkTypeKey = link.inwardIssue ? 'inward' : 'outward',
-              dateCreated;
-          
-          if (linkedIssue) {
-            // Lookup the issue by the identifier
-            let linkedItem = ImportedItems.findOne({ serverId: this.provider.server._id, identifier: linkedIssue.key });
-            if (linkedItem) {
-              // Look up the date the item was linked
-              if(processedItem.changelog && processedItem.changelog.histories){
-                processedItem.changelog.histories.forEach((entry) => {
-                  entry.items.forEach((changeItem) => {
-                    if(changeItem.field.toLowerCase() === 'link' && changeItem.to === linkedItem.identifier){
-                      dateCreated = moment(entry.created).toDate();
-                    }
-                  })
-                });
-              }
+      processedItem.fields.issuelinks
+          .filter((link) => {
+            return link.type.name.match(/clone/i) === null
+          })
+          .forEach((link) => {
+            try {
+              let linkedIssue = link.inwardIssue || link.outwardIssue,
+                  linkTypeKey = link.inwardIssue ? 'inward' : 'outward',
+                  dateCreated;
               
-              processedItem.links.push({
-                itemId        : linkedItem._id,
-                itemType      : linkedItem.itemType,
-                itemIdentifier: linkedItem.identifier,
-                itemTitle     : linkedItem.title,
-                itemViewUrl   : linkedItem.viewUrl,
-                linkId        : link.id,
-                linkType      : link.type[ linkTypeKey ],
-                dateCreated   : dateCreated
-              });
-            } else {
-              console.warn('JiraIntegrator.processItemForLinks could not find linked item:', linkedIssue.key);
-              self.provider.queueItemImport(linkedIssue.key);
+              if (linkedIssue) {
+                // Lookup the issue by the identifier
+                let linkedItem = ImportedItems.findOne({ serverId: this.provider.server._id, identifier: linkedIssue.key });
+                if (linkedItem) {
+                  // Look up the date the item was linked
+                  if (processedItem.changelog && processedItem.changelog.histories) {
+                    processedItem.changelog.histories.forEach((entry) => {
+                      entry.items.forEach((changeItem) => {
+                        if (changeItem.field.toLowerCase() === 'link' && changeItem.to === linkedItem.identifier) {
+                          dateCreated = moment(entry.created).toDate();
+                        }
+                      })
+                    });
+                  }
+                  
+                  processedItem.links.push({
+                    itemId        : linkedItem._id,
+                    itemType      : linkedItem.itemType,
+                    itemIdentifier: linkedItem.identifier,
+                    itemTitle     : linkedItem.title,
+                    itemViewUrl   : linkedItem.viewUrl,
+                    linkId        : link.id,
+                    linkType      : link.type[ linkTypeKey ],
+                    dateCreated   : dateCreated
+                  });
+                } else {
+                  console.warn('JiraIntegrator.processItemForLinks could not find linked item:', linkedIssue.key);
+                  self.provider.queueItemImport(linkedIssue.key);
+                }
+              }
+            } catch (e) {
+              console.error('JiraIntegrator.processItemForLinks failed:', link, e);
             }
-          }
-        } catch (e) {
-          console.error('JiraIntegrator.processItemForLinks failed:', link, e);
-        }
-      });
+          });
     }
   }
   
