@@ -30,7 +30,6 @@ import { BacklogItemCategories }        from '../../api/backlogs/backlog_item_ca
 import '../../../node_modules/c3/c3.css';
 
 Meteor.startup(() => {
-  console.log('Subscribing to dynamic_collections');
   Meteor.subscribe('dynamic_collections', {
     onReady () {
       console.log('DynamicCollections subscription ready:', DynamicCollections.find({}).count());
@@ -49,6 +48,17 @@ Meteor.startup(() => {
       Session.set("resize", { timestamp: Date.now(), width: window.innerWidth, height: window.innerHeight });
     }.bind(self), 250);
   });
+  
+  /**
+   * This hack fixes a problem where the line and bar charts don't draw automatically when the page is not visible
+   * The chart primitives are setup to listen for the resize session variable
+   * 
+   * @param e
+   */
+  document.onvisibilitychange = (e) => {
+    console.log('Visibility Changed:', document.visibilityState);
+    Session.set("resize", { timestamp: Date.now(), width: window.innerWidth, height: window.innerHeight });
+  };
 });
 
 /**

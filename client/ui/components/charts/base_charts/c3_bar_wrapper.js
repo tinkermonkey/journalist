@@ -30,20 +30,20 @@ export class C3BarWrapper {
     
     // Generate the chart
     self.chartConfig = _.extend({
-      bindto : '#' + self.containerId,
-      data   : {
+      bindto    : '#' + self.containerId,
+      data      : {
         type   : 'bar',
         columns: data
       },
-      bar    : {
+      bar       : {
         width: {
           ratio: 0.5 // this makes bar width 50% of length between ticks
         }
       },
-      legend : {
+      legend    : {
         show: false
       },
-      padding: {
+      padding   : {
         top   : 20,
         bottom: 20,
         left  : 40,

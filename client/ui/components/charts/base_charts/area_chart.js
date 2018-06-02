@@ -1,5 +1,6 @@
 import './area_chart.html';
 import './area_chart.css';
+import { Session }       from 'meteor/session';
 import { Template }      from 'meteor/templating';
 import { C3AreaWrapper } from './c3_area_wrapper';
 
@@ -29,7 +30,8 @@ Template.AreaChart.onRendered(() => {
   instance.$('.chart').attr('id', instance.elementId);
   
   instance.autorun(() => {
-    let context = Template.currentData();
+    let context = Template.currentData(),
+        resize  = Session.get('resize');
     
     // Clear any previous timeouts in flight
     clearTimeout(instance.updateTimeout);

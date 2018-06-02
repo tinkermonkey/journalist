@@ -1,5 +1,6 @@
 import './donut_chart.html';
 import './donut_chart.css';
+import { Session }        from 'meteor/session';
 import { Template }       from 'meteor/templating';
 import { C3DonutWrapper } from './c3_donut_wrapper';
 
@@ -29,7 +30,8 @@ Template.DonutChart.onRendered(() => {
   instance.$('.chart').attr('id', instance.elementId);
   
   instance.autorun(() => {
-    let context = Template.currentData();
+    let context = Template.currentData(),
+        resize  = Session.get('resize');
     
     if (context.config.scaleVar) {
       let scale = context.config.scaleVar.get();

@@ -1,5 +1,6 @@
 import './bar_chart.html';
 import './bar_chart.css';
+import { Session }       from 'meteor/session';
 import { Template }     from 'meteor/templating';
 import { C3BarWrapper } from './c3_bar_wrapper';
 
@@ -29,7 +30,8 @@ Template.BarChart.onRendered(() => {
   instance.$('.chart').attr('id', instance.elementId);
   
   instance.autorun(() => {
-    let context = Template.currentData();
+    let context = Template.currentData(),
+        resize  = Session.get('resize');
     
     // Clear any previous timeouts in flight
     clearTimeout(instance.updateTimeout);
