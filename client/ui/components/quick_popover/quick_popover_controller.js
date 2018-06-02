@@ -9,8 +9,9 @@ export const QuickPopoverController = {
    * @param contentData
    * @param anchorEl
    * @param placement
+   * @param reposition
    */
-  show (contentTemplate, contentData, anchorEl, placement) {
+  show (contentTemplate, contentData, anchorEl, placement, reposition) {
     let controller       = this,
         popoverPlacement = $(anchorEl);
     
@@ -21,6 +22,20 @@ export const QuickPopoverController = {
     
     if (controller.popover === undefined) {
       //console.log('QuickPopoverController.show anchorEl:', anchorEl);
+      
+      // Possibly correct the placement
+      if (placement.match(/left|right/i)) {
+        let bounds      = popoverPlacement.get(0).getBoundingClientRect(),
+            windowWidth = window.innerWidth;
+        
+        if (bounds.right > windowWidth / 2 && placement.match(/right/i) && placement.match(/auto/i)) {
+          console.log('QuickPopoverController placement change:', placement, '->', 'left');
+          placement = 'left';
+        } else if (bounds.left < windowWidth / 2 && placement.match(/left/i) && placement.match(/auto/i)) {
+          console.log('QuickPopoverController placement change:', placement, '->', 'left');
+          placement = 'right';
+        }
+      }
       
       controller.elementId = Random.id();
       controller.popover   = popoverPlacement
@@ -33,7 +48,7 @@ export const QuickPopoverController = {
       
       // Render the contents
       setTimeout(() => {
-        controller.renderContent();
+        controller.renderContent(reposition);
         
         // Add a click handler to close the popover if you click outside of it
         $('body').bind('click.quickPopoverClose', controller.hide);
@@ -43,6 +58,8 @@ export const QuickPopoverController = {
       setTimeout(() => {
         $('.quick-popover-contents input:visible').first('input').focus()
       }, 500);
+      
+      return controller.popover
     } else {
       controller.renderContent();
     }
@@ -60,6 +77,7 @@ export const QuickPopoverController = {
     if (QuickPopoverController.popover && (!popoverParent.length || force === true)) {
       QuickPopoverController.popover.popover('destroy');
       $('body').unbind('click.quickPopoverClose', QuickPopoverController.hide);
+      QuickPopoverController.anchorEl && $(QuickPopoverController.anchorEl).trigger('hide');
       delete QuickPopoverController.popover;
       setTimeout(() => {
         Blaze.remove(QuickPopoverController.childView);
@@ -68,9 +86,22 @@ export const QuickPopoverController = {
   },
   
   /**
-   * Render the template and data passed
+   * Determine if the popover is currently show
+   * @param template (optional) If passed, will be
    */
-  renderContent () {
+  isVisible (template) {
+    if (template) {
+      return QuickPopoverController.popover && QuickPopoverController.contentTemplate === template
+    } else {
+      return QuickPopoverController.popover !== undefined
+    }
+  },
+  
+  /**
+   * Render the template and data passed
+   * @param reposition Should the popover auto-reposition
+   */
+  renderContent (reposition) {
     let controller      = this,
         popoverContents = $('#' + controller.elementId),
         template        = _.isString(controller.contentTemplate) ? Template[ controller.contentTemplate ] : controller.contentTemplate;
@@ -94,9 +125,8 @@ export const QuickPopoverController = {
       if (controller.childInstance) {
         controller.childInstance.autorun(() => {
           //console.log('QuickPopover child controller autorun');
-          if (controller.childInstance.subscriptionsReady()) {
+          if (controller.childInstance.subscriptionsReady() && reposition) {
             //console.log('QuickPopover child controller subscriptions ready!');
-            /*
             setTimeout(() => {
               controller.popover && controller.popover.popover('reposition');
             }, 10);
@@ -106,7 +136,9 @@ export const QuickPopoverController = {
             setTimeout(() => {
               controller.popover && controller.popover.popover('reposition');
             }, 1000);
-            */
+            setTimeout(() => {
+              controller.popover && controller.popover.popover('reposition');
+            }, 3000);
           }
           controller.popover && controller.popover.popover('reposition');
         });
@@ -127,32 +159,28 @@ export const QuickPopoverController = {
 $(function () {
   if (!$.fn.popover.Constructor.prototype.reposition) {
     $.fn.popover.Constructor.prototype.reposition = function () {
-      let $tip      = this.tip();
-      let autoPlace = true;
+      let popover          = this,
+          $tip             = popover.tip(),
+          placement        = typeof popover.options.placement === 'function' ? this.options.placement.call(popover, $tip[ 0 ], popover.$element[ 0 ]) : popover.options.placement,
+          pos              = popover.getPosition(),
+          actualWidth      = $tip[ 0 ].offsetWidth,
+          actualHeight     = $tip[ 0 ].offsetHeight,
+          calculatedOffset = popover.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
       
-      let placement = typeof this.options.placement === 'function' ? this.options.placement.call(this, $tip[ 0 ], this.$element[ 0 ]) : this.options.placement;
-      let pos          = this.getPosition();
-      let actualWidth  = $tip[ 0 ].offsetWidth;
-      let actualHeight = $tip[ 0 ].offsetHeight;
+      popover.applyPlacement(calculatedOffset, placement);
       
-      if (autoPlace) {
-        let orgPlacement = placement;
-        let viewportDim  = this.getPosition(this.$viewport);
-        
-        placement = placement === 'bottom' &&
-        pos.bottom + actualHeight > viewportDim.bottom ? 'top' : placement === 'top' &&
-        pos.top - actualHeight < viewportDim.top ? 'bottom' : placement === 'right' &&
-        pos.right + actualWidth > viewportDim.width ? 'left' : placement === 'left' &&
-        pos.left - actualWidth < viewportDim.left ? 'right' : placement;
-  
-        $tip
-            .removeClass(orgPlacement)
-            .addClass(placement);
+      if (placement.match(/left/i)) {
+        $tip.css('left', '');
+        let container    = $tip.closest('.container'),
+            pointerWidth = $tip.find('.arrow').width() || 10;
+        if (container) {
+          let containerBounds = container.get(0).getBoundingClientRect();
+          $tip.css('right', (containerBounds.right - pos.left + pointerWidth) + 'px');
+        } else {
+          $tip.css('right', (window.innerWidth - pos.left + pointerWidth) + 'px');
+        }
+        //console.log('reposition:', placement, pos, window.innerWidth, $tip.css('right'));
       }
-      
-      let calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
-      
-      this.applyPlacement(calculatedOffset, placement);
     }
   }
 });

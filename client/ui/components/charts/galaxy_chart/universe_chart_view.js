@@ -23,23 +23,7 @@ Template.UniverseChartView.events({});
  * Template Created
  */
 Template.UniverseChartView.onCreated(() => {
-  let instance = Template.instance();
-  
-  // Go to a dimension
-  instance.autorun(() => {
-    /*
-    Data is local only for now
-    let data = Template.currentData();
-    if (data.dimensionId) {
-      debug && console.log('UniverseChartView subscribing to data points for dimension', data.dimensionId);
-      instance.subscribe('data-points', data.dimensionId, () => {
-        console.log('DataPoints subscription is ready');
-      });
-    } else {
-      console.error('UniverseChartView loaded without dimensionId');
-    }
-    */
-  })
+
 });
 
 /**
