@@ -40,6 +40,7 @@ export class UniverseChart {
       galaxy        : {
         eventNode: baseSelector
       },
+      showSatellites: true,
       
       // Node sizing function
       sizeFunction (d) {
@@ -215,32 +216,37 @@ export class UniverseChart {
     const self      = this,
           startTime = Date.now();
     
-    // Update the node selection
-    self.nodeSelection = self.nodeLayer.selectAll('.node-group')
-        .data(self.satellites, function (d) {
-          return d._id
-        });
-    
     // Store the size
     self.width  = chartWidth || self.width;
     self.height = chartHeight || self.height;
     
-    // Figure out how many columns of satellites to show
-    self.columnWidth        = Math.max(parseInt(self.width * self.config.columnWidth), self.config.columnMinWidth);
-    self.nodesPerColumn     = Math.floor(self.height / self.columnWidth);
-    self.displayColumnCount = Math.min(Math.floor(self.satellites.length / self.nodesPerColumn), self.config.maxColumns);
-    self.totalColumnCount   = Math.ceil(self.satellites.length / self.nodesPerColumn);
-    
-    // If there isn't a full column but there's a satellite to show, make sure it's visible
-    if (self.displayColumnCount === 0 && self.satellites.length) {
-      self.displayColumnCount = 1;
+    if (self.config.showSatellites) {
+      // Update the node selection
+      self.nodeSelection = self.nodeLayer.selectAll('.node-group')
+          .data(self.satellites, function (d) {
+            return d._id
+          });
+      
+      // Figure out how many columns of satellites to show
+      self.columnWidth        = Math.max(parseInt(self.width * self.config.columnWidth), self.config.columnMinWidth);
+      self.nodesPerColumn     = Math.floor(self.height / self.columnWidth);
+      self.displayColumnCount = Math.min(Math.floor(self.satellites.length / self.nodesPerColumn), self.config.maxColumns);
+      self.totalColumnCount   = Math.ceil(self.satellites.length / self.nodesPerColumn);
+      
+      // If there isn't a full column but there's a satellite to show, make sure it's visible
+      if (self.displayColumnCount === 0 && self.satellites.length) {
+        self.displayColumnCount = 1;
+      }
+      self.debug && console.log('UniverseChart.layout column metrics:', self.columnWidth, self.nodesPerColumn, self.displayColumnCount);
+    } else {
+      self.displayColumnCount = 0;
+      self.columnWidth = 0;
     }
-    self.debug && console.log('UniverseChart.layout column metrics:', self.columnWidth, self.nodesPerColumn, self.displayColumnCount);
-    
+  
     // Update the position of the satellite layer
     self.nodeLayer.attr('transform', 'translate(' + parseInt(self.width - self.columnWidth * self.displayColumnCount) + ', 0)');
     self.highlightLayer.attr('transform', 'translate(' + parseInt(self.width - self.columnWidth * self.displayColumnCount) + ', 0)');
-    
+  
     // Position the nodes
     self.positionNodes();
     

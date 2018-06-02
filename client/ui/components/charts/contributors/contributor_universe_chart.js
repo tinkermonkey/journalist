@@ -13,6 +13,20 @@ import '../galaxy_chart/universe_chart_view';
 Template.ContributorUniverseChart.helpers({
   dimensionId () {
     return Template.instance().activeDimensionId.get()
+  },
+  config () {
+    let instance = Template.instance();
+    return {
+      showSatellites: false,
+      sizeFunction (d) {
+        return d.dimensionChildTreeIds(instance.managementDimensionId).length
+      },
+      galaxy        : {
+        radiusFunction (d) {
+          return Math.sqrt(d.size || 10)
+        }
+      }
+    }
   }
 });
 

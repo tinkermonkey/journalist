@@ -131,7 +131,7 @@ Template.UniverseChartView.onRendered(() => {
       debug && console.log('UniverseChartView data points:', DataPoints.find({}).count());
       
       // Initialize the chart
-      instance.chart = new UniverseChart(chartSvgSelector, {}, true);
+      instance.chart = new UniverseChart(chartSvgSelector, context && context.config || {}, true);
       instance.chart.init(chartWidth, chartHeight);
       instance.chart.update(dimension, dataPoints.fetch());
       instance.chart.zoomBounds();
@@ -166,13 +166,18 @@ Template.UniverseChartView.onRendered(() => {
   
   // Listen for resize events
   instance.autorun(() => {
-    let resize      = Session.get('resize'),
-        chartWidth  = instance.$(chartSvgSelector).width(),
-        chartHeight = instance.$(chartSvgSelector).height();
-    debug && console.log('UniverseChartView resize:', chartWidth, chartHeight);
+    let resize      = Session.get('resize');
     if (instance.chart) {
-      instance.chart.layout(chartWidth, chartHeight);
-      instance.chart.zoomBounds(250);
+      clearTimeout(instance.resizeTimeout);
+      instance.resizeTimeout = setTimeout(() => {
+        let chartWidth  = instance.$(chartSvgSelector).width(),
+            chartHeight = instance.$(chartSvgSelector).height();
+        
+        debug && console.log('UniverseChartView resize:', chartWidth, chartHeight);
+        
+        instance.chart.layout(chartWidth, chartHeight);
+        instance.chart.zoomBounds(250);
+      }, 100);
     }
   });
 });

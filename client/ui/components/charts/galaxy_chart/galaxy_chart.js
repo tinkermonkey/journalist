@@ -44,7 +44,7 @@ export class GalaxyChart {
     self.links        = [];
     self.nodes        = [];
     self.config       = _.defaults(config, {
-      startAngle         : -Math.PI / 2,
+      startAngle         : -1 * Math.PI / 2,
       nodeSpread         : 4,    // Radius multiplier
       minSize            : 36,      // No units
       maxSize            : 10000,   // No units
@@ -59,16 +59,30 @@ export class GalaxyChart {
         min    : 0.25,
         max    : 4,
         padding: 20,
-        enabled: true
+        enabled: false
       },
       updateDelayTime    : 30,  // ms
       updateRetryTimer   : 30,  // ms
       maxUpdateRetries   : 5,
       updateTransition   : 250, // ms
       
+      // No commands by default
+      commandList: [],
+      
       // Node sizing function
       sizeFunction (d) {
         return d.properties && d.properties.size ? d.properties.size : d.size;
+      },
+      
+      // Node radius function
+      radiusFunction (d) {
+        console.log('Default radiusFunction:', d.size, Math.sqrt(d.size));
+        return Math.sqrt(d.size)
+      },
+      
+      // Spoke distance function
+      distanceFunction (d) {
+        return d.radius * self.config.nodeSpread + d.parent.radius;
       }
     });
     
@@ -205,7 +219,7 @@ export class GalaxyChart {
     ];
     
     // Initialize the controls
-    self.nodeControls.init(self.controlsLayer, self.commandList);
+    self.nodeControls.init(self.controlsLayer, self.config.commandList);
     
     // Track the time
     self.debug && console.log('GalaxyChart.init completed in', (Date.now() - startTime), 'ms');
@@ -354,7 +368,7 @@ export class GalaxyChart {
     // Calculate the size of each node
     self.data.each((d) => {
       //d.size = (d.data.properties && d.data.properties.size ? d.data.properties.size : d.data.size) || 0;
-      d.size = self.config.sizeFunction(d.data) || 0;
+      d.size = self.config.sizeFunction(d.data) || 1;
       
       minSize = d.size < minSize ? d.size : minSize;
       maxSize = d.size > maxSize ? d.size : maxSize;
@@ -419,13 +433,15 @@ export class GalaxyChart {
     
     // Calculate the node radius
     d.radius = Math.sqrt(d.size);
+    self.config.radiusFunction(d);
+    //d.radius = self.config.radiusFunction(d) || 10;
     
     if (d.parent) {
       // position relative to parent
       let familySize = d.parent.children.length;
       
       // Calculate the distance from the parent
-      d.distance = d.radius * self.config.nodeSpread + d.parent.radius;
+      d.distance = self.config.distanceFunction(d);
       
       // Calculate the angle by spreading out the nodes evenly
       d.angle = d.parent.angle - (d.childIndex * 2 * Math.PI / familySize) - (familySize % 2 || d.parent.depth < 1 ? 0 : -Math.PI / familySize);
