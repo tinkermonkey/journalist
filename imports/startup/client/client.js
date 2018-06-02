@@ -56,7 +56,6 @@ Meteor.startup(() => {
    * @param e
    */
   document.onvisibilitychange = (e) => {
-    console.log('Visibility Changed:', document.visibilityState);
     Session.set("resize", { timestamp: Date.now(), width: window.innerWidth, height: window.innerHeight });
   };
 });
