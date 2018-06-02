@@ -5,7 +5,6 @@
       <tr>
         <th></th>
         <th>Project</th>
-        <th>Server</th>
         <th>Item Type</th>
         <th>Update Frequency</th>
         <th>Deep Sync Job</th>
@@ -24,7 +23,6 @@
             </a>
           </td>
           <td>{{ project.title }}</td>
-          <td>{{ server.title }}</td>
           <td>{{ renderItemType itemType }}</td>
           <td>{{> EditableTextField dataKey="updateFrequency" value=updateFrequency emptyText="Enter later directive" }}</td>
           <td>{{> EditableTextField dataKey="deepSyncFrequency" value=deepSyncFrequency emptyText="Enter later directive" }}</td>
