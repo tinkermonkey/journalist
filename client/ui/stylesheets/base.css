@@ -197,3 +197,11 @@ a.editable-click:hover {
   border : 2px solid #007AC9;
 }
 
+/**
+ * Print styling
+ */
+@media print {
+  .container {
+    width: auto !important;
+  }
+}

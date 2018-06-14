@@ -8,34 +8,35 @@
         {{> ContributorBanner }}
       {{/if}}
     </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-9">
-          <h1>{{name}}</h1>
-          
-          {{#if defaultRole.homeTemplate}}
-            {{> Template.dynamic template=defaultRole.homeTemplate }}
-          {{else}}
+
+    {{#if defaultRole.homeTemplate}}
+      {{> Template.dynamic template=defaultRole.homeTemplate }}
+    {{else}}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-9">
+            <h1>{{name}}</h1>
+
             {{> ContributorHeader }}
-            
+
             {{#RobaTabGroup name="contributor-tabs" navClass="nav-pills"}}
               {{#if shouldSeeReports }}
                 {{#RobaTab name="status-report-due" title="Reports Due"}}
                   {{> ContributorStatusReportsDue }}
                 {{/RobaTab}}
               {{/if}}
-              
+
               {{#RobaTab name="status-reports" title="Reports Filed"}}
                 {{> RecentReports }}
               {{/RobaTab}}
             {{/RobaTabGroup}}
-          {{/if}}
-        </div>
-        <div class="col-md-3">
-          {{> ContributorSidebar }}
+          </div>
+          <div class="col-md-3">
+            {{> ContributorSidebar }}
+          </div>
         </div>
       </div>
-    </div>
+    {{/if}}
   {{else}}
     {{> NotFound}}
   {{/with}}
