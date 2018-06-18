@@ -5,6 +5,7 @@
       <tr>
         <th></th>
         <th>Server</th>
+        <th>Enabled</th>
         <th>Item Type</th>
         <th>Import Function</th>
         <th>Update Frequency</th>
@@ -24,6 +25,7 @@
             </a>
           </td>
           <td>{{> EditableRecordSelector serverSelectorContext }}</td>
+          <td>{{> EditableCheckbox dataKey="isEnabled" value=isEnabled }}</td>
           <td>{{> EditableEnumSelector dataKey="itemType" value=itemType enum=ItemTypes emptyText="Item Type" }}</td>
           <td>{{> EditableRecordSelector importFunctionSelectorContext }}</td>
           <td>{{> EditableTextField dataKey="updateFrequency" value=updateFrequency emptyText="Enter later directive" }}</td>

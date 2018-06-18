@@ -4,6 +4,7 @@
       <thead>
       <tr>
         <th></th>
+        <th>Enabled</th>
         <th>Project</th>
         <th>Item Type</th>
         <th>Update Frequency</th>
@@ -22,6 +23,7 @@
               <span class="glyphicon glyphicon-folder-open"></span>
             </a>
           </td>
+          <td>{{> EditableCheckbox dataKey="isEnabled" value=isEnabled }}</td>
           <td>{{ project.title }}</td>
           <td>{{ renderItemType itemType }}</td>
           <td>{{> EditableTextField dataKey="updateFrequency" value=updateFrequency emptyText="Enter later directive" }}</td>

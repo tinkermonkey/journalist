@@ -76,7 +76,7 @@ export class IntegrationAgent {
               return parser.text(parserText);
             },
             job () {
-              if (self.integration.details && self.integration.details[ queryKey ]) {
+              if (self.integration.details && self.integration.details[ queryKey ] && self.integration.isEnabled) {
                 self.executeQuery(queryKey, false);
                 self.checkForQueuedImports(queryKey);
                 
@@ -101,7 +101,7 @@ export class IntegrationAgent {
               return parser.text(parserText);
             },
             job () {
-              if (self.integration.details && self.integration.details[ queryKey ]) {
+              if (self.integration.details && self.integration.details[ queryKey ] && self.integration.isEnabled) {
                 self.executeQuery(queryKey, true);
                 self.checkForQueuedImports(queryKey);
                 

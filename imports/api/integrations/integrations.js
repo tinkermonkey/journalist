@@ -65,6 +65,10 @@ export const Integration = new SimpleSchema({
     type        : SimpleSchema.Integer,
     defaultValue: 0
   },
+  isEnabled             : {
+    type        : Boolean,
+    defaultValue: false
+  },
   // Configuration blob
   details               : {
     type    : Object,

@@ -66,6 +66,8 @@
   word-break    : break-all;
   overflow-wrap : break-word;
   word-wrap     : break-word;
+  min-width     : 700px;
+  padding-right : 10px;
 }
 
 .imported-item-summary-container,
