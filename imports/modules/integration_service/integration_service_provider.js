@@ -892,7 +892,7 @@ export class IntegrationServiceProvider {
     }
     
     // Execute the queries to get fresh data
-    agent.executeAllQueries();
+    //agent.executeAllQueries();
   }
   
   /**

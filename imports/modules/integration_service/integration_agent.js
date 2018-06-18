@@ -76,7 +76,7 @@ export class IntegrationAgent {
               return parser.text(parserText);
             },
             job () {
-              if (self.integration.details && self.integration.details[ queryKey ] && self.integration.isEnabled) {
+              if (self.integration.details && self.integration.details[ queryKey ] && self.integration.isEnabled === true) {
                 self.executeQuery(queryKey, false);
                 self.checkForQueuedImports(queryKey);
                 
@@ -101,7 +101,7 @@ export class IntegrationAgent {
               return parser.text(parserText);
             },
             job () {
-              if (self.integration.details && self.integration.details[ queryKey ] && self.integration.isEnabled) {
+              if (self.integration.details && self.integration.details[ queryKey ] && self.integration.isEnabled === true) {
                 self.executeQuery(queryKey, true);
                 self.checkForQueuedImports(queryKey);
                 
@@ -233,13 +233,13 @@ export class IntegrationAgent {
    * @param deepSync Perform a complete deep sync for all of the queries
    */
   executeAllQueries (deepSync) {
-    debug && console.log('IntegrationAgent.executeAllQueries:', this.integration._id);
+    console.log('IntegrationAgent.executeAllQueries:', this.integration._id);
     let self             = this,
         queryDefinitions = self.serviceProvider.getQueryDefinitions();
     
     if (queryDefinitions) {
       _.keys(queryDefinitions).forEach((queryKey) => {
-        if (self.integration.details && self.integration.details[ queryKey ]) {
+        if (self.integration.details && self.integration.details[ queryKey ] && self.integration.isEnabled === true) {
           self.executeQuery(queryKey, deepSync);
         }
       });
