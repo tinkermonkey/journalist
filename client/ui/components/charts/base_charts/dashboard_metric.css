@@ -15,7 +15,7 @@
   flex-direction : column;
   border-radius  : 10px;
   max-width      : 300px;
-  border         : 2px solid #999;
+  border         : 2px solid #333;
 }
 
 .dashboard-metric-value-container {
@@ -27,13 +27,20 @@
 }
 
 .dashboard-metric-value {
-  font-size : 96pt;
+  font-size : 60pt;
 }
 
 .dashboard-metric-title {
-  color                   : #999;
+  color                   : #333;
   padding                 : 10px;
-  font-size               : 14pt;
+  font-size               : 25pt;
+  font-weight             : bold;
   border-top-right-radius : 10px;
   border-top-left-radius  : 10px;
+}
+
+.dashboard-metric-sub-title {
+  color     : #333;
+  padding   : 10px;
+  font-size : 14pt;
 }

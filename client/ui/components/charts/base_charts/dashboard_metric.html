@@ -1,10 +1,19 @@
 <template name="DashboardMetric">
   <div class="dashboard-metric-container {{cssClass}}">
-    <div id="{{getElementId}}" class="dashboard-metric">
+    <div id="{{getElementId}}" class="dashboard-metric"  style="background-color:{{color}};">
       <div class="dashboard-metric-title">{{title}}</div>
       <div class="dashboard-metric-value-container">
-        <div class="dashboard-metric-value">{{value}}</div>
-        <div class="dashboard-metric-sub-title">{{subTitle}}</div>
+        {{#if target}}
+          <div class="dashboard-metric-value">{{value}}</div>
+          <div class="dashboard-metric-sub-title">Current Value</div>
+          <div class="dashboard-metric-value">{{target}}</div>
+          <div class="dashboard-metric-sub-title">Target</div>
+        {{else}}
+          <div class="dashboard-metric-value">{{value}}</div>
+          {{#if subTitle}}
+            <div class="dashboard-metric-sub-title">{{subTitle}}</div>
+          {{/if}}
+        {{/if}}
       </div>
     </div>
   </div>
