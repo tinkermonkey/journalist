@@ -1,6 +1,7 @@
 <template name="DashboardMetric">
   <div class="dashboard-metric-container {{cssClass}}">
-    <div id="{{getElementId}}" class="dashboard-metric"  style="background-color:{{color}};">
+    <div id="{{getElementId}}" class="dashboard-metric {{#unless customColorScale}}dashboard-metric-border{{/unless}}"
+         style="background-color:{{color}};">
       <div class="dashboard-metric-title">{{title}}</div>
       <div class="dashboard-metric-value-container">
         {{#if target}}

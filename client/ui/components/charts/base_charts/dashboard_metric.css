@@ -15,6 +15,10 @@
   flex-direction : column;
   border-radius  : 10px;
   max-width      : 300px;
+  border         : 2px solid transparent;
+}
+
+.dashboard-metric-border {
   border         : 2px solid #333;
 }
 

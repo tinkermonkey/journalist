@@ -19,8 +19,10 @@ Template.DashboardMetric.helpers({
         let numericValue = parseFloat(context.value),
             colorIndex   = parseInt((numericValue - context.customColorScale.min) / (context.customColorScale.max - context.customColorScale.min) * (context.customColorScale.max - context.customColorScale.min));
         
+        colorIndex = Math.max(0, colorIndex);
+        
         console.log('color:', numericValue, colorIndex, ((numericValue - context.customColorScale.min) / (context.customColorScale.max - context.customColorScale.min)) * (context.customColorScale.max - context.customColorScale.min));
-        for(let i = 0; i < (context.customColorScale.max - context.customColorScale.min) * 2; i++){
+        for (let i = 0; i < (context.customColorScale.max - context.customColorScale.min) * 2; i++) {
           console.log('DashboardMetric.color:', i, customScale(i));
         }
         return customScale(colorIndex)
@@ -49,14 +51,12 @@ Template.DashboardMetric.onCreated(() => {
   instance.autorun(() => {
     let context = Template.currentData();
     
-    if (context && context.customColorScale && context.customColorScale.colors) {
+    if (context && context.customColorScale) {
       try {
-        let scale = d3.scale.scaleLinear().domain([ 1, Math.max(context.customColorScale.max - context.customColorScale.min, context.customColorScale.colors.length) ])
+        let scale = d3.scale.scaleLinear()
+            .domain([ 1, Math.abs(context.customColorScale.max - context.customColorScale.min) ])
             .interpolate(d3.interpolateHcl)
-            .range(context.customColorScale.colors.map((d) => {
-              console.log('d3 custom color scale:', d, context.customColorScale.colors.length);
-              return d3.rgb(d)
-            }));
+            .range([ d3.rgb(context.customColorScale.start), d3.rgb(context.customColorScale.stop) ]);
         
         instance.customScale.set(scale);
       } catch (e) {
