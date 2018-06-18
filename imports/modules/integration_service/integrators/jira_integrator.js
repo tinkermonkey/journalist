@@ -699,7 +699,7 @@ export class JiraIntegrator extends Integrator {
    * Log out from this integration
    */
   unAuthenticate () {
-    console.log('JiraIntegrator.unAuthenticate:', this.provider.server.title);
+    console.error('JiraIntegrator.unAuthenticate:', this.provider.server.title);
     let self = this;
     
     try {

@@ -324,7 +324,7 @@ export class IntegrationServiceProvider {
    * Clear stored authentication data for this server
    */
   clearAuthData () {
-    console.warn('IntegrationServiceProvider.clearAuthData:', this.server._id, this.server.title);
+    console.error('IntegrationServiceProvider.clearAuthData:', this.server._id, this.server.title);
     let self = this;
     
     IntegrationServers.update({ _id: self.server._id }, {
