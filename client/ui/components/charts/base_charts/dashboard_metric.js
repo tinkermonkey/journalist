@@ -51,7 +51,7 @@ Template.DashboardMetric.onCreated(() => {
   instance.autorun(() => {
     let context = Template.currentData();
     
-    if (context && context.customColorScale) {
+    if (context && context.customColorScale && context.customColorScale.stops) {
       try {
         let scale = d3.scale.scaleLinear()
             .domain(context.customColorScale.stops.map((stop) => { return stop.value }))
