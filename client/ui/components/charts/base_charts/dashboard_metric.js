@@ -25,7 +25,7 @@ Template.DashboardMetric.helpers({
         for (let i = 0; i < (context.customColorScale.max - context.customColorScale.min) * 2; i++) {
           console.log('DashboardMetric.color:', i, customScale(i));
         }
-        return customScale(colorIndex)
+        return customScale(numericValue)
       } catch (e) {
         console.error('DashboardMetric.color failed:', e);
       }
@@ -54,9 +54,9 @@ Template.DashboardMetric.onCreated(() => {
     if (context && context.customColorScale) {
       try {
         let scale = d3.scale.scaleLinear()
-            .domain([ 1, Math.abs(context.customColorScale.max - context.customColorScale.min) ])
+            .domain(context.customColorScale.stops.map((stop) => { return stop.value }))
             .interpolate(d3.interpolateHcl)
-            .range([ d3.rgb(context.customColorScale.start), d3.rgb(context.customColorScale.stop) ]);
+            .range(context.customColorScale.stops.map((stop) => { return stop.color }));
         
         instance.customScale.set(scale);
       } catch (e) {
