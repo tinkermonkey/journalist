@@ -1,6 +1,6 @@
 <template name="AddIntegrationForm">
   <div>
-    {{#autoForm schema=getSchema id="serverMethodForm" type="normal"}}
+    {{#autoForm schema=getSchema id=formId type="normal"}}
       <fieldset>
         <label for="serverId" class="control-label">Server</label>
         <select class="form-control" name="serverId" data-schema-key="serverId" required>

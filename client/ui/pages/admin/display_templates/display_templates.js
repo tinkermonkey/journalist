@@ -78,7 +78,7 @@ Template.DisplayTemplates.events({
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
-          let formId = 'addRecordForm';
+          let formId = $('.roba-dialog form').attr('id');
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
@@ -120,7 +120,7 @@ Template.DisplayTemplates.events({
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
-          let formId = 'addRecordForm';
+          let formId = $('.roba-dialog form').attr('id');
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
@@ -169,7 +169,7 @@ Template.DisplayTemplates.events({
       ],
       callback       : function (btn) {
         if (btn.match(/move/i)) {
-          let formId = 'addRecordForm';
+          let formId = $('.roba-dialog form').attr('id');
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
@@ -225,7 +225,7 @@ Template.DisplayTemplates.events({
       ],
       callback       : function (btn) {
         if (btn.match(/save/i)) {
-          let formId = 'addRecordForm';
+          let formId = $('.roba-dialog form').attr('id');
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             

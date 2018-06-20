@@ -1,5 +1,6 @@
 import './add_role_form.html';
 import { Template }                   from 'meteor/templating';
+import { Random }                     from 'meteor/random';
 import SimpleSchema                   from 'simpl-schema';
 import { ContributorRoleDefinitions } from '../../../../imports/api/contributors/contributor_role_definitions.js';
 import { Teams }                      from '../../../../imports/api/teams/teams';
@@ -33,13 +34,20 @@ Template.AddRoleForm.helpers({
 /**
  * Template Event Handlers
  */
-Template.AddRoleForm.events({});
+Template.AddRoleForm.events({
+  'submit form' (e, instance) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+  }
+});
 
 /**
  * Template Created
  */
 Template.AddRoleForm.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.formId = Random.id();
 });
 
 /**

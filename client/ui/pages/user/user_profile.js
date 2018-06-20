@@ -82,7 +82,7 @@ Template.UserProfile.events({
         { text: 'Change' }
       ],
       callback       : function (btn) {
-        let formId = 'addRecordForm';
+        let formId = $('.roba-dialog form').attr('id');
         if (btn.match(/change/i)) {
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;

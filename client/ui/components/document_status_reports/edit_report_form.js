@@ -1,5 +1,6 @@
 import './edit_report_form.html';
 import { Template }      from 'meteor/templating';
+import { Random }        from 'meteor/random';
 import { RobaDialog }    from 'meteor/austinsand:roba-dialog';
 import { StatusReports } from '../../../../imports/api/status_reports/status_reports';
 
@@ -49,15 +50,20 @@ Template.EditReportForm.events({
         }
       });
     }
+  },
+  'submit form' (e, instance) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
   }
-  
 });
 
 /**
  * Template Created
  */
 Template.EditReportForm.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.formId = Random.id();
 });
 
 /**

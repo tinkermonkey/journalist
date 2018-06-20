@@ -1,5 +1,6 @@
 import './add_assignment_form.html';
 import { Template } from 'meteor/templating';
+import { Random }   from 'meteor/random';
 import SimpleSchema from 'simpl-schema';
 import { Projects } from '../../../../imports/api/projects/projects';
 
@@ -29,13 +30,20 @@ Template.AddAssignmentForm.helpers({
 /**
  * Template Event Handlers
  */
-Template.AddAssignmentForm.events({});
+Template.AddAssignmentForm.events({
+  'submit form' (e, instance) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+  }
+});
 
 /**
  * Template Created
  */
 Template.AddAssignmentForm.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.formId = Random.id();
 });
 
 /**

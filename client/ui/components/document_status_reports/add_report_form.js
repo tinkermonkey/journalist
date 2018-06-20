@@ -1,5 +1,6 @@
 import './add_report_form.html';
 import { Template }     from 'meteor/templating';
+import { Random }       from 'meteor/random';
 import SimpleSchema     from 'simpl-schema';
 import { Contributors } from '../../../../imports/api/contributors/contributors.js';
 
@@ -28,13 +29,20 @@ Template.AddReportForm.helpers({
 /**
  * Template Event Handlers
  */
-Template.AddReportForm.events({});
+Template.AddReportForm.events({
+  'submit form' (e, instance) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+  }
+});
 
 /**
  * Template Created
  */
 Template.AddReportForm.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.formId = Random.id();
 });
 
 /**

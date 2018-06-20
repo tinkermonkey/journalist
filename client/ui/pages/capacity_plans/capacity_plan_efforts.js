@@ -83,7 +83,7 @@ Template.CapacityPlanEfforts.events({
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
-          let formId = 'addRecordForm';
+          let formId = $('.roba-dialog form').attr('id');
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             

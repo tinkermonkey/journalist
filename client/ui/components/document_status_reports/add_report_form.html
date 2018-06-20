@@ -1,6 +1,6 @@
 <template name="AddReportForm">
   <div>
-    {{#autoForm schema=getSchema id="serverMethodForm" type="normal"}}
+    {{#autoForm schema=getSchema id=formId type="normal"}}
       <fieldset>
         <label for="contributorId" class="control-label">Assignee</label>
         <select class="form-control" name="contributorId" data-schema-key="contributorId" required>

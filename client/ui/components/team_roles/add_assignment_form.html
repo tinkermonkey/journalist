@@ -1,6 +1,6 @@
 <template name="AddAssignmentForm">
   <div>
-    {{#autoForm schema=getSchema id="serverMethodForm" type="normal"}}
+    {{#autoForm schema=getSchema id=formId type="normal"}}
       <fieldset>
         <label for="projectId" class="control-label">Project</label>
         <select class="form-control" name="projectId" data-schema-key="projectId" required>

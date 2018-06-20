@@ -42,8 +42,8 @@ Template.AuthenticateServerLink.events({
       ],
       callback       : function (btn) {
         console.log('authentication link login button clicked');
+        let formId = $('.roba-dialog form').attr('id');
         if (btn.match(/log in/i)) {
-          let formId = 'addRecordForm';
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             AutoForm.resetForm(formId);
@@ -64,7 +64,7 @@ Template.AuthenticateServerLink.events({
             AutoForm.resetForm(formId);
           }
         } else {
-          AutoForm.resetForm('addRecordForm');
+          AutoForm.resetForm(formId);
           RobaDialog.hide();
         }
       }.bind(this)

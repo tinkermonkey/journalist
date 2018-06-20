@@ -598,3 +598,8 @@ Template.registerHelper('weekDaysOld', function (date) {
     return Util.workDaysDiff(date, new Date())
   }
 });
+
+Template.registerHelper('formId', function () {
+  return this && this.formId || Template.instance().formId
+});
+

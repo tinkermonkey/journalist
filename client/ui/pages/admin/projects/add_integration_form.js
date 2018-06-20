@@ -1,5 +1,6 @@
 import './add_integration_form.html';
 import { Template }           from 'meteor/templating';
+import { Random }             from 'meteor/random';
 import SimpleSchema           from 'simpl-schema';
 import { Util }               from '../../../../../imports/api/util';
 import { IntegrationServers } from '../../../../../imports/api/integrations/integration_servers';
@@ -34,13 +35,20 @@ Template.AddIntegrationForm.helpers({
 /**
  * Template Event Handlers
  */
-Template.AddIntegrationForm.events({});
+Template.AddIntegrationForm.events({
+  'submit form' (e, instance) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+  }
+});
 
 /**
  * Template Created
  */
 Template.AddIntegrationForm.onCreated(() => {
+  let instance = Template.instance();
   
+  instance.formId = Random.id();
 });
 
 /**

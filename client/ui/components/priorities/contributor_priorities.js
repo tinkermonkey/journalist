@@ -50,12 +50,12 @@ Template.ContributorPriorities.events({
       ],
       callback       : function (btn) {
         if (btn.match(/add/i)) {
-          let formId = 'addRecordForm';
+          let formId = $('.roba-dialog form').attr('id');
           if (AutoForm.validateForm(formId)) {
             let formData = AutoForm.getFormValues(formId).insertDoc;
             
             // Create the priority
-            console.log('AddRecordForm:', btn, AutoForm.validateForm('addRecordForm'), AutoForm.getFormValues('addRecordForm').insertDoc);
+            console.log('AddRecordForm:', btn, AutoForm.validateForm(formId), AutoForm.getFormValues(formId).insertDoc);
             Meteor.call('addPriority', contributorId, formData.title, (error, response) => {
               if (error) {
                 RobaDialog.error('Failed to create priority:' + error.toString())
