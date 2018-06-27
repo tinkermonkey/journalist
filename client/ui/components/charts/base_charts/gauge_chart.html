@@ -1,0 +1,8 @@
+<template name="GuageChart">
+  <div class="chart-container {{cssClass}}">
+    {{#if title}}
+      <h3 class="chart-title">{{title}}</h3>
+    {{/if}}
+    <div id="{{getElementId}}" class="chart"></div>
+  </div>
+</template>

@@ -1,29 +1,30 @@
-import './donut_chart.html';
-import './donut_chart.css';
+import './gauge_chart.html';
+import './gauge_chart.css';
 import { Session }        from 'meteor/session';
 import { Template }       from 'meteor/templating';
-import { C3DonutWrapper } from './c3_donut_wrapper';
+import { C3GaugeWrapper } from './c3_gauge_wrapper';
 
 /**
  * Template Helpers
  */
-Template.DonutChart.helpers({});
+Template.GuageChart.helpers({});
 
 /**
  * Template Event Handlers
  */
-Template.DonutChart.events({});
+Template.GuageChart.events({});
 
 /**
  * Template Created
  */
-Template.DonutChart.onCreated(() => {
+Template.GuageChart.onCreated(() => {
+  
 });
 
 /**
  * Template Rendered
  */
-Template.DonutChart.onRendered(() => {
+Template.GuageChart.onRendered(() => {
   let instance = Template.instance();
   
   // Set the elementId
@@ -43,7 +44,7 @@ Template.DonutChart.onRendered(() => {
     // Throttle the update rate
     instance.updateTimeout = setTimeout(() => {
       if (instance.chart === undefined) {
-        instance.chart = new C3DonutWrapper(instance.elementId, context.config);
+        instance.chart = new C3GaugeWrapper(instance.elementId, context.config);
         instance.chart.generate(context.data)
       } else {
         instance.chart.update(context.data)
@@ -55,6 +56,6 @@ Template.DonutChart.onRendered(() => {
 /**
  * Template Destroyed
  */
-Template.DonutChart.onDestroyed(() => {
-
+Template.GuageChart.onDestroyed(() => {
+  
 });
