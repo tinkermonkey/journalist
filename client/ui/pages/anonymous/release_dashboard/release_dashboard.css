@@ -1,0 +1,19 @@
+.release-dashboard-logo-container {
+  display: flex;
+  align-items: end;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  background-color: #eeeeee;
+}
+
+.release-dashboard-logo-container h1 {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.release-dashboard-logo {
+  height: 36px;
+  width: auto;
+  margin: 0 10px;
+}

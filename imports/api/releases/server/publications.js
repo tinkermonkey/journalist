@@ -7,17 +7,11 @@ Meteor.publish('releases', function () {
   if (this.userId) {
     return Releases.find({});
   } else {
-    this.ready();
-    return []
+    return Releases.find({}, { fields: { devCompleteDate: false } });
   }
 });
 
 Meteor.publish('release_integration_links', function () {
   console.log('Publish: release_integration_links');
-  if (this.userId) {
-    return ReleaseIntegrationLinks.find({});
-  } else {
-    this.ready();
-    return []
-  }
+  return ReleaseIntegrationLinks.find({});
 });

@@ -1,5 +1,6 @@
 import './anonymous_layout.html';
 import './anonymous_layout.css';
+import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Util }     from '../../../imports/api/util';
 

@@ -1,6 +1,6 @@
 <template name="ReleaseDashboardProjectCard">
-  <div class="release-dashboard-project-card" style="border-color: {{backgroundColor}};">
-    <div class="release-dashboard-project-card-header" style="background-color: {{backgroundColor}}; color: {{foregroundColor}}">
+  <div class="release-dashboard-project-card" style="border-color: {{backgroundColor}}; background: linear-gradient(to bottom right, {{backgroundColor}}, {{backgroundColor}}, {{complementaryColor}});">
+    <div class="release-dashboard-project-card-header" style="color: {{foregroundColor}};">
       {{title}}
     </div>
     <div class="release-dashboard-project-card-body">
@@ -9,24 +9,24 @@
       {{else}}
         <h3>Next Release</h3>
         {{#with nextRelease}}
-          {{> ReleaseLink releaseId=_id }}
+          {{> ReleaseLink releaseId=_id showDate=true }}
         {{else}}
-          <div>Nothing actively planned</div>
+          <div>TBD</div>
         {{/with}}
 
-        <h3>Latest Version</h3>
+        <h3>Last Release</h3>
         {{#with latestRelease}}
-          {{> ReleaseLink releaseId=_id }}
+          {{> ReleaseLink releaseId=_id showDate=true }}
         {{else}}
         {{/with}}
 
-        <h3>Future Releases</h3>
+        <h3>Upcoming Releases</h3>
         {{#if futureReleases.length}}
           {{#each futureReleases}}
-            {{> ReleaseLink releaseId=_id }}
+            {{> ReleaseLink releaseId=_id showDate=true }}
           {{/each}}
         {{else}}
-          <div>Nothing actively planned</div>
+          <div>TBD</div>
         {{/if}}
       {{/if}}
     </div>

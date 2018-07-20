@@ -3,6 +3,13 @@
 
   <div class="container-fluid release-dashboard-banner">
     {{#RobaTabGroup name="sub-tabs" navClass="nav-pills"}}
+      {{#RobaTab name="all" title="All"}}
+        <div class="release-dashboard-project-list-container">
+          {{#each dashboardProjects }}
+            {{> ReleaseDashboardProjectCard }}
+          {{/each}}
+        </div>
+      {{/RobaTab}}
       {{#each dashboardCategories }}
         {{#RobaTab name=title title=title}}
           <div class="release-dashboard-project-list-container">
@@ -12,12 +19,8 @@
           </div>
         {{/RobaTab}}
       {{/each}}
-    {{/RobaTabGroup}}
-  </div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
+      {{#RobaTab name="history" title="History"}}
         <h1>Recent Releases</h1>
 
         <table class="table table-striped data-table">
@@ -53,7 +56,7 @@
           {{/each}}
           </tbody>
         </table>
-      </div>
-    </div>
+      {{/RobaTab}}
+    {{/RobaTabGroup}}
   </div>
 </template>

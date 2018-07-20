@@ -36,6 +36,7 @@ import '../../../client/ui/pages/admin/teams/admin_team';
 import '../../../client/ui/pages/admin/teams/admin_teams';
 import '../../../client/ui/pages/admin/users/admin_users';
 import '../../../client/ui/pages/anonymous/release_plan/release_plan';
+import '../../../client/ui/pages/anonymous/release_dashboard/release_dashboard';
 import '../../../client/ui/pages/backlogs/backlog_public_report';
 import '../../../client/ui/pages/backlogs/backlog_team_report';
 import '../../../client/ui/pages/capacity_plans/capacity_plan';
@@ -204,6 +205,12 @@ FlowRouter.route('/release_plan', {
   name: 'ReleasePlan',
   action () {
     BlazeLayout.render('AnonymousLayout', { main: 'ReleasePlan' });
+  }
+});
+FlowRouter.route('/release_dashboard', {
+  name: 'ReleaseDashboard',
+  action () {
+    BlazeLayout.render('AnonymousLayout', { main: 'ReleaseDashboard' });
   }
 });
 FlowRouter.route('/backlog_public_report/:backlogId', {

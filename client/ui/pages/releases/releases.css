@@ -6,7 +6,7 @@
 .release-dashboard-project-list-container {
   display: flex;
   justify-content: center;
+  align-items: stretch;
   width: 100%;
-  margin: 20px;
   flex-wrap: wrap;
 }

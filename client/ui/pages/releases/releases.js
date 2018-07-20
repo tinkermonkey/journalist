@@ -30,7 +30,10 @@ Template.Releases.helpers({
     return categories
   },
   dashboardProjects (category) {
-    return Projects.find({ showOnDashboard: true, dashboardCategory: { $regex: category.key, $options: 'i' } }, { sort: { sortOrder: 1 } })
+    if(category){
+      return Projects.find({ showOnDashboard: true, dashboardCategory: { $regex: category.key, $options: 'i' } }, { sort: { sortOrder: 1 } })
+    }
+    return Projects.find({ showOnDashboard: true }, { sort: { sortOrder: 1 } })
   },
   recentReleases () {
     let monthsAgoDate = moment().subtract(12, 'months').toDate();

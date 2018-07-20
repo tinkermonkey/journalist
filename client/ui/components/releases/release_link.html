@@ -3,7 +3,7 @@
     {{#with release}}
       <a href="{{pathFor 'Release' releaseId=_id}}">{{title}}</a>
 
-      {{#if showDate}}
+      {{#if ../showDate}}
         {{#unless isReleased}}
           {{#unless ../hideDetails}}
             <div class="release-link-details">

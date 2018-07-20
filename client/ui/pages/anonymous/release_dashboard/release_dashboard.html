@@ -1,0 +1,12 @@
+<template name="ReleaseDashboard">
+  <div class="release-dashboard-logo-container">
+    {{> StaticAsset key='logo' cssClass='release-dashboard-logo' }}
+    <h1>Release Dashboard</h1>
+  </div>
+
+  {{#if Template.subscriptionsReady}}
+    {{> Releases }}
+  {{ else }}
+    {{> AppLoading }}
+  {{/if}}
+</template>
