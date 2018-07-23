@@ -242,8 +242,10 @@ export class IntegrationAgent {
       IntegrationAgentExecutions.insert({
         integrationId: self.integration._id,
         serverId     : self.integration.serverId,
-        request      : {
-          failed: 'Provider Not Healthy'
+        request      : {},
+        result       : {
+          successful: false,
+          error     : 'Provider Not Healthy'
         }
       });
       
