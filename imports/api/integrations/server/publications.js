@@ -5,6 +5,7 @@ import { IntegrationImportFunctions }     from '../integration_import_functions'
 import { IntegrationServers }             from '../integration_servers';
 import { IntegrationServerCaches }        from '../integration_server_caches';
 import { IntegrationServerAuthProviders } from '../integration_server_auth_providers';
+import { IntegrationAgentExecutions }     from '../integration_agent_executions';
 
 Meteor.publish('integrations', function (projectId) {
   console.info('Publish: integrations', projectId);
@@ -181,6 +182,18 @@ Meteor.publish('integration_server_auth_providers', function (serverId) {
   }
 });
 
+Meteor.publish('integration_agent_executions', function (integrationId) {
+  console.info('Publish: integration_agent_executions:', integrationId);
+  if (this.userId && integrationId) {
+    return IntegrationAgentExecutions.find({
+      integrationId: integrationId
+    }, { sort: { requestTime: -1 }, limit: 50 });
+  } else {
+    this.ready();
+    return [];
+  }
+});
+
 Meteor.publish('enabled_auth_providers', function () {
   return IntegrationServerAuthProviders.find({
     isEnabled: true
@@ -188,3 +201,4 @@ Meteor.publish('enabled_auth_providers', function () {
     fields: { loginFunctionName: 1 }
   });
 });
+

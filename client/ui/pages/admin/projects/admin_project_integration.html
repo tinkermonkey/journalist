@@ -105,6 +105,9 @@
               {{#RobaTab name="imported-issues" title="Imported Issue Browser"}}
                 {{> AdminIntegrationImportedItemBrowser }}
               {{/RobaTab}}
+              {{#RobaTab name="execution-history" title="Execution History"}}
+                {{> AdminProjectIntegrationExecutionHistory integrationId=_id }}
+              {{/RobaTab}}
             {{/RobaTabGroup}}
           </div>
         </div>

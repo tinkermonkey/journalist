@@ -1,0 +1,61 @@
+<template name="AdminProjectIntegrationExecutionHistory">
+  <div>
+    <h3>Executions</h3>
+    <table class="table table-striped data-table">
+      <thead>
+      <tr>
+        <th>Request Time</th>
+        <th>Request</th>
+        <th></th>
+        <th>Response Time (ms)</th>
+        <th>Persistence Time (ms)</th>
+        <th>Result</th>
+        <th></th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+      {{#each executions}}
+        <tr>
+          <td>{{dateFormat requestTime 'MM/DD HH:mm:ss'}}</td>
+          <td>
+            {{> JsonInfoLink cssClass="hidden-control" data=request placement='bottom' }}
+            {{#if request.deepSync}}
+              <span class="label label-primary">Deep Sync</span>
+            {{/if}}
+          </td>
+          <td>
+            {{#if request.query}}
+              {{request.query}}
+            {{/if}}
+          </td>
+          <td>{{responseTime}}</td>
+          <td>{{persistenceTime}}</td>
+          <td>
+            {{> JsonInfoLink cssClass="hidden-control" data=result placement='bottom' }}
+          </td>
+          <td>
+            {{#if result.successful }}
+              <span class="label label-success">Success</span>
+            {{else}}
+              {{#if result.failure}}
+                <span class="label label-danger">Failed</span>
+              {{/if}}
+            {{/if}}
+          </td>
+          <td>
+            {{#if result.itemCount }}
+              <span class="label label-primary">{{result.itemCount}}</span>
+            {{else}}
+              {{#if result.failures}}
+                <span class="label label-warning">{{result.failures}}</span>
+              {{/if}}
+            {{/if}}
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>

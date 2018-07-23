@@ -7,6 +7,7 @@ import './admin_project_integration_details';
 import './admin_integration_imported_item_browser';
 import '../integration_servers/integration_server_field_reference';
 import '../integration_servers/integration_server_import_testbed';
+import './admin_project_integration_execution_history';
 
 /**
  * Template Helpers

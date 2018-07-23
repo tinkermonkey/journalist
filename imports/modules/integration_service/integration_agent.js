@@ -1,10 +1,11 @@
 //import { moment } from 'meteor/momentjs:moment';
-import { SyncedCron }             from 'meteor/percolate:synced-cron';
-import { Clustering }             from 'meteor/austinsand:journalist-clustering';
-import { Integrations }           from '../../api/integrations/integrations';
-import { ImportedItems }          from '../../api/imported_items/imported_items';
-import { ImportedItemFetchQueue } from '../../api/imported_items/imported_item_fetch_queue';
-import { HealthTracker }          from '../../api/system_health_metrics/server/health_tracker';
+import { SyncedCron }                 from 'meteor/percolate:synced-cron';
+import { Clustering }                 from 'meteor/austinsand:journalist-clustering';
+import { Integrations }               from '../../api/integrations/integrations';
+import { IntegrationAgentExecutions } from '../../api/integrations/integration_agent_executions';
+import { ImportedItems }              from '../../api/imported_items/imported_items';
+import { ImportedItemFetchQueue }     from '../../api/imported_items/imported_item_fetch_queue';
+import { HealthTracker }              from '../../api/system_health_metrics/server/health_tracker';
 
 let debug = false,
     trace = false;
@@ -149,15 +150,47 @@ export class IntegrationAgent {
         // Append the update limit to the query
         query = self.serviceProvider.integrator.appendUpdateLimitToQuery(query, lastUpdate);
         
+        // Track this
+        let executionId = IntegrationAgentExecutions.insert({
+          integrationId: self.integration._id,
+          serverId     : self.integration.serverId,
+          request      : {
+            queryKey: queryKey,
+            query   : query,
+            deepSync: false
+          }
+        });
+        
         // Fetch the data from the service provider
-        let importResult = self.serviceProvider.importItemsFromQuery(self.integration.projectId, self.integration.importFunction(), query, null, self.integration.calculatedFields());
+        let requestStartTime = Date.now(),
+            importResult     = self.serviceProvider.importItemsFromQuery(self.integration.projectId, self.integration.importFunction(), query, null, self.integration.calculatedFields());
         
         if (importResult.items && importResult.items.length) {
           debug && console.log('IntegrationAgent.executeQuery returned:', self.integration._id, queryKey, importResult.items.length);
           
+          // Track the import
+          IntegrationAgentExecutions.update(executionId, {
+            $set: {
+              result      : {
+                successful: true,
+                itemCount : importResult.items.length,
+                failures  : importResult.failures && importResult.failures.length ? importResult.failures.length + ' import failures reported' : null
+              },
+              responseTime: Date.now() - requestStartTime
+            }
+          });
+          
           // Persist all of the results
+          let persistStartTime = Date.now();
           importResult.items.forEach((item) => {
             self.serviceProvider.storeImportedItem(self.integration._id, self.integration.projectId, self.integration.itemType, item);
+          });
+          
+          // Store the persistence time
+          IntegrationAgentExecutions.update(executionId, {
+            $set: {
+              persistenceTime: Date.now() - persistStartTime
+            }
           });
           
           HealthTracker.update(self.trackerKey, true, {
@@ -166,15 +199,53 @@ export class IntegrationAgent {
         } else if (importResult.failures && importResult.failures.length) {
           console.error('IntegrationAgent.executeQuery item processing failed:', importResult.failures.length);
           HealthTracker.update(self.trackerKey, false, { message: 'Import failed for all items' });
+          
+          // Track it
+          IntegrationAgentExecutions.update(executionId, {
+            $set: {
+              result: {
+                successful: false,
+                error     : importResult.failures.length + ' import failures reported'
+              }
+            }
+          });
         } else {
           // Healthy
           HealthTracker.update(self.trackerKey, true, { message: 'No updates since ' + moment(lastUpdate).format('MM/DD hh:mm a') });
+          
+          // Track it
+          IntegrationAgentExecutions.update(executionId, {
+            $set: {
+              result      : {
+                successful: true,
+                itemCount : importResult.items.length
+              },
+              responseTime: Date.now() - requestStartTime
+            }
+          });
         }
       } catch (e) {
         console.error('IntegrationAgent.executeQuery failed:', self.integration.project().title, self.integration.itemType, query, e.toString());
         HealthTracker.update(self.trackerKey, false, { message: 'Query execution failed' });
+        
+        // Track it
+        IntegrationAgentExecutions.update(executionId, {
+          $set: {
+            result: {
+              successful: false,
+              error     : e.toString()
+            }
+          }
+        });
       }
     } else {
+      IntegrationAgentExecutions.insert({
+        integrationId: self.integration._id,
+        request      : {
+          failed: 'Provider Not Healthy'
+        }
+      });
+      
       HealthTracker.update(self.trackerKey, false, { message: 'Service provider is not healthy' });
     }
     

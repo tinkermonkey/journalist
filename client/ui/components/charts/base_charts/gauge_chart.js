@@ -7,24 +7,24 @@ import { C3GaugeWrapper } from './c3_gauge_wrapper';
 /**
  * Template Helpers
  */
-Template.GuageChart.helpers({});
+Template.GaugeChart.helpers({});
 
 /**
  * Template Event Handlers
  */
-Template.GuageChart.events({});
+Template.GaugeChart.events({});
 
 /**
  * Template Created
  */
-Template.GuageChart.onCreated(() => {
+Template.GaugeChart.onCreated(() => {
   
 });
 
 /**
  * Template Rendered
  */
-Template.GuageChart.onRendered(() => {
+Template.GaugeChart.onRendered(() => {
   let instance = Template.instance();
   
   // Set the elementId
@@ -56,6 +56,6 @@ Template.GuageChart.onRendered(() => {
 /**
  * Template Destroyed
  */
-Template.GuageChart.onDestroyed(() => {
+Template.GaugeChart.onDestroyed(() => {
   
 });
