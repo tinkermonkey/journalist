@@ -1,12 +1,12 @@
 import './imported_item_table.html';
-import { Template }           from 'meteor/templating';
-import { Random }             from 'meteor/random';
-import { RobaDialog }         from 'meteor/austinsand:roba-dialog';
-import { ImportedItems }      from '../../../../imports/api/imported_items/imported_items';
-import { ImportedItemCounts } from '../../pages/admin/projects/imported_item_counts';
+import { Template }      from 'meteor/templating';
+import { Random }        from 'meteor/random';
+import { RobaDialog }    from 'meteor/austinsand:roba-dialog';
+import { ImportedItems } from '../../../../imports/api/imported_items/imported_items';
 import './imported_item_preview_link';
 
-let pageSize = 50;
+let pageSize   = 50,
+    maxResults = 1000;
 
 /**
  * Template Helpers
@@ -25,29 +25,19 @@ Template.ImportedItemTable.helpers({
     }
   },
   importedItemsCount () {
-    let context = this;
-    
-    if (context && context.query) {
-      let countRow = ImportedItemCounts.findOne(Template.instance().queryId);
-      return countRow && countRow.count;
-    } else if (context && context.items) {
-      return context.items.length
-    }
+    return Template.instance().itemCount.get();
   },
   fromIndex () {
     let page = Template.instance().page.get();
     return (page - 1) * pageSize
   },
   toIndex () {
-    let instance = Template.instance(),
-        page     = instance.page.get(),
-        countRow = ImportedItemCounts.findOne(instance.queryId),
-        maxIndex = page * pageSize;
-    if (countRow && countRow.count) {
-      return Math.min(maxIndex, countRow.count)
-    } else {
-      return maxIndex
-    }
+    let instance  = Template.instance(),
+        page      = instance.page.get(),
+        itemCount = instance.itemCount.get(),
+        maxIndex  = page * pageSize;
+    
+    return Math.min(maxIndex, itemCount)
   },
   isCurrentPage () {
     let page        = parseInt(this),
@@ -55,18 +45,18 @@ Template.ImportedItemTable.helpers({
     return page === currentPage
   },
   multiplePages () {
-    let countRow  = ImportedItemCounts.findOne(Template.instance().queryId),
-        pageCount = countRow && countRow.count ? Math.ceil(countRow.count / pageSize) : 0;
+    let itemCount = Template.instance().itemCount.get(),
+        pageCount = Math.ceil(itemCount / pageSize);
     
     return pageCount > 1
   },
   pageCount () {
-    let countRow = ImportedItemCounts.findOne(Template.instance().queryId);
-    return countRow.count ? Math.ceil(countRow.count / pageSize) : 0
+    let itemCount = Template.instance().itemCount.get();
+    return Math.ceil(itemCount / pageSize)
   },
   pages () {
-    let countRow  = ImportedItemCounts.findOne(Template.instance().queryId),
-        pageCount = countRow.count ? Math.ceil(countRow.count / pageSize) : 0,
+    let itemCount = Template.instance().itemCount.get(),
+        pageCount = Math.ceil(itemCount / pageSize),
         pages     = [];
     
     for (let page = 1; page <= pageCount; page++) {
@@ -96,16 +86,28 @@ Template.ImportedItemTable.events({
 Template.ImportedItemTable.onCreated(() => {
   let instance = Template.instance();
   
-  instance.page    = new ReactiveVar(1);
-  instance.queryId = Random.id();
+  instance.page      = new ReactiveVar(1);
+  instance.queryId   = Random.id();
+  instance.itemCount = new ReactiveVar(0);
   
   instance.autorun(() => {
-    let context = Template.currentData(),
-        page    = instance.page.get();
+    let context = Template.currentData();
     
-    if (context && context.query && page) {
-      instance.subscribe('imported_item_query_count', context.query, instance.queryId);
-      instance.subscribe('imported_item_crumb_query', context.query);
+    console.log('ImportedItemTable autorun:', context);
+    
+    if (context && context.query) {
+      Meteor.call('getImportedItemQueryResultCount', context.query, (error, result) => {
+        if (!error && result !== undefined) {
+          console.log('getImportedItemQueryResultCount:', context.query, result);
+          instance.itemCount.set(Math.min(parseInt(result), maxResults));
+        } else {
+          instance.itemCount.set(0);
+          console.error('getImportedItemQueryResultCount failed:', error);
+        }
+      });
+      //instance.subscribe('imported_item_query_count', context.query, instance.queryId);
+      
+      instance.subscribe('imported_item_crumb_query', context.query, { sort: { dateCreated: -1 } });
     }
   })
 });

@@ -19,7 +19,7 @@ Meteor.publish('integration_imported_items', function (integrationId, start, lim
 });
 
 Meteor.publish('integration_imported_item_crumbs', function (integrationId, options) {
-  console.log('Publish: integration_imported_item_crumbs', integrationId);
+  console.log(this._session && this._session.id || '-', this._session && this._session.userId, this.connection.clientAddress, 'Publish: integration_imported_item_crumbs', integrationId, options);
   if (this.userId && integrationId) {
     // Enforce a few important limits
     options = _.extend({ fields: {} }, options);
@@ -43,7 +43,7 @@ Meteor.publish('imported_item', function (itemId) {
 });
 
 Meteor.publish('imported_item_query', function (query, options) {
-  console.log('Publish: imported_item_query');
+  console.log(this._session && this._session.id || '-', this._session && this._session.userId, this.connection.clientAddress, 'Publish: imported_item_query', query, options);
   if (this.userId && query && _.isObject(query)) {
     // Enforce a few important limits
     options = _.extend({ fields: {} }, options);
@@ -57,7 +57,7 @@ Meteor.publish('imported_item_query', function (query, options) {
 });
 
 Meteor.publish('imported_item_crumb_query', function (query, options) {
-  console.log('Publish: imported_item_crumb_query');
+  console.log(this._session && this._session.id || '-', this._session && this._session.userId, this.connection.clientAddress, 'Publish: imported_item_crumb_query', query, options);
   if (this.userId && query && _.isObject(query)) {
     // Enforce a few important limits
     options = _.extend({ fields: {} }, options);

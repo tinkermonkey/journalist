@@ -37,14 +37,15 @@ export const ImportedItemLink = new SimpleSchema({
     optional: true
   },
   dateCreated   : {
-    type    : Date
+    type: Date
   }
 });
 
 export const ImportedItem = new SimpleSchema({
   // The source of this item
   integrationId    : {
-    type: String
+    type : String,
+    index: 1
   },
   // The server this item was imported from
   serverId         : {
@@ -159,7 +160,8 @@ export const ImportedItem = new SimpleSchema({
   dateCreated      : {
     type    : Date,
     optional: true,
-    label   : 'The date this item was created'
+    label   : 'The date this item was created',
+    index   : 1
   },
   // Contributor who created the item in the originating system
   createdBy        : {

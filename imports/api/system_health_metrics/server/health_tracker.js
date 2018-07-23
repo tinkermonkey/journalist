@@ -30,7 +30,7 @@ export const HealthTracker = {
         key      : key,
         title    : title,
         type     : type,
-        isHealthy: false
+        isHealthy: true
       }
     });
   },
