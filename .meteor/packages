@@ -4,25 +4,24 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-base@1.3.0             # Packages every Meteor app needs to have
+meteor-base@1.4.0             # Packages every Meteor app needs to have
 mobile-experience@1.0.5       # Packages for a great mobile UX
-mongo@1.4.2                   # The database Meteor supports right now
+mongo@1.6.0                   # The database Meteor supports right now
 blaze-html-templates # Compile .html files into Meteor Blaze views
 reactive-var@1.0.11            # Reactive variable for tracker
-tracker@1.1.3                 # Meteor's client-side reactive programming library
+tracker@1.2.0                 # Meteor's client-side reactive programming library
 
-standard-minifier-css@1.4.0   # CSS minifier run for production mode
-standard-minifier-js@2.3.1    # JS minifier run for production mode
-es5-shim@4.7.0                # ECMAScript 5 compatibility for older browsers
-ecmascript@0.10.6              # Enable ECMAScript2015+ syntax in app code
-shell-server@0.3.1            # Server-side component of the `meteor shell` command
+standard-minifier-css@1.5.2   # CSS minifier run for production mode
+standard-minifier-js@2.4.0    # JS minifier run for production mode
+es5-shim@4.8.0                # ECMAScript 5 compatibility for older browsers
+ecmascript@0.12.3              # Enable ECMAScript2015+ syntax in app code
+shell-server@0.4.0            # Server-side component of the `meteor shell` command
 
 insecure@1.0.7                # Allow all DB writes from clients (for prototyping)
 kadira:flow-router
-accounts-password@1.5.0
+accounts-password@1.5.1
 optilude:jira-auth
 alanning:roles
-percolate:synced-cron
 kadira:blaze-layout
 austinsand:roba-spinner
 dburles:collection-helpers
@@ -40,7 +39,6 @@ austinsand:editable-code
 mizzao:jquery-ui
 mrt:later
 mrt:moment-timezone
-twbs:bootstrap
 austinsand:editable-checkbox
 markdown@1.0.12
 frpz:ping
@@ -49,7 +47,6 @@ tomi:upload-server
 tomi:upload-jquery
 meteorhacks:picker
 momentjs:moment
-u2622:persistent-session
 gilbertwat:bootstrap3-daterangepicker
 risul:bootstrap-colorpicker
 aldeed:collection2@3.0.0
@@ -63,3 +60,6 @@ austinsand:journalist-clustering
 cfs:standard-packages
 cfs:filesystem
 aldeed:schema-index
+underscore
+twbs:bootstrap
+littledata:synced-cron

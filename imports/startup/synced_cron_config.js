@@ -1,4 +1,4 @@
-import { SyncedCron } from 'meteor/percolate:synced-cron';
+import { SyncedCron } from 'meteor/littledata:synced-cron';
 
 SyncedCron.config({
   // Log job run details to console
@@ -8,7 +8,7 @@ SyncedCron.config({
   logger: null,
   
   // Name of collection to use for synchronisation and logging
-  collectionName: 'cronHistory',
+  collectionName: 'cron_jobs',
   
   // Default to using localTime
   utc: false,

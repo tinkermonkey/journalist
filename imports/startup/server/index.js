@@ -1,7 +1,7 @@
 import { Meteor }                         from 'meteor/meteor';
 import { ServiceConfiguration }           from 'meteor/service-configuration';
 import { UploadServer }                   from 'meteor/tomi:upload-server';
-import { SyncedCron }                     from 'meteor/percolate:synced-cron';
+import { SyncedCron }                     from 'meteor/littledata:synced-cron';
 import { Clustering }                     from 'meteor/austinsand:journalist-clustering';
 import { IntegrationServerAuthProviders } from '../../api/integrations/integration_server_auth_providers';
 import { DynamicCollectionManager }       from '../../api/dynamic_collection_manager';

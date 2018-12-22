@@ -1,6 +1,6 @@
 import { check }                                 from 'meteor/check';
 import { Ping }                                  from 'meteor/frpz:ping';
-import { SyncedCron }                            from 'meteor/percolate:synced-cron';
+import { SyncedCron }                            from 'meteor/littledata:synced-cron';
 import SimpleSchema                              from 'simpl-schema';
 import { Clustering }                            from 'meteor/austinsand:journalist-clustering';
 import { Contributors }                          from '../../api/contributors/contributors';

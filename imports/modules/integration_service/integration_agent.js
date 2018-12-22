@@ -1,5 +1,5 @@
 //import { moment } from 'meteor/momentjs:moment';
-import { SyncedCron }                 from 'meteor/percolate:synced-cron';
+import { SyncedCron }                 from 'meteor/littledata:synced-cron';
 import { Clustering }                 from 'meteor/austinsand:journalist-clustering';
 import { Integrations }               from '../../api/integrations/integrations';
 import { IntegrationAgentExecutions } from '../../api/integrations/integration_agent_executions';

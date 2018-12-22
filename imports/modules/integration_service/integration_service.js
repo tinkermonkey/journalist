@@ -1,4 +1,4 @@
-import { SyncedCron }                 from 'meteor/percolate:synced-cron';
+import { SyncedCron }                 from 'meteor/littledata:synced-cron';
 import { Clustering }                 from 'meteor/austinsand:journalist-clustering';
 import { IntegrationServiceProvider } from './integration_service_provider';
 import { IntegrationServers }         from '../../api/integrations/integration_servers';

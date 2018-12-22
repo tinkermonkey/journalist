@@ -5,7 +5,7 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "@babel/runtime": "7.0.0-beta.55",
+    "@babel/runtime": "^7.2.0",
     "ace-builds": "^1.2.9",
     "adm-zip": "^0.4.13",
     "bcrypt": "^1.0.3",
@@ -20,7 +20,7 @@
     "meteor-node-stubs": "~0.2.4",
     "numeral": "^2.0.6",
     "request": "^2.88.0",
-    "simpl-schema": "^1.5.3",
+    "simpl-schema": "^1.4.1",
     "tough-cookie": "^2.3.3"
   },
   "description": "Reporting Planning Tracking",

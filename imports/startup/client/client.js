@@ -73,7 +73,7 @@ AutoForm.hooks({
       return false
     }
   },
-  addRecordForm   : {
+  addRecordForm: {
     onSubmit (insertDoc, updateDoc, currentDoc) {
       this.event.preventDefault();
       let dialogElement = $('#' + this.formId).closest('.roba-dialog'),
