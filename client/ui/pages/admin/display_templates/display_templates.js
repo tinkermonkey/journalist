@@ -34,6 +34,9 @@ Template.DisplayTemplates.helpers({
   },
   orphanedTemplates () {
     return DisplayTemplates.find({ parentGroup: { $exists: false } }, { sort: { templateName: 1 } })
+  },
+  recentChanges () {
+    return DisplayTemplates.find({ dateModified: { $gte: moment().subtract(1, 'weeks').toDate() }, $where: "this.currentVersion == this.publishedVersion" }, { sort: { dateModified: -1 } })
   }
 });
 
